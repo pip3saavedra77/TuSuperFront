@@ -1,7 +1,7 @@
 import { Injectable, inject, signal, computed } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
-import { Observable, tap } from 'rxjs';
-import { LoginInterface } from '../interfaces/login';
+import { catchError, map, Observable, of, tap } from 'rxjs';
+import { LoginInterface } from '../../auth/interfaces/login';
 // import { LoginInterface } from '../interfaces/login';
 
 // export interface AuthResponse {
@@ -80,6 +80,41 @@ export class Auth {
     this._authStatus.set(null);
     localStorage.removeItem('token');
   }
+
+  public checkAuthStatus(): Observable<boolean> {
+    const token = localStorage.getItem('token'); // Asegúrate que la llave sea exactamente 'token'
+    if (!token) return of(false);
+
+    // Inyectamos el header manualmente aquí
+    return this.http.get<AuthResponse>(`${this.API_URL}/check-status`).pipe(
+      tap((response) => {
+        this._authStatus.set(response);
+        localStorage.setItem('token', response.access_token);
+      }),
+      map(() => true),
+      catchError(() => {
+        this.logout();
+        return of(false);
+      })
+    );
+  }
+
+  // public checkAuthStatus(): Observable<boolean> {
+  //   const token = localStorage.getItem('token');
+  //   if (!token) return of(false);
+
+  //   return this.http.get<AuthResponse>(`${this.API_URL}/check-status`).pipe(
+  //     tap((response) => {
+  //       this._authStatus.set(response);
+  //       localStorage.setItem('token', response.access_token);
+  //     }),
+  //     map(() => true),
+  //     catchError(() => {
+  //       this.logout();
+  //       return of(false);
+  //     })
+  //   );
+  // }
 
   // public login(user: LoginInterface){
   //   this.http.post<LoginInterface>(`http://localhost:3000/users`, user).subscribe(data => {

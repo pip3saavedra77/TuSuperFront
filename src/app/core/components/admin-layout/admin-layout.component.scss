@@ -1,0 +1,33 @@
+.sidenav-container {
+  height: 100%;
+}
+
+.sidenav {
+  width: 200px;
+  .active-link {
+    background-color: rgba(63, 81, 181, 0.1) !important; // Fondo azul tenue
+    color: #3f51b5 !important; // Texto azul
+    font-weight: 500;
+    border-right: 4px solid #3f51b5; // Una línea sutil a la derecha
+
+    // Aseguramos que el icono también cambie
+    mat-icon {
+      color: #3f51b5 !important;
+    }
+  }
+}
+
+.sidenav .mat-toolbar {
+  background: inherit;
+}
+
+.mat-toolbar.mat-primary {
+  position: sticky;
+  top: 0;
+  z-index: 1;
+}
+
+mat-sidenav-content {
+  padding: 16px;
+  background-color: #fafafa;
+}
