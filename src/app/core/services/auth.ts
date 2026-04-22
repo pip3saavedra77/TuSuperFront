@@ -2,16 +2,7 @@ import { Injectable, inject, signal, computed } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { catchError, map, Observable, of, tap } from 'rxjs';
 import { LoginInterface } from '../../auth/interfaces/login';
-// import { LoginInterface } from '../interfaces/login';
-
-// export interface AuthResponse {
-//   accessToken: string;
-//   user: {
-//     id: number;
-//     email: string;
-//     role: string; // Importante por tu RBAC
-//   };
-// }
+import { Router } from '@angular/router';
 
 export interface Module {
   id: number;
@@ -49,6 +40,7 @@ export interface AuthResponse {
 export class Auth {
 
   private http = inject(HttpClient);
+  private router = inject(Router);
   private readonly API_URL = 'http://localhost:3000/auth';
 
   // 1. Estado privado (Signal) - Almacena el objeto completo del back
@@ -66,47 +58,51 @@ export class Auth {
 
   /** Método principal de Login */
   public login(credentials: LoginInterface): Observable<AuthResponse> {
+    // LIMPIEZA PREVENTIVA
+    localStorage.clear();
+
     return this.http.post<AuthResponse>(`${this.API_URL}/login`, credentials).pipe(
       tap((response) => {
-        // Guardamos en la Signal el objeto que contiene access_token y user
-        this._authStatus.set(response);
-        // Persistencia básica para recargas de página
+        // Guardamos datos nuevos
         localStorage.setItem('token', response.access_token);
+        this._authStatus.set(response);
       })
     );
   }
+  // public login(credentials: LoginInterface): Observable<AuthResponse> {
+  //   return this.http.post<AuthResponse>(`${this.API_URL}/login`, credentials).pipe(
+  //     tap((response) => {
+  //       localStorage.clear(); // Limpia rastros del usuario anterior (Admin)
+  //       localStorage.setItem('token', response.access_token);
+  //       this._authStatus.set(response);
+  //     })
+  //   );
+  // }
 
   public logout(): void {
+    localStorage.clear();
+
+    // 2. Resetear el Signal de estado
     this._authStatus.set(null);
-    localStorage.removeItem('token');
-  }
 
-  public checkAuthStatus(): Observable<boolean> {
-    const token = localStorage.getItem('token'); // Asegúrate que la llave sea exactamente 'token'
-    if (!token) return of(false);
-
-    // Inyectamos el header manualmente aquí
-    return this.http.get<AuthResponse>(`${this.API_URL}/check-status`).pipe(
-      tap((response) => {
-        this._authStatus.set(response);
-        localStorage.setItem('token', response.access_token);
-      }),
-      map(() => true),
-      catchError(() => {
-        this.logout();
-        return of(false);
-      })
-    );
+    // 3. Navegar y FORZAR recarga (esto limpia la memoria de JS)
+    this.router.navigateByUrl('/auth').then(() => {
+      window.location.reload();
+    });
   }
 
   // public checkAuthStatus(): Observable<boolean> {
-  //   const token = localStorage.getItem('token');
+  //   const token = localStorage.getItem('token'); // Asegúrate que la llave sea exactamente 'token'
   //   if (!token) return of(false);
 
+  //   // Inyectamos el header manualmente aquí
   //   return this.http.get<AuthResponse>(`${this.API_URL}/check-status`).pipe(
   //     tap((response) => {
+  //       console.log('2. Respuesta del servidor (User):', response.user.email); // <--- DEBUG
   //       this._authStatus.set(response);
   //       localStorage.setItem('token', response.access_token);
+  //       // this._authStatus.set(response);
+  //       // localStorage.setItem('token', response.access_token);
   //     }),
   //     map(() => true),
   //     catchError(() => {
@@ -116,9 +112,25 @@ export class Auth {
   //   );
   // }
 
-  // public login(user: LoginInterface){
-  //   this.http.post<LoginInterface>(`http://localhost:3000/users`, user).subscribe(data => {
-  //     // ... Aqui es donde pienso darle un valor al signal que vamos a configurar
-  //   });
-  // }
+  public checkAuthStatus(): Observable<boolean> {
+    const token = localStorage.getItem('token');
+    if (!token) return of(false);
+
+    // Añadimos un timestamp para evitar que el navegador use una respuesta cacheada
+    // const params = { t: new Date().getTime().toString() };
+
+    return this.http.get<AuthResponse>(`${this.API_URL}/check-status`).pipe(
+      tap((response) => {
+        console.log('Validando sesión de:', response.user.email);
+        this._authStatus.set(response);
+        // Solo actualiza el token si el servidor generó uno nuevo
+        localStorage.setItem('token', response.access_token);
+      }),
+      map(() => true),
+      catchError(() => {
+        this.logout();
+        return of(false);
+      })
+    );
+  }
 }

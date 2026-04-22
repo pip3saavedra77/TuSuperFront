@@ -14,28 +14,12 @@
           <a mat-list-item 
             [routerLink]="'/' + moduleName.toLowerCase()" 
             routerLinkActive="active-link">
-            <!-- <mat-icon matListItemIcon>{{ getIcon(moduleName) }}</mat-icon> -->
             <span matListItemTitle>{{ moduleName }}</span>
           </a>
         }
-        <!-- <a mat-list-item 
-          routerLink="/users" 
-          routerLinkActive="active-link">
-          <mat-icon matListItemIcon>people</mat-icon>
-          <span matListItemTitle>Usuarios</span>
+        <a mat-list-item (click)="logout()">
+          <span matListItemTitle>Cerrar sesion</span>
         </a>
-        <a mat-list-item 
-          routerLink="/roles" 
-          routerLinkActive="active-link">
-          <mat-icon matListItemIcon>people</mat-icon>
-          <span matListItemTitle>Roles</span>
-        </a>
-        <a mat-list-item 
-          routerLink="/modules" 
-          routerLinkActive="active-link">
-          <mat-icon matListItemIcon>people</mat-icon>
-          <span matListItemTitle>Modulos</span>
-        </a> -->
       </mat-nav-list>
     }
   </mat-sidenav>
@@ -46,7 +30,7 @@
           <mat-icon aria-label="Side nav toggle icon">menu</mat-icon>
         </button>
       }
-      <span>adso_3063267</span>
+      <span>Hola, {{ currentUser()?.name }}</span>
     </mat-toolbar>
     <!-- Add Content Here -->
      <router-outlet></router-outlet>

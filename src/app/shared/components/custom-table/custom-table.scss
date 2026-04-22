@@ -1,0 +1,11 @@
+.action-buttons {
+  display: flex;
+  gap: 8px;
+  justify-content: center;
+}
+
+// Opcional: Centrar las cabeceras de acciones
+.mat-column-actions {
+  text-align: center;
+  width: 120px; // Ajusta según el tamaño de tus botones
+}

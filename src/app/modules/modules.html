@@ -1,1 +1,11 @@
-<p>modules works!</p>
+<!-- <p>modules works!</p> -->
+<div class="header">
+    <h1>Gestión de Módulos</h1>
+    <button mat-raised-button color="primary" (click)="openDialog()">
+        Nuevo Módulo
+    </button>
+
+    <app-custom-table [data]="modules()" [columns]="columns" (edit)="handleEdit($event)"
+        (delete)="handleDelete($event)">
+    </app-custom-table>
+</div>

@@ -29,14 +29,16 @@ import { Auth } from '../../services/auth';
 })
 export class AdminLayoutComponent {
   private breakpointObserver = inject(BreakpointObserver);
-
-  public authService = inject(Auth); // Inyectamos tu servicio de Core
-  
-  // Obtenemos los módulos del usuario
+  public authService = inject(Auth);
   public menuItems = this.authService.userModules;
+  public currentUser = this.authService.currentUser;
 
   isHandset$: Observable<boolean> = this.breakpointObserver.observe(Breakpoints.Handset).pipe(
     map((result) => result.matches),
     shareReplay(),
   );
+
+  logout(){
+    this.authService.logout();
+  }
 }
