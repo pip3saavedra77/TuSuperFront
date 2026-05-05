@@ -1,8 +1,8 @@
-<h2 mat-dialog-title>Crear Módulo</h2>
+<h2 mat-dialog-title>{{ isEditMode ? 'Editar' : 'Crear' }} Módulo</h2>
 
 <mat-dialog-content [formGroup]="form">
   <div style="display: flex; flex-direction: column; gap: 1rem; padding-top: 10px;">
-    
+
     <mat-form-field appearance="outline">
       <mat-label>Nombre</mat-label>
       <input matInput formControlName="name" placeholder="Ej: auth">
@@ -19,6 +19,6 @@
 <mat-dialog-actions align="end">
   <button mat-button (click)="onCancel()">Cancelar</button>
   <button mat-raised-button color="primary" (click)="onSave()" [disabled]="form.invalid">
-    Guardar
+    {{ isEditMode ? 'Actualizar' : 'Guardar' }}
   </button>
 </mat-dialog-actions>

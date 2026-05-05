@@ -8,17 +8,17 @@
     [opened]="(isHandset$ | async) === false"
   >
     <mat-toolbar>Menu</mat-toolbar>
-    @if (authService.isAuthenticated()) {
+    @if (isAuthenticated()) {
       <mat-nav-list>
         @for (moduleName of menuItems(); track moduleName) {
-          <a mat-list-item 
-            [routerLink]="'/' + moduleName.toLowerCase()" 
+          <a mat-list-item
+            [routerLink]="'/' + moduleName.toLowerCase()"
             routerLinkActive="active-link">
             <span matListItemTitle>{{ moduleName }}</span>
           </a>
         }
         <a mat-list-item (click)="logout()">
-          <span matListItemTitle>Cerrar sesion</span>
+          <span matListItemTitle>Cerrar sesión</span>
         </a>
       </mat-nav-list>
     }
@@ -32,7 +32,6 @@
       }
       <span>Hola, {{ currentUser()?.firstName }}</span>
     </mat-toolbar>
-    <!-- Add Content Here -->
      <router-outlet></router-outlet>
   </mat-sidenav-content>
 </mat-sidenav-container>

@@ -1,7 +1,4 @@
-export interface LoginInterface {
-    // id: number,
-    email: string,
-    password: string,
-    // isActive: boolean,
-    // roles: Role[],
+export interface LoginCredentials {
+  email: string;
+  password: string;
 }

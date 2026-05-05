@@ -1,0 +1,33 @@
+export interface Module {
+  id: number;
+  name: string;
+  description: string;
+}
+
+export interface Role {
+  id: number;
+  name: string;
+  description: string;
+  modules: Module[];
+}
+
+export interface User {
+  id: number;
+  firstName: string;
+  lastName: string;
+  docType: string;
+  docNumber: string;
+  email: string;
+  isActive: boolean;
+  roles: Role[];
+}
+
+export interface AuthResponse {
+  access_token: string;
+  user: User;
+}
+
+export interface LoginCredentials {
+  email: string;
+  password: string;
+}
