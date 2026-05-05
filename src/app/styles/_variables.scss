@@ -1,0 +1,28 @@
+:root {
+  /* Brand Colors */
+  --color-sidebar-bg: #1A3C2E;
+  --color-sidebar-active: #2D5A3D;
+  --color-primary: #2D6A4F;
+  --color-background: #F5F5F5;
+  --color-surface: #FFFFFF;
+  
+  /* Text Colors */
+  --color-text-primary: #111827;
+  --color-text-secondary: #6B7280;
+  
+  /* Badges */
+  --color-badge-completed-bg: #D1FAE5;
+  --color-badge-completed-text: #065F46;
+  --color-badge-progress-bg: #DBEAFE;
+  --color-badge-progress-text: #1E40AF;
+  --color-badge-pending-bg: #FEE2E2;
+  --color-badge-pending-text: #991B1B;
+
+  /* Typography */
+  --font-family: 'Inter', sans-serif;
+
+  /* Spacing & Shapes */
+  --sidebar-width: 220px;
+  --radius-card: 12px;
+  --shadow-card: 0 4px 6px -1px rgba(0, 0, 0, 0.05), 0 2px 4px -1px rgba(0, 0, 0, 0.03);
+}

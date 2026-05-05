@@ -4,16 +4,17 @@
 // Learn more about theming and how to use it for your application's
 // custom components at https://material.angular.dev/guide/theming
 @use '@angular/material' as mat;
+@use './app/styles/variables';
 
 html {
   height: 100%;
   @include mat.theme(
     (
       color: (
-        primary: mat.$magenta-palette,
-        tertiary: mat.$violet-palette,
+        primary: mat.$green-palette,
+        tertiary: mat.$green-palette,
       ),
-      typography: Roboto,
+      typography: 'Inter, sans-serif',
       density: 0,
     )
   );
@@ -28,9 +29,9 @@ body {
   // Set a default background, font and text colors for the application using
   // Angular Material's system-level CSS variables. Learn more about these
   // variables at https://material.angular.dev/guide/system-variables
-  background-color: var(--mat-sys-surface);
+  background-color: var(--color-background);
   color: var(--mat-sys-on-surface);
-  font: var(--mat-sys-body-medium);
+  font-family: var(--font-family);
 
   // Reset the user agent margin.
   margin: 0;

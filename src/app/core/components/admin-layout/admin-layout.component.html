@@ -7,30 +7,87 @@
     [mode]="(isHandset$ | async) ? 'over' : 'side'"
     [opened]="(isHandset$ | async) === false"
   >
-    <mat-toolbar>Menu</mat-toolbar>
+    <div class="brand-logo">
+      <mat-icon>spa</mat-icon>
+      <span>Donezo</span>
+    </div>
     @if (isAuthenticated()) {
+      <div class="nav-section-label">MENU</div>
       <mat-nav-list>
         @for (moduleName of menuItems(); track moduleName) {
           <a mat-list-item
             [routerLink]="'/' + moduleName.toLowerCase()"
             routerLinkActive="active-link">
+            <mat-icon matListItemIcon>
+              {{ 
+                moduleName === 'users' ? 'group' :
+                moduleName === 'roles' ? 'shield' :
+                moduleName === 'product' ? 'inventory_2' :
+                moduleName === 'category' ? 'category' :
+                moduleName === 'provider' ? 'local_shipping' :
+                moduleName === 'orders' ? 'receipt_long' :
+                'folder'
+              }}
+            </mat-icon>
             <span matListItemTitle>{{ moduleName }}</span>
           </a>
         }
+        <div class="nav-section-label">GENERAL</div>
         <a mat-list-item (click)="logout()">
+          <mat-icon matListItemIcon>logout</mat-icon>
           <span matListItemTitle>Cerrar sesión</span>
         </a>
       </mat-nav-list>
     }
+
+    <!-- Spacer para empujar la card al fondo en un flex column -->
+    <div style="flex-grow: 1;"></div>
+
+    <div class="sidebar-bottom-card">
+      <p class="card-title">Download our Mobile App</p>
+      <p class="card-subtitle">Get easy in another way</p>
+      <button>Download</button>
+    </div>
   </mat-sidenav>
   <mat-sidenav-content>
-    <mat-toolbar color="primary">
+    <mat-toolbar color="primary" class="top-toolbar">
       @if (isHandset$ | async) {
         <button type="button" aria-label="Toggle sidenav" matIconButton (click)="drawer.toggle()">
           <mat-icon aria-label="Side nav toggle icon">menu</mat-icon>
         </button>
       }
-      <span>Hola, {{ currentUser()?.firstName }}</span>
+
+      <!-- BUSCADOR -->
+      <div class="toolbar-search">
+        <mat-icon class="search-icon">search</mat-icon>
+        <span class="search-placeholder">Search task</span>
+        <span class="search-shortcut">⌘ F</span>
+      </div>
+
+      <span class="toolbar-spacer"></span>
+
+      <!-- ACCIONES DERECHA -->
+      <div class="toolbar-actions">
+        <button matIconButton class="toolbar-icon-btn">
+          <mat-icon>mail_outline</mat-icon>
+        </button>
+        <button matIconButton class="toolbar-icon-btn">
+          <mat-icon>notifications_none</mat-icon>
+        </button>
+        <div class="toolbar-user">
+          <div class="toolbar-avatar">
+            {{ currentUser()?.firstName?.charAt(0) }}
+          </div>
+          <div class="toolbar-user-info">
+            <span class="toolbar-user-name">
+              {{ currentUser()?.firstName }} {{ currentUser()?.lastName }}
+            </span>
+            <span class="toolbar-user-email">
+              {{ currentUser()?.email }}
+            </span>
+          </div>
+        </div>
+      </div>
     </mat-toolbar>
      <router-outlet></router-outlet>
   </mat-sidenav-content>
