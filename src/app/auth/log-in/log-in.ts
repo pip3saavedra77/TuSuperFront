@@ -50,7 +50,7 @@ export class LogIn {
 
     this.authService.login(credentials).subscribe({
       next: () => {
-        this.router.navigate(['/users']);
+        this.router.navigate(['/home']);
       },
       error: (err: unknown) => {
         const message = (err as { error?: { message?: string } })?.error?.message

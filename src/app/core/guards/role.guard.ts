@@ -15,6 +15,6 @@ export const roleGuard: CanActivateFn = (route, _state) => {
     return true;
   }
 
-  router.navigateByUrl('/auth');
+  router.navigateByUrl('/home');
   return false;
 };

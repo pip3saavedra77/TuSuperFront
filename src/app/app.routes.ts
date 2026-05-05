@@ -14,6 +14,10 @@ export const routes: Routes = [
     canActivate: [authGuard],
     children: [
       {
+        path: 'home',
+        loadComponent: () => import('./home/home').then(m => m.Home),
+      },
+      {
         path: 'users',
         loadComponent: () => import('./users/users').then(m => m.Users),
         canActivate: [roleGuard],
@@ -31,16 +35,35 @@ export const routes: Routes = [
         canActivate: [roleGuard],
         data: { module: 'modules' },
       },
-      { path: '', redirectTo: 'users', pathMatch: 'full' },
+      {
+        path: 'product',
+        loadComponent: () => import('./product/product').then(m => m.Product),
+        canActivate: [roleGuard],
+        data: { module: 'product' },
+      },
+      {
+        path: 'category',
+        loadComponent: () => import('./category/category').then(m => m.Category),
+        canActivate: [roleGuard],
+        data: { module: 'category' },
+      },
+      {
+        path: 'provider',
+        loadComponent: () => import('./provider/provider').then(m => m.Provider),
+        canActivate: [roleGuard],
+        data: { module: 'provider' },
+      },
+      {
+        path: 'orders',
+        loadComponent: () => import('./orders/orders').then(m => m.Orders),
+        canActivate: [roleGuard],
+        data: { module: 'orders' },
+      },
+      { path: '', redirectTo: 'home', pathMatch: 'full' },
     ],
   },
   {
-    path: '',
-    redirectTo: 'auth',
-    pathMatch: 'full',
-  },
-  {
     path: '**',
-    redirectTo: 'auth',
+    redirectTo: 'home',
   },
 ];

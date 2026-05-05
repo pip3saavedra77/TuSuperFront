@@ -1,0 +1,17 @@
+<div class="home-container">
+  <h1>Bienvenido, {{ currentUser()?.firstName }}</h1>
+  <p class="subtitle">Selecciona un módulo para continuar</p>
+
+  <div class="modules-grid">
+    @for (moduleName of userModules(); track moduleName) {
+      <mat-card class="module-card" [routerLink]="'/' + moduleName.toLowerCase()">
+        <mat-card-header>
+          <mat-icon mat-card-avatar>{{ getIcon(moduleName) }}</mat-icon>
+          <mat-card-title>{{ moduleName | titlecase }}</mat-card-title>
+        </mat-card-header>
+      </mat-card>
+    } @empty {
+      <p class="no-modules">No tienes módulos asignados. Contacta al administrador.</p>
+    }
+  </div>
+</div>
