@@ -17,8 +17,7 @@ import { ModuleModel } from '../../models/module.model';
     MatInputModule,
     MatButtonModule,
   ],
-  templateUrl: './modules-form.html',
-  styleUrl: './modules-form.scss',
+  templateUrl: './modules-form.html'
 })
 export class ModulesForm {
 
