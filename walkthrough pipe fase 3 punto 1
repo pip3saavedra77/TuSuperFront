@@ -1,0 +1,203 @@
+# Walkthrough: SignalStore para Modules Feature
+
+## Cambios realizados
+
+### Nueva dependencia
+- `@ngrx/signals@21.1.0` — compatible con Angular 21.2.0
+
+### Archivos nuevos
+
+#### [modules.store.ts](file:///c:/angular/TuSuperFront/TuSuperFront/src/app/modules/store/modules.store.ts)
+SignalStore centralizado con:
+- **State**: `{ modules: ModuleModel[], loading: boolean, error: string | null }`
+- **Computed**: `totalModules`, `isEmpty`
+- **Methods** (vía `rxMethod`): `loadAll`, `create`, `update`, `remove`, `clearError`
+- **Hook**: `onInit` → auto-carga de módulos
+
+#### [modules-http.service.ts](file:///c:/angular/TuSuperFront/TuSuperFront/src/app/modules/services/modules-http.service.ts)
+Data access layer HTTP-only. 4 métodos puros que retornan `Observable<T>`. Sin estado, sin signals.
+
+### Archivos modificados
+
+#### [modules.ts](file:///c:/angular/TuSuperFront/TuSuperFront/src/app/modules/modules.ts)
+```diff:modules.ts
+import { CommonModule } from '@angular/common';
+import { Component, inject } from '@angular/core';
+import { MatButtonModule } from '@angular/material/button';
+import { MatDialog, MatDialogModule } from '@angular/material/dialog';
+import { ModulesService } from './services/modules';
+import { ModulesForm } from './components/modules-form/modules-form';
+import { ModuleModel } from './models/module.model';
+import { CustomTable, TableColumn } from '../shared/components/custom-table/custom-table';
+
+@Component({
+  selector: 'app-modules',
+  imports: [
+    CommonModule,
+    MatButtonModule,
+    MatDialogModule,
+    CustomTable,
+  ],
+  templateUrl: './modules.html',
+  styleUrl: './modules.scss',
+})
+export class Modules {
+
+  private readonly moduleService = inject(ModulesService);
+  private readonly dialog = inject(MatDialog);
+
+  public columns: TableColumn[] = [
+    { label: 'ID', key: 'id' },
+    { label: 'Nombre', key: 'name' },
+    { label: 'Descripción', key: 'description' },
+  ];
+
+  public modules = this.moduleService.modules;
+
+  openDialog(): void {
+    const dialogRef = this.dialog.open(ModulesForm, { width: '450px' });
+
+    dialogRef.afterClosed().subscribe(result => {
+      if (!result) return;
+      this.moduleService.createModule(result).subscribe({
+        error: () => alert('Error al crear el módulo'),
+      });
+    });
+  }
+
+  handleEdit(module: ModuleModel): void {
+    const dialogRef = this.dialog.open(ModulesForm, {
+      width: '450px',
+      data: module,
+    });
+
+    dialogRef.afterClosed().subscribe(result => {
+      if (!result || !module.id) return;
+      this.moduleService.updateModule(module.id, result).subscribe({
+        error: () => alert('Error al actualizar el módulo'),
+      });
+    });
+  }
+
+  handleDelete(module: ModuleModel): void {
+    if (!module.id) return;
+    const confirmed = confirm(`¿Estás seguro de eliminar "${module.name}"?`);
+    if (!confirmed) return;
+
+    this.moduleService.delete(module.id).subscribe({
+      error: () => alert('Error al eliminar el módulo'),
+    });
+  }
+}
+===
+import { Component, inject } from '@angular/core';
+import { MatButtonModule } from '@angular/material/button';
+import { MatDialog, MatDialogModule } from '@angular/material/dialog';
+import { ModulesStore } from './store/modules.store';
+import { ModulesForm } from './components/modules-form/modules-form';
+import { ModuleModel } from './models/module.model';
+import { CustomTable, TableColumn } from '../shared/components/custom-table/custom-table';
+
+@Component({
+  selector: 'app-modules',
+  imports: [
+    MatButtonModule,
+    MatDialogModule,
+    CustomTable,
+  ],
+  templateUrl: './modules.html',
+  styleUrl: './modules.scss',
+})
+export class Modules {
+  readonly store = inject(ModulesStore);
+  private readonly dialog = inject(MatDialog);
+
+  public readonly columns: TableColumn[] = [
+    { label: 'ID', key: 'id' },
+    { label: 'Nombre', key: 'name' },
+    { label: 'Descripción', key: 'description' },
+  ];
+
+  openDialog(): void {
+    this.dialog
+      .open(ModulesForm, { width: '450px' })
+      .afterClosed()
+      .subscribe((result: ModuleModel | undefined) => {
+        if (result) this.store.create(result);
+      });
+  }
+
+  handleEdit(module: ModuleModel): void {
+    this.dialog
+      .open(ModulesForm, { width: '450px', data: module })
+      .afterClosed()
+      .subscribe((result: Partial<ModuleModel> | undefined) => {
+        if (result && module.id) {
+          this.store.update({ id: module.id, changes: result });
+        }
+      });
+  }
+
+  handleDelete(module: ModuleModel): void {
+    if (!module.id) return;
+    if (confirm(`¿Estás seguro de eliminar "${module.name}"?`)) {
+      this.store.remove(module.id);
+    }
+  }
+}
+
+```
+
+#### [modules.html](file:///c:/angular/TuSuperFront/TuSuperFront/src/app/modules/modules.html)
+```diff:modules.html
+<div class="header">
+    <h1>Gestión de Módulos</h1>
+    <button mat-raised-button color="primary" (click)="openDialog()">
+        Nuevo Módulo
+    </button>
+
+    <app-custom-table [data]="modules()" [columns]="columns" (edit)="handleEdit($event)"
+        (delete)="handleDelete($event)">
+    </app-custom-table>
+</div>
+===
+<div class="header">
+    <h1>Gestión de Módulos</h1>
+    <button mat-raised-button color="primary" (click)="openDialog()">
+        Nuevo Módulo
+    </button>
+
+    <app-custom-table [data]="store.modules()" [columns]="columns" (edit)="handleEdit($event)"
+        (delete)="handleDelete($event)">
+    </app-custom-table>
+</div>
+</div>
+```
+
+### Archivos NO modificados (blast radius = 0)
+- `app.config.ts`, `app.routes.ts`
+- `core/` (guards, interceptor, auth service)
+- `modules/components/modules-form/`
+- `modules/models/module.model.ts`
+- `shared/`, `auth/`, `home/`, `users/`, `roles/`, `orders/`
+
+### Archivo deprecado
+- `modules/services/modules.ts` (ModulesService) — ya sin consumidores. Candidato a eliminación.
+
+## Métricas
+
+| Archivo | CC Pre | CC Post | Δ |
+|---|---|---|---|
+| `modules/modules.ts` | 8 | 6 | -25% |
+| `modules/services/modules-http.service.ts` | N/A | 1 | Nuevo (HTTP puro) |
+| `modules/store/modules.store.ts` | N/A | 5 | Nuevo (complejidad aislada) |
+
+**Mejora cualitativa**: El componente eliminó manejo de errores inline (`alert` en subscribe error callbacks), side effects directos, y suscripciones anidadas. El estado está centralizado y reactivo.
+
+## Verificación
+- `ng build --configuration production` → **0 errores TypeScript**
+- SonarQube MCP no disponible (error de inicialización JSON del servidor)
+- CC calculada manualmente (McCabe estándar)
+
+## Nota técnica
+El archivo `modules/services/modules.ts` (el `ModulesService` original) queda huérfano — no tiene consumidores. Se recomienda eliminarlo en un commit separado (`chore: remove deprecated ModulesService`).

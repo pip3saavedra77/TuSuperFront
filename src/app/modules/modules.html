@@ -4,7 +4,7 @@
         Nuevo Módulo
     </button>
 
-    <app-custom-table [data]="modules()" [columns]="columns" (edit)="handleEdit($event)"
+    <app-custom-table [data]="store.modules()" [columns]="columns" (edit)="handleEdit($event)"
         (delete)="handleDelete($event)">
     </app-custom-table>
 </div>
