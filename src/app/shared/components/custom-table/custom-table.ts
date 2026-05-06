@@ -34,7 +34,6 @@ export class CustomTable <T> implements OnInit, AfterViewInit {
   @ViewChild(MatSort) sort!: MatSort;
 
   ngOnInit() {
-    // this.displayedColumns = this.columns.map(col => col.key);
     this.displayedColumns = [...this.columns.map(col => col.key), 'actions'];
   }
 
