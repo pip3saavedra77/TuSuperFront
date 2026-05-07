@@ -8,6 +8,7 @@ import { CustomTable, TableColumn } from '../shared/components/custom-table/cust
 
 @Component({
   selector: 'app-modules',
+  standalone: true,
   imports: [
     MatButtonModule,
     MatDialogModule,

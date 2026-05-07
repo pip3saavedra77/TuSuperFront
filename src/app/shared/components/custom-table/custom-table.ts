@@ -12,6 +12,7 @@ export interface TableColumn {
 
 @Component({
   selector: 'app-custom-table',
+  standalone: true,
   imports: [CommonModule, MatTableModule, MatPaginatorModule, MatSortModule, ScrollingModule],
   templateUrl: './custom-table.html',
   styleUrl: './custom-table.scss',
