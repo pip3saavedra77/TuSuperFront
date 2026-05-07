@@ -13,6 +13,7 @@ import { AuthService } from '../../services/auth';
 
 @Component({
   selector: 'app-admin-layout',
+  standalone: true,
   templateUrl: './admin-layout.component.html',
   styleUrl: './admin-layout.component.scss',
   imports: [

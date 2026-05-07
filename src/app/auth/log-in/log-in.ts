@@ -14,6 +14,7 @@ import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-log-in',
+  standalone: true,
   imports: [
     CommonModule,
     ReactiveFormsModule,

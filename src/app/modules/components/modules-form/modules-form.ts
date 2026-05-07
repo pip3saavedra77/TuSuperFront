@@ -9,6 +9,7 @@ import { ModuleModel } from '../../models/module.model';
 
 @Component({
   selector: 'app-modules-form',
+  standalone: true,
   imports: [
     CommonModule,
     ReactiveFormsModule,
