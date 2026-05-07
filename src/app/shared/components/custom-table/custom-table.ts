@@ -3,25 +3,26 @@ import { CommonModule } from '@angular/common';
 import { MatTableModule, MatTableDataSource } from '@angular/material/table';
 import { MatPaginator, MatPaginatorModule } from '@angular/material/paginator';
 import { MatSort, MatSortModule } from '@angular/material/sort';
+import { ScrollingModule } from '@angular/cdk/scrolling';
 
 export interface TableColumn {
-  label: string; // Título de la columna (ej: 'Descripción')
-  key: string;   // Propiedad del objeto (ej: 'description')
+  label: string;
+  key: string;
 }
 
 @Component({
   selector: 'app-custom-table',
-  imports: [CommonModule, MatTableModule, MatPaginatorModule, MatSortModule],
+  imports: [CommonModule, MatTableModule, MatPaginatorModule, MatSortModule, ScrollingModule],
   templateUrl: './custom-table.html',
   styleUrl: './custom-table.scss',
 })
 export class CustomTable <T> implements OnInit, AfterViewInit {
 
   @Input() columns: TableColumn[] = [];
+  @Input() viewportHeight: string = '400px';
   
-  // Usamos un setter para actualizar el DataSource automáticamente cuando cambien los datos
   @Input() set data(value: T[]) {
-    this.dataSource.data = value;
+    this.dataSource.data = value ?? [];
   }
 
   @Output() edit = new EventEmitter<T>();
