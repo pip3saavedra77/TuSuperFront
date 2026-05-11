@@ -26,7 +26,7 @@ export const authInterceptor: HttpInterceptorFn = (req, next) => {
     tap((event) => {
       if (event instanceof HttpResponse && isCheckStatus) {
         const body = event.body as { token?: string } | null;
-        if (body && body.token) {
+        if (body?.token) {
           localStorage.setItem('token', body.token);
         }
       }
