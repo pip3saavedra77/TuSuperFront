@@ -1,0 +1,27 @@
+@use 'tokens' as *;
+@use 'sass:map';
+
+// Typography Utilities
+// =============================================================================
+
+@each $size, $value in $font-sizes {
+  .text-#{$size} {
+    font-size: $value;
+    line-height: 1.5;
+  }
+}
+
+@each $name, $weight in $font-weights {
+  .font-#{$name} {
+    font-weight: $weight;
+  }
+}
+
+// Global text accessibility on glass
+.text-high { color: map.get($neutral, "text-high"); }
+.text-medium { color: map.get($neutral, "text-medium"); }
+.text-low { color: map.get($neutral, "text-low"); }
+
+.text-shadow-sm {
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.2);
+}
