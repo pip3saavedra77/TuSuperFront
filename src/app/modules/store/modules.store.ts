@@ -37,6 +37,12 @@ export const ModulesStore = signalStore(
   withMethods((store) => {
     const httpService = inject(ModulesHttpService);
 
+    const updateModules = (modules: ModuleModel[], updated: ModuleModel, id: number) =>
+      modules.map((m) => (m.id === id ? { ...m, ...updated } : m));
+
+    const removeModule = (modules: ModuleModel[], id: number) =>
+      modules.filter((m) => m.id !== id);
+
     return {
       loadAll: rxMethod<void>(
         pipe(
@@ -82,9 +88,7 @@ export const ModulesStore = signalStore(
             httpService.update(id, changes).pipe(
               tap((updated) =>
                 patchState(store, ({ modules }) => ({
-                  modules: modules.map((m) =>
-                    m.id === id ? { ...m, ...updated } : m
-                  ),
+                  modules: updateModules(modules, updated, id),
                 }))
               ),
               catchError((err: { status: number }) => {
@@ -104,7 +108,7 @@ export const ModulesStore = signalStore(
             httpService.delete(id).pipe(
               tap(() =>
                 patchState(store, ({ modules }) => ({
-                  modules: modules.filter((m) => m.id !== id),
+                  modules: removeModule(modules, id),
                 }))
               ),
               catchError((err: { status: number }) => {
