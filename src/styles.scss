@@ -9,8 +9,8 @@
 html {
   @include mat.theme((
     color: (
-      primary: mat.$red-palette, // Admin (Cereza aprox)
-      tertiary: mat.$blue-palette, // Tendero
+      primary: mat.$red-palette,
+      tertiary: mat.$blue-palette,
     ),
     typography: tk.$font-family,
     density: 0,
@@ -26,14 +26,48 @@ html, body {
 }
 
 body {
-  @include gs.background-organic();
+  background-color: var(--color-background);
   font-family: tk.$font-family;
-  color: #FFFFFF;
-  color-scheme: dark; // Forzar modo oscuro para Glassmorphism
+  color: var(--color-text-primary);
+  color-scheme: light;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 }
 
 * {
   box-sizing: border-box;
+}
+
+// Profile Classes - Definición de variables CSS dinámicas
+// =============================================================================
+
+.profile-admin {
+  --profile-primary: #8B1A2F;
+  --profile-glass: rgba(139, 26, 47, 0.85);
+}
+
+.profile-tendero {
+  --profile-primary: #2980B9;
+  --profile-glass: rgba(41, 128, 185, 0.85);
+}
+
+.profile-usuario {
+  --profile-primary: #2ECC71;
+  --profile-glass: rgba(46, 204, 113, 0.85);
+}
+
+// Sobreescritura para asegurar que la Navbar y Sidebar tomen el color del perfil
+.sidenav-container {
+  &.profile-admin {
+    --profile-primary: #8B1A2F;
+    --profile-glass: rgba(139, 26, 47, 0.85);
+  }
+  &.profile-tendero {
+    --profile-primary: #2980B9;
+    --profile-glass: rgba(41, 128, 185, 0.85);
+  }
+  &.profile-usuario {
+    --profile-primary: #2ECC71;
+    --profile-glass: rgba(46, 204, 113, 0.85);
+  }
 }
