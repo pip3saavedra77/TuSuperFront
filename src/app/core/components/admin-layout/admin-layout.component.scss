@@ -1,13 +1,35 @@
+@use '../../../styles/glass' as gs;
+@use '../../../styles/tokens' as tk;
+@use 'sass:map';
+
 .sidenav-container {
   height: 100%;
+
+  // Perfil Administrador (Cereza)
+  &.profile-admin {
+    --profile-primary: #8B1A2F;
+    --profile-glass: rgba(139, 26, 47, 0.85);
+  }
+
+  // Perfil Tendero (Azul)
+  &.profile-tendero {
+    --profile-primary: #2980B9;
+    --profile-glass: rgba(41, 128, 185, 0.85);
+  }
+
+  // Perfil Usuario (Verde)
+  &.profile-usuario {
+    --profile-primary: #2ECC71;
+    --profile-glass: rgba(46, 204, 113, 0.85);
+  }
 }
 
 .sidenav {
   width: var(--sidebar-width);
-  background-color: var(--color-sidebar-bg);
-  border-right: none;
-  
-  /* Flex layout para empujar la card al fondo */
+  background: var(--profile-glass) !important;
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border-right: 1px solid rgba(255, 255, 255, 0.1);
   display: flex;
   flex-direction: column;
 
@@ -15,199 +37,144 @@
     display: flex;
     align-items: center;
     gap: 12px;
-    padding: 24px 16px;
-    font-size: 1.25rem;
-    font-weight: 700;
+    padding: 32px 24px;
+    font-size: 1.5rem;
+    font-weight: 800;
     color: #FFFFFF;
     
-    mat-icon {
-      color: var(--color-primary);
-      transform: scale(1.2);
-    }
+    mat-icon { color: #FFFFFF; transform: scale(1.4); }
   }
 
   .nav-section-label {
-    font-size: 0.75rem;
+    font-size: 0.7rem;
     text-transform: uppercase;
-    color: rgba(255, 255, 255, 0.5); /* Gris tenue sobre el verde oscuro */
-    padding: 16px 16px 8px 16px;
-    font-weight: 600;
-    letter-spacing: 0.5px;
+    color: rgba(255, 255, 255, 0.5);
+    padding: 24px 24px 8px 24px;
+    font-weight: 700;
+    letter-spacing: 1px;
   }
 
-  /* Estilos base de los items de menú */
   mat-list-item {
     color: rgba(255, 255, 255, 0.8) !important;
-    border-radius: 8px;
-    margin: 4px 12px;
-    width: calc(100% - 24px) !important;
+    border-radius: 12px;
+    margin: 4px 16px;
+    width: calc(100% - 32px) !important;
+    transition: all 0.2s ease;
 
-    mat-icon {
-      color: rgba(255, 255, 255, 0.6) !important;
-    }
+    mat-icon { color: rgba(255, 255, 255, 0.6) !important; }
 
     &:hover {
-      background-color: rgba(255, 255, 255, 0.05);
+      background: rgba(255, 255, 255, 0.1) !important;
+      color: #FFFFFF !important;
     }
   }
 
-  /* Item Activo */
   .active-link {
-    background-color: var(--color-sidebar-active) !important; 
-    color: #FFFFFF !important; 
+    background: rgba(255, 255, 255, 0.2) !important;
+    color: #FFFFFF !important;
     font-weight: 600;
-    position: relative;
-
-    /* Borde izquierdo verde claro (primary) */
-    &::before {
-      content: '';
-      position: absolute;
-      left: -12px; /* Lo pegamos al borde absoluto del sidebar */
-      top: 10%;
-      height: 80%;
-      width: 4px;
-      background-color: var(--color-primary);
-      border-radius: 0 4px 4px 0;
-    }
-
-    mat-icon {
-      color: var(--color-primary) !important;
-    }
-  }
-
-  /* Card inferior ("Download app") */
-  .sidebar-bottom-card {
-    margin: auto 16px 24px 16px; /* auto empuja la card hacia abajo */
-    background-color: #112A20; /* Verde aún más oscuro para contraste */
-    border-radius: var(--radius-card);
-    padding: 16px;
-    text-align: left;
-
-    p.card-title {
-      margin: 0 0 4px 0;
-      font-size: 0.9rem;
-      font-weight: 600;
-      color: #FFFFFF;
-    }
-
-    p.card-subtitle {
-      margin: 0 0 16px 0;
-      font-size: 0.75rem;
-      color: rgba(255, 255, 255, 0.6);
-    }
-
-    button {
-      width: 100%;
-      background-color: var(--color-primary);
-      color: #FFFFFF;
-      border-radius: 8px;
-      font-weight: 500;
-      border: none;
-      padding: 8px;
-      cursor: pointer;
-    }
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+    mat-icon { color: #FFFFFF !important; }
   }
 }
 
-/* Ocultamos el toolbar original de Material dentro del sidenav */
-.sidenav .mat-toolbar {
-  display: none;
-}
-
-/* Toolbar superior del main content */
 .top-toolbar {
-  background: var(--color-surface) !important;
-  color: var(--color-text-primary) !important;
-  border-bottom: 1px solid var(--color-border);
-  padding: 0 var(--spacing-lg);
-  height: 64px;
-  display: flex;
-  align-items: center;
-  gap: var(--spacing-md);
-  box-shadow: none !important;
-  position: sticky; /* Retained from old design to keep it at the top */
+  position: sticky;
   top: 0;
-  z-index: 1;
+  z-index: 1000;
+  background: var(--profile-glass) !important;
+  backdrop-filter: blur(15px);
+  -webkit-backdrop-filter: blur(15px);
+  color: #FFFFFF !important;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+  height: 72px;
+  min-height: 72px;
 
   .toolbar-search {
+    background: rgba(255, 255, 255, 0.1);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 12px;
+    padding: 8px 16px;
+    color: #FFFFFF;
     display: flex;
     align-items: center;
-    gap: var(--spacing-sm);
-    background: var(--color-background);
-    border: 1px solid var(--color-border);
-    border-radius: 8px;
-    padding: 6px var(--spacing-md);
-    min-width: 220px;
-
-    .search-icon { 
-      font-size: 18px; 
-      color: var(--color-text-secondary); 
-    }
-    .search-placeholder { 
-      font-size: 14px; 
-      color: var(--color-text-secondary); 
-      flex: 1; 
-    }
-    .search-shortcut {
-      font-size: 11px;
-      color: var(--color-text-secondary);
-      background: var(--color-border);
-      padding: 2px 6px;
-      border-radius: 4px;
+    gap: 12px;
+    
+    .search-icon, .search-placeholder, .search-shortcut {
+      color: rgba(255, 255, 255, 0.7);
     }
   }
-
-  .toolbar-spacer { flex: 1; }
 
   .toolbar-actions {
     display: flex;
     align-items: center;
-    gap: var(--spacing-sm);
-
-    .toolbar-icon-btn {
-      color: var(--color-text-secondary);
-    }
+    gap: 16px;
 
     .toolbar-user {
       display: flex;
       align-items: center;
-      gap: var(--spacing-sm);
-      margin-left: var(--spacing-sm);
+      gap: 12px;
+      padding-left: 16px;
+      border-left: 1px solid rgba(255, 255, 255, 0.1);
+    }
 
-      .toolbar-avatar {
-        width: 36px;
-        height: 36px;
-        border-radius: 50%;
-        background: var(--color-primary-light);
-        color: white;
-        display: flex;
-        align-items: center;
-        justify-content: center;
+    .toolbar-avatar {
+      width: 40px;
+      height: 40px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: rgba(255, 255, 255, 0.2);
+      border: 1px solid rgba(255, 255, 255, 0.3);
+      border-radius: 50%;
+      color: #FFFFFF;
+      font-weight: 700;
+    }
+
+    .toolbar-user-info {
+      display: flex;
+      flex-direction: column;
+      line-height: 1.2;
+
+      .toolbar-user-name { 
+        color: #FFFFFF; 
         font-weight: 600;
-        font-size: 14px;
+        font-size: 0.9rem;
+        white-space: nowrap;
       }
-
-      .toolbar-user-info {
-        display: flex;
-        flex-direction: column;
-
-        .toolbar-user-name {
-          font-size: 13px;
-          font-weight: 600;
-          color: var(--color-text-primary);
-          line-height: 1.2;
-        }
-        .toolbar-user-email {
-          font-size: 11px;
-          color: var(--color-text-secondary);
-          line-height: 1.2;
-        }
+      .toolbar-user-email { 
+        color: rgba(255, 255, 255, 0.7); 
+        font-size: 0.75rem;
+        white-space: nowrap;
       }
     }
+    .toolbar-icon-btn mat-icon { color: #FFFFFF; }
   }
 }
 
 mat-sidenav-content {
   background-color: var(--color-background);
-  padding: 24px; /* Espaciado global de la vista */
+  padding: 0 32px 32px 32px;
+}
+
+.sidebar-bottom-card {
+  margin: 16px;
+  padding: 20px;
+  background: rgba(255, 255, 255, 0.1);
+  border-radius: 16px;
+  color: #FFFFFF;
+  text-align: center;
+  
+  .card-title { font-weight: 700; font-size: 0.9rem; margin: 0; }
+  .card-subtitle { font-size: 0.75rem; opacity: 0.8; margin: 4px 0 12px 0; }
+  button {
+    background: #FFFFFF;
+    color: var(--profile-primary);
+    border: none;
+    padding: 8px 24px;
+    border-radius: 8px;
+    font-weight: 700;
+    font-size: 0.8rem;
+    cursor: pointer;
+  }
 }

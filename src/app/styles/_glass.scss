@@ -1,0 +1,91 @@
+@use 'tokens' as *;
+@use 'sass:map';
+
+// Glassmorphism Mixins
+// =============================================================================
+
+@mixin glass-card($profile-name) {
+  $profile: map.get($profiles, $profile-name);
+  $primary-color: map.get($profile, "primary");
+  $shadow-color: map.get($profile, "shadow");
+
+  background: rgba(255, 255, 255, 0.05);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-top-color: rgba(255, 255, 255, 0.2);
+  border-left-color: rgba(255, 255, 255, 0.2);
+  border-radius: map.get($radius, "lg");
+  box-shadow: 0 8px 32px 0 $shadow-color;
+  
+  // Browser Fallback
+  @supports not (backdrop-filter: blur(12px)) {
+    background-color: rgba(15, 15, 26, 0.85);
+  }
+}
+
+@mixin glass-button($profile-name) {
+  $profile: map.get($profiles, $profile-name);
+  $primary-color: map.get($profile, "primary");
+  $hover-color: map.get($profile, "hover");
+
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: map.get($spacing, "12") map.get($spacing, "24");
+  background: rgba($primary-color, 0.15);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  border: 1px solid rgba($primary-color, 0.3);
+  border-radius: map.get($radius, "md");
+  color: #FFFFFF;
+  font-weight: map.get($font-weights, "semibold");
+  cursor: pointer;
+  transition: map.get($transitions, "normal");
+  text-decoration: none;
+
+  &:hover {
+    background: rgba($primary-color, 0.25);
+    border-color: rgba($primary-color, 0.5);
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba($primary-color, 0.3);
+  }
+
+  &:active {
+    transform: translateY(0);
+  }
+
+  // Browser Fallback
+  @supports not (backdrop-filter: blur(8px)) {
+    background-color: rgba($primary-color, 0.85);
+  }
+}
+
+@mixin glass-navbar() {
+  background: rgba(15, 15, 26, 0.4);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+  position: sticky;
+  top: 0;
+  z-index: map.get($z-index, "dropdown");
+
+  // Browser Fallback
+  @supports not (backdrop-filter: blur(20px)) {
+    background-color: rgba(15, 15, 26, 0.95);
+  }
+}
+
+// Organic Background Helper
+@mixin background-organic() {
+  $c1: rgba(46, 204, 113, 0.15); // Comprador
+  $c2: rgba(41, 128, 185, 0.15); // Tendero
+  $c3: rgba(139, 26, 47, 0.15);  // Admin
+
+  background: 
+    radial-gradient(circle at 0% 0%, $c1 0%, transparent 50%),
+    radial-gradient(circle at 100% 0%, $c2 0%, transparent 50%),
+    radial-gradient(circle at 100% 100%, $c3 0%, transparent 50%),
+    map.get($neutral, "bg-base");
+  background-attachment: fixed;
+}

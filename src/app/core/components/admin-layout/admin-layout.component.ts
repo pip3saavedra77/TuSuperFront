@@ -1,4 +1,4 @@
-import { Component, inject } from '@angular/core';
+import { Component, inject, computed } from '@angular/core';
 import { BreakpointObserver, Breakpoints } from '@angular/cdk/layout';
 import { AsyncPipe } from '@angular/common';
 import { MatToolbarModule } from '@angular/material/toolbar';
@@ -35,6 +35,19 @@ export class AdminLayoutComponent {
   public isAuthenticated = this.authService.isAuthenticated;
   public menuItems = this.authService.userModules;
   public currentUser = this.authService.currentUser;
+
+  public profileClass = computed(() => {
+    const roles = this.currentUser()?.roles;
+    if (!roles || roles.length === 0) return 'profile-admin';
+    
+    const roleNames = roles.map(r => r.name.toUpperCase());
+    
+    if (roleNames.some(name => name.includes('ADMIN'))) return 'profile-admin';
+    if (roleNames.some(name => name.includes('TENDER') || name.includes('VENDEDOR'))) return 'profile-tendero';
+    if (roleNames.some(name => name.includes('USER') || name.includes('COMPRADOR'))) return 'profile-usuario';
+    
+    return 'profile-admin';
+  });
 
   isHandset$: Observable<boolean> = this.breakpointObserver.observe(Breakpoints.Handset).pipe(
     map((result) => result.matches),
