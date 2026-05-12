@@ -44,7 +44,7 @@ export const routes: Routes = [
       },
       {
         path: 'category',
-        loadComponent: () => import('./category/category').then(m => m.Category),
+        loadComponent: () => import('./category/category').then(m => m.CategoryComponent),
         canActivate: [roleGuard],
         data: { module: 'category' },
       },
