@@ -37,7 +37,8 @@ export const routes: Routes = [
       },
       {
         path: 'product',
-        loadComponent: () => import('./product/product').then(m => m.Product),
+        loadChildren: () =>
+          import('./product/product.routes').then(m => m.PRODUCT_ROUTES),
         canActivate: [roleGuard],
         data: { module: 'product' },
       },
