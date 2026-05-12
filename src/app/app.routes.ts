@@ -50,7 +50,7 @@ export const routes: Routes = [
       },
       {
         path: 'provider',
-        loadComponent: () => import('./provider/provider').then(m => m.Provider),
+        loadComponent: () => import('./provider/provider').then(m => m.ProviderComponent),
         canActivate: [roleGuard],
         data: { module: 'provider' },
       },
