@@ -1,0 +1,83 @@
+@use '../../../styles/tokens' as *;
+@use '../../../styles/glass' as *;
+@use '../../../styles/order-badges';
+@use 'sass:map';
+
+:host {
+  display: block;
+  padding: map.get($spacing, "32");
+}
+
+.page-title {
+  font-size: map.get($font-sizes, "2xl");
+  font-weight: map.get($font-weights, "bold");
+  color: #1a1a1a;
+  margin-bottom: map.get($spacing, "24");
+}
+
+// Loading
+.loading-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 300px;
+}
+
+// Tabla - Tema usuario
+.table-container {
+  @include glass-card("buyer");
+  padding: map.get($spacing, "24");
+  overflow-x: auto;
+  border: 1px solid rgba(46, 204, 113, 0.3);
+}
+
+.orders-table {
+  width: 100%;
+  background: transparent;
+
+  th.mat-header-cell {
+    color: #1a1a1a;
+    font-weight: map.get($font-weights, "semibold");
+    font-size: map.get($font-sizes, "sm");
+    background: rgba(255, 255, 255, 0.5);
+    border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+    padding: map.get($spacing, "12") map.get($spacing, "16");
+  }
+
+  td.mat-cell {
+    color: #1a1a1a;
+    font-size: map.get($font-sizes, "sm");
+    border-bottom: 1px solid rgba(0, 0, 0, 0.05);
+    padding: map.get($spacing, "12") map.get($spacing, "16");
+  }
+
+  tr.mat-row:hover {
+    background: rgba(0, 0, 0, 0.03);
+    transition: map.get($transitions, "fast");
+  }
+}
+
+// Empty state
+.empty-state {
+  text-align: center;
+  padding: map.get($spacing, "48");
+  color: #555555;
+  font-size: map.get($font-sizes, "md");
+}
+
+// Paginator
+mat-paginator {
+  background: transparent;
+  color: #1a1a1a;
+}
+
+// Material overrides para dark theme
+::ng-deep {
+  .mat-mdc-paginator {
+    background: transparent;
+    color: #1a1a1a !important;
+  }
+  .mat-mdc-select-value {
+    color: #1a1a1a !important;
+  }
+}

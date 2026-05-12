@@ -55,7 +55,7 @@ export const routes: Routes = [
       },
       {
         path: 'orders',
-        loadComponent: () => import('./orders/orders').then(m => m.Orders),
+        loadChildren: () => import('./orders/orders.routes').then(m => m.ORDERS_ROUTES),
         canActivate: [roleGuard],
         data: { module: 'orders' },
       },
