@@ -23,9 +23,9 @@ export interface ProviderDialogData {
     MatButtonModule
   ],
   template: `
-    <h2 mat-dialog-title>{{ data.provider ? 'Editar' : 'Nuevo' }} Proveedor</h2>
-    <mat-dialog-content>
-      <form [formGroup]="providerForm" class="provider-form">
+    <form [formGroup]="providerForm" (ngSubmit)="onSave()">
+      <h2 mat-dialog-title>{{ data.provider ? 'Editar' : 'Nuevo' }} Proveedor</h2>
+      <mat-dialog-content class="provider-form-content">
         <mat-form-field appearance="outline" class="full-width">
           <mat-label>Nombre / Razón Social</mat-label>
           <input matInput formControlName="name" placeholder="Ej: Distribuidora S.A.S" maxlength="150">
@@ -49,19 +49,19 @@ export interface ProviderDialogData {
             Ingrese un correo válido
           </mat-error>
         </mat-form-field>
-      </form>
-    </mat-dialog-content>
-    <mat-dialog-actions align="end">
-      <button mat-button (click)="onCancel()">Cancelar</button>
-      <button mat-flat-button color="primary" 
-              [disabled]="providerForm.invalid" 
-              (click)="onSave()">
-        {{ data.provider ? 'Actualizar' : 'Guardar' }}
-      </button>
-    </mat-dialog-actions>
+      </mat-dialog-content>
+      <mat-dialog-actions align="end">
+        <button mat-button type="button" (click)="onCancel()">Cancelar</button>
+        <button mat-flat-button color="primary" 
+                type="submit"
+                [disabled]="providerForm.invalid">
+          {{ data.provider ? 'Actualizar' : 'Guardar' }}
+        </button>
+      </mat-dialog-actions>
+    </form>
   `,
   styles: [`
-    .provider-form {
+    .provider-form-content {
       display: flex;
       flex-direction: column;
       gap: 1rem;

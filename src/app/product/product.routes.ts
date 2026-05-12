@@ -6,7 +6,7 @@ const isTenderoOrAdmin: CanMatchFn = () => {
   const authService = inject(AuthService);
   const user = authService.currentUser();
   return !!user?.roles.some(r =>
-    ['ADMIN', 'TENDERO', 'VENDEDOR'].includes(r.name),
+    ['ADMIN', 'TENDERO', 'VENDEDOR'].includes(r.name.toUpperCase()),
   );
 };
 

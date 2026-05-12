@@ -23,9 +23,9 @@ export interface CategoryDialogData {
     MatButtonModule
   ],
   template: `
-    <h2 mat-dialog-title>{{ data.category ? 'Editar' : 'Nueva' }} Categoría</h2>
-    <mat-dialog-content>
-      <form [formGroup]="categoryForm" class="category-form">
+    <form [formGroup]="categoryForm" (ngSubmit)="onSave()">
+      <h2 mat-dialog-title>{{ data.category ? 'Editar' : 'Nueva' }} Categoría</h2>
+      <mat-dialog-content class="category-form-content">
         <mat-form-field appearance="outline" class="full-width">
           <mat-label>Nombre</mat-label>
           <input matInput formControlName="name" placeholder="Ej: Lácteos" maxlength="100">
@@ -38,19 +38,19 @@ export interface CategoryDialogData {
           <mat-label>Descripción</mat-label>
           <textarea matInput formControlName="description" rows="3" placeholder="Opcional..."></textarea>
         </mat-form-field>
-      </form>
-    </mat-dialog-content>
-    <mat-dialog-actions align="end">
-      <button mat-button (click)="onCancel()">Cancelar</button>
-      <button mat-flat-button color="primary" 
-              [disabled]="categoryForm.invalid" 
-              (click)="onSave()">
-        {{ data.category ? 'Actualizar' : 'Guardar' }}
-      </button>
-    </mat-dialog-actions>
+      </mat-dialog-content>
+      <mat-dialog-actions align="end">
+        <button mat-button type="button" (click)="onCancel()">Cancelar</button>
+        <button mat-flat-button color="primary" 
+                type="submit"
+                [disabled]="categoryForm.invalid">
+          {{ data.category ? 'Actualizar' : 'Guardar' }}
+        </button>
+      </mat-dialog-actions>
+    </form>
   `,
   styles: [`
-    .category-form {
+    .category-form-content {
       display: flex;
       flex-direction: column;
       gap: 1rem;
