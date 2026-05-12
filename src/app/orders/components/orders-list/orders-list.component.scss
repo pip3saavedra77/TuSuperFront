@@ -1,0 +1,181 @@
+@use '../../../styles/tokens' as *;
+@use '../../../styles/glass' as *;
+@use '../../../styles/order-badges';
+@use 'sass:map';
+
+:host {
+  display: block;
+  padding: map.get($spacing, "32");
+}
+
+.page-title {
+  font-size: map.get($font-sizes, "2xl");
+  font-weight: map.get($font-weights, "bold");
+  color: #1a1a1a;
+  margin-bottom: map.get($spacing, "24");
+}
+
+// Filtros
+.filters-panel {
+  @include glass-card("admin");
+  padding: map.get($spacing, "24");
+  margin-bottom: map.get($spacing, "24");
+}
+
+.filters-row {
+  display: flex;
+  align-items: center;
+  gap: map.get($spacing, "16");
+  flex-wrap: wrap;
+}
+
+.filter-field {
+  min-width: 180px;
+  flex: 1;
+}
+
+.filter-actions {
+  display: flex;
+  gap: map.get($spacing, "8");
+  align-items: center;
+
+  button[mat-flat-button] {
+    background: #8B1A2F;
+    color: #FFFFFF;
+
+    &:hover {
+      background: #6B1424;
+    }
+  }
+
+  button[mat-button] {
+    color: #555555;
+  }
+}
+
+// Loading
+.loading-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 300px;
+}
+
+// Tabla
+.table-container {
+  @include glass-card("admin");
+  padding: map.get($spacing, "24");
+  overflow-x: auto;
+}
+
+.orders-table {
+  width: 100%;
+  background: transparent;
+
+  th.mat-header-cell {
+    color: #1a1a1a;
+    font-weight: map.get($font-weights, "semibold");
+    font-size: map.get($font-sizes, "sm");
+    background: rgba(255, 255, 255, 0.5);
+    border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+    padding: map.get($spacing, "12") map.get($spacing, "16");
+  }
+
+  td.mat-cell {
+    color: #1a1a1a;
+    font-size: map.get($font-sizes, "sm");
+    border-bottom: 1px solid rgba(0, 0, 0, 0.05);
+    padding: map.get($spacing, "12") map.get($spacing, "16");
+  }
+
+  tr.mat-row:hover {
+    background: rgba(0, 0, 0, 0.03);
+    transition: map.get($transitions, "fast");
+  }
+}
+
+// Customer
+.customer-info {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.customer-name {
+  font-weight: map.get($font-weights, "medium");
+}
+
+.customer-email {
+  font-size: map.get($font-sizes, "xs");
+  color: #555555;
+}
+
+// Status badges importados desde _order-badges.scss
+
+// Acción
+.action-btn {
+  font-size: map.get($font-sizes, "xs");
+  color: #1a1a1a;
+  border-color: rgba(0, 0, 0, 0.2);
+
+  &:hover:not(:disabled) {
+    background: rgba(139, 26, 47, 0.15);
+    border-color: rgba(139, 26, 47, 0.4);
+  }
+
+  &:disabled {
+    color: #999999;
+    border-color: rgba(0, 0, 0, 0.05);
+    opacity: 0.5;
+  }
+
+  mat-icon {
+    font-size: 16px;
+    width: 16px;
+    height: 16px;
+    margin-right: 4px;
+  }
+}
+
+// Paginator
+mat-paginator {
+  background: transparent;
+  color: #1a1a1a;
+}
+
+// Empty state
+.no-data-row {
+  .no-data-cell {
+    text-align: center;
+    padding: map.get($spacing, "48");
+    color: #555555;
+    font-size: map.get($font-sizes, "md");
+  }
+}
+
+// Material overrides para dark theme
+::ng-deep {
+  .mat-mdc-form-field {
+    .mdc-text-field--outlined .mdc-notched-outline__leading,
+    .mdc-text-field--outlined .mdc-notched-outline__notch,
+    .mdc-text-field--outlined .mdc-notched-outline__trailing {
+      border-color: rgba(0, 0, 0, 0.15);
+    }
+  }
+
+  .mat-mdc-select-value,
+  .mat-mdc-input-element {
+    color: #1a1a1a !important;
+  }
+
+  .mat-mdc-form-field .mat-mdc-floating-label,
+  .mat-mdc-form-field-label,
+  .mdc-floating-label {
+    color: #555555 !important;
+  }
+
+  .mat-mdc-paginator {
+    background: transparent;
+    color: #1a1a1a !important;
+  }
+}
