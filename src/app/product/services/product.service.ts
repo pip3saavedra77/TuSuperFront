@@ -64,6 +64,9 @@ export class ProductService {
     if (filters.search) {
       params = params.set('search', filters.search);
     }
+    if (filters.categoryId !== undefined) {
+      params = params.set('categoryId', String(filters.categoryId));
+    }
     return params;
   }
 }

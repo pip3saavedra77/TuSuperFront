@@ -68,6 +68,16 @@
 
       <!-- ACCIONES DERECHA -->
       <div class="toolbar-actions">
+        @if (isUserRole()) {
+          <button matIconButton class="toolbar-icon-btn"
+                  (click)="onCartClick()"
+                  [matBadge]="cartStore.totalItems()"
+                  [matBadgeHidden]="cartStore.isEmpty()"
+                  matBadgeColor="accent"
+                  matBadgeSize="small">
+            <mat-icon>shopping_cart</mat-icon>
+          </button>
+        }
         <button matIconButton class="toolbar-icon-btn">
           <mat-icon>mail_outline</mat-icon>
         </button>

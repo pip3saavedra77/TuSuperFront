@@ -1,0 +1,105 @@
+<div class="cart-panel">
+
+  <!-- HEADER -->
+  <div class="cart-header">
+    <h3 class="cart-title">
+      <mat-icon>shopping_cart</mat-icon>
+      Mi Carrito
+    </h3>
+    <button mat-icon-button (click)="cartStore.closeCart()">
+      <mat-icon>close</mat-icon>
+    </button>
+  </div>
+
+  <mat-divider></mat-divider>
+
+  <!-- EMPTY -->
+  @if (cartStore.isEmpty()) {
+    <div class="cart-empty">
+      <mat-icon>remove_shopping_cart</mat-icon>
+      <p>Tu carrito está vacío</p>
+    </div>
+  } @else {
+    <!-- ITEMS -->
+    <div class="cart-items">
+      @for (item of cartStore.items(); track item.product.id) {
+        <div class="cart-item">
+          <div class="item-info">
+            <span class="item-name">{{ item.product.name }}</span>
+            <span class="item-unit-price">
+              {{ item.product.price | currency:'COP':'symbol-narrow':'1.0-0' }} c/u
+            </span>
+          </div>
+
+          <div class="item-controls">
+            <button mat-icon-button
+                    class="qty-btn"
+                    (click)="onDecrease(item)"
+                    [disabled]="cartStore.loading()">
+              <mat-icon>remove</mat-icon>
+            </button>
+            <span class="qty-value">{{ item.quantity }}</span>
+            <button mat-icon-button
+                    class="qty-btn"
+                    (click)="onIncrease(item)"
+                    [disabled]="item.quantity >= item.product.stock || cartStore.loading()">
+              <mat-icon>add</mat-icon>
+            </button>
+          </div>
+
+          <div class="item-subtotal">
+            {{ item.product.price * item.quantity | currency:'COP':'symbol-narrow':'1.0-0' }}
+          </div>
+
+          <button mat-icon-button
+                  class="remove-btn"
+                  (click)="onRemove(item.product.id)"
+                  [disabled]="cartStore.loading()">
+            <mat-icon>delete_outline</mat-icon>
+          </button>
+        </div>
+      }
+    </div>
+
+    <mat-divider></mat-divider>
+
+    <!-- TOTAL -->
+    <div class="cart-total">
+      <span class="total-label">Total</span>
+      <span class="total-value">
+        {{ cartStore.totalAmount() | currency:'COP':'symbol-narrow':'1.0-0' }}
+      </span>
+    </div>
+
+    <!-- ERROR -->
+    @if (cartStore.error()) {
+      <div class="cart-error">
+        <mat-icon>error_outline</mat-icon>
+        {{ cartStore.error() }}
+      </div>
+    }
+
+    <!-- ACTIONS -->
+    <div class="cart-actions">
+      <button mat-stroked-button
+              class="clear-btn"
+              (click)="onClearCart()"
+              [disabled]="cartStore.loading()">
+        Vaciar carrito
+      </button>
+      <button mat-flat-button
+              class="order-btn"
+              (click)="onPlaceOrder()"
+              [disabled]="cartStore.loading()">
+        @if (cartStore.loading()) {
+          <mat-spinner diameter="20" color="accent"></mat-spinner>
+        } @else {
+          <ng-container>
+            <mat-icon>receipt_long</mat-icon>
+            Realizar Pedido
+          </ng-container>
+        }
+      </button>
+    </div>
+  }
+</div>

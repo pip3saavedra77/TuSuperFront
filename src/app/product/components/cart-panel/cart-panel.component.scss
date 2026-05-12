@@ -1,0 +1,202 @@
+@use '../../../styles/tokens' as *;
+@use 'sass:map';
+
+.cart-panel {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  background: #FFFFFF;
+}
+
+// ── Header ──────────────────────────────────────────
+.cart-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: map.get($spacing, "16") map.get($spacing, "24");
+
+  .cart-title {
+    display: flex;
+    align-items: center;
+    gap: map.get($spacing, "8");
+    margin: 0;
+    font-size: map.get($font-sizes, "lg");
+    font-weight: map.get($font-weights, "bold");
+    color: #1a1a1a;
+
+    mat-icon { color: #2ECC71; }
+  }
+}
+
+// ── Empty ───────────────────────────────────────────
+.cart-empty {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: map.get($spacing, "64") map.get($spacing, "24");
+  color: #999999;
+
+  mat-icon {
+    font-size: 48px;
+    width: 48px;
+    height: 48px;
+    margin-bottom: map.get($spacing, "16");
+    opacity: 0.5;
+  }
+
+  p {
+    font-size: map.get($font-sizes, "md");
+    margin: 0;
+  }
+}
+
+// ── Items ───────────────────────────────────────────
+.cart-items {
+  flex: 1;
+  overflow-y: auto;
+  padding: map.get($spacing, "16") map.get($spacing, "24");
+}
+
+.cart-item {
+  display: grid;
+  grid-template-columns: 1fr auto auto auto;
+  align-items: center;
+  gap: map.get($spacing, "8");
+  padding: map.get($spacing, "12") 0;
+  border-bottom: 1px solid rgba(0, 0, 0, 0.06);
+
+  &:last-child { border-bottom: none; }
+}
+
+.item-info {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+}
+
+.item-name {
+  font-size: map.get($font-sizes, "sm");
+  font-weight: map.get($font-weights, "semibold");
+  color: #1a1a1a;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.item-unit-price {
+  font-size: map.get($font-sizes, "xs");
+  color: #999999;
+}
+
+.item-controls {
+  display: flex;
+  align-items: center;
+  gap: map.get($spacing, "4");
+}
+
+.qty-btn {
+  width: 28px;
+  height: 28px;
+  line-height: 28px;
+
+  mat-icon {
+    font-size: 18px;
+    width: 18px;
+    height: 18px;
+    color: #2ECC71;
+  }
+}
+
+.qty-value {
+  min-width: 24px;
+  text-align: center;
+  font-size: map.get($font-sizes, "sm");
+  font-weight: map.get($font-weights, "semibold");
+  color: #1a1a1a;
+}
+
+.item-subtotal {
+  font-size: map.get($font-sizes, "sm");
+  font-weight: map.get($font-weights, "semibold");
+  color: #2ECC71;
+  min-width: 80px;
+  text-align: right;
+}
+
+.remove-btn {
+  mat-icon {
+    font-size: 20px;
+    width: 20px;
+    height: 20px;
+    color: #E74C3C;
+  }
+}
+
+// ── Total ───────────────────────────────────────────
+.cart-total {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: map.get($spacing, "16") map.get($spacing, "24");
+}
+
+.total-label {
+  font-size: map.get($font-sizes, "lg");
+  font-weight: map.get($font-weights, "bold");
+  color: #1a1a1a;
+}
+
+.total-value {
+  font-size: map.get($font-sizes, "xl");
+  font-weight: map.get($font-weights, "bold");
+  color: #2ECC71;
+}
+
+// ── Error ───────────────────────────────────────────
+.cart-error {
+  display: flex;
+  align-items: center;
+  gap: map.get($spacing, "8");
+  margin: 0 map.get($spacing, "24");
+  padding: map.get($spacing, "8") map.get($spacing, "12");
+  background: rgba(231, 76, 60, 0.08);
+  border-radius: map.get($radius, "md");
+  color: #E74C3C;
+  font-size: map.get($font-sizes, "sm");
+
+  mat-icon {
+    font-size: 18px;
+    width: 18px;
+    height: 18px;
+  }
+}
+
+// ── Actions ─────────────────────────────────────────
+.cart-actions {
+  display: flex;
+  flex-direction: column;
+  gap: map.get($spacing, "8");
+  padding: map.get($spacing, "16") map.get($spacing, "24") map.get($spacing, "24");
+}
+
+.clear-btn {
+  color: #999999;
+  border-color: rgba(0, 0, 0, 0.15);
+}
+
+.order-btn {
+  background: #2ECC71 !important;
+  color: #FFFFFF !important;
+  font-weight: map.get($font-weights, "semibold");
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: map.get($spacing, "8");
+
+  &:hover:not(:disabled) { background: #27AE60 !important; }
+
+  &:disabled {
+    opacity: 0.7;
+  }
+}

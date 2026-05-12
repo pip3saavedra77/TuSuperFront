@@ -8,6 +8,7 @@ import {
   OrderStatus,
   PaginatedResult,
   PaginationParams,
+  CreateOrderPayload,
 } from '../../core/models/order.model';
 import { buildHttpParams } from '../../core/utils/build-http-params';
 
@@ -15,6 +16,10 @@ import { buildHttpParams } from '../../core/utils/build-http-params';
 export class OrdersService {
   private readonly http = inject(HttpClient);
   private readonly API_URL = `${environment.apiUrl}/orders`;
+
+  createOrder(payload: CreateOrderPayload): Observable<Order> {
+    return this.http.post<Order>(this.API_URL, payload);
+  }
 
   getAllOrders(
     filters: OrderFilterParams,
@@ -43,3 +48,4 @@ export class OrdersService {
     );
   }
 }
+

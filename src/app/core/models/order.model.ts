@@ -81,3 +81,12 @@ export function getValidTransitions(status: OrderStatus): readonly OrderStatus[]
 export function isTerminalStatus(status: OrderStatus): boolean {
   return getValidTransitions(status).length === 0;
 }
+
+export interface CreateOrderItem {
+  productId: number;
+  quantity: number;
+}
+
+export interface CreateOrderPayload {
+  items: CreateOrderItem[];
+}
