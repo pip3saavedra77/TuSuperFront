@@ -1,7 +1,7 @@
 import { Injectable, inject, signal, computed } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { catchError, map, Observable, of, tap } from 'rxjs';
-import { AuthResponse, LoginCredentials } from '../models/auth.models';
+import { AuthResponse, LoginCredentials, RegisterPayload } from '../models/auth.models';
 import { Router } from '@angular/router';
 import { environment } from '../../../environments/environment';
 
@@ -29,6 +29,17 @@ export class AuthService {
     localStorage.removeItem('token');
 
     return this.http.post<AuthResponse>(`${this.API_URL}/login`, credentials).pipe(
+      tap((response) => {
+        localStorage.setItem('token', response.access_token);
+        this._authStatus.set(response);
+      })
+    );
+  }
+
+  public register(payload: RegisterPayload): Observable<AuthResponse> {
+    localStorage.removeItem('token');
+
+    return this.http.post<AuthResponse>(`${this.API_URL}/register`, payload).pipe(
       tap((response) => {
         localStorage.setItem('token', response.access_token);
         this._authStatus.set(response);
