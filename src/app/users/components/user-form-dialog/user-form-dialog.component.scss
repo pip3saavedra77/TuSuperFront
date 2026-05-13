@@ -1,0 +1,91 @@
+@use '../../../styles/tokens' as *;
+@use '../../../styles/glass' as *;
+@use 'sass:map';
+
+.dialog-container {
+  padding: map.get($spacing, "24");
+  max-width: 500px;
+  background: transparent;
+}
+
+h2[mat-dialog-title] {
+  color: #FFFFFF;
+  font-weight: map.get($font-weights, "bold");
+  margin-bottom: map.get($spacing, "24");
+  font-family: $font-family;
+}
+
+.form-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: map.get($spacing, "16");
+
+  .full-width {
+    grid-column: span 2;
+  }
+}
+
+mat-dialog-content {
+  overflow-y: visible;
+  max-height: none;
+  padding: map.get($spacing, "16") 0;
+}
+
+mat-dialog-actions {
+  padding: map.get($spacing, "16") 0 0 0;
+  gap: map.get($spacing, "12");
+}
+
+.save-btn {
+  background-color: #8B1A2F !important;
+  color: #FFFFFF !important;
+  
+  &:hover:not(:disabled) {
+    background-color: #6B1424 !important;
+  }
+}
+
+::ng-deep {
+  .mat-mdc-dialog-container {
+    .mdc-dialog__surface {
+      @include glass-card("admin");
+      background: rgba(15, 15, 26, 0.9) !important; // Un poco más oscuro para legibilidad de inputs
+    }
+  }
+
+  .mat-mdc-form-field {
+    .mdc-text-field--outlined .mdc-notched-outline__leading,
+    .mdc-text-field--outlined .mdc-notched-outline__notch,
+    .mdc-text-field--outlined .mdc-notched-outline__trailing {
+      border-color: rgba(255, 255, 255, 0.2);
+    }
+
+    &.mat-focused {
+      .mdc-text-field--outlined .mdc-notched-outline__leading,
+      .mdc-text-field--outlined .mdc-notched-outline__notch,
+      .mdc-text-field--outlined .mdc-notched-outline__trailing {
+        border-color: #8B1A2F !important;
+      }
+    }
+  }
+
+  .mat-mdc-select-value,
+  .mat-mdc-input-element,
+  .mat-mdc-select-arrow {
+    color: #FFFFFF !important;
+  }
+
+  .mat-mdc-form-field-label,
+  .mdc-floating-label {
+    color: rgba(255, 255, 255, 0.7) !important;
+  }
+
+  .mat-mdc-option {
+    background-color: #1b1011 !important;
+    color: #FFFFFF !important;
+    &:hover { background-color: rgba(139, 26, 47, 0.2) !important; }
+    &.mdc-list-item--selected {
+      background-color: rgba(139, 26, 47, 0.4) !important;
+    }
+  }
+}
