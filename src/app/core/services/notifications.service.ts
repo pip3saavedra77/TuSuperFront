@@ -1,0 +1,114 @@
+import { Injectable, signal, computed, effect } from '@angular/core';
+import { io, Socket } from 'socket.io-client';
+import { Notification, NotificationType } from '../models/notification.model';
+
+@Injectable({
+  providedIn: 'root',
+})
+export class NotificationsService {
+  private socket: Socket | null = null;
+  private readonly apiUrl = 'http://localhost:3000'; // Ajustar segun backend
+
+  // State
+  private readonly notifications = signal<Notification[]>([]);
+  readonly allNotifications = this.notifications.asReadonly();
+  readonly unreadCount = computed(
+    () => this.notifications().filter((n) => !n.isRead).length,
+  );
+
+  constructor() {
+    this.connect();
+  }
+
+  connect(): void {
+    const token = localStorage.getItem('token');
+    if (!token) {
+      console.warn('NotificationsService: No token found, skipping socket connection');
+      return;
+    }
+
+    if (this.socket?.connected) return;
+
+    this.socket = io(this.apiUrl, {
+      transports: ['websocket'],
+      auth: { token },
+    });
+
+    this.socket.on('connect', () => {
+      console.log('Connected to notifications gateway');
+      this.socket?.emit('authenticate', { token });
+    });
+
+    this.socket.on('new-order', (data: any) => {
+      this.addNotification({
+        id: Math.random().toString(36).substr(2, 9),
+        title: '¡Nuevo Pedido!',
+        message: `Cliente: ${data.customerName} - Total: $${data.total}`,
+        type: 'new-order',
+        timestamp: new Date().toISOString(),
+        isRead: false,
+        data,
+      });
+    });
+
+    this.socket.on('order-status-changed', (data: any) => {
+      this.addNotification({
+        id: Math.random().toString(36).substr(2, 9),
+        title: 'Actualización de Pedido',
+        message: `El pedido #${data.orderId} cambió a ${data.newStatus}`,
+        type: 'order-status-changed',
+        timestamp: new Date().toISOString(),
+        isRead: false,
+        data,
+      });
+    });
+
+    this.socket.on('disconnect', () => {
+      console.log('Disconnected from notifications gateway');
+    });
+  }
+
+  disconnect(): void {
+    if (this.socket) {
+      this.socket.disconnect();
+      this.socket = null;
+    }
+  }
+
+  private addNotification(notification: Notification): void {
+    this.notifications.update((prev) => [notification, ...prev].slice(0, 20));
+  }
+
+  markAsRead(id: string): void {
+    this.notifications.update((prev) =>
+      prev.map((n) => (n.id === id ? { ...n, isRead: true } : n)),
+    );
+  }
+
+  markAllAsRead(): void {
+    this.notifications.update((prev) => prev.map((n) => ({ ...n, isRead: true })));
+  }
+
+  clearAll(): void {
+    this.notifications.set([]);
+  }
+
+  getTimeAgo(date: string): string {
+    const now = new Date();
+    const past = new Date(date);
+    const diffInMs = now.getTime() - past.getTime();
+
+    const seconds = Math.floor(diffInMs / 1000);
+    const minutes = Math.floor(seconds / 60);
+    const hours = Math.floor(minutes / 60);
+    const days = Math.floor(hours / 24);
+
+    if (seconds < 60) return 'hace unos segundos';
+    if (minutes === 1) return 'hace 1 minuto';
+    if (minutes < 60) return `hace ${minutes} minutos`;
+    if (hours === 1) return 'hace 1 hora';
+    if (hours < 24) return `hace ${hours} horas`;
+    if (days === 1) return 'hace 1 día';
+    return `hace ${days} días`;
+  }
+}
