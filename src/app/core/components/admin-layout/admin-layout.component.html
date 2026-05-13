@@ -81,9 +81,7 @@
         <button matIconButton class="toolbar-icon-btn">
           <mat-icon>mail_outline</mat-icon>
         </button>
-        <button matIconButton class="toolbar-icon-btn">
-          <mat-icon>notifications_none</mat-icon>
-        </button>
+        <app-notification-bell />
         <div class="toolbar-user">
           <div class="toolbar-avatar">
             {{ currentUser()?.firstName?.charAt(0) }}
