@@ -1,0 +1,99 @@
+<div class="users-container">
+  <div class="header-actions">
+    <h1 class="page-title">Gestión de Usuarios</h1>
+    <button mat-flat-button color="primary" (click)="openUserForm()" class="new-user-btn">
+      <mat-icon>person_add</mat-icon>
+      Nuevo Usuario
+    </button>
+  </div>
+
+  <div class="filters-panel glass-card">
+    <mat-form-field appearance="outline" class="search-field">
+      <mat-label>Buscar usuarios</mat-label>
+      <mat-icon matPrefix>search</mat-icon>
+      <input matInput [formControl]="searchControl" placeholder="Nombre o email...">
+    </mat-form-field>
+  </div>
+
+  <div class="table-container glass-card">
+    <table mat-table [dataSource]="users" class="users-table">
+      
+      <!-- Avatar Column -->
+      <ng-container matColumnDef="avatar">
+        <th mat-header-cell *matHeaderCellDef></th>
+        <td mat-cell *matCellDef="let user">
+          <div class="user-avatar">{{ getInitials(user) }}</div>
+        </td>
+      </ng-container>
+
+      <!-- Full Name Column -->
+      <ng-container matColumnDef="fullName">
+        <th mat-header-cell *matHeaderCellDef>Nombre Completo</th>
+        <td mat-cell *matCellDef="let user">{{ user.firstName }} {{ user.lastName }}</td>
+      </ng-container>
+
+      <!-- Email Column -->
+      <ng-container matColumnDef="email">
+        <th mat-header-cell *matHeaderCellDef>Email</th>
+        <td mat-cell *matCellDef="let user">{{ user.email }}</td>
+      </ng-container>
+
+      <!-- Roles Column -->
+      <ng-container matColumnDef="roles">
+        <th mat-header-cell *matHeaderCellDef>Roles</th>
+        <td mat-cell *matCellDef="let user">
+          <mat-chip-set>
+            <mat-chip *ngFor="let role of user.roles" class="admin-chip">
+              {{ role.name }}
+            </mat-chip>
+          </mat-chip-set>
+        </td>
+      </ng-container>
+
+      <!-- Status Column -->
+      <ng-container matColumnDef="status">
+        <th mat-header-cell *matHeaderCellDef>Estado</th>
+        <td mat-cell *matCellDef="let user">
+          <span class="status-badge" [ngClass]="user.isActive ? 'status-active' : 'status-inactive'">
+            {{ user.isActive ? 'Activo' : 'Inactivo' }}
+          </span>
+        </td>
+      </ng-container>
+
+      <!-- Actions Column -->
+      <ng-container matColumnDef="actions">
+        <th mat-header-cell *matHeaderCellDef>Acciones</th>
+        <td mat-cell *matCellDef="let user">
+          <div class="action-buttons">
+            <button mat-icon-button (click)="openUserForm(user)" matTooltip="Editar">
+              <mat-icon>edit</mat-icon>
+            </button>
+            <button mat-icon-button (click)="toggleStatus(user)" [matTooltip]="user.isActive ? 'Desactivar' : 'Activar'">
+              <mat-icon [color]="user.isActive ? 'warn' : 'primary'">
+                {{ user.isActive ? 'block' : 'check_circle' }}
+              </mat-icon>
+            </button>
+          </div>
+        </td>
+      </ng-container>
+
+      <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+      <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
+
+      <!-- Row shown when there is no matching data. -->
+      <tr class="mat-row no-data-row" *matNoDataRow>
+        <td class="mat-cell no-data-cell" colspan="6">
+          {{ isLoading ? 'Cargando usuarios...' : 'No se encontraron usuarios' }}
+        </td>
+      </tr>
+    </table>
+
+    <mat-paginator 
+      [length]="totalUsers"
+      [pageSize]="pageSize"
+      [pageSizeOptions]="[5, 10, 25, 50]"
+      (page)="onPageChange($event)"
+      aria-label="Seleccionar página">
+    </mat-paginator>
+  </div>
+</div>
