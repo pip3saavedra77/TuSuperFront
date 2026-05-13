@@ -60,7 +60,9 @@ export class AuthService {
     return this.http.get<AuthResponse>(`${this.API_URL}/check-status`).pipe(
       tap((response) => {
         this._authStatus.set(response);
-        localStorage.setItem('token', response.access_token);
+        if (response.access_token) {
+          localStorage.setItem('token', response.access_token);
+        }
       }),
       map(() => true),
       catchError(() => {
