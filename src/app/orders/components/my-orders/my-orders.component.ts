@@ -14,8 +14,11 @@ import { MatTableModule } from '@angular/material/table';
 import { MatPaginatorModule, PageEvent } from '@angular/material/paginator';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
+import { MatIconModule } from '@angular/material/icon';
+import { MatChipsModule } from '@angular/material/chips';
 
 import { OrdersService } from '../../services/orders.service';
+import { NotificationsService } from '../../../core/services/notifications.service';
 import {
   Order,
   OrderStatus,
@@ -34,12 +37,15 @@ import {
     MatPaginatorModule,
     MatProgressSpinnerModule,
     MatSnackBarModule,
+    MatIconModule,
+    MatChipsModule,
   ],
   templateUrl: './my-orders.component.html',
   styleUrl: './my-orders.component.scss',
 })
 export class MyOrdersComponent implements OnInit {
   private readonly ordersService = inject(OrdersService);
+  private readonly notificationsService = inject(NotificationsService);
   private readonly snackBar = inject(MatSnackBar);
   private readonly destroyRef = inject(DestroyRef);
 
@@ -51,13 +57,22 @@ export class MyOrdersComponent implements OnInit {
 
   readonly displayedColumns: string[] = [
     'id',
+    'createdAt',
     'totalAmount',
     'status',
-    'createdAt',
   ];
 
   ngOnInit(): void {
     this.loadOrders();
+    this.setupWebSocketRefresh();
+  }
+
+  private setupWebSocketRefresh(): void {
+    this.notificationsService.orderStatusChanged$
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe(() => {
+        this.loadOrders();
+      });
   }
 
   loadOrders(): void {

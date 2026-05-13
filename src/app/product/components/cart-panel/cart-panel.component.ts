@@ -3,6 +3,7 @@ import {
   DestroyRef,
   inject,
 } from '@angular/core';
+import { Router } from '@angular/router';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { CommonModule, CurrencyPipe } from '@angular/common';
 import { finalize } from 'rxjs';
@@ -38,6 +39,7 @@ export class CartPanelComponent {
   readonly cartStore = inject(CartStore);
   private readonly ordersService = inject(OrdersService);
   private readonly snackBar = inject(MatSnackBar);
+  private readonly router = inject(Router);
   private readonly destroyRef = inject(DestroyRef);
 
   onIncrease(item: CartItem): void {
@@ -62,37 +64,7 @@ export class CartPanelComponent {
     const items = this.cartStore.items();
     if (items.length === 0) return;
 
-    const payload: CreateOrderPayload = {
-      items: items.map(i => ({
-        productId: i.product.id,
-        quantity: i.quantity,
-      })),
-    };
-
-    this.cartStore.setLoading(true);
-    this.cartStore.setError(null);
-
-    this.ordersService
-      .createOrder(payload)
-      .pipe(
-        finalize(() => this.cartStore.setLoading(false)),
-        takeUntilDestroyed(this.destroyRef),
-      )
-      .subscribe({
-        next: () => {
-          this.cartStore.clearCart();
-          this.snackBar.open('¡Pedido realizado!', 'OK', {
-            duration: 4000,
-            panelClass: ['success-snackbar'],
-          });
-        },
-        error: (err: HttpErrorResponse) => {
-          const message =
-            (err.error as { message?: string })?.message ??
-            'Error al realizar el pedido';
-          this.cartStore.setError(message);
-          this.snackBar.open(message, 'Cerrar', { duration: 5000 });
-        },
-      });
+    this.cartStore.closeCart();
+    this.router.navigate(['/orders/checkout']);
   }
 }

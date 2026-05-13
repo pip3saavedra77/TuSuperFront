@@ -16,7 +16,24 @@ const isAdminGuard: CanMatchFn = () => {
       return user$.pipe(
         filter(user => !!user),
         first(),
-        map(user => !!user?.roles.some(r => r.name === 'ADMIN')),
+        map(user => !!user?.roles.some(r => r.name === 'ADMIN' || r.name === 'TENDERO')),
+      );
+    }),
+  );
+};
+
+const isUserGuard: CanMatchFn = () => {
+  const authService = inject(AuthService);
+  const injector = inject(Injector);
+  const user$ = toObservable(authService.currentUser, { injector });
+
+  return authService.checkAuthStatus().pipe(
+    switchMap(isLoggedIn => {
+      if (!isLoggedIn) return of(false);
+      return user$.pipe(
+        filter(user => !!user),
+        first(),
+        map(user => !!user?.roles.some(r => r.name === 'USER')),
       );
     }),
   );
@@ -29,7 +46,18 @@ export const ORDERS_ROUTES: Routes = [
     loadComponent: () => import('./components/orders-list/orders-list.component').then(m => m.OrdersListComponent),
   },
   {
-    path: '',
+    path: 'checkout',
+    canMatch: [isUserGuard],
+    loadComponent: () => import('./components/checkout/checkout.component').then(m => m.CheckoutComponent),
+  },
+  {
+    path: 'my-orders',
+    canMatch: [isUserGuard],
     loadComponent: () => import('./components/my-orders/my-orders.component').then(m => m.MyOrdersComponent),
+  },
+  {
+    path: '',
+    pathMatch: 'full',
+    redirectTo: 'my-orders'
   }
 ];

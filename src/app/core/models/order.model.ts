@@ -89,4 +89,7 @@ export interface CreateOrderItem {
 
 export interface CreateOrderPayload {
   items: CreateOrderItem[];
+  deliveryAddress: string;
+  contactPhone: string;
+  paymentMethod: string;
 }

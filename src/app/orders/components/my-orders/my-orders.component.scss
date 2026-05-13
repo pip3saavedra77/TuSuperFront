@@ -1,83 +1,137 @@
-@use '../../../styles/tokens' as *;
-@use '../../../styles/glass' as *;
-@use '../../../styles/order-badges';
-@use 'sass:map';
-
-:host {
-  display: block;
-  padding: map.get($spacing, "32");
-}
-
-.page-title {
-  font-size: map.get($font-sizes, "2xl");
-  font-weight: map.get($font-weights, "bold");
-  color: #1a1a1a;
-  margin-bottom: map.get($spacing, "24");
-}
-
-// Loading
-.loading-container {
+.orders-container {
+  padding: 2rem;
   display: flex;
   justify-content: center;
-  align-items: center;
-  min-height: 300px;
+  min-height: calc(100vh - 64px);
 }
 
-// Tabla - Tema usuario
-.table-container {
-  @include glass-card("buyer");
-  padding: map.get($spacing, "24");
+.orders-card {
+  width: 100%;
+  max-width: 1000px;
+  padding: 24px;
+  display: flex;
+  flex-direction: column;
+}
+
+.orders-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 24px;
+
+  h1 {
+    margin: 0;
+    font-size: 1.8rem;
+    font-weight: 700;
+    color: #2c3e50;
+  }
+}
+
+.table-wrapper {
+  position: relative;
+  min-height: 200px;
   overflow-x: auto;
-  border: 1px solid rgba(46, 204, 113, 0.3);
 }
 
 .orders-table {
+  background: transparent !important;
   width: 100%;
-  background: transparent;
 
-  th.mat-header-cell {
-    color: #1a1a1a;
-    font-weight: map.get($font-weights, "semibold");
-    font-size: map.get($font-sizes, "sm");
-    background: rgba(255, 255, 255, 0.5);
-    border-bottom: 1px solid rgba(0, 0, 0, 0.1);
-    padding: map.get($spacing, "12") map.get($spacing, "16");
+  th {
+    color: #7f8c8d;
+    font-weight: 600;
+    text-transform: uppercase;
+    font-size: 0.75rem;
+    padding: 16px 8px;
   }
 
-  td.mat-cell {
-    color: #1a1a1a;
-    font-size: map.get($font-sizes, "sm");
-    border-bottom: 1px solid rgba(0, 0, 0, 0.05);
-    padding: map.get($spacing, "12") map.get($spacing, "16");
-  }
-
-  tr.mat-row:hover {
-    background: rgba(0, 0, 0, 0.03);
-    transition: map.get($transitions, "fast");
+  td {
+    padding: 16px 8px;
+    color: #2c3e50;
+    font-size: 0.9rem;
   }
 }
 
-// Empty state
+.status-badge {
+  padding: 6px 12px;
+  border-radius: 20px;
+  font-size: 0.75rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  display: inline-block;
+
+  &[data-status="PENDING"] {
+    background: rgba(241, 196, 15, 0.2);
+    color: #d35400;
+  }
+
+  &[data-status="PREPARING"], &[data-status="READY_FOR_DISPATCH"] {
+    background: rgba(52, 152, 219, 0.2);
+    color: #2980b9;
+  }
+
+  &[data-status="DISPATCHED"] {
+    background: rgba(155, 89, 182, 0.2);
+    color: #8e44ad;
+  }
+
+  &[data-status="DELIVERED"] {
+    background: rgba(46, 204, 113, 0.2);
+    color: #2ecc71;
+  }
+
+  &[data-status="CANCELLED"] {
+    background: rgba(139, 26, 47, 0.2);
+    color: #8B1A2F;
+  }
+}
+
 .empty-state {
-  text-align: center;
-  padding: map.get($spacing, "48");
-  color: #555555;
-  font-size: map.get($font-sizes, "md");
-}
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 48px;
+  color: #95a5a6;
 
-// Paginator
-mat-paginator {
-  background: transparent;
-  color: #1a1a1a;
-}
-
-// Material overrides para dark theme
-::ng-deep {
-  .mat-mdc-paginator {
-    background: transparent;
-    color: #1a1a1a !important;
+  mat-icon {
+    font-size: 48px;
+    width: 48px;
+    height: 48px;
+    margin-bottom: 16px;
   }
-  .mat-mdc-select-value {
-    color: #1a1a1a !important;
+
+  p {
+    margin: 0;
+    font-weight: 500;
+  }
+}
+
+.spinner {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+}
+
+.spin {
+  animation: rotate 1s linear infinite;
+}
+
+@keyframes rotate {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}
+
+@media (max-width: 600px) {
+  .orders-container {
+    padding: 1rem;
+  }
+
+  .orders-table {
+    .mat-column-createdAt {
+      display: none;
+    }
   }
 }
