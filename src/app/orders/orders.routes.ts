@@ -1,11 +1,25 @@
-import { inject } from '@angular/core';
+import { inject, Injector } from '@angular/core';
 import { Routes, CanMatchFn } from '@angular/router';
 import { AuthService } from '../core/services/auth';
 
+import { toObservable } from '@angular/core/rxjs-interop';
+import { filter, first, map, of, switchMap, tap } from 'rxjs';
+
 const isAdminGuard: CanMatchFn = () => {
   const authService = inject(AuthService);
-  const user = authService.currentUser();
-  return !!user?.roles.some(r => r.name === 'ADMIN');
+  const injector = inject(Injector);
+  const user$ = toObservable(authService.currentUser, { injector });
+
+  return authService.checkAuthStatus().pipe(
+    switchMap(isLoggedIn => {
+      if (!isLoggedIn) return of(false);
+      return user$.pipe(
+        filter(user => !!user),
+        first(),
+        map(user => !!user?.roles.some(r => r.name === 'ADMIN')),
+      );
+    }),
+  );
 };
 
 export const ORDERS_ROUTES: Routes = [
