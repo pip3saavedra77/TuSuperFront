@@ -1,4 +1,5 @@
 import { Injectable, signal, computed, effect } from '@angular/core';
+import { Subject } from 'rxjs';
 import { io, Socket } from 'socket.io-client';
 import { Notification, NotificationType } from '../models/notification.model';
 
@@ -11,7 +12,10 @@ export class NotificationsService {
 
   // State
   private readonly notifications = signal<Notification[]>([]);
+  private readonly _orderStatusChanged = new Subject<any>();
+
   readonly allNotifications = this.notifications.asReadonly();
+  readonly orderStatusChanged$ = this._orderStatusChanged.asObservable();
   readonly unreadCount = computed(
     () => this.notifications().filter((n) => !n.isRead).length,
   );
@@ -61,6 +65,7 @@ export class NotificationsService {
         isRead: false,
         data,
       });
+      this._orderStatusChanged.next(data);
     });
 
     this.socket.on('disconnect', () => {
