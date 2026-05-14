@@ -23,7 +23,7 @@ import { MatTooltipModule } from '@angular/material/tooltip';
 
 import { ProviderService } from './services/provider.service';
 import { 
-  Provider, 
+  Provider as ProviderModel, 
   ProviderWithProducts, 
   CreateProviderPayload, 
   UpdateProviderPayload 
@@ -33,6 +33,8 @@ import {
   ConfirmDeleteDialogComponent, 
   ConfirmDeleteDialogData 
 } from '../product/components/confirm-delete-dialog.component';
+
+import { AuthService } from '../core/services/auth';
 
 @Component({
   selector: 'app-provider',
@@ -55,6 +57,7 @@ import {
 })
 export class ProviderComponent implements OnInit {
   private readonly providerService = inject(ProviderService);
+  public readonly auth = inject(AuthService);
   private readonly dialog = inject(MatDialog);
   private readonly snackBar = inject(MatSnackBar);
   private readonly destroyRef = inject(DestroyRef);
@@ -138,7 +141,7 @@ export class ProviderComponent implements OnInit {
       });
   }
 
-  onEdit(provider: Provider): void {
+  onEdit(provider: ProviderModel): void {
     const dialogRef = this.dialog.open(ProviderFormDialogComponent, {
       width: '450px',
       data: { provider },

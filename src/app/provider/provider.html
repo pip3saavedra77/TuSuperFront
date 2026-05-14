@@ -2,10 +2,12 @@
     <!-- HEADER -->
     <div class="page-header">
       <h2 class="page-title">Gestión de Proveedores</h2>
+      @if (auth.hasManagementPrivileges()) {
       <button mat-flat-button class="add-btn" (click)="onAdd()">
         <mat-icon>add</mat-icon>
         Nuevo Proveedor
       </button>
+      }
     </div>
   
     <!-- BÚSQUEDA -->
@@ -63,21 +65,23 @@
           <ng-container matColumnDef="actions">
             <th mat-header-cell *matHeaderCellDef>Acciones</th>
             <td mat-cell *matCellDef="let provider">
-              @let hasProducts = (provider._count?.products || 0) > 0;
-              <div class="action-buttons">
-                <button mat-icon-button class="edit-btn"
-                        (click)="onEdit(provider)" title="Editar">
-                  <mat-icon>edit</mat-icon>
-                </button>
-                
-                <span [matTooltip]="hasProducts ? 'Tiene productos asociados' : ''">
-                    <button mat-icon-button class="delete-btn"
-                            [disabled]="hasProducts"
-                            (click)="onDelete(provider)" title="Eliminar">
-                      <mat-icon>delete</mat-icon>
-                    </button>
-                </span>
-              </div>
+              @if (auth.hasManagementPrivileges()) {
+                @let hasProducts = (provider._count?.products || 0) > 0;
+                <div class="action-buttons">
+                  <button mat-icon-button class="edit-btn"
+                          (click)="onEdit(provider)" title="Editar">
+                    <mat-icon>edit</mat-icon>
+                  </button>
+                  
+                  <span [matTooltip]="hasProducts ? 'Tiene productos asociados' : ''">
+                      <button mat-icon-button class="delete-btn"
+                              [disabled]="hasProducts"
+                              (click)="onDelete(provider)" title="Eliminar">
+                        <mat-icon>delete</mat-icon>
+                      </button>
+                  </span>
+                </div>
+              }
             </td>
           </ng-container>
   

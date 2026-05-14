@@ -3,10 +3,12 @@
   <!-- HEADER -->
   <div class="page-header">
     <h2 class="page-title">Gestión de Productos</h2>
-    <button mat-flat-button class="add-btn" (click)="onAdd()">
-      <mat-icon>add</mat-icon>
-      Nuevo Producto
-    </button>
+    @if (auth.hasManagementPrivileges()) {
+      <button mat-flat-button class="add-btn" (click)="onAdd()">
+        <mat-icon>add</mat-icon>
+        Nuevo Producto
+      </button>
+    }
   </div>
 
   <!-- BÚSQUEDA -->
@@ -87,16 +89,18 @@
         <ng-container matColumnDef="actions">
           <th mat-header-cell *matHeaderCellDef>Acciones</th>
           <td mat-cell *matCellDef="let product">
-            <div class="action-buttons">
-              <button mat-icon-button class="edit-btn"
-                      (click)="onEdit(product)" title="Editar">
-                <mat-icon>edit</mat-icon>
-              </button>
-              <button mat-icon-button class="delete-btn"
-                      (click)="onDelete(product)" title="Eliminar">
-                <mat-icon>delete</mat-icon>
-              </button>
-            </div>
+            @if (auth.hasManagementPrivileges()) {
+              <div class="action-buttons">
+                <button mat-icon-button class="edit-btn"
+                        (click)="onEdit(product)" title="Editar">
+                  <mat-icon>edit</mat-icon>
+                </button>
+                <button mat-icon-button class="delete-btn"
+                        (click)="onDelete(product)" title="Eliminar">
+                  <mat-icon>delete</mat-icon>
+                </button>
+              </div>
+            }
           </td>
         </ng-container>
 

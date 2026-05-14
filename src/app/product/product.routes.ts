@@ -17,9 +17,12 @@ const isTenderoOrAdmin: CanMatchFn = () => {
         filter(user => !!user),
         first(),
         map(user =>
-          !!user?.roles.some(r =>
-            ['ADMIN', 'TENDERO', 'VENDEDOR'].includes(r.name.toUpperCase()),
-          ),
+          !!user?.roles.some(r => {
+            const roleName = r.name.toUpperCase();
+            return roleName.includes('ADMIN') || 
+                   roleName.includes('TENDER') || 
+                   roleName.includes('VENDEDOR');
+          }),
         ),
       );
     }),

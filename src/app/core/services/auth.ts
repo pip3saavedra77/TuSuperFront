@@ -18,6 +18,14 @@ export class AuthService {
 
   public currentUser = computed(() => this._authStatus()?.user);
   public isAuthenticated = computed(() => !!this._authStatus());
+  public hasManagementPrivileges = computed(() => {
+    const roles = this._authStatus()?.user.roles;
+    if (!roles) return false;
+    return roles.some(r => {
+      const name = r.name.toUpperCase();
+      return name.includes('ADMIN') || name.includes('TENDER') || name.includes('VENDEDOR');
+    });
+  });
 
   public userModules = computed(() => {
     const user = this._authStatus()?.user;
