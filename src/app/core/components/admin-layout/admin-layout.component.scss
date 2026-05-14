@@ -1,10 +1,30 @@
+@use 'sass:color';
+@use 'sass:map';
 @use '../../../styles/tokens' as tk;
 @use '../../../styles/pos_tokens' as pos;
-@use 'sass:map';
 
 .sidenav-container {
   height: 100vh;
   background-color: pos.$pos-bg;
+
+  // Identity logic via CSS Variables
+  &.profile-admin {
+    --profile-primary: #{pos.$pos-admin};
+    --profile-primary-light: #{color.scale(pos.$pos-admin, $lightness: 90%)};
+    --profile-primary-soft: #{color.scale(pos.$pos-admin, $lightness: 95%)};
+  }
+
+  &.profile-tendero {
+    --profile-primary: #{pos.$pos-tendero};
+    --profile-primary-light: #{color.scale(pos.$pos-tendero, $lightness: 90%)};
+    --profile-primary-soft: #{color.scale(pos.$pos-tendero, $lightness: 95%)};
+  }
+
+  &.profile-usuario {
+    --profile-primary: #{pos.$pos-usuario};
+    --profile-primary-light: #{color.scale(pos.$pos-usuario, $lightness: 90%)};
+    --profile-primary-soft: #{color.scale(pos.$pos-usuario, $lightness: 95%)};
+  }
 
   .sidenav {
     width: var(--sidebar-width);
@@ -27,7 +47,7 @@
       font-weight: 800;
       color: pos.$pos-text;
       
-      mat-icon { color: pos.$pos-primary; transform: scale(1.2); }
+      mat-icon { color: var(--profile-primary); transform: scale(1.2); }
     }
 
     .nav-content {
@@ -65,8 +85,9 @@
       mat-icon { color: pos.$pos-text-muted !important; }
 
       &:hover {
-        background: #F1F3F9 !important;
-        color: pos.$pos-text !important;
+        background: var(--profile-primary-soft) !important;
+        color: var(--profile-primary) !important;
+        mat-icon { color: var(--profile-primary) !important; }
       }
 
       &.logout-link:hover {
@@ -77,10 +98,10 @@
     }
 
     .active-link {
-      background: pos.$pos-primary !important;
+      background: var(--profile-primary) !important;
       color: #FFFFFF !important;
       font-weight: 700;
-      box-shadow: 0 8px 16px rgba(0, 166, 81, 0.2);
+      box-shadow: 0 8px 16px rgba(0, 0, 0, 0.1);
       mat-icon { color: #FFFFFF !important; }
     }
   }
@@ -136,13 +157,14 @@
     .toolbar-avatar {
       width: 44px;
       height: 44px;
-      background: #F1F3F9;
+      background: var(--profile-primary-soft);
       border-radius: 14px;
       display: flex;
       align-items: center;
       justify-content: center;
       font-weight: 800;
-      color: pos.$pos-primary;
+      color: var(--profile-primary);
+      border: 1px solid var(--profile-primary-light);
     }
 
     .toolbar-user-info {
