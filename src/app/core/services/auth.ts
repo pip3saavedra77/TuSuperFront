@@ -62,6 +62,18 @@ export class AuthService {
     this.router.navigateByUrl('/auth');
   }
 
+  public forgotPassword(email: string): Observable<{ message: string }> {
+    return this.http.post<{ message: string }>(`${this.API_URL}/forgot-password`, { email });
+  }
+
+  public validateResetToken(token: string): Observable<{ valid: boolean }> {
+    return this.http.post<{ valid: boolean }>(`${this.API_URL}/validate-reset-token`, { token });
+  }
+
+  public resetPassword(token: string, newPassword: string): Observable<{ message: string }> {
+    return this.http.post<{ message: string }>(`${this.API_URL}/reset-password`, { token, newPassword });
+  }
+
   private _checkStatus$?: Observable<boolean>;
   public checkAuthStatus(): Observable<boolean> {
     if (this._checkStatus$) return this._checkStatus$;
