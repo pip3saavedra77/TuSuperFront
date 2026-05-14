@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { Component, OnInit, ViewChild, inject, DestroyRef } from '@angular/core';
+import { Component, OnInit, ViewChild, inject, DestroyRef, ChangeDetectorRef } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { FormControl, ReactiveFormsModule } from '@angular/forms';
 import { MatButtonModule } from '@angular/material/button';
@@ -12,7 +12,7 @@ import { MatPaginator, MatPaginatorModule, PageEvent } from '@angular/material/p
 import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
 import { MatTableModule } from '@angular/material/table';
 import { MatTooltipModule } from '@angular/material/tooltip';
-import { debounceTime, distinctUntilChanged, finalize, switchMap } from 'rxjs/operators';
+import { debounceTime, distinctUntilChanged, finalize } from 'rxjs/operators';
 import { User } from '../../../core/models/user.model';
 import { UsersService } from '../../services/users.service';
 import { UserFormDialogComponent } from '../user-form-dialog/user-form-dialog.component';
@@ -42,6 +42,7 @@ export class UsersListComponent implements OnInit {
   private readonly dialog = inject(MatDialog);
   private readonly snackBar = inject(MatSnackBar);
   private readonly destroyRef = inject(DestroyRef);
+  private readonly cdr = inject(ChangeDetectorRef);
 
   @ViewChild(MatPaginator) paginator!: MatPaginator;
 
@@ -76,6 +77,7 @@ export class UsersListComponent implements OnInit {
         next: (result) => {
           this.users = result.data;
           this.totalUsers = result.total;
+          this.cdr.detectChanges();
         },
         error: () => this.snackBar.open('Error al cargar usuarios', 'Cerrar', { duration: 3000 })
       });
