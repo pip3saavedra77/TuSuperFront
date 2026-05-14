@@ -37,6 +37,7 @@ import {
   ChangeStatusDialogComponent,
   ChangeStatusDialogData,
 } from './change-status-dialog.component';
+import { AuthService } from '../../../core/services/auth';
 
 @Component({
   selector: 'app-orders-list',
@@ -64,6 +65,7 @@ import {
 })
 export class OrdersListComponent implements OnInit {
   private readonly ordersService = inject(OrdersService);
+  public readonly auth = inject(AuthService);
   private readonly dialog = inject(MatDialog);
   private readonly snackBar = inject(MatSnackBar);
   private readonly destroyRef = inject(DestroyRef);

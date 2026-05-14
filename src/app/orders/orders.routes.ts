@@ -16,7 +16,14 @@ const isAdminGuard: CanMatchFn = () => {
       return user$.pipe(
         filter(user => !!user),
         first(),
-        map(user => !!user?.roles.some(r => r.name === 'ADMIN' || r.name === 'TENDERO')),
+        map(user => 
+          !!user?.roles.some(r => {
+            const roleName = r.name.toUpperCase();
+            return roleName.includes('ADMIN') || 
+                   roleName.includes('TENDER') || 
+                   roleName.includes('VENDEDOR');
+          })
+        ),
       );
     }),
   );
@@ -33,7 +40,7 @@ const isUserGuard: CanMatchFn = () => {
       return user$.pipe(
         filter(user => !!user),
         first(),
-        map(user => !!user?.roles.some(r => r.name === 'USER')),
+        map(user => !!user?.roles.some(r => r.name.toUpperCase() === 'USER')),
       );
     }),
   );

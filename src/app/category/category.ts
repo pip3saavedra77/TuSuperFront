@@ -23,7 +23,7 @@ import { MatTooltipModule } from '@angular/material/tooltip';
 
 import { CategoryService } from './services/category.service';
 import { 
-  Category, 
+  Category as CategoryModel, 
   CategoryWithProducts, 
   CreateCategoryPayload, 
   UpdateCategoryPayload 
@@ -33,6 +33,8 @@ import {
   ConfirmDeleteDialogComponent, 
   ConfirmDeleteDialogData 
 } from '../product/components/confirm-delete-dialog.component';
+
+import { AuthService } from '../core/services/auth';
 
 @Component({
   selector: 'app-category',
@@ -55,6 +57,7 @@ import {
 })
 export class CategoryComponent implements OnInit {
   private readonly categoryService = inject(CategoryService);
+  public readonly auth = inject(AuthService);
   private readonly dialog = inject(MatDialog);
   private readonly snackBar = inject(MatSnackBar);
   private readonly destroyRef = inject(DestroyRef);
@@ -138,7 +141,7 @@ export class CategoryComponent implements OnInit {
       });
   }
 
-  onEdit(category: Category): void {
+  onEdit(category: CategoryModel): void {
     const dialogRef = this.dialog.open(CategoryFormDialogComponent, {
       width: '450px',
       data: { category },

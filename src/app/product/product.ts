@@ -36,6 +36,8 @@ import {
   ConfirmDeleteDialogData,
 } from './components/confirm-delete-dialog.component';
 
+import { AuthService } from '../core/services/auth';
+
 @Component({
   selector: 'app-product',
   standalone: true,
@@ -59,6 +61,7 @@ export class Product implements OnInit {
   // Note: class name kept as 'Product' to match app.routes.ts lazy-load
   // The interface is aliased as ProductModel to avoid conflict
   private readonly productService = inject(ProductService);
+  public readonly auth = inject(AuthService);
   private readonly dialog = inject(MatDialog);
   private readonly snackBar = inject(MatSnackBar);
   private readonly destroyRef = inject(DestroyRef);
