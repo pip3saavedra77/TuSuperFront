@@ -37,6 +37,7 @@ export class ResetPassword implements OnInit {
   isCheckingToken = signal(true);
   isTokenValid = signal(false);
   isLoading = signal(false);
+  isSuccess = signal(false);
   hidePassword = signal(true);
   hideConfirmPassword = signal(true);
   errorMessage = signal('');
@@ -84,8 +85,7 @@ export class ResetPassword implements OnInit {
     this.authService.resetPassword(this.token, newPassword).subscribe({
       next: () => {
         this.isLoading.set(false);
-        alert('Contraseña actualizada exitosamente. Ahora puedes iniciar sesión.');
-        this.router.navigate(['/auth/login']);
+        this.isSuccess.set(true);
       },
       error: (err) => {
         this.isLoading.set(false);
