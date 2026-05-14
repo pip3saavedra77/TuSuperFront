@@ -1,4 +1,4 @@
-<mat-sidenav-container class="catalog-container">
+<mat-sidenav-container class="catalog-container modern-pos">
   <mat-sidenav
     #cartDrawer
     [opened]="cartStore.isOpen()"
@@ -14,10 +14,13 @@
 
       <!-- HEADER -->
       <div class="page-header">
-        <h2 class="page-title">Catálogo de Productos</h2>
+        <div class="header-titles">
+          <h2 class="page-title">TuSuper Catalog</h2>
+          <p class="page-subtitle">Fresh products delivered to your door</p>
+        </div>
         <button mat-flat-button class="cart-toggle-btn" (click)="toggleCart()">
           <mat-icon>shopping_cart</mat-icon>
-          Mi Carrito
+          <span>My Cart</span>
           @if (!cartStore.isEmpty()) {
             <span class="cart-count">{{ cartStore.totalItems() }}</span>
           }
@@ -27,21 +30,21 @@
       <!-- FILTROS -->
       <div class="filters-panel">
         <mat-form-field appearance="outline" class="search-field">
-          <mat-label>Buscar por nombre</mat-label>
+          <mat-label>Search products</mat-label>
           <input
             matInput
             [value]="searchTerm"
             (input)="onSearchInput($event)"
-            placeholder="Escribe para buscar..." />
+            placeholder="Type to search..." />
           <mat-icon matSuffix>search</mat-icon>
         </mat-form-field>
 
         <mat-form-field appearance="outline" class="category-field">
-          <mat-label>Categoría</mat-label>
+          <mat-label>Category</mat-label>
           <mat-select
             [value]="selectedCategoryId()"
             (selectionChange)="onCategoryChange($event.value)">
-            <mat-option [value]="null">Todas</mat-option>
+            <mat-option [value]="null">All Categories</mat-option>
             @for (cat of categories(); track cat.id) {
               <mat-option [value]="cat.id">{{ cat.name }}</mat-option>
             }
@@ -58,14 +61,16 @@
         <!-- EMPTY STATE -->
         @if (products().length === 0) {
           <div class="empty-state">
-            <mat-icon>inventory_2</mat-icon>
-            <p>No se encontraron productos</p>
+            <div class="empty-icon-wrapper">
+              <mat-icon>inventory_2</mat-icon>
+            </div>
+            <p>No products found in this category</p>
           </div>
         } @else {
           <!-- GRID -->
           <div class="products-grid">
             @for (product of products(); track product.id) {
-              <div class="product-card">
+              <div class="product-card card-premium">
                 <div class="card-image-container">
                   @if (product.imageUrl) {
                     <img [src]="product.imageUrl"
@@ -76,23 +81,24 @@
                       <mat-icon>inventory_2</mat-icon>
                     </div>
                   }
+                  <span class="category-badge">{{ product.category.name }}</span>
                 </div>
 
                 <div class="card-body">
-                  <span class="category-badge">{{ product.category.name }}</span>
                   <h3 class="product-name">{{ product.name }}</h3>
-                  <p class="product-price">
-                    {{ product.price | currency:'COP':'symbol-narrow':'1.0-0' }}
-                  </p>
-
-                  <div class="stock-info">
-                    @if (product.stock > 10) {
-                      <span class="stock-badge stock-ok">{{ product.stock }} disponibles</span>
-                    } @else if (product.stock > 0) {
-                      <span class="stock-badge stock-low">Solo {{ product.stock }} disponibles</span>
-                    } @else {
-                      <span class="stock-badge stock-out">Sin stock</span>
-                    }
+                  <div class="price-stock-row">
+                    <p class="product-price">
+                      {{ product.price | currency:'COP':'symbol-narrow':'1.0-0' }}
+                    </p>
+                    <div class="stock-info">
+                      @if (product.stock > 10) {
+                        <span class="stock-badge stock-ok">{{ product.stock }} in stock</span>
+                      } @else if (product.stock > 0) {
+                        <span class="stock-badge stock-low">Low stock</span>
+                      } @else {
+                        <span class="stock-badge stock-out">Out of stock</span>
+                      }
+                    </div>
                   </div>
 
                   <button
@@ -101,7 +107,7 @@
                     [disabled]="product.stock === 0"
                     (click)="onAddToCart(product)">
                     <mat-icon>add_shopping_cart</mat-icon>
-                    {{ product.stock === 0 ? 'Sin stock' : 'Agregar al carrito' }}
+                    <span>{{ product.stock === 0 ? 'Unavailable' : 'Add to Cart' }}</span>
                   </button>
                 </div>
               </div>
@@ -110,14 +116,16 @@
         }
 
         <!-- PAGINATION -->
-        <mat-paginator
-          [length]="totalProducts()"
-          [pageSize]="currentLimit()"
-          [pageSizeOptions]="[6, 12, 24]"
-          [pageIndex]="currentOffset() / currentLimit()"
-          (page)="onPageChange($event)"
-          showFirstLastButtons>
-        </mat-paginator>
+        <div class="pagination-container">
+          <mat-paginator
+            [length]="totalProducts()"
+            [pageSize]="currentLimit()"
+            [pageSizeOptions]="[6, 12, 24]"
+            [pageIndex]="currentOffset() / currentLimit()"
+            (page)="onPageChange($event)"
+            showFirstLastButtons>
+          </mat-paginator>
+        </div>
       }
     </div>
   </mat-sidenav-content>

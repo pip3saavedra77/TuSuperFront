@@ -1,202 +1,249 @@
-@use '../../../styles/tokens' as *;
+@use 'sass:color';
 @use 'sass:map';
+@use '../../../styles/tokens' as *;
+@use '../../../styles/pos_tokens' as pos;
 
-.cart-panel {
+.cart-panel.modern-pos-cart {
   display: flex;
   flex-direction: column;
   height: 100%;
-  background: #FFFFFF;
-}
+  background: pos.$pos-glass-bg;
+  backdrop-filter: blur(pos.$pos-glass-blur);
+  border-left: 1px solid pos.$pos-glass-border;
+  color: pos.$pos-text;
+  font-family: $font-family;
 
-// ── Header ──────────────────────────────────────────
-.cart-header {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  padding: map.get($spacing, "16") map.get($spacing, "24");
+  // ── Header ──────────────────────────────────────────
+  .cart-header {
+    padding: map.get($spacing, "32");
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-bottom: 1px solid rgba(0, 0, 0, 0.05);
 
-  .cart-title {
+    .header-left {
+      .cart-title {
+        font-size: map.get($font-sizes, "xl");
+        font-weight: 800;
+        margin: 0;
+        letter-spacing: -0.5px;
+      }
+      .item-count {
+        font-size: map.get($font-sizes, "xs");
+        color: pos.$pos-text-muted;
+        font-weight: 600;
+      }
+    }
+
+    .close-btn {
+      background: rgba(0, 0, 0, 0.03);
+      border-radius: 12px;
+    }
+  }
+
+  // ── Items List ──────────────────────────────────────
+  .cart-items-container {
+    flex: 1;
+    overflow-y: auto;
+    padding: map.get($spacing, "24");
+    display: flex;
+    flex-direction: column;
+    gap: map.get($spacing, "16");
+
+    &::-webkit-scrollbar { width: 4px; }
+    &::-webkit-scrollbar-thumb { background: rgba(0, 0, 0, 0.1); border-radius: 10px; }
+  }
+
+  .cart-item-card {
+    background: white;
+    padding: map.get($spacing, "16");
+    border-radius: 20px;
     display: flex;
     align-items: center;
-    gap: map.get($spacing, "8");
-    margin: 0;
-    font-size: map.get($font-sizes, "lg");
-    font-weight: map.get($font-weights, "bold");
-    color: #1a1a1a;
+    gap: map.get($spacing, "16");
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.03);
+    transition: transform 0.2s ease;
 
-    mat-icon { color: #2ECC71; }
+    &:hover { transform: scale(1.02); }
+
+    .item-image {
+      width: 56px;
+      height: 56px;
+      background: #F1F3F9;
+      border-radius: 12px;
+      overflow: hidden;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+
+      img { width: 100%; height: 100%; object-fit: cover; }
+      mat-icon { color: pos.$pos-text-muted; font-size: 20px; width: 20px; height: 20px; }
+    }
+
+    .item-details {
+      flex: 1;
+      .product-name {
+        font-size: map.get($font-sizes, "sm");
+        font-weight: 700;
+        margin: 0;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        max-width: 120px;
+      }
+      .product-price {
+        font-size: 11px;
+        color: pos.$pos-text-muted;
+      }
+    }
+
+    .item-quantity-control {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      background: #F1F3F9;
+      padding: 2px;
+      border-radius: 12px;
+
+      .control-btn {
+        width: 28px;
+        height: 28px;
+        background: white;
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+        border-radius: 8px;
+        mat-icon { font-size: 16px; width: 16px; height: 16px; }
+        
+        &.minus { color: #BA1A1A; }
+        &.plus { color: pos.$pos-primary; }
+      }
+
+      .quantity-text {
+        font-size: map.get($font-sizes, "sm");
+        font-weight: 800;
+        min-width: 20px;
+        text-align: center;
+      }
+    }
+
+    .item-final-price {
+      font-size: map.get($font-sizes, "sm");
+      font-weight: 800;
+      color: pos.$pos-text;
+      min-width: 60px;
+      text-align: right;
+    }
+
+    .item-remove-btn {
+      color: pos.$pos-text-muted;
+      &:hover { color: #BA1A1A; }
+    }
   }
-}
 
-// ── Empty ───────────────────────────────────────────
-.cart-empty {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  padding: map.get($spacing, "64") map.get($spacing, "24");
-  color: #999999;
+  // ── Summary & Footer ────────────────────────────────
+  .cart-summary-section {
+    padding: map.get($spacing, "32");
+    background: white;
+    border-radius: 32px 32px 0 0;
+    box-shadow: 0 -10px 30px rgba(0, 0, 0, 0.05);
+    display: flex;
+    flex-direction: column;
+    gap: map.get($spacing, "12");
 
-  mat-icon {
-    font-size: 48px;
-    width: 48px;
-    height: 48px;
-    margin-bottom: map.get($spacing, "16");
-    opacity: 0.5;
+    .summary-row {
+      display: flex;
+      justify-content: space-between;
+      font-size: map.get($font-sizes, "sm");
+      color: pos.$pos-text-muted;
+      font-weight: 600;
+
+      .free-text { color: pos.$pos-primary; font-weight: 800; }
+
+      &.total {
+        margin-top: 8px;
+        padding-top: 16px;
+        border-top: 2px dashed #F1F3F9;
+        color: pos.$pos-text;
+        font-size: map.get($font-sizes, "lg");
+        font-weight: 800;
+
+        .total-amount { font-size: map.get($font-sizes, "2xl"); color: pos.$pos-primary; }
+      }
+    }
   }
 
-  p {
-    font-size: map.get($font-sizes, "md");
-    margin: 0;
+  .cart-footer-actions {
+    margin-top: map.get($spacing, "24");
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+
+    .btn-checkout {
+      width: 100%;
+      height: 64px;
+      background: pos.$pos-primary !important;
+      color: white !important;
+      border-radius: pos.$pos-radius !important;
+      font-size: map.get($font-sizes, "md");
+      font-weight: 800;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 12px;
+      box-shadow: 0 12px 24px rgba(0, 166, 81, 0.25);
+      transition: all 0.3s ease;
+
+      &:hover:not(:disabled) {
+        transform: translateY(-4px);
+        box-shadow: 0 16px 32px rgba(0, 166, 81, 0.35);
+        background: color.scale(pos.$pos-primary, $lightness: -10%) !important;
+      }
+    }
+
+    .btn-clear-minimal {
+      font-size: map.get($font-sizes, "xs");
+      color: pos.$pos-text-muted;
+      text-transform: none;
+      font-weight: 600;
+      &:hover { color: #BA1A1A; }
+    }
   }
-}
 
-// ── Items ───────────────────────────────────────────
-.cart-items {
-  flex: 1;
-  overflow-y: auto;
-  padding: map.get($spacing, "16") map.get($spacing, "24");
-}
-
-.cart-item {
-  display: grid;
-  grid-template-columns: 1fr auto auto auto;
-  align-items: center;
-  gap: map.get($spacing, "8");
-  padding: map.get($spacing, "12") 0;
-  border-bottom: 1px solid rgba(0, 0, 0, 0.06);
-
-  &:last-child { border-bottom: none; }
-}
-
-.item-info {
-  display: flex;
-  flex-direction: column;
-  min-width: 0;
-}
-
-.item-name {
-  font-size: map.get($font-sizes, "sm");
-  font-weight: map.get($font-weights, "semibold");
-  color: #1a1a1a;
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
-}
-
-.item-unit-price {
-  font-size: map.get($font-sizes, "xs");
-  color: #999999;
-}
-
-.item-controls {
-  display: flex;
-  align-items: center;
-  gap: map.get($spacing, "4");
-}
-
-.qty-btn {
-  width: 28px;
-  height: 28px;
-  line-height: 28px;
-
-  mat-icon {
-    font-size: 18px;
-    width: 18px;
-    height: 18px;
-    color: #2ECC71;
+  .cart-error-banner {
+    background: #FFEBEB;
+    color: #BA1A1A;
+    padding: 12px;
+    border-radius: 12px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 11px;
+    font-weight: 600;
+    mat-icon { font-size: 16px; width: 16px; height: 16px; }
   }
-}
 
-.qty-value {
-  min-width: 24px;
-  text-align: center;
-  font-size: map.get($font-sizes, "sm");
-  font-weight: map.get($font-weights, "semibold");
-  color: #1a1a1a;
-}
+  // ── Empty State ─────────────────────────────────────
+  .cart-empty {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: map.get($spacing, "48");
+    text-align: center;
 
-.item-subtotal {
-  font-size: map.get($font-sizes, "sm");
-  font-weight: map.get($font-weights, "semibold");
-  color: #2ECC71;
-  min-width: 80px;
-  text-align: right;
-}
+    .empty-icon-wrapper {
+      width: 120px;
+      height: 120px;
+      background: #F1F3F9;
+      border-radius: 40px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin-bottom: 24px;
+      mat-icon { font-size: 48px; width: 48px; height: 48px; color: pos.$pos-text-muted; opacity: 0.5; }
+    }
 
-.remove-btn {
-  mat-icon {
-    font-size: 20px;
-    width: 20px;
-    height: 20px;
-    color: #E74C3C;
-  }
-}
-
-// ── Total ───────────────────────────────────────────
-.cart-total {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  padding: map.get($spacing, "16") map.get($spacing, "24");
-}
-
-.total-label {
-  font-size: map.get($font-sizes, "lg");
-  font-weight: map.get($font-weights, "bold");
-  color: #1a1a1a;
-}
-
-.total-value {
-  font-size: map.get($font-sizes, "xl");
-  font-weight: map.get($font-weights, "bold");
-  color: #2ECC71;
-}
-
-// ── Error ───────────────────────────────────────────
-.cart-error {
-  display: flex;
-  align-items: center;
-  gap: map.get($spacing, "8");
-  margin: 0 map.get($spacing, "24");
-  padding: map.get($spacing, "8") map.get($spacing, "12");
-  background: rgba(231, 76, 60, 0.08);
-  border-radius: map.get($radius, "md");
-  color: #E74C3C;
-  font-size: map.get($font-sizes, "sm");
-
-  mat-icon {
-    font-size: 18px;
-    width: 18px;
-    height: 18px;
-  }
-}
-
-// ── Actions ─────────────────────────────────────────
-.cart-actions {
-  display: flex;
-  flex-direction: column;
-  gap: map.get($spacing, "8");
-  padding: map.get($spacing, "16") map.get($spacing, "24") map.get($spacing, "24");
-}
-
-.clear-btn {
-  color: #999999;
-  border-color: rgba(0, 0, 0, 0.15);
-}
-
-.order-btn {
-  background: #2ECC71 !important;
-  color: #FFFFFF !important;
-  font-weight: map.get($font-weights, "semibold");
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: map.get($spacing, "8");
-
-  &:hover:not(:disabled) { background: #27AE60 !important; }
-
-  &:disabled {
-    opacity: 0.7;
+    p { font-size: map.get($font-sizes, "lg"); font-weight: 700; color: pos.$pos-text; margin-bottom: 24px; }
+    button { border-radius: 12px; font-weight: 700; border-color: pos.$pos-primary; color: pos.$pos-primary; }
   }
 }
