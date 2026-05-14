@@ -7,46 +7,49 @@
     [mode]="(isHandset$ | async) ? 'over' : 'side'"
     [opened]="(isHandset$ | async) === false"
   >
-    <div class="brand-logo">
-      <mat-icon>spa</mat-icon>
-      <span>Donezo</span>
-    </div>
-    @if (isAuthenticated()) {
-      <div class="nav-section-label">MENU</div>
-      <mat-nav-list>
-        @for (moduleName of menuItems(); track moduleName) {
-          <a mat-list-item
-            [routerLink]="'/' + moduleName.toLowerCase()"
-            routerLinkActive="active-link">
-            <mat-icon matListItemIcon>
-              {{ 
-                moduleName === 'users' ? 'group' :
-                moduleName === 'roles' ? 'shield' :
-                moduleName === 'product' ? 'inventory_2' :
-                moduleName === 'category' ? 'category' :
-                moduleName === 'provider' ? 'local_shipping' :
-                moduleName === 'orders' ? 'receipt_long' :
-                'folder'
-              }}
-            </mat-icon>
-            <span matListItemTitle>{{ moduleName === 'orders' ? 'pedidos' : moduleName }}</span>
-          </a>
-        }
-        <div class="nav-section-label">GENERAL</div>
-        <a mat-list-item (click)="logout()">
-          <mat-icon matListItemIcon>logout</mat-icon>
-          <span matListItemTitle>Cerrar sesión</span>
-        </a>
-      </mat-nav-list>
-    }
+    <div class="sidebar-wrapper">
+      <div class="brand-logo">
+        <mat-icon>spa</mat-icon>
+        <span>Donezo</span>
+      </div>
 
-    <!-- Spacer para empujar la card al fondo en un flex column -->
-    <div style="flex-grow: 1;"></div>
+      @if (isAuthenticated()) {
+        <div class="nav-content">
+          <div class="nav-section">
+            <div class="nav-section-label">MENU</div>
+            <mat-nav-list>
+              @for (moduleName of menuItems(); track moduleName) {
+                <a mat-list-item
+                  [routerLink]="'/' + moduleName.toLowerCase()"
+                  routerLinkActive="active-link">
+                  <mat-icon matListItemIcon>
+                    {{ 
+                      moduleName === 'users' ? 'group' :
+                      moduleName === 'roles' ? 'shield' :
+                      moduleName === 'product' ? 'inventory_2' :
+                      moduleName === 'category' ? 'category' :
+                      moduleName === 'provider' ? 'local_shipping' :
+                      moduleName === 'orders' ? 'receipt_long' :
+                      'folder'
+                    }}
+                  </mat-icon>
+                  <span matListItemTitle>{{ moduleName === 'orders' ? 'pedidos' : moduleName }}</span>
+                </a>
+              }
+            </mat-nav-list>
+          </div>
 
-    <div class="sidebar-bottom-card">
-      <p class="card-title">Download our Mobile App</p>
-      <p class="card-subtitle">Get easy in another way</p>
-      <button>Download</button>
+          <div class="nav-section logout-section">
+            <div class="nav-section-label">GENERAL</div>
+            <mat-nav-list>
+              <a mat-list-item (click)="logout()" class="logout-link">
+                <mat-icon matListItemIcon>logout</mat-icon>
+                <span matListItemTitle>Cerrar sesión</span>
+              </a>
+            </mat-nav-list>
+          </div>
+        </div>
+      }
     </div>
   </mat-sidenav>
   <mat-sidenav-content>
@@ -97,6 +100,8 @@
         </div>
       </div>
     </mat-toolbar>
-     <router-outlet></router-outlet>
+    <main class="main-content">
+      <router-outlet></router-outlet>
+    </main>
   </mat-sidenav-content>
 </mat-sidenav-container>
