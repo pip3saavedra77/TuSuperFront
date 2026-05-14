@@ -104,8 +104,10 @@
           @if (cartStore.loading()) {
             <mat-spinner diameter="24"></mat-spinner>
           } @else {
-            <span>Place Order</span>
-            <mat-icon>arrow_forward</mat-icon>
+            <ng-container>
+              <span>Place Order</span>
+              <mat-icon>arrow_forward</mat-icon>
+            </ng-container>
           }
         </button>
         

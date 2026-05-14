@@ -52,14 +52,14 @@
 .cart-toggle-btn {
   height: 56px;
   padding: 0 map.get($spacing, "24") !important;
-  background: pos.$pos-primary !important;
+  background: var(--profile-primary, #{pos.$pos-primary}) !important;
   color: #FFFFFF !important;
   border-radius: pos.$pos-radius !important;
   font-weight: map.get($font-weights, "bold");
   display: flex;
   align-items: center;
   gap: 12px;
-  box-shadow: 0 8px 16px rgba(0, 166, 81, 0.2);
+  box-shadow: 0 8px 16px rgba(0, 0, 0, 0.1);
   transition: all 0.3s ease;
 
   &:hover {
@@ -175,7 +175,7 @@
       .product-price {
         font-size: map.get($font-sizes, "xl");
         font-weight: 800;
-        color: pos.$pos-primary;
+        color: var(--profile-primary, #{pos.$pos-primary});
         margin: 0;
       }
 
@@ -193,7 +193,7 @@
 
     .add-cart-btn {
       height: 52px;
-      background: pos.$pos-primary !important;
+      background: var(--profile-primary, #{pos.$pos-primary}) !important;
       color: #FFFFFF !important;
       border-radius: 16px !important;
       font-weight: map.get($font-weights, "bold");
@@ -203,7 +203,7 @@
       gap: 8px;
 
       &:hover:not(:disabled) {
-        background: color.scale(pos.$pos-primary, $lightness: -10%) !important;
+        filter: brightness(0.9);
       }
 
       &:disabled {
