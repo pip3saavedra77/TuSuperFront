@@ -162,7 +162,9 @@ export class OrdersListComponent implements OnInit {
     const dialogData: ChangeStatusDialogData = {
       orderId: order.id,
       currentStatus: order.status,
-      validTransitions: getValidTransitions(order.status),
+      validTransitions: Object.values(OrderStatus).filter(
+        (s) => s !== order.status
+      ),
     };
 
     const dialogRef = this.dialog.open(ChangeStatusDialogComponent, {
