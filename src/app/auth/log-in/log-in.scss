@@ -103,3 +103,50 @@
         }
     }
 }
+
+.divider {
+    display: flex;
+    align-items: center;
+    margin: 24px 0;
+    
+    &::before,
+    &::after {
+        content: "";
+        flex: 1;
+        height: 1px;
+        background: #E5E7EB;
+    }
+    
+    .divider-text {
+        padding: 0 16px;
+        color: #9CA3AF;
+        font-size: 0.875rem;
+    }
+}
+
+.google-button {
+    height: 52px !important;
+    border-radius: 12px !important;
+    font-weight: 600 !important;
+    font-size: 1rem !important;
+    border: 1px solid #E5E7EB !important;
+    background-color: #FFFFFF !important;
+    color: #374151 !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    gap: 12px !important;
+    transition: all 0.2s ease;
+
+    &:hover {
+        background-color: #F9FAFB !important;
+        border-color: #D1D5DB !important;
+        transform: translateY(-1px);
+        box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+    }
+
+    .google-icon {
+        width: 20px;
+        height: 20px;
+    }
+}

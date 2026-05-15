@@ -11,6 +11,7 @@ import { MatCheckboxModule } from '@angular/material/checkbox';
 import { LoginCredentials } from '../interfaces/login';
 import { AuthService } from '../../core/services/auth';
 import { Router, RouterModule } from '@angular/router';
+import { environment } from '../../../environments/environment';
 
 @Component({
   selector: 'app-log-in',
@@ -60,5 +61,9 @@ export class LogIn {
         alert(message);
       },
     });
+  }
+
+  loginWithGoogle(): void {
+    window.location.href = `${environment.apiUrl}/auth/google`;
   }
 }
