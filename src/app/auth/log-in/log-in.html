@@ -38,6 +38,16 @@
                 </div>
 
                 <button matButton="filled" class="login-button" [disabled]="loginForm.invalid">Iniciar Sesión</button>
+
+                <div class="divider">
+                    <span class="divider-text">O continúa con</span>
+                </div>
+
+                <button mat-stroked-button type="button" class="google-button" (click)="loginWithGoogle()">
+                    <img src="https://fonts.gstatic.com/s/i/productlogos/googleg/v6/24px.svg" alt="Google"
+                        class="google-icon">
+                    Continuar con Google
+                </button>
             </form>
         </mat-card-content>
 
