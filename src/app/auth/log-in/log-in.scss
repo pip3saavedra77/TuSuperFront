@@ -1,203 +1,510 @@
 @use '../../styles/tokens' as tk;
 @use 'sass:map';
 
-.login-card-container {
+// Deep space background matching the premium style guidelines
+.login-page-wrapper {
+    position: relative;
     display: flex;
     justify-content: center;
     align-items: center;
-    height: 100vh;
-    background-color: #FAFAFA;
-}
-
-.modern-card {
+    min-height: 100vh;
     width: 100%;
-    max-width: 450px;
-    padding: 40px;
-    background: #FFFFFF;
-    border-radius: 20px;
-    box-shadow: 0 4px 24px rgba(0, 0, 0, 0.08);
-    border: 1px solid #F3F4F6;
+    background-color: #0A0A0C;
+    overflow: hidden;
+    font-family: 'Geist', 'Inter', sans-serif;
+    box-sizing: border-box;
+    padding: 24px 16px;
 }
 
+// Atmospheric fluid background with organic green-magenta glow blobs
+.fluid-background-glow {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 1;
+    pointer-events: none;
+    overflow: hidden;
+
+    .glow-blob {
+        position: absolute;
+        border-radius: 50%;
+        filter: blur(100px);
+        opacity: 0.55;
+        animation: pulseGlow 12s infinite alternate ease-in-out;
+    }
+
+    .glow-green {
+        top: -10%;
+        left: -10%;
+        width: 70vw;
+        height: 70vw;
+        background: radial-gradient(circle, rgba(16, 185, 129, 0.45) 0%, rgba(16, 185, 129, 0) 70%);
+        animation-delay: 0s;
+    }
+
+    .glow-magenta {
+        bottom: -15%;
+        right: -10%;
+        width: 80vw;
+        height: 80vw;
+        background: radial-gradient(circle, rgba(217, 70, 239, 0.4) 0%, rgba(217, 70, 239, 0) 70%);
+        animation-delay: 3s;
+    }
+}
+
+// Smooth slow breathing motion for the atmospheric glows
+@keyframes pulseGlow {
+    0% {
+        transform: translate(0, 0) scale(1);
+    }
+    100% {
+        transform: translate(8%, 5%) scale(1.15);
+    }
+}
+
+// Main Interactive Container
+.main-login-container {
+    position: relative;
+    z-index: 2;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    width: 100%;
+    max-width: 440px;
+    gap: 32px;
+}
+
+// Top navigation tabs styled minimalistically
+.top-nav-options {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 36px;
+    width: 100%;
+
+    .nav-option {
+        font-family: 'Geist', sans-serif;
+        font-size: 0.95rem;
+        font-weight: 500;
+        color: rgba(255, 255, 255, 0.4);
+        text-decoration: none;
+        cursor: pointer;
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        user-select: none;
+
+        &:hover {
+            color: rgba(255, 255, 255, 0.85);
+        }
+
+        &.active {
+            color: #FFFFFF;
+            font-weight: 600;
+            text-shadow: 0 0 12px rgba(255, 255, 255, 0.35);
+
+            .active-icon {
+                transform: scale(1.1);
+                color: #10B981;
+                filter: drop-shadow(0 0 6px rgba(16, 185, 129, 0.5));
+            }
+        }
+
+        .active-icon {
+            font-size: 1.15rem;
+            width: 1.15rem;
+            height: 1.15rem;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+    }
+}
+
+// Premium Glassmorphism Card Container
+.glassmorphic-card {
+    width: 100%;
+    padding: 40px 32px;
+    box-sizing: border-box;
+    background: rgba(255, 255, 255, 0.03) !important;
+    backdrop-filter: blur(35px) !important;
+    -webkit-backdrop-filter: blur(35px) !important;
+    border-radius: 24px !important;
+    border: 1px solid rgba(255, 255, 255, 0.08) !important;
+    box-shadow: 
+        0 24px 64px rgba(0, 0, 0, 0.5),
+        inset 0 1px 0 rgba(255, 255, 255, 0.15) !important;
+    transition: border-color 0.4s ease;
+
+    &:hover {
+        border-color: rgba(255, 255, 255, 0.12) !important;
+    }
+}
+
+// Header layout and typography
 .header-content {
-    margin-bottom: 32px;
     text-align: center;
+    margin-bottom: 36px;
+    width: 100%;
 
-    mat-card-title {
-        font-size: 1.75rem;
-        font-weight: 800;
-        color: #111827;
-        margin-bottom: 8px;
+    .card-title {
+        font-family: 'Geist', sans-serif;
+        font-size: 1.65rem;
+        font-weight: 700;
+        letter-spacing: -0.02em;
+        color: #FFFFFF;
+        margin: 0 0 10px 0;
+        text-shadow: 0 2px 8px rgba(0, 0, 0, 0.25);
     }
 
-    mat-card-subtitle {
-        color: #6B7280;
+    .card-subtitle {
+        font-family: 'Inter', sans-serif;
+        font-size: 0.92rem;
+        line-height: 1.5;
+        color: rgba(255, 255, 255, 0.55);
+        margin: 0;
     }
 }
 
+// Form logic
 .login-form {
     display: flex;
     flex-direction: column;
-    gap: 20px;
+    gap: 22px;
+    width: 100%;
+}
 
-    ::ng-deep {
-        .mat-mdc-form-field-label {
-            color: #6B7280 !important;
+// Glassmorphic Input wrapper
+.input-glass-wrapper {
+    position: relative;
+    display: flex;
+    align-items: center;
+    width: 100%;
+    height: 54px;
+    border-radius: 12px;
+    background: rgba(255, 255, 255, 0.04);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    box-shadow: inset 0 1px 1px rgba(255, 255, 255, 0.03);
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    box-sizing: border-box;
+
+    &:hover {
+        background: rgba(255, 255, 255, 0.06);
+        border-color: rgba(255, 255, 255, 0.12);
+    }
+
+    &:focus-within {
+        background: rgba(255, 255, 255, 0.05);
+        border-color: #10B981;
+        box-shadow: 
+            0 0 20px rgba(16, 185, 129, 0.15),
+            inset 0 1px 1px rgba(255, 255, 255, 0.05);
+    }
+
+    .input-icon {
+        position: absolute;
+        left: 16px;
+        color: rgba(255, 255, 255, 0.35);
+        font-size: 1.25rem;
+        width: 1.25rem;
+        height: 1.25rem;
+        pointer-events: none;
+    }
+
+    input {
+        width: 100%;
+        height: 100%;
+        background: transparent;
+        border: none;
+        outline: none;
+        padding: 0 48px;
+        color: #FFFFFF;
+        font-family: 'Inter', sans-serif;
+        font-size: 0.95rem;
+        box-sizing: border-box;
+
+        &::placeholder {
+            color: rgba(255, 255, 255, 0.35);
         }
-        .mat-mdc-text-field-wrapper {
-            background-color: #F9FAFB !important;
-        }
-        input.mat-mdc-input-element {
-            color: #111827 !important;
+    }
+
+    .visibility-toggle {
+        position: absolute;
+        right: 14px;
+        background: transparent;
+        border: none;
+        outline: none;
+        color: rgba(255, 255, 255, 0.35);
+        cursor: pointer;
+        padding: 4px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        transition: color 0.2s ease;
+
+        &:hover {
+            color: rgba(255, 255, 255, 0.7);
         }
     }
 }
 
+// Error state styling
+.error-text {
+    font-size: 0.8rem;
+    color: #F87171;
+    margin-top: -14px;
+    padding-left: 4px;
+    font-family: 'Inter', sans-serif;
+    animation: fadeIn 0.25s ease;
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(-4px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+// Inline options (remember me and password reset)
 .form-options {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    margin: 8px 0;
+    margin: 4px 0;
     font-size: 0.875rem;
-    color: #4B5563;
+    font-family: 'Inter', sans-serif;
+}
+
+.remember-me {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    color: rgba(255, 255, 255, 0.6);
+    cursor: pointer;
+    user-select: none;
+
+    input[type="checkbox"] {
+        appearance: none;
+        -webkit-appearance: none;
+        width: 16px;
+        height: 16px;
+        border-radius: 4px;
+        border: 1px solid rgba(255, 255, 255, 0.2);
+        background: rgba(255, 255, 255, 0.05);
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        transition: all 0.2s ease;
+
+        &:checked {
+            background: #10B981;
+            border-color: #10B981;
+            box-shadow: 0 0 8px rgba(16, 185, 129, 0.4);
+
+            &::after {
+                content: "✓";
+                color: #050505;
+                font-size: 10px;
+                font-weight: bold;
+            }
+        }
+    }
+
+    .checkbox-label {
+        font-size: 0.88rem;
+        transition: color 0.2s ease;
+    }
+
+    &:hover .checkbox-label {
+        color: rgba(255, 255, 255, 0.85);
+    }
 }
 
 .forgot-password {
-    color: #8B1A2F;
+    color: #D946EF;
     text-decoration: none;
-    font-weight: 600;
-    
+    font-weight: 500;
+    transition: all 0.2s ease;
+
     &:hover {
-        text-decoration: underline;
+        color: #F0ABFC;
+        text-shadow: 0 0 8px rgba(217, 70, 239, 0.35);
     }
 }
 
-.login-button {
-    background-color: #8B1A2F !important;
-    color: #FFFFFF !important;
+// Premium emerald primary action button
+.primary-emerald-button {
+    background-color: #10B981 !important;
+    color: #050505 !important;
     height: 52px;
+    border: none;
+    outline: none;
     border-radius: 12px;
-    font-weight: 700;
+    font-weight: 600;
     font-size: 1rem;
-    margin-top: 12px;
-    box-shadow: 0 4px 12px rgba(139, 26, 47, 0.2) !important;
+    font-family: 'Geist', sans-serif;
+    margin-top: 8px;
+    cursor: pointer;
+    box-shadow: 0 8px 24px rgba(16, 185, 129, 0.25) !important;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
     
-    &:hover {
-        background-color: #6B1424 !important;
+    &:hover:not(:disabled) {
+        background-color: #34D399 !important;
+        transform: translateY(-1.5px);
+        box-shadow: 
+            0 12px 28px rgba(16, 185, 129, 0.35),
+            0 0 14px rgba(16, 185, 129, 0.15) !important;
+    }
+
+    &:active:not(:disabled) {
+        transform: translateY(0.5px);
+        box-shadow: 0 4px 12px rgba(16, 185, 129, 0.2) !important;
+    }
+
+    &:disabled {
+        background-color: rgba(255, 255, 255, 0.06) !important;
+        color: rgba(255, 255, 255, 0.25) !important;
+        cursor: not-allowed;
+        box-shadow: none !important;
     }
 }
 
-.card-footer {
-    text-align: center;
-    margin-top: 32px;
-    font-size: 0.9rem;
-    color: #6B7280;
-
-    a {
-        color: #8B1A2F;
-        text-decoration: none;
-        font-weight: 700;
-        
-        &:hover {
-            text-decoration: underline;
-        }
-    }
-}
-
+// Separator line
 .divider {
     display: flex;
     align-items: center;
-    margin: 24px 0;
+    margin: 12px 0;
     
     &::before,
     &::after {
         content: "";
         flex: 1;
         height: 1px;
-        background: #E5E7EB;
+        background: rgba(255, 255, 255, 0.08);
     }
     
     .divider-text {
         padding: 0 16px;
-        color: #9CA3AF;
-        font-size: 0.875rem;
+        color: rgba(255, 255, 255, 0.35);
+        font-size: 0.85rem;
+        font-family: 'Inter', sans-serif;
     }
 }
 
-.google-button {
-    height: 52px !important;
-    border-radius: 26px !important;
-    font-weight: 600 !important;
-    font-size: 0.95rem !important;
-    letter-spacing: 0.3px !important;
-    color: #2D3748 !important;
-    background: linear-gradient(
-        180deg,
-        rgba(255, 255, 255, 0.75) 0%,
-        rgba(255, 255, 255, 0.3) 48%,
-        rgba(255, 255, 255, 0.15) 50%,
-        rgba(255, 255, 255, 0.25) 100%
-    ) !important;
-    border: 1.5px solid rgba(255, 255, 255, 0.85) !important;
-    backdrop-filter: blur(16px) !important;
-    -webkit-backdrop-filter: blur(16px) !important;
-    display: inline-flex !important;
-    align-items: center !important;
-    justify-content: center !important;
-    gap: 12px !important;
-    padding-left: 24px !important;
-    padding-right: 24px !important;
-    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1) !important;
-    cursor: pointer !important;
+// Premium glass Google login button matching mockups
+.google-glass-button {
+    height: 52px;
+    border-radius: 12px;
+    font-weight: 500;
+    font-size: 0.95rem;
+    font-family: 'Geist', sans-serif;
+    color: rgba(255, 255, 255, 0.85);
+    background: rgba(255, 255, 255, 0.04);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 12px;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    cursor: pointer;
     box-shadow: 
-        inset 0 1px 0 rgba(255, 255, 255, 0.9),
-        inset 0 12px 12px -6px rgba(255, 255, 255, 0.5),
-        inset 0 -8px 12px -8px rgba(0, 0, 0, 0.04),
-        0 8px 24px rgba(0, 0, 0, 0.04) !important;
-
-    ::ng-deep {
-        .mdc-button__label {
-            display: flex !important;
-            align-items: center !important;
-            justify-content: center !important;
-            gap: 12px !important;
-        }
-    }
+        inset 0 1px 0 rgba(255, 255, 255, 0.05),
+        0 4px 12px rgba(0, 0, 0, 0.15);
 
     &:hover {
-        background: linear-gradient(
-            180deg,
-            rgba(255, 255, 255, 0.85) 0%,
-            rgba(255, 255, 255, 0.4) 48%,
-            rgba(255, 255, 255, 0.2) 50%,
-            rgba(255, 255, 255, 0.3) 100%
-        ) !important;
-        border-color: rgba(255, 255, 255, 0.95) !important;
+        background: rgba(255, 255, 255, 0.08);
+        border-color: rgba(255, 255, 255, 0.15);
+        color: #FFFFFF;
+        transform: translateY(-1px);
         box-shadow: 
-            inset 0 1px 0 rgba(255, 255, 255, 0.95),
-            inset 0 12px 12px -4px rgba(255, 255, 255, 0.65),
-            inset 0 -8px 12px -6px rgba(0, 0, 0, 0.06),
-            0 12px 28px rgba(0, 0, 0, 0.07) !important;
-        transform: translateY(-1.5px);
+            inset 0 1px 0 rgba(255, 255, 255, 0.08),
+            0 8px 24px rgba(0, 0, 0, 0.25);
     }
 
     &:active {
         transform: translateY(0.5px);
-        box-shadow: 
-            inset 0 1px 0 rgba(255, 255, 255, 0.8),
-            inset 0 8px 8px -4px rgba(255, 255, 255, 0.4),
-            inset 0 4px 12px rgba(0, 0, 0, 0.06),
-            0 4px 12px rgba(0, 0, 0, 0.03) !important;
     }
 
     .google-icon {
-        width: 22px !important;
-        height: 22px !important;
-        transition: transform 0.3s ease !important;
-        margin: 0 !important;
+        width: 20px;
+        height: 20px;
+        transition: transform 0.3s ease;
     }
 
     &:hover .google-icon {
-        transform: scale(1.08) !important;
+        transform: scale(1.06);
+    }
+}
+
+// Signup footer navigation
+.card-footer {
+    text-align: center;
+    margin-top: 36px;
+    font-size: 0.9rem;
+    color: rgba(255, 255, 255, 0.4);
+    font-family: 'Inter', sans-serif;
+    width: 100%;
+
+    a {
+        color: #10B981;
+        text-decoration: none;
+        font-weight: 600;
+        transition: all 0.2s ease;
+        margin-left: 4px;
+        
+        &:hover {
+            color: #34D399;
+            text-shadow: 0 0 8px rgba(16, 185, 129, 0.35);
+        }
+    }
+}
+
+// Adaptive/Responsive Media Queries for total visual flexibility
+@media (max-width: 480px) {
+    .login-page-wrapper {
+        padding: 0;
+        background-color: #0A0A0C;
+    }
+
+    .main-login-container {
+        height: 100vh;
+        max-width: 100%;
+        gap: 0;
+        justify-content: space-between;
+    }
+
+    .top-nav-options {
+        padding: 24px 0;
+        background: linear-gradient(to bottom, #0A0A0C 60%, transparent);
+        z-index: 10;
+    }
+
+    .glassmorphic-card {
+        flex: 1;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        border-radius: 32px 32px 0 0 !important;
+        border-left: none !important;
+        border-right: none !important;
+        border-bottom: none !important;
+        padding: 40px 24px;
+        background: rgba(255, 255, 255, 0.02) !important;
+        box-shadow: 
+            0 -10px 40px rgba(0, 0, 0, 0.4),
+            inset 0 1px 0 rgba(255, 255, 255, 0.1) !important;
+    }
+
+    .header-content {
+        margin-bottom: 30px;
+        
+        .card-title {
+            font-size: 1.5rem;
+        }
+    }
+
+    .card-footer {
+        margin-top: auto;
+        padding-top: 24px;
     }
 }
