@@ -1,48 +1,82 @@
-<div class="login-card-container">
-    <mat-card class="modern-card">
-        <mat-card-header>
-            <div class="header-content">
-                <mat-card-title>Bienvenido de nuevo</mat-card-title>
-                <mat-card-subtitle>Ingresa tus credenciales para acceder</mat-card-subtitle>
-            </div>
-        </mat-card-header>
+<div class="login-page-wrapper">
+    <!-- Fluid background with organic green-magenta glow blobs -->
+    <div class="fluid-background-glow">
+        <div class="glow-blob glow-green"></div>
+        <div class="glow-blob glow-magenta"></div>
+    </div>
 
-        <mat-card-content>
-            <form [formGroup]="loginForm" (ngSubmit)="onSubmit()" class="login-form">
+    <!-- Main Container -->
+    <div class="main-login-container">
+        <!-- Top Navigation Options -->
+        <header class="top-nav-options">
+            <a class="nav-option">Explorar</a>
+            <a class="nav-option active">
+                <mat-icon class="active-icon">shopping_bag</mat-icon>
+                Comprar
+            </a>
+            <a class="nav-option">Recibir</a>
+        </header>
 
-                <mat-form-field appearance="outline" class="full-width">
-                    <mat-label>Correo electrónico</mat-label>
-                    <input matInput formControlName="email" type="email" placeholder="nombre@ejemplo.com">
-                    <mat-icon matPrefix>mail</mat-icon>
-                    @if (loginForm.get('email')?.hasError('email') && loginForm.get('email')?.touched) {
-                    <mat-error>Ingresa un correo válido</mat-error>
-                    }
-
-                    @if (loginForm.get('email')?.hasError('required') && loginForm.get('email')?.touched) {
-                    <mat-error>El correo es obligatorio</mat-error>
-                    }
-                </mat-form-field>
-
-                <mat-form-field appearance="outline" class="full-width">
-                    <mat-label>Contraseña</mat-label>
-                    <input matInput [type]="hidePassword ? 'password' : 'text'" formControlName="password">
-                    <mat-icon matPrefix>lock</mat-icon>
-                    <button mat-icon-button matSuffix (click)="hidePassword = !hidePassword" type="button">
-                        <mat-icon>{{hidePassword ? 'visibility_off' : 'visibility'}}</mat-icon>
-                    </button>
-                </mat-form-field>
-
-                <div class="form-options">
-                    <mat-checkbox color="primary">Recordarme</mat-checkbox>
-                    <a routerLink="/auth/forgot-password" class="forgot-password">¿Olvidaste tu contraseña?</a>
+        <!-- Glassmorphic Card Container -->
+        <mat-card class="glassmorphic-card">
+            <mat-card-header>
+                <div class="header-content">
+                    <h1 class="card-title">Tu súper, a otro nivel</h1>
+                    <p class="card-subtitle">Compra, ahorra y disfruta de la mejor calidad directamente en tu hogar</p>
                 </div>
+            </mat-card-header>
 
-                <button matButton="filled" class="login-button" [disabled]="loginForm.invalid">Iniciar Sesión</button>
-            </form>
-        </mat-card-content>
+            <mat-card-content>
+                <form [formGroup]="loginForm" (ngSubmit)="onSubmit()" class="login-form">
+                    
+                    <div class="input-glass-wrapper">
+                        <mat-icon class="input-icon">mail</mat-icon>
+                        <input type="email" formControlName="email" placeholder="Correo electrónico" required autocomplete="email">
+                    </div>
+                    @if (loginForm.get('email')?.hasError('email') && loginForm.get('email')?.touched) {
+                        <span class="error-text">Ingresa un correo válido</span>
+                    }
+                    @if (loginForm.get('email')?.hasError('required') && loginForm.get('email')?.touched) {
+                        <span class="error-text">El correo es obligatorio</span>
+                    }
 
-        <mat-card-footer class="card-footer">
-            <p>¿No tienes cuenta? <a routerLink="/auth/sign-in">Regístrate aquí</a></p>
-        </mat-card-footer>
-    </mat-card>
+                    <div class="input-glass-wrapper">
+                        <mat-icon class="input-icon">lock</mat-icon>
+                        <input [type]="hidePassword ? 'password' : 'text'" formControlName="password" placeholder="Contraseña" required autocomplete="current-password">
+                        <button type="button" class="visibility-toggle" (click)="hidePassword = !hidePassword">
+                            <mat-icon>{{hidePassword ? 'visibility_off' : 'visibility'}}</mat-icon>
+                        </button>
+                    </div>
+                    @if (loginForm.get('password')?.hasError('required') && loginForm.get('password')?.touched) {
+                        <span class="error-text">La contraseña es obligatoria</span>
+                    }
+
+                    <div class="form-options">
+                        <label class="remember-me">
+                            <input type="checkbox">
+                            <span class="checkbox-label">Recordarme</span>
+                        </label>
+                        <a routerLink="/auth/forgot-password" class="forgot-password">¿Olvidaste tu contraseña?</a>
+                    </div>
+
+                    <button type="submit" class="primary-emerald-button" [disabled]="loginForm.invalid">
+                        Iniciar Sesión
+                    </button>
+
+                    <div class="divider">
+                        <span class="divider-text">O continúa con</span>
+                    </div>
+
+                    <button type="button" class="google-glass-button" (click)="loginWithGoogle()">
+                        <img src="https://fonts.gstatic.com/s/i/productlogos/googleg/v6/24px.svg" alt="Google" class="google-icon">
+                        Continuar con Google
+                    </button>
+                </form>
+            </mat-card-content>
+
+            <mat-card-footer class="card-footer">
+                <p>¿No tienes cuenta? <a routerLink="/auth/sign-in">Regístrate aquí</a></p>
+            </mat-card-footer>
+        </mat-card>
+    </div>
 </div>

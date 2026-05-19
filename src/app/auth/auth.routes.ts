@@ -20,6 +20,10 @@ export const AUTH_ROUTES: Routes = [
         path: 'reset-password',
         loadComponent: () => import('./reset-password/reset-password').then(m => m.ResetPassword)
       },
+      {
+        path: 'social-callback',
+        loadComponent: () => import('./social-callback/social-callback').then(m => m.SocialCallback)
+      },
       { path: '', redirectTo: 'login', pathMatch: 'full' }
     ]
   }
