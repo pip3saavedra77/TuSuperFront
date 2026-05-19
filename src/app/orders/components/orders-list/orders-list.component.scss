@@ -226,4 +226,36 @@ mat-paginator {
     background: transparent;
     color: #1a1c1e !important;
   }
+
+  .pos-tab-group {
+    .mat-mdc-tab-header {
+      border-bottom: 1px solid #f1f3f5;
+      margin-bottom: 24px;
+    }
+
+    .mat-mdc-tab {
+      color: #74777f;
+      font-weight: 600;
+      font-size: 0.95rem;
+      letter-spacing: 0.3px;
+      padding: 0 24px;
+
+      &:hover {
+        color: #1a1c1e;
+      }
+
+      &.mdc-tab--active {
+        color: var(--profile-primary, #00a651) !important;
+        .mdc-tab__text-label {
+          color: var(--profile-primary, #00a651) !important;
+        }
+      }
+    }
+
+    .mdc-tab-indicator__content--underline {
+      border-color: var(--profile-primary, #00a651) !important;
+      border-top-width: 3px !important;
+      border-radius: 3px 3px 0 0;
+    }
+  }
 }
