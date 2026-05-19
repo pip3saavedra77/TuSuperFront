@@ -22,6 +22,7 @@ import { MatIconModule } from '@angular/material/icon';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { MatDialog, MatDialogModule } from '@angular/material/dialog';
 import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
+import { MatTabsModule } from '@angular/material/tabs';
 import { provideNativeDateAdapter } from '@angular/material/core';
 
 import { OrdersService } from '../../services/orders.service';
@@ -38,6 +39,11 @@ import {
   ChangeStatusDialogData,
 } from './change-status-dialog.component';
 import { AuthService } from '../../../core/services/auth';
+
+export interface TabOption {
+  label: string;
+  status: OrderStatus | '';
+}
 
 @Component({
   selector: 'app-orders-list',
@@ -58,6 +64,7 @@ import { AuthService } from '../../../core/services/auth';
     MatProgressSpinnerModule,
     MatDialogModule,
     MatSnackBarModule,
+    MatTabsModule,
   ],
   providers: [provideNativeDateAdapter()],
   templateUrl: './orders-list.component.html',
@@ -80,11 +87,22 @@ export class OrdersListComponent implements OnInit {
   filterStartDate: string = '';
   filterEndDate: string = '';
 
+  readonly tabOptions: TabOption[] = [
+    { label: 'Todos', status: '' },
+    { label: 'Pendientes', status: OrderStatus.PENDING },
+    { label: 'Preparando', status: OrderStatus.PREPARING },
+    { label: 'Listos para despacho', status: OrderStatus.READY_FOR_DISPATCH },
+    { label: 'Despachados', status: OrderStatus.DISPATCHED },
+    { label: 'Entregados', status: OrderStatus.DELIVERED },
+    { label: 'Cancelados', status: OrderStatus.CANCELLED },
+  ];
+
+  selectedTabIndex = 0;
+
   readonly displayedColumns: string[] = [
     'id',
     'customer',
     'totalAmount',
-    'status',
     'createdAt',
     'actions',
   ];
@@ -137,9 +155,16 @@ export class OrdersListComponent implements OnInit {
   }
 
   onClearFilters(): void {
-    this.filterStatus = '';
+    this.filterStatus = this.tabOptions[this.selectedTabIndex].status;
     this.filterStartDate = '';
     this.filterEndDate = '';
+    this.currentOffset.set(0);
+    this.loadOrders();
+  }
+
+  onTabChange(index: number): void {
+    this.selectedTabIndex = index;
+    this.filterStatus = this.tabOptions[index].status;
     this.currentOffset.set(0);
     this.loadOrders();
   }
