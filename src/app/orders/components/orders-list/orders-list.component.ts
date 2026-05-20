@@ -5,10 +5,10 @@ import {
   inject,
   signal,
 } from '@angular/core';
-import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
+import { takeUntilDestroyed, toObservable } from '@angular/core/rxjs-interop';
 import { CommonModule, CurrencyPipe, DatePipe } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { finalize } from 'rxjs';
+import { debounceTime, distinctUntilChanged, finalize } from 'rxjs';
 import { HttpErrorResponse } from '@angular/common/http';
 
 import { MatTableModule } from '@angular/material/table';
@@ -20,9 +20,11 @@ import { MatInputModule } from '@angular/material/input';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
-import { MatDialog, MatDialogModule } from '@angular/material/dialog';
+import { MatDialogModule } from '@angular/material/dialog';
 import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
 import { MatTabsModule } from '@angular/material/tabs';
+import { MatMenuModule } from '@angular/material/menu';
+import { MatChipsModule } from '@angular/material/chips';
 import { provideNativeDateAdapter } from '@angular/material/core';
 
 import { OrdersService } from '../../services/orders.service';
@@ -34,10 +36,6 @@ import {
   getValidTransitions,
   isTerminalStatus,
 } from '../../../core/models/order.model';
-import {
-  ChangeStatusDialogComponent,
-  ChangeStatusDialogData,
-} from './change-status-dialog.component';
 import { AuthService } from '../../../core/services/auth';
 
 export interface TabOption {
@@ -65,6 +63,8 @@ export interface TabOption {
     MatDialogModule,
     MatSnackBarModule,
     MatTabsModule,
+    MatMenuModule,
+    MatChipsModule,
   ],
   providers: [provideNativeDateAdapter()],
   templateUrl: './orders-list.component.html',
@@ -73,7 +73,6 @@ export interface TabOption {
 export class OrdersListComponent implements OnInit {
   private readonly ordersService = inject(OrdersService);
   public readonly auth = inject(AuthService);
-  private readonly dialog = inject(MatDialog);
   private readonly snackBar = inject(MatSnackBar);
   private readonly destroyRef = inject(DestroyRef);
 
@@ -82,6 +81,12 @@ export class OrdersListComponent implements OnInit {
   readonly loading = signal<boolean>(false);
   readonly currentLimit = signal<number>(10);
   readonly currentOffset = signal<number>(0);
+
+  // ── Search & Side Drawer State ──────────────────────
+  readonly searchQuery = signal<string>('');
+  readonly selectedOrder = signal<Order | null>(null);
+  readonly drawerOpen = signal<boolean>(false);
+  readonly updatingStatus = signal<boolean>(false);
 
   filterStatus: OrderStatus | '' = '';
   filterStartDate: string = '';
@@ -102,13 +107,27 @@ export class OrdersListComponent implements OnInit {
   readonly displayedColumns: string[] = [
     'id',
     'customer',
-    'totalAmount',
     'createdAt',
+    'totalAmount',
+    'status',
     'actions',
   ];
 
   readonly statusOptions = Object.values(OrderStatus);
   readonly statusLabels = ORDER_STATUS_LABELS;
+
+  constructor() {
+    toObservable(this.searchQuery)
+      .pipe(
+        debounceTime(300),
+        distinctUntilChanged(),
+        takeUntilDestroyed(this.destroyRef),
+      )
+      .subscribe(() => {
+        this.currentOffset.set(0);
+        this.loadOrders();
+      });
+  }
 
   ngOnInit(): void {
     this.loadOrders();
@@ -132,6 +151,11 @@ export class OrdersListComponent implements OnInit {
       filters.endDate = this.filterEndDate;
     }
 
+    const query = this.searchQuery().trim();
+    if (query) {
+      filters.search = query;
+    }
+
     this.ordersService
       .getAllOrders(filters)
       .pipe(
@@ -149,9 +173,13 @@ export class OrdersListComponent implements OnInit {
       });
   }
 
-  onSearch(): void {
-    this.currentOffset.set(0);
-    this.loadOrders();
+  onSearchInput(event: Event): void {
+    const input = event.target as HTMLInputElement;
+    this.searchQuery.set(input.value);
+  }
+
+  clearSearch(): void {
+    this.searchQuery.set('');
   }
 
   onClearFilters(): void {
@@ -183,44 +211,46 @@ export class OrdersListComponent implements OnInit {
     return ORDER_STATUS_LABELS[status];
   }
 
-  openChangeStatusDialog(order: Order): void {
-    const dialogData: ChangeStatusDialogData = {
-      orderId: order.id,
-      currentStatus: order.status,
-      validTransitions: Object.values(OrderStatus).filter(
-        (s) => s !== order.status
-      ),
-    };
-
-    const dialogRef = this.dialog.open(ChangeStatusDialogComponent, {
-      width: '400px',
-      data: dialogData,
-    });
-
-    dialogRef
-      .afterClosed()
-      .pipe(takeUntilDestroyed(this.destroyRef))
-      .subscribe((newStatus: OrderStatus | undefined) => {
-        if (newStatus) {
-          this.executeStatusChange(order.id, newStatus);
-        }
-      });
+  getTransitions(status: OrderStatus): readonly OrderStatus[] {
+    return getValidTransitions(status);
   }
 
-  private executeStatusChange(orderId: number, newStatus: OrderStatus): void {
-    this.loading.set(true);
+  viewDetails(order: Order): void {
+    this.selectedOrder.set(order);
+    this.drawerOpen.set(true);
+  }
+
+  closeDrawer(): void {
+    this.drawerOpen.set(false);
+  }
+
+  cancelOrder(order: Order): void {
+    if (confirm(`¿Estás seguro de que deseas cancelar el pedido #${order.id}?`)) {
+      this.executeStatusChange(order.id, OrderStatus.CANCELLED);
+    }
+  }
+
+  executeStatusChange(orderId: number, newStatus: OrderStatus): void {
+    this.updatingStatus.set(true);
 
     this.ordersService
       .updateOrderStatus(orderId, newStatus)
       .pipe(
-        finalize(() => this.loading.set(false)),
+        finalize(() => this.updatingStatus.set(false)),
         takeUntilDestroyed(this.destroyRef),
       )
       .subscribe({
-        next: () => {
+        next: (updatedOrder) => {
           this.snackBar.open('Estado actualizado correctamente', 'Cerrar', {
             duration: 3000,
           });
+
+          // Sincronizar selectedOrder en caliente
+          const current = this.selectedOrder();
+          if (current && current.id === orderId) {
+            this.selectedOrder.set({ ...current, status: newStatus });
+          }
+
           this.loadOrders();
         },
         error: (err: HttpErrorResponse) => {
