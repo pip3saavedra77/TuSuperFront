@@ -71,7 +71,7 @@
                   </div>
                   @for (item of order.items; track item.id) {
                     <div class="order-card__item-row">
-                      <span>#{{ item.productId }}</span>
+                      <span>{{ item.product?.name || 'Producto #' + item.productId }}</span>
                       <span>{{ item.quantity }}</span>
                       <span>{{ item.unitPrice | currency:'COP':'symbol-narrow':'1.0-0' }}</span>
                       <span>{{ item.subTotal | currency:'COP':'symbol-narrow':'1.0-0' }}</span>

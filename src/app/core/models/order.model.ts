@@ -1,4 +1,5 @@
 import { User } from './auth.models';
+import { Product } from './product.model';
 
 export enum OrderStatus {
   PENDING = 'PENDING',
@@ -15,6 +16,7 @@ export interface OrderItem {
   quantity: number;
   unitPrice: number;
   subTotal: number;
+  product?: Product;
 }
 
 export interface Order {
