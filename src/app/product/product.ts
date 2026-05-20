@@ -5,10 +5,10 @@ import {
   inject,
   signal,
 } from '@angular/core';
-import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
+import { takeUntilDestroyed, toObservable } from '@angular/core/rxjs-interop';
 import { CommonModule, CurrencyPipe } from '@angular/common';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
-import { Subject, debounceTime, distinctUntilChanged, finalize, forkJoin } from 'rxjs';
+import { debounceTime, distinctUntilChanged, finalize, forkJoin } from 'rxjs';
 import { HttpErrorResponse } from '@angular/common/http';
 
 import { MatTableModule } from '@angular/material/table';
@@ -89,8 +89,7 @@ export class Product implements OnInit {
   readonly selectedCategoryId = signal<number | 'todos'>('todos');
 
   // ── Search ───────────────────────────────────────────
-  searchTerm = '';
-  private readonly searchSubject = new Subject<string>();
+  readonly searchQuery = signal<string>('');
 
   // ── Table config ─────────────────────────────────────
   readonly displayedColumns: string[] = [
@@ -114,7 +113,7 @@ export class Product implements OnInit {
   });
 
   constructor() {
-    this.searchSubject
+    toObservable(this.searchQuery)
       .pipe(
         debounceTime(300),
         distinctUntilChanged(),
@@ -141,8 +140,9 @@ export class Product implements OnInit {
       offset: this.currentOffset(),
     };
 
-    if (this.searchTerm.trim()) {
-      filters.search = this.searchTerm.trim();
+    const query = this.searchQuery().trim();
+    if (query) {
+      filters.search = query;
     }
 
     const catId = this.selectedCategoryId();
@@ -192,8 +192,11 @@ export class Product implements OnInit {
 
   onSearchInput(event: Event): void {
     const input = event.target as HTMLInputElement;
-    this.searchTerm = input.value;
-    this.searchSubject.next(this.searchTerm);
+    this.searchQuery.set(input.value);
+  }
+
+  clearSearch(): void {
+    this.searchQuery.set('');
   }
 
   onCategoryChange(value: number | 'todos'): void {

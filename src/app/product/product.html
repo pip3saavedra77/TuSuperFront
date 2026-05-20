@@ -10,12 +10,17 @@
     <div class="inventory-toolbar__right">
       <mat-form-field appearance="outline" class="search-field">
         <mat-label>Buscar producto por nombre</mat-label>
+        <mat-icon matPrefix>search</mat-icon>
         <input
           matInput
-          [value]="searchTerm"
+          [value]="searchQuery()"
           (input)="onSearchInput($event)"
           placeholder="Escribe para buscar..." />
-        <mat-icon matSuffix>search</mat-icon>
+        @if (searchQuery()) {
+          <button mat-icon-button matSuffix (click)="clearSearch()" aria-label="Limpiar búsqueda">
+            <mat-icon>close</mat-icon>
+          </button>
+        }
       </mat-form-field>
 
       @if (auth.hasManagementPrivileges()) {
