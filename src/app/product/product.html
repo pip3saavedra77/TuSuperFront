@@ -1,27 +1,30 @@
 <div class="product-container">
 
-  <!-- HEADER -->
-  <div class="page-header">
-    <h2 class="page-title">Gestión de Productos</h2>
-    @if (auth.hasManagementPrivileges()) {
-      <button mat-flat-button class="add-btn" (click)="onAdd()">
-        <mat-icon>add</mat-icon>
-        Nuevo Producto
-      </button>
-    }
-  </div>
+  <!-- BARRA DE HERRAMIENTAS SUPERIOR -->
+  <div class="inventory-toolbar">
+    <div class="inventory-toolbar__left">
+      <h2 class="inventory-toolbar__title">Gestión de Inventario</h2>
+      <p class="inventory-toolbar__subtitle">Administra los productos del catálogo y los niveles de existencias.</p>
+    </div>
 
-  <!-- BÚSQUEDA -->
-  <div class="search-panel">
-    <mat-form-field appearance="outline" class="search-field">
-      <mat-label>Buscar por nombre</mat-label>
-      <input
-        matInput
-        [value]="searchTerm"
-        (input)="onSearchInput($event)"
-        placeholder="Escribe para buscar..." />
-      <mat-icon matSuffix>search</mat-icon>
-    </mat-form-field>
+    <div class="inventory-toolbar__right">
+      <mat-form-field appearance="outline" class="search-field">
+        <mat-label>Buscar producto por nombre</mat-label>
+        <input
+          matInput
+          [value]="searchTerm"
+          (input)="onSearchInput($event)"
+          placeholder="Escribe para buscar..." />
+        <mat-icon matSuffix>search</mat-icon>
+      </mat-form-field>
+
+      @if (auth.hasManagementPrivileges()) {
+        <button mat-flat-button class="add-btn" (click)="onAdd()">
+          <mat-icon>add</mat-icon>
+          Añadir Producto
+        </button>
+      }
+    </div>
   </div>
 
   <!-- LOADING -->
@@ -30,14 +33,14 @@
       <mat-spinner diameter="48"></mat-spinner>
     </div>
   } @else {
-    <!-- TABLA -->
+    <!-- TABLA DE PRODUCTOS -->
     <div class="table-container">
       <table mat-table [dataSource]="products()" class="products-table">
 
         <!-- Imagen -->
         <ng-container matColumnDef="image">
-          <th mat-header-cell *matHeaderCellDef>Imagen</th>
-          <td mat-cell *matCellDef="let product">
+          <th mat-header-cell *matHeaderCellDef class="col-image">Imagen</th>
+          <td mat-cell *matCellDef="let product" class="col-image">
             @if (product.imageUrl) {
               <img [src]="product.imageUrl"
                    [alt]="product.name"
@@ -52,54 +55,50 @@
 
         <!-- Nombre -->
         <ng-container matColumnDef="name">
-          <th mat-header-cell *matHeaderCellDef>Nombre</th>
-          <td mat-cell *matCellDef="let product">{{ product.name }}</td>
+          <th mat-header-cell *matHeaderCellDef class="col-name">Nombre</th>
+          <td mat-cell *matCellDef="let product" class="col-name">{{ product.name }}</td>
         </ng-container>
 
         <!-- Precio -->
         <ng-container matColumnDef="price">
-          <th mat-header-cell *matHeaderCellDef>Precio</th>
-          <td mat-cell *matCellDef="let product" class="price-cell">
+          <th mat-header-cell *matHeaderCellDef class="col-price">Precio</th>
+          <td mat-cell *matCellDef="let product" class="price-cell col-price">
             {{ product.price | currency:'COP':'symbol-narrow':'1.0-0' }}
           </td>
         </ng-container>
 
         <!-- Stock -->
         <ng-container matColumnDef="stock">
-          <th mat-header-cell *matHeaderCellDef>Stock</th>
-          <td mat-cell *matCellDef="let product">
-            <span class="stock-badge"
-                  [class.stock-ok]="product.stock > 10"
-                  [class.stock-low]="product.stock > 0 && product.stock <= 10"
-                  [class.stock-out]="product.stock === 0">
-              {{ product.stock }}
-            </span>
+          <th mat-header-cell *matHeaderCellDef class="col-stock">Stock</th>
+          <td mat-cell *matCellDef="let product" class="col-stock">
+            <mat-chip-set>
+              <mat-chip [ngClass]="{
+                'stock-chip--ok': product.stock > 20,
+                'stock-chip--low': product.stock > 0 && product.stock <= 20,
+                'stock-chip--empty': product.stock === 0
+              }" class="stock-chip">
+                {{ product.stock }} uds.
+              </mat-chip>
+            </mat-chip-set>
           </td>
         </ng-container>
 
         <!-- Categoría -->
         <ng-container matColumnDef="category">
-          <th mat-header-cell *matHeaderCellDef>Categoría</th>
-          <td mat-cell *matCellDef="let product">
+          <th mat-header-cell *matHeaderCellDef class="col-category">Categoría</th>
+          <td mat-cell *matCellDef="let product" class="col-category">
             <span class="category-badge">{{ product.category?.name }}</span>
           </td>
         </ng-container>
 
-        <!-- Acciones -->
+        <!-- Acciones (Menú de tres puntos) -->
         <ng-container matColumnDef="actions">
-          <th mat-header-cell *matHeaderCellDef>Acciones</th>
-          <td mat-cell *matCellDef="let product">
+          <th mat-header-cell *matHeaderCellDef class="col-actions"></th>
+          <td mat-cell *matCellDef="let product" class="col-actions">
             @if (auth.hasManagementPrivileges()) {
-              <div class="action-buttons">
-                <button mat-icon-button class="edit-btn"
-                        (click)="onEdit(product)" title="Editar">
-                  <mat-icon>edit</mat-icon>
-                </button>
-                <button mat-icon-button class="delete-btn"
-                        (click)="onDelete(product)" title="Eliminar">
-                  <mat-icon>delete</mat-icon>
-                </button>
-              </div>
+              <button mat-icon-button [matMenuTriggerFor]="actionsMenu" [matMenuTriggerData]="{ product: product }" class="btn-more-actions">
+                <mat-icon>more_vert</mat-icon>
+              </button>
             }
           </td>
         </ng-container>
@@ -111,7 +110,7 @@
         <!-- Empty state -->
         <tr class="mat-row no-data-row" *matNoDataRow>
           <td class="mat-cell no-data-cell" [attr.colspan]="displayedColumns.length">
-            No se encontraron productos
+            No se encontraron productos en el inventario.
           </td>
         </tr>
       </table>
@@ -126,4 +125,124 @@
       </mat-paginator>
     </div>
   }
+
+  <!-- MENÚ CONTEXTUAL DE ACCIONES -->
+  <mat-menu #actionsMenu="matMenu" xPosition="before" class="actions-dropdown-menu">
+    <ng-template matMenuContent let-product="product">
+      <button mat-menu-item (click)="onEdit(product)">
+        <mat-icon class="menu-icon-edit">edit</mat-icon>
+        <span>Editar Producto</span>
+      </button>
+      <button mat-menu-item (click)="onDelete(product)" class="menu-delete-item">
+        <mat-icon class="menu-icon-delete">delete</mat-icon>
+        <span>Eliminar de Almacén</span>
+      </button>
+    </ng-template>
+  </mat-menu>
+
+  <!-- SIDE DRAWER CONTEXTUAL (PANEL LATERAL) -->
+  <div class="drawer-backdrop" [class.open]="drawerOpen()" (click)="closeDrawer()"></div>
+  <div class="side-drawer" [class.open]="drawerOpen()">
+    <div class="drawer-header">
+      <h2>{{ editingProduct() ? 'Editar Producto' : 'Añadir Producto' }}</h2>
+      <button mat-icon-button (click)="closeDrawer()" class="btn-close-drawer">
+        <mat-icon>close</mat-icon>
+      </button>
+    </div>
+
+    <div class="drawer-body">
+      @if (loadingFormSelects()) {
+        <div class="drawer-loading">
+          <mat-spinner diameter="36"></mat-spinner>
+          <span>Cargando datos maestros...</span>
+        </div>
+      } @else {
+        <form [formGroup]="form" (ngSubmit)="submitForm()" class="product-form">
+          <mat-form-field appearance="outline" class="full-width">
+            <mat-label>Nombre del Producto</mat-label>
+            <input matInput formControlName="name" placeholder="Ej: Leche entera 1L" />
+            @if (form.controls.name.hasError('required')) {
+              <mat-error>El nombre es obligatorio</mat-error>
+            }
+            @if (form.controls.name.hasError('maxlength')) {
+              <mat-error>Máximo 255 caracteres</mat-error>
+            }
+          </mat-form-field>
+
+          <mat-form-field appearance="outline" class="full-width">
+            <mat-label>Descripción</mat-label>
+            <textarea matInput formControlName="description" rows="3"
+                      placeholder="Especificaciones o descripción adicional..."></textarea>
+          </mat-form-field>
+
+          <div class="form-row">
+            <mat-form-field appearance="outline" class="half-width">
+              <mat-label>Precio (COP)</mat-label>
+              <span matTextPrefix>$&nbsp;</span>
+              <input matInput type="number" formControlName="price" placeholder="0" />
+              @if (form.controls.price.hasError('required')) {
+                <mat-error>El precio es obligatorio</mat-error>
+              }
+              @if (form.controls.price.hasError('min')) {
+                <mat-error>Debe ser mayor a 0</mat-error>
+              }
+            </mat-form-field>
+
+            <mat-form-field appearance="outline" class="half-width">
+              <mat-label>Stock</mat-label>
+              <input matInput type="number" formControlName="stock" placeholder="0" />
+              @if (form.controls.stock.hasError('required')) {
+                <mat-error>El stock es obligatorio</mat-error>
+              }
+              @if (form.controls.stock.hasError('min')) {
+                <mat-error>No puede ser negativo</mat-error>
+              }
+            </mat-form-field>
+          </div>
+
+          <div class="form-row">
+            <mat-form-field appearance="outline" class="half-width">
+              <mat-label>Categoría</mat-label>
+              <mat-select formControlName="categoryId">
+                @for (cat of categories(); track cat.id) {
+                  <mat-option [value]="cat.id">{{ cat.name }}</mat-option>
+                }
+              </mat-select>
+              @if (form.controls.categoryId.hasError('required')) {
+                <mat-error>Selecciona una categoría</mat-error>
+              }
+            </mat-form-field>
+
+            <mat-form-field appearance="outline" class="half-width">
+              <mat-label>Proveedor</mat-label>
+              <mat-select formControlName="providerId">
+                @for (prov of providers(); track prov.id) {
+                  <mat-option [value]="prov.id">{{ prov.name }}</mat-option>
+                }
+              </mat-select>
+              @if (form.controls.providerId.hasError('required')) {
+                <mat-error>Selecciona un proveedor</mat-error>
+              }
+            </mat-form-field>
+          </div>
+
+          <div class="slide-toggle-row">
+            <mat-slide-toggle formControlName="isActive" color="primary">
+              Producto disponible y activo
+            </mat-slide-toggle>
+          </div>
+
+          <div class="drawer-actions">
+            <button mat-button type="button" (click)="closeDrawer()" class="btn-cancel">
+              Cancelar
+            </button>
+            <button mat-flat-button type="submit" [disabled]="form.invalid || loading()" class="btn-submit">
+              {{ editingProduct() ? 'Actualizar' : 'Crear' }}
+            </button>
+          </div>
+        </form>
+      }
+    </div>
+  </div>
+
 </div>
