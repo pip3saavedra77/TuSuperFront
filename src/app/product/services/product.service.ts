@@ -28,6 +28,10 @@ export class ProductService {
     return this.http.get<Product>(`${this.API_URL}/${id}`);
   }
 
+  getProductByBarcode(barcode: string): Observable<Product> {
+    return this.http.get<Product>(`${this.API_URL}/barcode/${barcode}`);
+  }
+
   create(payload: CreateProductPayload): Observable<Product> {
     return this.http.post<Product>(this.API_URL, payload);
   }

@@ -8,20 +8,30 @@
     </div>
 
     <div class="inventory-toolbar__right">
-      <mat-form-field appearance="outline" class="search-field">
-        <mat-label>Buscar producto por nombre</mat-label>
-        <mat-icon matPrefix>search</mat-icon>
+      <div class="scanner-wrapper">
+        <mat-icon class="scanner-icon">search</mat-icon>
         <input
-          matInput
+          #searchInput
+          type="text"
+          class="glass-input"
           [value]="searchQuery()"
           (input)="onSearchInput($event)"
-          placeholder="Escribe para buscar..." />
-        @if (searchQuery()) {
-          <button mat-icon-button matSuffix (click)="clearSearch()" aria-label="Limpiar búsqueda">
+          placeholder="Buscar por nombre o código de barras..."
+          (keyup.enter)="onSmartSearch(searchInput.value)"
+          [disabled]="loading() || isSearching()" />
+        @if (searchQuery() || searchInput.value) {
+          <button mat-icon-button class="clear-btn" (click)="clearSearch(searchInput)" aria-label="Limpiar búsqueda">
             <mat-icon>close</mat-icon>
           </button>
         }
-      </mat-form-field>
+        @if (isSearching()) {
+          <mat-spinner diameter="20" class="scanner-spinner"></mat-spinner>
+        }
+      </div>
+
+      <button mat-flat-button class="search-btn" (click)="onSmartSearch(searchInput.value)" [disabled]="loading() || isSearching()">
+        Buscar
+      </button>
 
       @if (auth.hasManagementPrivileges()) {
         <button mat-flat-button class="add-btn" (click)="onAdd()">
@@ -176,6 +186,12 @@
         </div>
       } @else {
         <form [formGroup]="form" (ngSubmit)="submitForm()" class="product-form">
+          <mat-form-field appearance="outline" class="full-width">
+            <mat-label>Código de Barras</mat-label>
+            <input matInput formControlName="barcode" placeholder="Ej: 7701234567890" />
+            <mat-icon matSuffix>qr_code</mat-icon>
+          </mat-form-field>
+
           <mat-form-field appearance="outline" class="full-width">
             <mat-label>Nombre del Producto</mat-label>
             <input matInput formControlName="name" placeholder="Ej: Leche entera 1L" />
