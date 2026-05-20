@@ -14,6 +14,7 @@ import { MatSelectModule } from '@angular/material/select';
 import { MatButtonModule } from '@angular/material/button';
 import { MatSlideToggleModule } from '@angular/material/slide-toggle';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
+import { MatIconModule } from '@angular/material/icon';
 
 import { ProductService } from '../services/product.service';
 import {
@@ -26,6 +27,7 @@ import {
 
 export interface ProductFormDialogData {
   product?: Product;
+  barcode?: string;
 }
 
 @Component({
@@ -41,6 +43,7 @@ export interface ProductFormDialogData {
     MatButtonModule,
     MatSlideToggleModule,
     MatProgressSpinnerModule,
+    MatIconModule,
   ],
   template: `
     <h2 mat-dialog-title class="dialog-title">
@@ -55,6 +58,12 @@ export interface ProductFormDialogData {
         </div>
       } @else {
         <form [formGroup]="form" class="product-form">
+          <mat-form-field appearance="outline" class="full-width">
+            <mat-label>Código de Barras</mat-label>
+            <input matInput formControlName="barcode" placeholder="Ej: 7701234567890" />
+            <mat-icon matSuffix>qr_code</mat-icon>
+          </mat-form-field>
+
           <mat-form-field appearance="outline" class="full-width">
             <mat-label>Nombre</mat-label>
             <input matInput formControlName="name" placeholder="Ej: Leche entera 1L" />
@@ -213,6 +222,7 @@ export class ProductFormDialogComponent implements OnInit {
     categoryId:  [0, [Validators.required, Validators.min(1)]],
     providerId:  [0, [Validators.required, Validators.min(1)]],
     isActive:    [true],
+    barcode:     [''],
   });
 
   ngOnInit(): void {
@@ -228,6 +238,11 @@ export class ProductFormDialogComponent implements OnInit {
         categoryId: p.category.id,
         providerId: p.provider.id,
         isActive: p.isActive,
+        barcode: p.barcode ?? '',
+      });
+    } else if (this.data.barcode) {
+      this.form.patchValue({
+        barcode: this.data.barcode,
       });
     }
   }
@@ -238,7 +253,10 @@ export class ProductFormDialogComponent implements OnInit {
     const raw = this.form.getRawValue();
 
     if (this.isEditMode) {
-      const payload: UpdateProductPayload = { ...raw };
+      const payload: UpdateProductPayload = {
+        ...raw,
+        barcode: raw.barcode || null,
+      };
       this.dialogRef.close(payload);
     } else {
       const payload: CreateProductPayload = {
@@ -249,6 +267,7 @@ export class ProductFormDialogComponent implements OnInit {
         isActive: raw.isActive,
         categoryId: raw.categoryId,
         providerId: raw.providerId,
+        barcode: raw.barcode || null,
       };
       this.dialogRef.close(payload);
     }

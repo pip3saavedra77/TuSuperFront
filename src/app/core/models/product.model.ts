@@ -23,6 +23,7 @@ export interface Product {
   updatedAt: string;
   category: Category;
   provider: ProductProvider;
+  barcode: string | null;
 }
 
 export interface CreateProductPayload {
@@ -33,6 +34,7 @@ export interface CreateProductPayload {
   isActive: boolean;
   categoryId: number;
   providerId: number;
+  barcode?: string | null;
 }
 
 export type UpdateProductPayload = Partial<CreateProductPayload>;

@@ -4,6 +4,8 @@ import {
   OnInit,
   inject,
   signal,
+  ElementRef,
+  ViewChild,
 } from '@angular/core';
 import { takeUntilDestroyed, toObservable } from '@angular/core/rxjs-interop';
 import { CommonModule, CurrencyPipe } from '@angular/common';
@@ -73,12 +75,15 @@ export class Product implements OnInit {
   private readonly destroyRef = inject(DestroyRef);
   private readonly fb = inject(FormBuilder);
 
+  @ViewChild('searchInput') searchInput?: ElementRef<HTMLInputElement>;
+
   // ── State (Signals) ──────────────────────────────────
   readonly products = signal<ProductModel[]>([]);
   readonly totalProducts = signal<number>(0);
   readonly loading = signal<boolean>(false);
   readonly currentLimit = signal<number>(10);
   readonly currentOffset = signal<number>(0);
+  readonly isSearching = signal<boolean>(false);
 
   // ── Drawer & Form State ─────────────────────────────
   readonly drawerOpen = signal<boolean>(false);
@@ -110,20 +115,10 @@ export class Product implements OnInit {
     categoryId:  [0, [Validators.required, Validators.min(1)]],
     providerId:  [0, [Validators.required, Validators.min(1)]],
     isActive:    [true],
+    barcode:     [''],
   });
 
-  constructor() {
-    toObservable(this.searchQuery)
-      .pipe(
-        debounceTime(300),
-        distinctUntilChanged(),
-        takeUntilDestroyed(this.destroyRef),
-      )
-      .subscribe(() => {
-        this.currentOffset.set(0);
-        this.loadProducts();
-      });
-  }
+  constructor() {}
 
   ngOnInit(): void {
     this.loadProducts();
@@ -195,8 +190,14 @@ export class Product implements OnInit {
     this.searchQuery.set(input.value);
   }
 
-  clearSearch(): void {
+  clearSearch(input?: HTMLInputElement): void {
     this.searchQuery.set('');
+    if (input) {
+      input.value = '';
+    }
+    this.currentOffset.set(0);
+    this.loadProducts();
+    this.focusSearchInput();
   }
 
   onCategoryChange(value: number | 'todos'): void {
@@ -211,16 +212,17 @@ export class Product implements OnInit {
     this.loadProducts();
   }
 
-  onAdd(): void {
+  onAdd(prefill?: { barcode?: string; name?: string }): void {
     this.editingProduct.set(null);
     this.form.reset({
-      name: '',
+      name: prefill?.name || '',
       description: '',
       price: 0,
       stock: 0,
       categoryId: 0,
       providerId: 0,
       isActive: true,
+      barcode: prefill?.barcode || '',
     });
     this.drawerOpen.set(true);
   }
@@ -235,6 +237,7 @@ export class Product implements OnInit {
       categoryId: product.category.id,
       providerId: product.provider.id,
       isActive: product.isActive,
+      barcode: product.barcode ?? '',
     });
     this.drawerOpen.set(true);
   }
@@ -243,6 +246,99 @@ export class Product implements OnInit {
     this.drawerOpen.set(false);
     this.editingProduct.set(null);
     this.form.reset();
+    this.focusSearchInput();
+  }
+
+  onSmartSearch(query: string): void {
+    const cleaned = query.trim();
+    if (!cleaned) {
+      this.clearSearch();
+      return;
+    }
+
+    this.isSearching.set(true);
+
+    const isCodeLike = !cleaned.includes(' ') && (/^\d+$/.test(cleaned) || /^[a-zA-Z0-9-]{5,50}$/.test(cleaned));
+
+    if (isCodeLike) {
+      this.productService
+        .getProductByBarcode(cleaned)
+        .pipe(
+          finalize(() => {
+            this.isSearching.set(false);
+            this.focusSearchInput();
+          }),
+          takeUntilDestroyed(this.destroyRef)
+        )
+        .subscribe({
+          next: (product) => {
+            this.products.set([product]);
+            this.totalProducts.set(1);
+            this.searchQuery.set(cleaned);
+          },
+          error: (err: HttpErrorResponse) => {
+            if (err.status === 404) {
+              this.snackBar.open('Código de barras no registrado. Abriendo formulario...', 'Cerrar', {
+                duration: 3000,
+              });
+              this.onAdd({ barcode: cleaned });
+            } else {
+              this.performNameSearch(cleaned);
+            }
+          },
+        });
+    } else {
+      this.performNameSearch(cleaned);
+    }
+  }
+
+  private performNameSearch(query: string): void {
+    this.searchQuery.set(query);
+    this.currentOffset.set(0);
+    this.loading.set(true);
+
+    const filters: ProductFilterParams = {
+      limit: this.currentLimit(),
+      offset: 0,
+      search: query,
+    };
+
+    const catId = this.selectedCategoryId();
+    if (catId !== 'todos') {
+      filters.categoryId = catId;
+    }
+
+    this.productService
+      .getAll(filters)
+      .pipe(
+        finalize(() => {
+          this.loading.set(false);
+          this.isSearching.set(false);
+          this.focusSearchInput();
+        }),
+        takeUntilDestroyed(this.destroyRef)
+      )
+      .subscribe({
+        next: (result) => {
+          this.products.set(result.data);
+          this.totalProducts.set(result.total);
+          if (result.data.length === 0) {
+            this.snackBar.open('Sin coincidencias. Abriendo formulario...', 'Cerrar', {
+              duration: 3000,
+            });
+            this.onAdd({ name: query });
+          }
+        },
+        error: (err: HttpErrorResponse) => {
+          this.showError(err);
+        },
+      });
+  }
+
+  private focusSearchInput(): void {
+    setTimeout(() => {
+      this.searchInput?.nativeElement?.focus();
+    }, 100);
   }
 
   submitForm(): void {
@@ -252,7 +348,10 @@ export class Product implements OnInit {
     const editing = this.editingProduct();
 
     if (editing) {
-      const payload: UpdateProductPayload = { ...raw };
+      const payload: UpdateProductPayload = {
+        ...raw,
+        barcode: raw.barcode || null,
+      };
       this.updateProduct(editing.id, payload);
     } else {
       const payload: CreateProductPayload = {
@@ -263,6 +362,7 @@ export class Product implements OnInit {
         isActive: raw.isActive,
         categoryId: raw.categoryId,
         providerId: raw.providerId,
+        barcode: raw.barcode || null,
       };
       this.createProduct(payload);
     }
