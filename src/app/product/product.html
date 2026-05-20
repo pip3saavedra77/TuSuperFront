@@ -27,6 +27,19 @@
     </div>
   </div>
 
+  <!-- FILTRADO POR CATEGORÍAS -->
+  <div class="category-filter-row">
+    <mat-chip-listbox
+      [value]="selectedCategoryId()"
+      (change)="onCategoryChange($event.value)"
+      class="category-chips">
+      <mat-chip-option value="todos">Todos</mat-chip-option>
+      @for (cat of categories(); track cat.id) {
+        <mat-chip-option [value]="cat.id">{{ cat.name }}</mat-chip-option>
+      }
+    </mat-chip-listbox>
+  </div>
+
   <!-- LOADING -->
   @if (loading()) {
     <div class="loading-container">

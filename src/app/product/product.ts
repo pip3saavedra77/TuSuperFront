@@ -86,6 +86,7 @@ export class Product implements OnInit {
   readonly categories = signal<Category[]>([]);
   readonly providers = signal<ProductProvider[]>([]);
   readonly loadingFormSelects = signal<boolean>(false);
+  readonly selectedCategoryId = signal<number | 'todos'>('todos');
 
   // ── Search ───────────────────────────────────────────
   searchTerm = '';
@@ -144,6 +145,11 @@ export class Product implements OnInit {
       filters.search = this.searchTerm.trim();
     }
 
+    const catId = this.selectedCategoryId();
+    if (catId !== 'todos') {
+      filters.categoryId = catId;
+    }
+
     this.productService
       .getAll(filters)
       .pipe(
@@ -188,6 +194,12 @@ export class Product implements OnInit {
     const input = event.target as HTMLInputElement;
     this.searchTerm = input.value;
     this.searchSubject.next(this.searchTerm);
+  }
+
+  onCategoryChange(value: number | 'todos'): void {
+    this.selectedCategoryId.set(value || 'todos');
+    this.currentOffset.set(0);
+    this.loadProducts();
   }
 
   onPageChange(event: PageEvent): void {
