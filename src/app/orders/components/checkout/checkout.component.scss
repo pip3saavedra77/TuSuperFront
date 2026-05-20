@@ -1,97 +1,147 @@
+@use 'sass:map';
+@use '../../../styles/tokens' as *;
+@use '../../../styles/pos_tokens' as pos;
+
 .checkout-container {
-  padding: 2rem;
-  display: flex;
-  justify-content: center;
-  min-height: calc(100vh - 64px);
+  padding: map.get($spacing, "48");
+  min-height: calc(100vh - 80px);
   background: transparent;
 }
 
-.checkout-card {
-  width: 100%;
-  max-width: 900px;
-  display: flex;
-  flex-direction: column;
-  padding: 24px;
+.checkout-page {
+  max-width: 1100px;
+  margin: 0 auto;
 }
 
+// ── Header ────────────────────────────────────────────
 .checkout-header {
   display: flex;
   align-items: center;
   gap: 16px;
-  margin-bottom: 24px;
+  margin-bottom: 40px;
 
   h1 {
+    font-size: map.get($font-sizes, "2xl");
+    font-weight: 800;
+    color: pos.$pos-text;
     margin: 0;
-    font-size: 1.8rem;
-    font-weight: 700;
-    color: #2c3e50;
+    letter-spacing: -0.025em;
+  }
+
+  .checkout-subtitle {
+    font-size: map.get($font-sizes, "sm");
+    color: pos.$pos-text-muted;
+    margin: 4px 0 0;
   }
 }
 
-.checkout-table {
-  background: transparent !important;
-  width: 100%;
+// ── Body Grid: 2 cols desktop, 1 col mobile ───────────
+.checkout-body {
+  display: grid;
+  grid-template-columns: 1fr 380px;
+  gap: map.get($spacing, "32");
+  align-items: start;
+}
 
-  th {
-    color: #7f8c8d;
-    font-weight: 600;
-    text-transform: uppercase;
-    font-size: 0.75rem;
-    letter-spacing: 0.5px;
+// ── Left Column ───────────────────────────────────────
+.checkout-left {
+  display: flex;
+  flex-direction: column;
+  gap: map.get($spacing, "32");
+}
+
+// ── Items Section ─────────────────────────────────────
+.checkout-items-section {
+  display: flex;
+  flex-direction: column;
+  gap: map.get($spacing, "12");
+}
+
+.checkout-item-card {
+  background: #ffffff;
+  border-radius: 16px;
+  border: 1px solid rgba(0, 0, 0, 0.06);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+  padding: map.get($spacing, "16");
+  display: flex;
+  align-items: center;
+  gap: map.get($spacing, "16");
+  transition: box-shadow 0.2s ease;
+
+  &:hover {
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.08);
   }
 
-  td {
-    padding: 12px 8px;
-    color: #2c3e50;
-  }
-
-  .product-thumb {
-    width: 50px;
-    height: 50px;
-    object-fit: cover;
-    border-radius: 8px;
-    box-shadow: 0 4px 10px rgba(0,0,0,0.1);
-  }
-
-  .product-thumb-placeholder {
-    width: 50px;
-    height: 50px;
+  .item-image {
+    width: 56px;
+    height: 56px;
+    background: #f8f9fa;
+    border-radius: 12px;
+    overflow: hidden;
     display: flex;
     align-items: center;
     justify-content: center;
-    background: rgba(255, 255, 255, 0.4);
-    backdrop-filter: blur(4px);
-    border-radius: 8px;
-    color: #95a5a6;
-    border: 1px solid rgba(0, 0, 0, 0.05);
-    
-    mat-icon {
-      font-size: 20px;
-      width: 20px;
-      height: 20px;
+    flex-shrink: 0;
+
+    img { width: 100%; height: 100%; object-fit: contain; mix-blend-mode: multiply; }
+    mat-icon { font-size: 24px; width: 24px; height: 24px; color: #c8cdd5; }
+  }
+
+  .item-info {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+    min-width: 0;
+
+    .item-name {
+      font-size: map.get($font-sizes, "sm");
+      font-weight: 700;
+      color: pos.$pos-text;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .item-unit-price {
+      font-size: map.get($font-sizes, "xs");
+      color: pos.$pos-text-muted;
     }
   }
 
-  .product-name {
-    font-weight: 600;
+  .item-quantity-badge {
+    background: #f1f3f9;
+    border-radius: map.get($radius, "full");
+    padding: 4px 12px;
+    font-size: map.get($font-sizes, "sm");
+    font-weight: 700;
+    color: pos.$pos-text;
+    flex-shrink: 0;
   }
 
   .item-subtotal {
-    font-weight: 700;
-    color: #2ecc71;
+    font-size: map.get($font-sizes, "md");
+    font-weight: 800;
+    color: var(--profile-primary, #{pos.$pos-primary});
+    min-width: 80px;
+    text-align: right;
+    flex-shrink: 0;
   }
 }
 
+// ── Form Section ──────────────────────────────────────
 .checkout-form-section {
-  margin-top: 32px;
-  padding-top: 24px;
-  border-top: 1px solid rgba(0,0,0,0.05);
+  background: #ffffff;
+  border-radius: 16px;
+  border: 1px solid rgba(0, 0, 0, 0.06);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+  padding: map.get($spacing, "24");
 
-  h3 {
-    margin-bottom: 20px;
-    font-weight: 600;
-    color: #34495e;
-    font-size: 1.1rem;
+  .form-title {
+    font-size: map.get($font-sizes, "lg");
+    font-weight: 700;
+    color: pos.$pos-text;
+    margin: 0 0 map.get($spacing, "24");
   }
 
   .form-grid {
@@ -99,21 +149,118 @@
     grid-template-columns: 1fr 1fr;
     gap: 16px;
 
-    .full-width {
-      grid-column: span 2;
+    .full-width { grid-column: span 2; }
+  }
+}
+
+// ── Right Column: Summary Card ────────────────────────
+.checkout-right {
+  position: sticky;
+  top: 24px;
+}
+
+.checkout-summary-card {
+  background: #f8f9fa;
+  border-radius: 16px;
+  border: 1px solid rgba(0, 0, 0, 0.06);
+  padding: map.get($spacing, "24");
+  display: flex;
+  flex-direction: column;
+  gap: map.get($spacing, "16");
+
+  .summary-title {
+    font-size: map.get($font-sizes, "lg");
+    font-weight: 700;
+    color: pos.$pos-text;
+    margin: 0;
+  }
+
+  .summary-rows {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+  }
+
+  .summary-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-size: map.get($font-sizes, "sm");
+    color: pos.$pos-text-muted;
+    font-weight: 600;
+
+    .free-badge {
+      background: rgba(0, 166, 81, 0.12);
+      color: #006D3C;
+      padding: 3px 10px;
+      border-radius: map.get($radius, "full");
+      font-size: 0.7rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+  }
+
+  .summary-total-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding-top: map.get($spacing, "16");
+    border-top: 2px dashed rgba(0, 0, 0, 0.08);
+
+    span:first-child {
+      font-size: map.get($font-sizes, "lg");
+      font-weight: 700;
+      color: pos.$pos-text;
+    }
+
+    .total-amount {
+      font-size: map.get($font-sizes, "2xl");
+      font-weight: 800;
+      color: var(--profile-primary, #{pos.$pos-primary});
     }
   }
 }
 
-// Glassmorphism for inputs
+// ── CTA Button ────────────────────────────────────────
+.btn-confirm-order {
+  width: 100%;
+  height: 52px;
+  background: var(--profile-primary, #{pos.$pos-primary}) !important;
+  color: #ffffff !important;
+  border-radius: 16px !important;
+  font-size: map.get($font-sizes, "md");
+  font-weight: 700;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  box-shadow: 0 8px 20px rgba(0, 166, 81, 0.25);
+  transition: all 0.2s ease;
+
+  &:hover:not(:disabled) {
+    transform: translateY(-1px);
+    box-shadow: 0 12px 28px rgba(0, 166, 81, 0.35);
+    filter: brightness(0.95);
+  }
+
+  &:disabled {
+    background: #e9ecef !important;
+    color: pos.$pos-text-muted !important;
+    box-shadow: none;
+    cursor: not-allowed;
+  }
+}
+
+// ── Glassmorphism para inputs ─────────────────────────
 ::ng-deep {
   .mat-mdc-form-field {
     width: 100%;
-    
+
     .mdc-text-field--outlined {
-      background: rgba(255, 255, 255, 0.4) !important;
+      background: rgba(255, 255, 255, 0.8) !important;
       backdrop-filter: blur(4px);
-      border-radius: 10px !important;
+      border-radius: 12px !important;
     }
 
     .mdc-notched-outline__leading,
@@ -126,87 +273,37 @@
       .mdc-notched-outline__leading,
       .mdc-notched-outline__notch,
       .mdc-notched-outline__trailing {
-        border-color: #2ecc71 !important;
+        border-color: var(--profile-primary, #{pos.$pos-primary}) !important;
         border-width: 2px !important;
       }
     }
   }
 }
 
-.checkout-summary {
-  margin-top: 32px;
-  margin-left: auto;
-  width: 100%;
-  max-width: 300px;
-  display: flex;
-  flex-direction: column;
-  gap: 12px;
+// ── Responsive ────────────────────────────────────────
+@media (max-width: 768px) {
+  .checkout-body {
+    grid-template-columns: 1fr;
+  }
 
-  .summary-row {
-    display: flex;
-    justify-content: space-between;
-    font-size: 0.95rem;
-    color: #34495e;
+  .checkout-right {
+    position: static;
+  }
 
-    &.total {
-      margin-top: 8px;
-      font-size: 1.25rem;
-      font-weight: 700;
-      color: #2c3e50;
-
-      .total-amount {
-        color: #2ecc71;
-      }
-    }
-
-    .free-badge {
-      background: rgba(46, 204, 113, 0.2);
-      color: #27ae60;
-      padding: 2px 8px;
-      border-radius: 4px;
-      font-size: 0.75rem;
-      font-weight: 600;
+  .checkout-form-section {
+    .form-grid {
+      grid-template-columns: 1fr;
+      .full-width { grid-column: span 1; }
     }
   }
 }
 
-.checkout-footer {
-  margin-top: 40px;
-  display: flex;
-  justify-content: flex-end;
-
-  .confirm-btn {
-    padding: 12px 32px;
-    font-size: 1.1rem;
-    font-weight: 600;
-    border-radius: 12px;
-    height: 54px;
-    background: #2ecc71 !important; // Forced brand green
-    color: white !important;
-
-    mat-icon {
-      margin-right: 8px;
-    }
-
-    &:disabled {
-      background: rgba(0,0,0,0.1) !important;
-      opacity: 0.5;
-    }
-  }
-}
-
-@media (max-width: 600px) {
+@media (max-width: 640px) {
   .checkout-container {
-    padding: 1rem;
-  }
-  
-  .checkout-table {
-    .mat-column-image, .mat-column-price {
-      display: none;
-    }
+    padding: map.get($spacing, "16");
   }
 
   .checkout-header h1 {
-    font-size: 1.4rem;
+    font-size: map.get($font-sizes, "xl");
   }
 }

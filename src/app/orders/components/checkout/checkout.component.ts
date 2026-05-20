@@ -10,6 +10,7 @@ import { ReactiveFormsModule, FormBuilder, Validators, FormGroup } from '@angula
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
 import { MatSelectModule } from '@angular/material/select';
+import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { CartStore } from '../../../product/store/cart.store';
 import { OrdersService } from '../../services/orders.service';
 import { CreateOrderPayload } from '../../../core/models/order.model';
@@ -23,13 +24,13 @@ import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
     RouterLink,
     MatButtonModule,
     MatIconModule,
-    MatTableModule,
     MatDividerModule,
     MatSnackBarModule,
     ReactiveFormsModule,
     MatFormFieldModule,
     MatInputModule,
     MatSelectModule,
+    MatProgressSpinnerModule,
   ],
   templateUrl: './checkout.component.html',
   styleUrls: ['./checkout.component.scss'],
@@ -43,8 +44,6 @@ export class CheckoutComponent {
   private readonly destroyRef = inject(DestroyRef);
 
   public readonly checkoutForm: FormGroup;
-  public readonly displayedColumns: string[] = ['image', 'product', 'price', 'quantity', 'subtotal'];
-  
   public isProcessing = false;
 
   constructor() {
