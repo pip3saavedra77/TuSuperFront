@@ -1,0 +1,305 @@
+@use 'sass:map';
+@use '../styles/tokens' as *;
+@use '../styles/pos_tokens' as pos;
+
+.profile-container {
+  padding: map.get($spacing, "48") map.get($spacing, "24");
+  min-height: calc(100vh - 80px);
+  background: transparent;
+}
+
+.profile-page {
+  max-width: 700px;
+  margin: 0 auto;
+  display: flex;
+  flex-direction: column;
+  gap: map.get($spacing, "32");
+}
+
+// ── Header del Perfil ─────────────────────────────────
+.profile-header {
+  display: flex;
+  align-items: center;
+  gap: map.get($spacing, "24");
+
+  .profile-avatar-wrapper {
+    position: relative;
+  }
+
+  .profile-avatar {
+    width: 84px;
+    height: 84px;
+    border-radius: 50%;
+    background: var(--profile-primary, #{pos.$pos-primary});
+    color: #ffffff;
+    font-size: 2.25rem;
+    font-weight: 800;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.08);
+    border: 3px solid #ffffff;
+  }
+
+  .profile-title-block {
+    h1 {
+      font-size: map.get($font-sizes, "2xl");
+      font-weight: 800;
+      color: pos.$pos-text;
+      margin: 0;
+      letter-spacing: -0.025em;
+    }
+
+    .profile-subtitle {
+      font-size: map.get($font-sizes, "sm");
+      color: pos.$pos-text-muted;
+      margin: 4px 0 0;
+    }
+  }
+}
+
+// ── Cuerpo y Tarjetas ─────────────────────────────────
+.profile-body {
+  display: flex;
+  flex-direction: column;
+  gap: map.get($spacing, "24");
+}
+
+.profile-card {
+  background: #ffffff;
+  border-radius: 16px;
+  border: 1px solid rgba(0, 0, 0, 0.06);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+  padding: map.get($spacing, "24");
+  display: flex;
+  flex-direction: column;
+  gap: map.get($spacing, "20");
+
+  .card-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-bottom: 1px solid rgba(0, 0, 0, 0.05);
+    padding-bottom: map.get($spacing, "16");
+
+    .card-title-group {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+
+      .title-icon {
+        color: var(--profile-primary, #{pos.$pos-primary});
+      }
+
+      h2 {
+        font-size: map.get($font-sizes, "md");
+        font-weight: 700;
+        color: pos.$pos-text;
+        margin: 0;
+      }
+    }
+  }
+}
+
+// ── Personal Info: Modo Lectura ────────────────────────
+.profile-read-mode {
+  display: flex;
+  flex-direction: column;
+  gap: map.get($spacing, "16");
+
+  .info-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 8px 0;
+    border-bottom: 1px dashed rgba(0, 0, 0, 0.04);
+
+    &:last-child {
+      border: none;
+    }
+
+    .info-label {
+      font-size: map.get($font-sizes, "sm");
+      color: pos.$pos-text-muted;
+      font-weight: 600;
+    }
+
+    .info-value {
+      font-size: map.get($font-sizes, "sm");
+      color: pos.$pos-text;
+      font-weight: 700;
+    }
+
+    .roles-badges {
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+
+      .role-badge {
+        background: var(--profile-primary-soft, #f1f3f9);
+        color: var(--profile-primary, #{pos.$pos-primary});
+        padding: 4px 12px;
+        border-radius: map.get($radius, "full");
+        font-size: map.get($font-sizes, "xs");
+        font-weight: 700;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+      }
+    }
+  }
+}
+
+// ── Formularios y Acciones ────────────────────────────
+.profile-edit-form, .password-change-form {
+  display: flex;
+  flex-direction: column;
+  gap: map.get($spacing, "16");
+}
+
+.form-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
+}
+
+.form-vertical-stack {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.password-form-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 12px;
+  margin-top: 8px;
+}
+
+// ── Botones Estilizados ────────────────────────────────
+.btn-edit-toggle, .btn-change-password-toggle, .btn-cancel-password {
+  border-color: var(--profile-primary, #{pos.$pos-primary}) !important;
+  color: var(--profile-primary, #{pos.$pos-primary}) !important;
+  border-radius: 12px !important;
+  font-weight: 700 !important;
+  transition: all 0.2s ease !important;
+
+  &:hover {
+    background: var(--profile-primary-soft) !important;
+    transform: translateY(-1px);
+    filter: brightness(0.95);
+  }
+}
+
+.btn-save-profile, .btn-save-password {
+  height: 48px;
+  background: var(--profile-primary, #{pos.$pos-primary}) !important;
+  color: #ffffff !important;
+  border-radius: 12px !important;
+  font-weight: 700 !important;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  transition: all 0.2s ease !important;
+  box-shadow: 0 6px 16px rgba(0, 0, 0, 0.05);
+
+  &:hover:not(:disabled) {
+    transform: translateY(-1px);
+    filter: brightness(0.95);
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.08);
+  }
+
+  &:disabled {
+    background: #e9ecef !important;
+    color: pos.$pos-text-muted !important;
+    box-shadow: none;
+    cursor: not-allowed;
+  }
+}
+
+// ── Sección Seguridad Estática ────────────────────────
+.security-static-info {
+  display: flex;
+  align-items: flex-start;
+  gap: 16px;
+  background: #f8f9fa;
+  padding: map.get($spacing, "16");
+  border-radius: 12px;
+  border: 1px solid rgba(0, 0, 0, 0.04);
+
+  mat-icon {
+    color: #00a651;
+    font-size: 28px;
+    width: 28px;
+    height: 28px;
+  }
+
+  div {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+
+    .security-status {
+      font-size: map.get($font-sizes, "sm");
+      font-weight: 700;
+      color: pos.$pos-text;
+    }
+
+    .security-desc {
+      font-size: map.get($font-sizes, "xs");
+      color: pos.$pos-text-muted;
+      margin: 0;
+    }
+  }
+}
+
+// ── Glassmorphism Inputs ──────────────────────────────
+::ng-deep {
+  .profile-card {
+    .mat-mdc-form-field {
+      width: 100%;
+
+      .mdc-text-field--outlined {
+        background: rgba(255, 255, 255, 0.8) !important;
+        backdrop-filter: blur(4px);
+        border-radius: 12px !important;
+      }
+
+      .mdc-notched-outline__leading,
+      .mdc-notched-outline__notch,
+      .mdc-notched-outline__trailing {
+        border-color: rgba(0, 0, 0, 0.1) !important;
+      }
+
+      &.mat-focused {
+        .mdc-notched-outline__leading,
+        .mdc-notched-outline__notch,
+        .mdc-notched-outline__trailing {
+          border-color: var(--profile-primary, #{pos.$pos-primary}) !important;
+          border-width: 2px !important;
+        }
+      }
+    }
+  }
+}
+
+// ── Responsive ────────────────────────────────────────
+@media (max-width: 600px) {
+  .profile-container {
+    padding: map.get($spacing, "24") map.get($spacing, "16");
+  }
+
+  .profile-header {
+    flex-direction: column;
+    text-align: center;
+    gap: map.get($spacing, "12");
+  }
+
+  .form-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .profile-card {
+    padding: map.get($spacing, "16");
+  }
+}

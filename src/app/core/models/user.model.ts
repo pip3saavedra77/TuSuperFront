@@ -22,6 +22,11 @@ export interface CreateUserPayload {
 
 export interface UpdateUserPayload extends Partial<CreateUserPayload> {}
 
+export interface UpdatePasswordPayload {
+  currentPassword?: string;
+  newPassword?: string;
+}
+
 export interface UserFilterParams extends PaginationParams {
   search?: string;
 }
