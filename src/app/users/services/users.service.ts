@@ -8,7 +8,8 @@ import {
   UpdateUserPayload, 
   User, 
   UserFilterParams, 
-  UserPaginatedResult 
+  UserPaginatedResult,
+  UpdatePasswordPayload
 } from '../../core/models/user.model';
 import { buildHttpParams } from '../../core/utils/build-http-params';
 
@@ -46,5 +47,13 @@ export class UsersService {
 
   getRoles(): Observable<Role[]> {
     return this.http.get<Role[]>(`${environment.apiUrl}/roles`);
+  }
+
+  updateMyProfile(payload: { firstName: string; lastName: string }): Observable<User> {
+    return this.http.patch<User>(`${this.apiUrl}/me/profile`, payload);
+  }
+
+  updateMyPassword(payload: UpdatePasswordPayload): Observable<void> {
+    return this.http.patch<void>(`${this.apiUrl}/me/password`, payload);
   }
 }

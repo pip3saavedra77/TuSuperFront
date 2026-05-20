@@ -18,6 +18,10 @@ export const routes: Routes = [
         loadComponent: () => import('./home/home').then(m => m.Home),
       },
       {
+        path: 'profile',
+        loadComponent: () => import('./profile/profile.component').then(m => m.ProfileComponent),
+      },
+      {
         path: 'users',
         loadComponent: () => import('./users/users').then(m => m.Users),
         canActivate: [roleGuard],

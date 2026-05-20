@@ -1,0 +1,207 @@
+<div class="profile-container">
+  <div class="profile-page">
+
+    <!-- Header del Perfil -->
+    <header class="profile-header">
+      <div class="profile-avatar-wrapper">
+        <div class="profile-avatar">
+          {{ currentUser()?.firstName?.charAt(0) }}
+        </div>
+      </div>
+      <div class="profile-title-block">
+        <h1>Mi Perfil</h1>
+        <p class="profile-subtitle">Gestiona tu información personal y de seguridad</p>
+      </div>
+    </header>
+
+    <div class="profile-body">
+
+      <!-- Tarjeta Principal: Información Personal -->
+      <section class="profile-card info-card">
+        <div class="card-header">
+          <div class="card-title-group">
+            <mat-icon class="title-icon">person</mat-icon>
+            <h2>Información Personal</h2>
+          </div>
+          <button mat-stroked-button type="button" class="btn-edit-toggle" (click)="toggleEditProfile()">
+            <mat-icon>{{ isEditingProfile() ? 'close' : 'edit' }}</mat-icon>
+            <span>{{ isEditingProfile() ? 'Cancelar' : 'Editar' }}</span>
+          </button>
+        </div>
+
+        @if (!isEditingProfile()) {
+          <!-- Modo Lectura -->
+          <div class="profile-read-mode">
+            <div class="info-row">
+              <span class="info-label">Nombre</span>
+              <span class="info-value">{{ currentUser()?.firstName }}</span>
+            </div>
+            <div class="info-row">
+              <span class="info-label">Apellido</span>
+              <span class="info-value">{{ currentUser()?.lastName }}</span>
+            </div>
+            <div class="info-row">
+              <span class="info-label">Correo Electrónico</span>
+              <span class="info-value">{{ currentUser()?.email }}</span>
+            </div>
+            <div class="info-row">
+              <span class="info-label">Roles Asignados</span>
+              <div class="roles-badges">
+                @for (role of currentUser()?.roles; track role.id) {
+                  <span class="role-badge">{{ role.name }}</span>
+                }
+              </div>
+            </div>
+          </div>
+        } @else {
+          <!-- Modo Edición -->
+          <form [formGroup]="profileForm" (ngSubmit)="updateProfile()" class="profile-edit-form">
+            <div class="form-grid">
+              <mat-form-field appearance="outline">
+                <mat-label>Nombre</mat-label>
+                <input matInput formControlName="firstName" placeholder="Tu nombre">
+                <mat-error *ngIf="profileForm.get('firstName')?.hasError('required')">
+                  El nombre es obligatorio
+                </mat-error>
+              </mat-form-field>
+
+              <mat-form-field appearance="outline">
+                <mat-label>Apellido</mat-label>
+                <input matInput formControlName="lastName" placeholder="Tu apellido">
+                <mat-error *ngIf="profileForm.get('lastName')?.hasError('required')">
+                  El apellido es obligatorio
+                </mat-error>
+              </mat-form-field>
+            </div>
+
+            <button mat-flat-button
+                    type="submit"
+                    class="btn-save-profile"
+                    [disabled]="profileForm.invalid || isSavingProfile()">
+              @if (isSavingProfile()) {
+                <mat-spinner diameter="22"></mat-spinner>
+              } @else {
+                <ng-container>
+                  <mat-icon>save</mat-icon>
+                  <span>Guardar Cambios</span>
+                </ng-container>
+              }
+            </button>
+          </form>
+        }
+      </section>
+
+      <!-- Tarjeta Secundaria: Seguridad -->
+      <section class="profile-card security-card">
+        <div class="card-header">
+          <div class="card-title-group">
+            <mat-icon class="title-icon">security</mat-icon>
+            <h2>Seguridad de la Cuenta</h2>
+          </div>
+          @if (!isChangingPassword()) {
+            <button mat-stroked-button type="button" class="btn-change-password-toggle" (click)="toggleChangePassword()">
+              <mat-icon>lock_open</mat-icon>
+              <span>Cambiar Contraseña</span>
+            </button>
+          }
+        </div>
+
+        @if (isChangingPassword()) {
+          <form [formGroup]="passwordForm" (ngSubmit)="updatePassword()" class="password-change-form">
+            <div class="form-vertical-stack">
+              
+              <!-- Contraseña Actual -->
+              <mat-form-field appearance="outline">
+                <mat-label>Contraseña Actual</mat-label>
+                <input matInput 
+                       [type]="showCurrentPassword() ? 'text' : 'password'" 
+                       formControlName="currentPassword" 
+                       placeholder="Ingresa tu contraseña actual">
+                <button mat-icon-button 
+                        type="button" 
+                        matSuffix 
+                        (click)="showCurrentPassword.set(!showCurrentPassword())">
+                  <mat-icon>{{ showCurrentPassword() ? 'visibility_off' : 'visibility' }}</mat-icon>
+                </button>
+                <mat-error *ngIf="passwordForm.get('currentPassword')?.hasError('required')">
+                  La contraseña actual es obligatoria
+                </mat-error>
+              </mat-form-field>
+
+              <!-- Nueva Contraseña -->
+              <mat-form-field appearance="outline">
+                <mat-label>Nueva Contraseña</mat-label>
+                <input matInput 
+                       [type]="showNewPassword() ? 'text' : 'password'" 
+                       formControlName="newPassword" 
+                       placeholder="Mínimo 8 caracteres">
+                <button mat-icon-button 
+                        type="button" 
+                        matSuffix 
+                        (click)="showNewPassword.set(!showNewPassword())">
+                  <mat-icon>{{ showNewPassword() ? 'visibility_off' : 'visibility' }}</mat-icon>
+                </button>
+                <mat-error *ngIf="passwordForm.get('newPassword')?.hasError('required')">
+                  La nueva contraseña es obligatoria
+                </mat-error>
+                <mat-error *ngIf="passwordForm.get('newPassword')?.hasError('minlength')">
+                  Debe tener al menos 8 caracteres
+                </mat-error>
+              </mat-form-field>
+
+              <!-- Confirmar Contraseña -->
+              <mat-form-field appearance="outline">
+                <mat-label>Confirmar Nueva Contraseña</mat-label>
+                <input matInput 
+                       [type]="showConfirmPassword() ? 'text' : 'password'" 
+                       formControlName="confirmPassword" 
+                       placeholder="Repite la nueva contraseña">
+                <button mat-icon-button 
+                        type="button" 
+                        matSuffix 
+                        (click)="showConfirmPassword.set(!showConfirmPassword())">
+                  <mat-icon>{{ showConfirmPassword() ? 'visibility_off' : 'visibility' }}</mat-icon>
+                </button>
+                <mat-error *ngIf="passwordForm.get('confirmPassword')?.hasError('required')">
+                  Confirma tu contraseña
+                </mat-error>
+                <mat-error *ngIf="passwordForm.hasError('passwordMismatch') && passwordForm.get('confirmPassword')?.touched">
+                  Las contraseñas no coinciden
+                </mat-error>
+              </mat-form-field>
+
+            </div>
+
+            <div class="password-form-actions">
+              <button mat-stroked-button type="button" class="btn-cancel-password" (click)="toggleChangePassword()">
+                Cancelar
+              </button>
+              <button mat-flat-button
+                      type="submit"
+                      class="btn-save-password"
+                      [disabled]="passwordForm.invalid || isSavingPassword()">
+                @if (isSavingPassword()) {
+                  <mat-spinner diameter="22"></mat-spinner>
+                } @else {
+                  <ng-container>
+                    <mat-icon>lock</mat-icon>
+                    <span>Actualizar Contraseña</span>
+                  </ng-container>
+                }
+              </button>
+            </div>
+          </form>
+        } @else {
+          <div class="security-static-info">
+            <mat-icon>verified_user</mat-icon>
+            <div>
+              <span class="security-status">Tu contraseña y datos de seguridad están activos</span>
+              <p class="security-desc">Recomendamos cambiar la contraseña periódicamente para proteger tu cuenta.</p>
+            </div>
+          </div>
+        }
+      </section>
+
+    </div>
+  </div>
+</div>
