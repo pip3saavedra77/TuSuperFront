@@ -46,7 +46,10 @@
       font-size: 1.5rem;
       font-weight: 800;
       color: pos.$pos-text;
-      
+      cursor: pointer;
+      text-decoration: none;
+      color: inherit;
+
       mat-icon { color: var(--profile-primary); transform: scale(1.2); }
     }
 
