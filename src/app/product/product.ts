@@ -5,9 +5,10 @@ import {
   inject,
   signal,
 } from '@angular/core';
-import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
+import { takeUntilDestroyed, toObservable } from '@angular/core/rxjs-interop';
 import { CommonModule, CurrencyPipe } from '@angular/common';
-import { Subject, debounceTime, distinctUntilChanged, finalize } from 'rxjs';
+import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
+import { debounceTime, distinctUntilChanged, finalize, forkJoin } from 'rxjs';
 import { HttpErrorResponse } from '@angular/common/http';
 
 import { MatTableModule } from '@angular/material/table';
@@ -19,6 +20,10 @@ import { MatIconModule } from '@angular/material/icon';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { MatDialog, MatDialogModule } from '@angular/material/dialog';
 import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
+import { MatMenuModule } from '@angular/material/menu';
+import { MatChipsModule } from '@angular/material/chips';
+import { MatSelectModule } from '@angular/material/select';
+import { MatSlideToggleModule } from '@angular/material/slide-toggle';
 
 import { ProductService } from './services/product.service';
 import {
@@ -26,11 +31,9 @@ import {
   ProductFilterParams,
   CreateProductPayload,
   UpdateProductPayload,
+  Category,
+  ProductProvider,
 } from '../core/models/product.model';
-import {
-  ProductFormDialogComponent,
-  ProductFormDialogData,
-} from './components/product-form-dialog.component';
 import {
   ConfirmDeleteDialogComponent,
   ConfirmDeleteDialogData,
@@ -44,6 +47,7 @@ import { AuthService } from '../core/services/auth';
   imports: [
     CommonModule,
     CurrencyPipe,
+    ReactiveFormsModule,
     MatTableModule,
     MatPaginatorModule,
     MatFormFieldModule,
@@ -53,18 +57,21 @@ import { AuthService } from '../core/services/auth';
     MatProgressSpinnerModule,
     MatDialogModule,
     MatSnackBarModule,
+    MatMenuModule,
+    MatChipsModule,
+    MatSelectModule,
+    MatSlideToggleModule,
   ],
   templateUrl: './product.html',
   styleUrl: './product.scss',
 })
 export class Product implements OnInit {
-  // Note: class name kept as 'Product' to match app.routes.ts lazy-load
-  // The interface is aliased as ProductModel to avoid conflict
   private readonly productService = inject(ProductService);
   public readonly auth = inject(AuthService);
   private readonly dialog = inject(MatDialog);
   private readonly snackBar = inject(MatSnackBar);
   private readonly destroyRef = inject(DestroyRef);
+  private readonly fb = inject(FormBuilder);
 
   // ── State (Signals) ──────────────────────────────────
   readonly products = signal<ProductModel[]>([]);
@@ -73,9 +80,16 @@ export class Product implements OnInit {
   readonly currentLimit = signal<number>(10);
   readonly currentOffset = signal<number>(0);
 
+  // ── Drawer & Form State ─────────────────────────────
+  readonly drawerOpen = signal<boolean>(false);
+  readonly editingProduct = signal<ProductModel | null>(null);
+  readonly categories = signal<Category[]>([]);
+  readonly providers = signal<ProductProvider[]>([]);
+  readonly loadingFormSelects = signal<boolean>(false);
+  readonly selectedCategoryId = signal<number | 'todos'>('todos');
+
   // ── Search ───────────────────────────────────────────
-  searchTerm = '';
-  private readonly searchSubject = new Subject<string>();
+  readonly searchQuery = signal<string>('');
 
   // ── Table config ─────────────────────────────────────
   readonly displayedColumns: string[] = [
@@ -87,8 +101,19 @@ export class Product implements OnInit {
     'actions',
   ];
 
+  // Formulario reactivo tipado estrictamente
+  readonly form = this.fb.nonNullable.group({
+    name:        ['', [Validators.required, Validators.maxLength(255)]],
+    description: [''],
+    price:       [0, [Validators.required, Validators.min(0.01)]],
+    stock:       [0, [Validators.required, Validators.min(0)]],
+    categoryId:  [0, [Validators.required, Validators.min(1)]],
+    providerId:  [0, [Validators.required, Validators.min(1)]],
+    isActive:    [true],
+  });
+
   constructor() {
-    this.searchSubject
+    toObservable(this.searchQuery)
       .pipe(
         debounceTime(300),
         distinctUntilChanged(),
@@ -102,6 +127,7 @@ export class Product implements OnInit {
 
   ngOnInit(): void {
     this.loadProducts();
+    this.loadSelectData();
   }
 
   // ── Data loading ─────────────────────────────────────
@@ -114,8 +140,14 @@ export class Product implements OnInit {
       offset: this.currentOffset(),
     };
 
-    if (this.searchTerm.trim()) {
-      filters.search = this.searchTerm.trim();
+    const query = this.searchQuery().trim();
+    if (query) {
+      filters.search = query;
+    }
+
+    const catId = this.selectedCategoryId();
+    if (catId !== 'todos') {
+      filters.categoryId = catId;
     }
 
     this.productService
@@ -135,12 +167,42 @@ export class Product implements OnInit {
       });
   }
 
+  private loadSelectData(): void {
+    this.loadingFormSelects.set(true);
+    forkJoin({
+      categories: this.productService.getCategories(),
+      providers: this.productService.getProviders(),
+    })
+      .pipe(
+        finalize(() => this.loadingFormSelects.set(false)),
+        takeUntilDestroyed(this.destroyRef),
+      )
+      .subscribe({
+        next: (result) => {
+          this.categories.set(result.categories.data);
+          this.providers.set(result.providers.data);
+        },
+        error: (err: HttpErrorResponse) => {
+          this.showError(err);
+        },
+      });
+  }
+
   // ── Event handlers ───────────────────────────────────
 
   onSearchInput(event: Event): void {
     const input = event.target as HTMLInputElement;
-    this.searchTerm = input.value;
-    this.searchSubject.next(this.searchTerm);
+    this.searchQuery.set(input.value);
+  }
+
+  clearSearch(): void {
+    this.searchQuery.set('');
+  }
+
+  onCategoryChange(value: number | 'todos'): void {
+    this.selectedCategoryId.set(value || 'todos');
+    this.currentOffset.set(0);
+    this.loadProducts();
   }
 
   onPageChange(event: PageEvent): void {
@@ -150,39 +212,60 @@ export class Product implements OnInit {
   }
 
   onAdd(): void {
-    const dialogData: ProductFormDialogData = {};
-
-    const dialogRef = this.dialog.open(ProductFormDialogComponent, {
-      width: '600px',
-      data: dialogData,
+    this.editingProduct.set(null);
+    this.form.reset({
+      name: '',
+      description: '',
+      price: 0,
+      stock: 0,
+      categoryId: 0,
+      providerId: 0,
+      isActive: true,
     });
-
-    dialogRef
-      .afterClosed()
-      .pipe(takeUntilDestroyed(this.destroyRef))
-      .subscribe((payload: CreateProductPayload | undefined) => {
-        if (payload) {
-          this.createProduct(payload);
-        }
-      });
+    this.drawerOpen.set(true);
   }
 
   onEdit(product: ProductModel): void {
-    const dialogData: ProductFormDialogData = { product };
-
-    const dialogRef = this.dialog.open(ProductFormDialogComponent, {
-      width: '600px',
-      data: dialogData,
+    this.editingProduct.set(product);
+    this.form.setValue({
+      name: product.name,
+      description: product.description ?? '',
+      price: product.price,
+      stock: product.stock,
+      categoryId: product.category.id,
+      providerId: product.provider.id,
+      isActive: product.isActive,
     });
+    this.drawerOpen.set(true);
+  }
 
-    dialogRef
-      .afterClosed()
-      .pipe(takeUntilDestroyed(this.destroyRef))
-      .subscribe((payload: UpdateProductPayload | undefined) => {
-        if (payload) {
-          this.updateProduct(product.id, payload);
-        }
-      });
+  closeDrawer(): void {
+    this.drawerOpen.set(false);
+    this.editingProduct.set(null);
+    this.form.reset();
+  }
+
+  submitForm(): void {
+    if (this.form.invalid) return;
+
+    const raw = this.form.getRawValue();
+    const editing = this.editingProduct();
+
+    if (editing) {
+      const payload: UpdateProductPayload = { ...raw };
+      this.updateProduct(editing.id, payload);
+    } else {
+      const payload: CreateProductPayload = {
+        name: raw.name,
+        description: raw.description || undefined,
+        price: raw.price,
+        stock: raw.stock,
+        isActive: raw.isActive,
+        categoryId: raw.categoryId,
+        providerId: raw.providerId,
+      };
+      this.createProduct(payload);
+    }
   }
 
   onDelete(product: ProductModel): void {
@@ -221,6 +304,7 @@ export class Product implements OnInit {
           this.snackBar.open('Producto creado exitosamente', 'Cerrar', {
             duration: 3000,
           });
+          this.closeDrawer();
           this.loadProducts();
         },
         error: (err: HttpErrorResponse) => {
@@ -243,6 +327,7 @@ export class Product implements OnInit {
           this.snackBar.open('Producto actualizado exitosamente', 'Cerrar', {
             duration: 3000,
           });
+          this.closeDrawer();
           this.loadProducts();
         },
         error: (err: HttpErrorResponse) => {
