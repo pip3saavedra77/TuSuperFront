@@ -1,17 +1,129 @@
 <div class="home-container">
-  <h1>Bienvenido, {{ currentUser()?.firstName }}</h1>
-  <p class="subtitle">Selecciona un módulo para continuar</p>
 
-  <div class="modules-grid">
-    @for (moduleName of userModules(); track moduleName) {
-      <mat-card class="module-card" [routerLink]="'/' + moduleName.toLowerCase()">
-        <mat-card-header>
-          <mat-icon mat-card-avatar>{{ getIcon(moduleName) }}</mat-icon>
-          <mat-card-title>{{ moduleName | titlecase }}</mat-card-title>
-        </mat-card-header>
-      </mat-card>
-    } @empty {
-      <p class="no-modules">No tienes módulos asignados. Contacta al administrador.</p>
+  @if (isUserRole()) {
+    <!-- ═══════════════════════════════════════════════ -->
+    <!--  DASHBOARD DE BIENVENIDA — ROL USUARIO          -->
+    <!-- ═══════════════════════════════════════════════ -->
+
+    <!-- Header personalizado con avatar inicial -->
+    <div class="dashboard-welcome">
+      <div class="welcome-avatar">
+        {{ currentUser()?.firstName?.charAt(0)?.toUpperCase() }}
+      </div>
+      <div class="welcome-text">
+        <h1>Bienvenido de nuevo, {{ currentUser()?.firstName }} 👋</h1>
+        <p class="subtitle">Aquí tienes un resumen de tu actividad en TuSuper.</p>
+      </div>
+    </div>
+
+    <!-- Loading global del dashboard -->
+    @if (loadingDashboard()) {
+      <div class="dashboard-loading">
+        <mat-progress-spinner mode="indeterminate" diameter="48"></mat-progress-spinner>
+      </div>
+    } @else {
+      <div class="dashboard-grid">
+
+        <!-- ── Widget: Actividad Reciente ─────────────── -->
+        <div class="widget-card">
+          <div class="widget-header">
+            <mat-icon>receipt_long</mat-icon>
+            <h2 class="widget-title">Actividad Reciente</h2>
+          </div>
+
+          @if (latestOrder()) {
+            <div class="mini-order-card">
+              <div class="mini-order-card__header">
+                <span class="mini-order-card__id">
+                  <mat-icon>receipt</mat-icon>
+                  Pedido #{{ latestOrder()!.id }}
+                </span>
+                <span class="status-badge" [ngClass]="getStatusClass(latestOrder()!.status)">
+                  {{ getStatusLabel(latestOrder()!.status) }}
+                </span>
+              </div>
+              <div class="mini-order-card__meta">
+                <span class="mini-order-card__date">
+                  <mat-icon>calendar_today</mat-icon>
+                  {{ latestOrder()!.createdAt | date:'dd/MM/yyyy · HH:mm' }}
+                </span>
+                <span class="mini-order-card__total">
+                  {{ latestOrder()!.totalAmount | currency:'COP':'symbol-narrow':'1.0-0' }}
+                </span>
+              </div>
+              <div class="mini-order-card__footer">
+                <a class="view-orders-link" [routerLink]="['/orders/my-orders']">
+                  Ver todos mis pedidos
+                  <mat-icon>arrow_forward</mat-icon>
+                </a>
+              </div>
+            </div>
+          } @else {
+            <div class="widget-empty">
+              <mat-icon>inbox</mat-icon>
+              <p>Aún no tienes pedidos. ¡Explora el catálogo!</p>
+              <a class="view-orders-link" [routerLink]="['/product']">Ir al catálogo</a>
+            </div>
+          }
+        </div>
+
+        <!-- ── Widget: Descubre TuSuper ───────────────── -->
+        <div class="widget-card">
+          <div class="widget-header">
+            <mat-icon>storefront</mat-icon>
+            <h2 class="widget-title">Descubre TuSuper</h2>
+          </div>
+
+          @if (featuredProducts().length > 0) {
+            <div class="product-preview-grid">
+              @for (product of featuredProducts(); track product.id) {
+                <a class="product-preview-card" [routerLink]="['/product']">
+                  <div class="product-preview-card__image">
+                    @if (product.imageUrl) {
+                      <img [src]="product.imageUrl" [alt]="product.name" />
+                    } @else {
+                      <mat-icon>inventory_2</mat-icon>
+                    }
+                  </div>
+                  <div class="product-preview-card__info">
+                    <span class="product-preview-card__name">{{ product.name }}</span>
+                    <span class="product-preview-card__price">
+                      {{ product.price | currency:'COP':'symbol-narrow':'1.0-0' }}
+                    </span>
+                  </div>
+                </a>
+              }
+            </div>
+          } @else {
+            <div class="widget-empty">
+              <mat-icon>inventory_2</mat-icon>
+              <p>No hay productos disponibles en este momento.</p>
+            </div>
+          }
+        </div>
+
+      </div>
     }
-  </div>
+
+  } @else {
+    <!-- ═══════════════════════════════════════════════ -->
+    <!--  MÓDULOS DE NAVEGACIÓN — ROL ADMIN / TENDERO   -->
+    <!-- ═══════════════════════════════════════════════ -->
+    <h1>Bienvenido, {{ currentUser()?.firstName }}</h1>
+    <p class="subtitle">Selecciona un módulo para continuar</p>
+
+    <div class="modules-grid">
+      @for (moduleName of userModules(); track moduleName) {
+        <mat-card class="module-card" [routerLink]="'/' + moduleName.toLowerCase()">
+          <mat-card-header>
+            <mat-icon mat-card-avatar>{{ getIcon(moduleName) }}</mat-icon>
+            <mat-card-title>{{ moduleName | titlecase }}</mat-card-title>
+          </mat-card-header>
+        </mat-card>
+      } @empty {
+        <p class="no-modules">No tienes módulos asignados. Contacta al administrador.</p>
+      }
+    </div>
+  }
+
 </div>
