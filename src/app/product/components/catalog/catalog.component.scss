@@ -129,12 +129,32 @@
     height: 240px;
     background: #F1F3F9;
     padding: map.get($spacing, "16");
+    display: flex;
+    align-items: center;
+    justify-content: center;
 
     .card-image {
       width: 100%;
       height: 100%;
       object-fit: contain;
       mix-blend-mode: multiply;
+    }
+
+    .card-image-placeholder {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      width: 100%;
+      height: 100%;
+      background: #f8f9fa;
+      border-radius: inherit;
+
+      mat-icon {
+        font-size: 56px;
+        width: 56px;
+        height: 56px;
+        color: #c8cdd5;
+      }
     }
 
     .category-badge {
@@ -145,7 +165,7 @@
       backdrop-filter: blur(4px);
       padding: 4px 12px;
       border-radius: map.get($radius, "full");
-      font-size: 10px;
+      font-size: map.get($font-sizes, "xs");
       font-weight: map.get($font-weights, "bold");
       color: pos.$pos-text;
       text-transform: uppercase;
@@ -180,8 +200,8 @@
       }
 
       .stock-badge {
-        font-size: 11px;
-        font-weight: map.get($font-weights, "medium");
+        font-size: 0.7rem;
+        font-weight: map.get($font-weights, "semibold");
         padding: 4px 10px;
         border-radius: map.get($radius, "full");
 
@@ -192,23 +212,35 @@
     }
 
     .add-cart-btn {
-      height: 52px;
-      background: var(--profile-primary, #{pos.$pos-primary}) !important;
-      color: #FFFFFF !important;
-      border-radius: 16px !important;
-      font-weight: map.get($font-weights, "bold");
+      height: 40px;
+      background: transparent !important;
+      border: 1.5px solid var(--profile-primary, #{pos.$pos-primary}) !important;
+      color: var(--profile-primary, #{pos.$pos-primary}) !important;
+      border-radius: 12px !important;
+      font-size: 0.85rem;
+      font-weight: map.get($font-weights, "semibold");
       display: flex;
       align-items: center;
       justify-content: center;
-      gap: 8px;
+      gap: 6px;
+      transition: all 0.2s ease;
+
+      mat-icon {
+        font-size: 1rem;
+        width: 1rem;
+        height: 1rem;
+      }
 
       &:hover:not(:disabled) {
-        filter: brightness(0.9);
+        background: rgba(0, 166, 81, 0.08) !important;
+        transform: translateY(-1px);
       }
 
       &:disabled {
-        background: #F1F3F9 !important;
+        background: transparent !important;
+        border-color: #c8cdd5 !important;
         color: pos.$pos-text-muted !important;
+        cursor: not-allowed;
       }
     }
   }
@@ -258,5 +290,26 @@
     font-size: map.get($font-sizes, "lg");
     color: pos.$pos-text-muted;
     font-weight: map.get($font-weights, "medium");
+  }
+}
+
+// ── Responsive (Mobile-first) ────────────────────────
+@media (max-width: 640px) {
+  .catalog-content {
+    padding: map.get($spacing, "16");
+  }
+
+  .products-grid {
+    grid-template-columns: 1fr;
+    gap: map.get($spacing, "16");
+  }
+
+  .filters-panel {
+    flex-direction: column;
+    gap: map.get($spacing, "12");
+
+    .category-field {
+      min-width: unset;
+    }
   }
 }
