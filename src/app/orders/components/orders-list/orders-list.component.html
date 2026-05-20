@@ -1,30 +1,46 @@
 <div class="orders-list-container">
-  <h2 class="page-title">Gestión de Pedidos</h2>
-
-  <!-- FILTROS -->
-  <div class="filters-panel">
-    <div class="filters-row">
-      <mat-form-field appearance="outline" class="filter-field">
-        <mat-label>Fecha inicio</mat-label>
-        <input matInput type="date" [(ngModel)]="filterStartDate" />
-      </mat-form-field>
-
-      <mat-form-field appearance="outline" class="filter-field">
-        <mat-label>Fecha fin</mat-label>
-        <input matInput type="date" [(ngModel)]="filterEndDate" />
-      </mat-form-field>
-
-      <div class="filter-actions">
-        <button mat-flat-button color="primary" (click)="onSearch()">
-          <mat-icon>search</mat-icon>
-          Buscar
-        </button>
-        <button mat-button (click)="onClearFilters()">
-          <mat-icon>clear_all</mat-icon>
-          Limpiar
-        </button>
-      </div>
+  
+  <!-- BARRA DE HERRAMIENTAS DE PEDIDOS (VENTAS) -->
+  <div class="orders-toolbar">
+    <div class="orders-toolbar__left">
+      <h2 class="orders-toolbar__title">Gestión de Ventas</h2>
+      <p class="orders-toolbar__subtitle">Monitorea y despacha los pedidos de los clientes en tiempo real.</p>
     </div>
+
+    <div class="orders-toolbar__right">
+      <mat-form-field appearance="outline" class="search-field">
+        <mat-label>Buscar por ID o cliente</mat-label>
+        <mat-icon matPrefix>search</mat-icon>
+        <input
+          matInput
+          [value]="searchQuery()"
+          (input)="onSearchInput($event)"
+          placeholder="Escribe para buscar..." />
+        @if (searchQuery()) {
+          <button mat-icon-button matSuffix (click)="clearSearch()" aria-label="Limpiar búsqueda">
+            <mat-icon>close</mat-icon>
+          </button>
+        }
+      </mat-form-field>
+    </div>
+  </div>
+
+  <!-- FILTROS DE FECHA (OPCIONALES) -->
+  <div class="date-filters-panel">
+    <mat-form-field appearance="outline" class="date-field">
+      <mat-label>Fecha inicio</mat-label>
+      <input matInput type="date" [(ngModel)]="filterStartDate" (change)="loadOrders()" />
+    </mat-form-field>
+
+    <mat-form-field appearance="outline" class="date-field">
+      <mat-label>Fecha fin</mat-label>
+      <input matInput type="date" [(ngModel)]="filterEndDate" (change)="loadOrders()" />
+    </mat-form-field>
+
+    <button mat-stroked-button (click)="onClearFilters()" class="clear-filters-btn">
+      <mat-icon>clear_all</mat-icon>
+      Limpiar Fechas
+    </button>
   </div>
 
   <!-- LOADING -->
@@ -33,9 +49,8 @@
       <mat-spinner diameter="48"></mat-spinner>
     </div>
   } @else {
-    <!-- TABLA -->
-    <!-- PESTAÑAS Y TABLA -->
-    <mat-tab-group [selectedIndex]="selectedTabIndex" (selectedIndexChange)="onTabChange($event)" class="pos-tab-group" animationDuration="0ms">
+    <!-- PESTAÑAS Y TABLA DE PEDIDOS -->
+    <mat-tab-group [selectedIndex]="selectedTabIndex" (selectedIndexChange)="onTabChange($event)" class="pos-tab-group" animationDuration="150ms">
       @for (tab of tabOptions; track tab.label) {
         <mat-tab [label]="tab.label">
           <div class="table-container">
@@ -43,14 +58,14 @@
 
               <!-- ID -->
               <ng-container matColumnDef="id">
-                <th mat-header-cell *matHeaderCellDef>ID</th>
-                <td mat-cell *matCellDef="let order">{{ order.id }}</td>
+                <th mat-header-cell *matHeaderCellDef class="col-id">Pedido ID</th>
+                <td mat-cell *matCellDef="let order" class="col-id">#{{ order.id }}</td>
               </ng-container>
 
               <!-- Cliente -->
               <ng-container matColumnDef="customer">
-                <th mat-header-cell *matHeaderCellDef>Cliente</th>
-                <td mat-cell *matCellDef="let order">
+                <th mat-header-cell *matHeaderCellDef class="col-customer">Cliente</th>
+                <td mat-cell *matCellDef="let order" class="col-customer">
                   <div class="customer-info">
                     <span class="customer-name">
                       {{ order.customer.firstName }} {{ order.customer.lastName }}
@@ -60,36 +75,57 @@
                 </td>
               </ng-container>
 
-              <!-- Total -->
-              <ng-container matColumnDef="totalAmount">
-                <th mat-header-cell *matHeaderCellDef>Total</th>
-                <td mat-cell *matCellDef="let order">
-                  {{ order.totalAmount | currency:'COP':'symbol-narrow':'1.0-0' }}
-                </td>
-              </ng-container>
-
               <!-- Fecha -->
               <ng-container matColumnDef="createdAt">
-                <th mat-header-cell *matHeaderCellDef>Fecha</th>
-                <td mat-cell *matCellDef="let order">
+                <th mat-header-cell *matHeaderCellDef class="col-date">Fecha</th>
+                <td mat-cell *matCellDef="let order" class="col-date">
                   {{ order.createdAt | date:'dd/MM/yyyy HH:mm' }}
                 </td>
               </ng-container>
 
-              <!-- Acciones -->
+              <!-- Total -->
+              <ng-container matColumnDef="totalAmount">
+                <th mat-header-cell *matHeaderCellDef class="col-total">Total</th>
+                <td mat-cell *matCellDef="let order" class="col-total font-bold">
+                  {{ order.totalAmount | currency:'COP':'symbol-narrow':'1.0-0' }}
+                </td>
+              </ng-container>
+
+              <!-- Estado -->
+              <ng-container matColumnDef="status">
+                <th mat-header-cell *matHeaderCellDef class="col-status">Estado</th>
+                <td mat-cell *matCellDef="let order" class="col-status">
+                  <span class="status-chip-wrapper">
+                    <mat-chip [class]="order.status.toLowerCase()">
+                      {{ getStatusLabel(order.status) }}
+                    </mat-chip>
+                  </span>
+                </td>
+              </ng-container>
+
+              <!-- Acciones Contextuales -->
               <ng-container matColumnDef="actions">
-                <th mat-header-cell *matHeaderCellDef>Acciones</th>
-                <td mat-cell *matCellDef="let order">
-                  @if (auth.hasManagementPrivileges()) {
-                    <button
-                      mat-stroked-button
-                      class="action-btn"
-                      [disabled]="isTerminal(order.status)"
-                      (click)="openChangeStatusDialog(order)">
-                      <mat-icon>swap_horiz</mat-icon>
-                      Cambiar Estado
+                <th mat-header-cell *matHeaderCellDef class="col-actions"></th>
+                <td mat-cell *matCellDef="let order" class="col-actions">
+                  <button mat-icon-button [matMenuTriggerFor]="menu" aria-label="Acciones de pedido">
+                    <mat-icon>more_vert</mat-icon>
+                  </button>
+                  <mat-menu #menu="matMenu" xPosition="before" class="glass-menu">
+                    <button mat-menu-item (click)="viewDetails(order)">
+                      <mat-icon>visibility</mat-icon>
+                      <span>Ver Detalles</span>
                     </button>
-                  }
+                    @if (auth.hasManagementPrivileges() && !isTerminal(order.status)) {
+                      <button mat-menu-item (click)="viewDetails(order)">
+                        <mat-icon>swap_horiz</mat-icon>
+                        <span>Cambiar Estado</span>
+                      </button>
+                      <button mat-menu-item class="text-danger" (click)="cancelOrder(order)">
+                        <mat-icon class="text-danger">cancel</mat-icon>
+                        <span>Cancelar Pedido</span>
+                      </button>
+                    }
+                  </mat-menu>
                 </td>
               </ng-container>
 
@@ -99,7 +135,10 @@
               <!-- Empty state -->
               <tr class="mat-row no-data-row" *matNoDataRow>
                 <td class="mat-cell no-data-cell" [attr.colspan]="displayedColumns.length">
-                  No se encontraron pedidos
+                  <div class="empty-state-container">
+                    <mat-icon class="empty-icon">shopping_bag</mat-icon>
+                    <p>No se encontraron pedidos coincidentes</p>
+                  </div>
                 </td>
               </tr>
             </table>
@@ -116,5 +155,143 @@
         </mat-tab>
       }
     </mat-tab-group>
+  }
+</div>
+
+<!-- BACKDROP BLUR -->
+@if (drawerOpen()) {
+  <div class="backdrop-blur" (click)="closeDrawer()"></div>
+}
+
+<!-- SIDE DRAWER DE DETALLES -->
+<div class="side-drawer" [class.drawer-open]="drawerOpen()">
+  @if (selectedOrder(); as order) {
+    <div class="drawer-header">
+      <div class="drawer-header__left">
+        <h3>Pedido #{{ order.id }}</h3>
+        <span class="drawer-date">{{ order.createdAt | date:'dd/MM/yyyy HH:mm' }}</span>
+      </div>
+      <button mat-icon-button (click)="closeDrawer()" aria-label="Cerrar panel">
+        <mat-icon>close</mat-icon>
+      </button>
+    </div>
+
+    <div class="drawer-body">
+      @if (updatingStatus()) {
+        <div class="drawer-loading">
+          <mat-spinner diameter="40"></mat-spinner>
+        </div>
+      }
+
+      <!-- Estado y Cambio -->
+      <div class="drawer-section state-section">
+        <div class="state-display">
+          <span class="label">Estado Actual:</span>
+          <mat-chip [class]="order.status.toLowerCase()">
+            {{ getStatusLabel(order.status) }}
+          </mat-chip>
+        </div>
+
+        @if (auth.hasManagementPrivileges() && !isTerminal(order.status)) {
+          <div class="state-update">
+            <span class="label">Actualizar Estado:</span>
+            <mat-form-field appearance="outline" class="w-100">
+              <mat-label>Seleccionar nuevo estado</mat-label>
+              <mat-select [value]="order.status" (selectionChange)="executeStatusChange(order.id, $event.value)">
+                @for (status of getTransitions(order.status); track status) {
+                  <mat-option [value]="status">{{ getStatusLabel(status) }}</mat-option>
+                }
+              </mat-select>
+            </mat-form-field>
+          </div>
+        }
+      </div>
+
+      <!-- Cliente -->
+      <div class="drawer-section">
+        <h4>Información del Cliente</h4>
+        <div class="info-grid">
+          <div class="info-item">
+            <span class="info-label">Nombre</span>
+            <span class="info-val">{{ order.customer.firstName }} {{ order.customer.lastName }}</span>
+          </div>
+          <div class="info-item">
+            <span class="info-label">Email</span>
+            <span class="info-val">{{ order.customer.email }}</span>
+          </div>
+          <div class="info-item">
+            <span class="info-label">Teléfono</span>
+            <span class="info-val">{{ order.contactPhone || 'N/A' }}</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Entrega -->
+      <div class="drawer-section">
+        <h4>Detalles de Entrega</h4>
+        <div class="info-grid">
+          <div class="info-item full-width">
+            <span class="info-label">Dirección de Entrega</span>
+            <span class="info-val">{{ order.deliveryAddress }}</span>
+          </div>
+          <div class="info-item">
+            <span class="info-label">Método de Pago</span>
+            <span class="info-val">{{ order.paymentMethod }}</span>
+          </div>
+          <div class="info-item">
+            <span class="info-label">Estado del Pago</span>
+            <span class="info-val">{{ order.paymentStatus }}</span>
+          </div>
+          @if (order.deliveryNotes) {
+            <div class="info-item full-width">
+              <span class="info-label">Notas Especiales</span>
+              <span class="info-val notes-val">{{ order.deliveryNotes }}</span>
+            </div>
+          }
+        </div>
+      </div>
+
+      <!-- Productos -->
+      <div class="drawer-section">
+        <h4>Artículos del Pedido</h4>
+        <div class="items-list">
+          @for (item of order.items; track item.id) {
+            <div class="order-item-card">
+              <div class="item-img">
+                @if (item.product?.imageUrl) {
+                  <img [src]="item.product?.imageUrl" alt="Producto" />
+                } @else {
+                  <div class="no-img-placeholder">
+                    <mat-icon>shopping_bag</mat-icon>
+                  </div>
+                }
+              </div>
+              <div class="item-details">
+                <span class="item-name">{{ item.product?.name || 'Producto' }}</span>
+                <div class="item-qty-price">
+                  <span class="qty">{{ item.quantity }} x</span>
+                  <span class="price">{{ item.unitPrice | currency:'COP':'symbol-narrow':'1.0-0' }}</span>
+                </div>
+              </div>
+              <div class="item-total">
+                {{ item.subTotal | currency:'COP':'symbol-narrow':'1.0-0' }}
+              </div>
+            </div>
+          }
+        </div>
+      </div>
+
+      <!-- Resumen Financiero -->
+      <div class="drawer-section summary-section">
+        <div class="summary-row">
+          <span>Envío</span>
+          <span>{{ order.deliveryFee | currency:'COP':'symbol-narrow':'1.0-0' }}</span>
+        </div>
+        <div class="summary-row total-row">
+          <span>Total del Pedido</span>
+          <span class="total-amount">{{ order.totalAmount | currency:'COP':'symbol-narrow':'1.0-0' }}</span>
+        </div>
+      </div>
+    </div>
   }
 </div>
