@@ -16,6 +16,7 @@ import { AuthService } from '../core/services/auth';
 import { OrdersService } from '../orders/services/orders.service';
 import { ProductService } from '../product/services/product.service';
 import { UsersService } from '../users/services/users.service';
+import { DashboardService } from '../core/services/dashboard.service';
 import { Order, ORDER_STATUS_LABELS, OrderStatus } from '../core/models/order.model';
 import { Product } from '../core/models/product.model';
 
@@ -51,11 +52,12 @@ const MODULE_ICONS: Record<string, string> = {
   styleUrl: './home.scss',
 })
 export class Home implements OnInit {
-  private readonly authService    = inject(AuthService);
-  private readonly ordersService  = inject(OrdersService);
-  private readonly productService = inject(ProductService);
-  private readonly usersService    = inject(UsersService);
-  private readonly destroyRef     = inject(DestroyRef);
+  private readonly authService      = inject(AuthService);
+  private readonly ordersService    = inject(OrdersService);
+  private readonly productService   = inject(ProductService);
+  private readonly usersService     = inject(UsersService);
+  private readonly dashboardService = inject(DashboardService);
+  private readonly destroyRef       = inject(DestroyRef);
 
   readonly currentUser = this.authService.currentUser;
   readonly userModules = this.authService.userModules;
@@ -85,7 +87,7 @@ export class Home implements OnInit {
   readonly activeUsersCount = signal<number>(0);
 
   // TODO: Integrar endpoint de bajo stock en backend
-  readonly lowStockCount = signal<number>(12);
+  readonly lowStockCount = signal<number>(0);
 
   /** Loading state unificado del dashboard */
   readonly loadingDashboard = signal<boolean>(false);
@@ -94,11 +96,11 @@ export class Home implements OnInit {
 
   // 1. Gráfico de Barras: Ventas de los últimos 7 días
   public readonly barChartType: ChartType = 'bar';
-  public readonly barChartData: ChartData<'bar'> = {
+  public barChartData: ChartData<'bar'> = {
     labels: ['Lun', 'Mar', 'Mié', 'Jue', 'Vie', 'Sáb', 'Dom'],
     datasets: [
       {
-        data: [1200000, 1900000, 1500000, 2500000, 2200000, 3000000, 2800000],
+        data: [0, 0, 0, 0, 0, 0, 0],
         label: 'Ventas ($ COP)',
         backgroundColor: '#3b82f6',
         hoverBackgroundColor: '#2563eb',
@@ -132,11 +134,11 @@ export class Home implements OnInit {
 
   // 2. Gráfico de Dona: Productos por Categoría
   public readonly doughnutChartType: ChartType = 'doughnut';
-  public readonly doughnutChartData: ChartData<'doughnut'> = {
-    labels: ['Frutas y Verduras', 'Lácteos', 'Carnes', 'Despensa', 'Bebidas'],
+  public doughnutChartData: ChartData<'doughnut'> = {
+    labels: ['Cargando...'],
     datasets: [
       {
-        data: [35, 20, 15, 20, 10],
+        data: [1],
         backgroundColor: [
           '#3b82f6',
           '#10b981',
@@ -195,19 +197,21 @@ export class Home implements OnInit {
   }
 
   /**
-   * Carga en paralelo las métricas globales para roles internos (ADMIN/TENDERO)
-   * limit=1 garantiza extraer únicamente el total sin sobrecargar la red.
+   * Carga en paralelo las métricas globales para roles internos (ADMIN/TENDERO) desde el nuevo endpoint.
    */
   private loadInternalDashboardData(): void {
     this.loadingDashboard.set(true);
 
     forkJoin({
-      products: this.productService
-        .getAll({ limit: 1, offset: 0 })
-        .pipe(catchError(() => of({ data: [], total: 0, limit: 1, offset: 0 }))),
-      orders: this.ordersService
-        .getAllOrders({ limit: 1, offset: 0, status: OrderStatus.PENDING })
-        .pipe(catchError(() => of({ data: [], total: 0, limit: 1, offset: 0 }))),
+      stats: this.dashboardService.getStats().pipe(
+        catchError(() => of({
+          pendingOrders: 0,
+          totalProducts: 0,
+          lowStock: 0,
+          salesFlow: [0, 0, 0, 0, 0, 0, 0],
+          categoryDistribution: []
+        }))
+      ),
       users: this.isAdminRole()
         ? this.usersService.getUsers({ limit: 1, offset: 0 }).pipe(
             catchError(() => of({ data: [], total: 0, limit: 1, offset: 0 }))
@@ -215,10 +219,59 @@ export class Home implements OnInit {
         : of({ data: [], total: 0, limit: 1, offset: 0 }),
     })
     .pipe(takeUntilDestroyed(this.destroyRef))
-    .subscribe(({ products, orders, users }) => {
-      this.totalProductsCount.set(products.total);
-      this.pendingOrdersCount.set(orders.total);
+    .subscribe(({ stats, users }) => {
+      this.totalProductsCount.set(stats.totalProducts);
+      this.pendingOrdersCount.set(stats.pendingOrders);
+      this.lowStockCount.set(stats.lowStock);
       this.activeUsersCount.set(users.total);
+
+      // Actualizar datos de flujo de ventas dinámicamente con los días de la semana correspondientes
+      const daysOfWeek = ['Dom', 'Lun', 'Mar', 'Mié', 'Jue', 'Vie', 'Sáb'];
+      const labels: string[] = [];
+      for (let i = 6; i >= 0; i--) {
+        const d = new Date();
+        d.setDate(d.getDate() - i);
+        labels.push(daysOfWeek[d.getDay()]);
+      }
+
+      this.barChartData = {
+        labels,
+        datasets: [
+          {
+            data: stats.salesFlow,
+            label: 'Ventas ($ COP)',
+            backgroundColor: '#3b82f6',
+            hoverBackgroundColor: '#2563eb',
+            borderRadius: 8,
+          }
+        ]
+      };
+
+      // Actualizar distribución por categoría
+      const catLabels = stats.categoryDistribution.map(cat => cat.name);
+      const catData = stats.categoryDistribution.map(cat => cat.value);
+
+      this.doughnutChartData = {
+        labels: catLabels.length > 0 ? catLabels : ['Sin categorizar'],
+        datasets: [
+          {
+            data: catData.length > 0 ? catData : [0],
+            backgroundColor: [
+              '#3b82f6',
+              '#10b981',
+              '#f59e0b',
+              '#8b5cf6',
+              '#ec4899',
+              '#06b6d4',
+              '#f43f5e',
+              '#14b8a6',
+              '#64748b'
+            ],
+            borderWidth: 0,
+          }
+        ]
+      };
+
       this.loadingDashboard.set(false);
     });
   }

@@ -3,14 +3,14 @@
   <mat-icon>notifications</mat-icon>
 </button>
 
-<mat-menu #notificationMenu="matMenu" xPosition="before" class="notification-panel-menu">
+<mat-menu #notificationMenu="matMenu" xPosition="before" panelClass="notification-panel-menu">
   <div class="notification-header" (click)="$event.stopPropagation()">
     <span class="header-title">Notificaciones</span>
     <div class="header-actions">
-      <button mat-button color="primary" (click)="markAllAsRead()" *ngIf="unreadCount() > 0">
-        Marcar todo como leído
+      <button mat-button class="mark-read-btn" (click)="markAllAsRead()" *ngIf="unreadCount() > 0">
+        Marcar todo leído
       </button>
-      <button mat-icon-button (click)="clearAll()" title="Limpiar todo">
+      <button mat-icon-button class="clear-all-btn" (click)="clearAll()" title="Limpiar todo">
         <mat-icon>delete_sweep</mat-icon>
       </button>
     </div>
@@ -31,9 +31,9 @@
       
       <div class="unread-indicator" *ngIf="!notification.isRead"></div>
       
-      <div class="notification-icon">
-        <mat-icon [color]="notification.type === 'new-order' ? 'accent' : 'primary'">
-          {{ notification.type === 'new-order' ? 'shopping_bag' : 'info' }}
+      <div class="notification-icon-wrapper" [class.new-order]="notification.type === 'new-order'" [class.status-change]="notification.type !== 'new-order'">
+        <mat-icon>
+          {{ notification.type === 'new-order' ? 'shopping_bag' : 'receipt' }}
         </mat-icon>
       </div>
 
