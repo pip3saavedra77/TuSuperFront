@@ -1,13 +1,14 @@
 import { CommonModule } from '@angular/common';
-import { Component, OnInit, ViewChild, inject, DestroyRef, ChangeDetectorRef } from '@angular/core';
-import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
-import { FormControl, ReactiveFormsModule } from '@angular/forms';
+import { Component, OnInit, ViewChild, inject, DestroyRef, ChangeDetectorRef, signal } from '@angular/core';
+import { takeUntilDestroyed, toObservable } from '@angular/core/rxjs-interop';
+import { ReactiveFormsModule } from '@angular/forms';
 import { MatButtonModule } from '@angular/material/button';
 import { MatChipsModule } from '@angular/material/chips';
 import { MatDialog, MatDialogModule } from '@angular/material/dialog';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatIconModule } from '@angular/material/icon';
 import { MatInputModule } from '@angular/material/input';
+import { MatMenuModule } from '@angular/material/menu';
 import { MatPaginator, MatPaginatorModule, PageEvent } from '@angular/material/paginator';
 import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
 import { MatTableModule } from '@angular/material/table';
@@ -30,6 +31,7 @@ import { UserFormDialogComponent } from '../user-form-dialog/user-form-dialog.co
     MatChipsModule,
     MatFormFieldModule,
     MatInputModule,
+    MatMenuModule,
     MatDialogModule,
     MatSnackBarModule,
     MatTooltipModule
@@ -51,13 +53,26 @@ export class UsersListComponent implements OnInit {
   pageSize = 10;
   currentPage = 0;
   isLoading = false;
-  searchControl = new FormControl('');
+  readonly searchQuery = signal<string>('');
 
   displayedColumns: string[] = ['avatar', 'fullName', 'email', 'roles', 'status', 'actions'];
 
+  constructor() {
+    toObservable(this.searchQuery)
+      .pipe(
+        debounceTime(300),
+        distinctUntilChanged(),
+        takeUntilDestroyed(this.destroyRef)
+      )
+      .subscribe(() => {
+        this.currentPage = 0;
+        if (this.paginator) this.paginator.pageIndex = 0;
+        this.loadUsers();
+      });
+  }
+
   ngOnInit(): void {
     this.loadUsers();
-    this.setupSearch();
   }
 
   loadUsers(): void {
@@ -65,7 +80,7 @@ export class UsersListComponent implements OnInit {
     const params = {
       limit: this.pageSize,
       offset: this.currentPage * this.pageSize,
-      search: this.searchControl.value || undefined
+      search: this.searchQuery().trim() || undefined
     };
 
     this.usersService.getUsers(params)
@@ -83,16 +98,13 @@ export class UsersListComponent implements OnInit {
       });
   }
 
-  private setupSearch(): void {
-    this.searchControl.valueChanges.pipe(
-      takeUntilDestroyed(this.destroyRef),
-      debounceTime(300),
-      distinctUntilChanged()
-    ).subscribe(() => {
-      this.currentPage = 0;
-      if (this.paginator) this.paginator.pageIndex = 0;
-      this.loadUsers();
-    });
+  onSearchInput(event: Event): void {
+    const input = event.target as HTMLInputElement;
+    this.searchQuery.set(input.value);
+  }
+
+  clearSearch(): void {
+    this.searchQuery.set('');
   }
 
   onPageChange(event: PageEvent): void {

@@ -55,6 +55,7 @@ export interface OrderFilterParams extends PaginationParams {
   customerId?: number;
   startDate?: string;
   endDate?: string;
+  search?: string;
 }
 
 export const ORDER_TRANSITIONS: ReadonlyMap<OrderStatus, readonly OrderStatus[]> =

@@ -6,8 +6,8 @@ import {
   DestroyRef 
 } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { Subject, debounceTime, distinctUntilChanged, finalize } from 'rxjs';
-import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
+import { debounceTime, distinctUntilChanged, finalize } from 'rxjs';
+import { takeUntilDestroyed, toObservable } from '@angular/core/rxjs-interop';
 import { HttpErrorResponse } from '@angular/common/http';
 
 import { MatTableModule } from '@angular/material/table';
@@ -20,6 +20,7 @@ import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { MatDialog, MatDialogModule } from '@angular/material/dialog';
 import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
 import { MatTooltipModule } from '@angular/material/tooltip';
+import { MatMenuModule } from '@angular/material/menu';
 
 import { ProviderService } from './services/provider.service';
 import { 
@@ -51,6 +52,7 @@ import { AuthService } from '../core/services/auth';
     MatDialogModule,
     MatSnackBarModule,
     MatTooltipModule,
+    MatMenuModule,
   ],
   templateUrl: './provider.html',
   styleUrl: './provider.scss',
@@ -70,14 +72,13 @@ export class ProviderComponent implements OnInit {
   readonly currentOffset = signal<number>(0);
 
   // ── Search ───────────────────────────────────────────
-  searchTerm = '';
-  private readonly searchSubject = new Subject<string>();
+  readonly searchQuery = signal<string>('');
 
   // ── Table config ─────────────────────────────────────
   readonly displayedColumns: string[] = ['id', 'name', 'phone', 'email', 'actions'];
 
   constructor() {
-    this.searchSubject
+    toObservable(this.searchQuery)
       .pipe(
         debounceTime(300),
         distinctUntilChanged(),
@@ -100,7 +101,7 @@ export class ProviderComponent implements OnInit {
       .getAll({
         limit: this.currentLimit(),
         offset: this.currentOffset(),
-        search: this.searchTerm.trim() || undefined,
+        search: this.searchQuery().trim() || undefined,
       })
       .pipe(
         finalize(() => this.loading.set(false)),
@@ -117,8 +118,11 @@ export class ProviderComponent implements OnInit {
 
   onSearchInput(event: Event): void {
     const input = event.target as HTMLInputElement;
-    this.searchTerm = input.value;
-    this.searchSubject.next(this.searchTerm);
+    this.searchQuery.set(input.value);
+  }
+
+  clearSearch(): void {
+    this.searchQuery.set('');
   }
 
   onPageChange(event: PageEvent): void {

@@ -17,7 +17,7 @@
   .page-title {
     font-size: map.get($font-sizes, "2xl");
     font-weight: map.get($font-weights, "bold");
-    color: #FFFFFF;
+    color: #111827;
     margin: 0;
   }
 }
@@ -34,7 +34,12 @@
 .filters-panel {
   padding: map.get($spacing, "16") map.get($spacing, "24");
   margin-bottom: map.get($spacing, "24");
-  @include glass-card("admin");
+  background: rgba(255, 255, 255, 0.85);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid rgba(0, 0, 0, 0.08);
+  border-radius: map.get($radius, "lg");
+  box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.04);
 }
 
 .search-field {
@@ -43,7 +48,12 @@
 }
 
 .table-container {
-  @include glass-card("admin");
+  background: rgba(255, 255, 255, 0.85);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid rgba(0, 0, 0, 0.08);
+  border-radius: map.get($radius, "lg");
+  box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.04);
   padding: map.get($spacing, "16");
   overflow-x: auto;
 }
@@ -53,18 +63,21 @@
   background: transparent;
 
   th.mat-header-cell {
-    color: rgba(255, 255, 255, 0.9);
+    color: #4b5563;
     font-weight: map.get($font-weights, "semibold");
-    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    border-bottom: 2px solid rgba(0, 0, 0, 0.05);
+    text-transform: uppercase;
+    font-size: 11px;
+    letter-spacing: 0.05em;
   }
 
   td.mat-cell {
-    color: rgba(255, 255, 255, 0.8);
-    border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+    color: #111827;
+    border-bottom: 1px solid rgba(0, 0, 0, 0.05);
   }
 
   tr.mat-row:hover {
-    background: rgba(255, 255, 255, 0.03);
+    background: rgba(0, 0, 0, 0.02);
   }
 }
 
@@ -82,39 +95,68 @@
   border: 1px solid rgba(255, 255, 255, 0.2);
 }
 
-.admin-chip {
-  background-color: rgba(139, 26, 47, 0.2) !important;
-  color: #FFFFFF !important;
-  border: 1px solid rgba(139, 26, 47, 0.4) !important;
-  font-size: 11px !important;
-  min-height: 24px !important;
+.role-chip-set, .status-chip-set {
+  ::ng-deep {
+    .mat-mdc-standard-chip {
+      min-height: 24px !important;
+      border-radius: map.get($radius, "md") !important;
+      font-size: 11px !important;
+      font-weight: map.get($font-weights, "semibold") !important;
+      border-width: 1px !important;
+      border-style: solid !important;
+
+      &.admin {
+        background-color: #FAEDED !important;
+        color: #c62828 !important;
+        border-color: rgba(198, 40, 40, 0.2) !important;
+      }
+      &.tender {
+        background-color: #FAF0ED !important;
+        color: #bf360c !important;
+        border-color: rgba(191, 54, 12, 0.2) !important;
+      }
+      &.user {
+        background-color: #EDF3FA !important;
+        color: #1565c0 !important;
+        border-color: rgba(21, 101, 192, 0.2) !important;
+      }
+      &.activo {
+        background-color: #EDFAEE !important;
+        color: #2e7d32 !important;
+        border-color: rgba(46, 125, 50, 0.2) !important;
+      }
+      &.inactivo {
+        background-color: #FAEDED !important;
+        color: #c62828 !important;
+        border-color: rgba(198, 40, 40, 0.2) !important;
+      }
+    }
+  }
 }
 
-.action-buttons {
-  display: flex;
-  gap: 4px;
-
-  button {
-    color: rgba(255, 255, 255, 0.7);
-    &:hover { color: #FFFFFF; background: rgba(255, 255, 255, 0.1); }
+.action-menu-btn {
+  color: #424242 !important;
+  &:hover {
+    color: #000000 !important;
+    background-color: #f5f5f5 !important;
   }
 }
 
 .no-data-cell {
   text-align: center;
   padding: 40px !important;
-  color: rgba(255, 255, 255, 0.5) !important;
+  color: #9ca3af !important;
 }
 
 mat-paginator {
   background: transparent !important;
-  color: rgba(255, 255, 255, 0.7) !important;
+  color: #4b5563 !important;
   margin-top: 16px;
 }
 
 ::ng-deep {
   .mat-mdc-paginator-container {
-    color: rgba(255, 255, 255, 0.7) !important;
+    color: #4b5563 !important;
   }
   
   .mat-mdc-icon-button[disabled] {
@@ -125,11 +167,36 @@ mat-paginator {
     .mdc-text-field--outlined .mdc-notched-outline__leading,
     .mdc-text-field--outlined .mdc-notched-outline__notch,
     .mdc-text-field--outlined .mdc-notched-outline__trailing {
-      border-color: rgba(255, 255, 255, 0.15);
+      border-color: rgba(0, 0, 0, 0.12) !important;
     }
   }
 
   .mat-mdc-input-element {
-    color: #FFFFFF !important;
+    color: #111827 !important;
+  }
+
+  .mat-mdc-menu-panel.glass-menu {
+    background: rgba(255, 255, 255, 0.95) !important;
+    backdrop-filter: blur(16px) !important;
+    border: 1px solid rgba(0, 0, 0, 0.08) !important;
+    border-radius: map.get($radius, "md") !important;
+    box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.08) !important;
+
+    .mat-mdc-menu-item {
+      color: #1f2937 !important;
+      
+      mat-icon {
+        color: #4b5563 !important;
+      }
+
+      &:hover {
+        background-color: #f5f5f5 !important;
+        color: #000000 !important;
+
+        mat-icon {
+          color: #000000 !important;
+        }
+      }
+    }
   }
 }
