@@ -15,7 +15,7 @@ export interface Product {
   id: number;
   name: string;
   description: string | null;
-  imageUrl: string | null;
+  imageUrl?: string | null;
   price: number;
   stock: number;
   isActive: boolean;

@@ -10,7 +10,7 @@ import {
 import { takeUntilDestroyed, toObservable } from '@angular/core/rxjs-interop';
 import { CommonModule, CurrencyPipe } from '@angular/common';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
-import { debounceTime, distinctUntilChanged, finalize, forkJoin } from 'rxjs';
+import { debounceTime, distinctUntilChanged, finalize, forkJoin, of, switchMap } from 'rxjs';
 import { HttpErrorResponse } from '@angular/common/http';
 
 import { MatTableModule } from '@angular/material/table';
@@ -95,6 +95,10 @@ export class Product implements OnInit {
 
   // ── Search ───────────────────────────────────────────
   readonly searchQuery = signal<string>('');
+
+  // ── Image Upload State ───────────────────────────────
+  readonly selectedFile = signal<File | null>(null);
+  readonly previewUrl = signal<string | null>(null);
 
   // ── Table config ─────────────────────────────────────
   readonly displayedColumns: string[] = [
@@ -214,6 +218,8 @@ export class Product implements OnInit {
 
   onAdd(prefill?: { barcode?: string; name?: string }): void {
     this.editingProduct.set(null);
+    this.selectedFile.set(null);
+    this.previewUrl.set(null);
     this.form.reset({
       name: prefill?.name || '',
       description: '',
@@ -229,6 +235,8 @@ export class Product implements OnInit {
 
   onEdit(product: ProductModel): void {
     this.editingProduct.set(product);
+    this.selectedFile.set(null);
+    this.previewUrl.set(null);
     this.form.setValue({
       name: product.name,
       description: product.description ?? '',
@@ -245,8 +253,30 @@ export class Product implements OnInit {
   closeDrawer(): void {
     this.drawerOpen.set(false);
     this.editingProduct.set(null);
+    this.selectedFile.set(null);
+    this.previewUrl.set(null);
     this.form.reset();
     this.focusSearchInput();
+  }
+
+  onFileSelected(event: Event): void {
+    const input = event.target as HTMLInputElement;
+    if (input.files && input.files.length > 0) {
+      const file = input.files[0];
+      this.selectedFile.set(file);
+
+      const reader = new FileReader();
+      reader.onload = () => {
+        this.previewUrl.set(reader.result as string);
+      };
+      reader.readAsDataURL(file);
+    }
+  }
+
+  removeSelectedFile(event: Event): void {
+    event.stopPropagation();
+    this.selectedFile.set(null);
+    this.previewUrl.set(null);
   }
 
   onSmartSearch(query: string): void {
@@ -396,6 +426,13 @@ export class Product implements OnInit {
     this.productService
       .create(payload)
       .pipe(
+        switchMap((product) => {
+          const file = this.selectedFile();
+          if (file) {
+            return this.productService.uploadProductImage(product.id, file);
+          }
+          return of(product);
+        }),
         finalize(() => this.loading.set(false)),
         takeUntilDestroyed(this.destroyRef),
       )
@@ -419,6 +456,13 @@ export class Product implements OnInit {
     this.productService
       .update(id, payload)
       .pipe(
+        switchMap((product) => {
+          const file = this.selectedFile();
+          if (file) {
+            return this.productService.uploadProductImage(product.id, file);
+          }
+          return of(product);
+        }),
         finalize(() => this.loading.set(false)),
         takeUntilDestroyed(this.destroyRef),
       )

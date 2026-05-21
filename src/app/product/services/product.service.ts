@@ -40,6 +40,12 @@ export class ProductService {
     return this.http.patch<Product>(`${this.API_URL}/${id}`, payload);
   }
 
+  uploadProductImage(id: number, file: File): Observable<Product> {
+    const formData = new FormData();
+    formData.append('image', file);
+    return this.http.patch<Product>(`${this.API_URL}/${id}/image`, formData);
+  }
+
   delete(id: number): Observable<void> {
     return this.http.delete<void>(
       `${this.API_URL}/${id}`,
