@@ -1,128 +1,171 @@
+@use '../styles/tokens' as *;
+@use 'sass:map';
+
 .category-container {
-    padding: 2rem;
-    max-width: 1200px;
-    margin: 0 auto;
-    animation: fadeIn 0.4s ease-out;
+  padding: map.get($spacing, "32");
+  animation: fadeIn 0.4s ease-out;
 }
 
 .page-header {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin-bottom: 2rem;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: map.get($spacing, "24");
 
-    .page-title {
-        font-size: 1.875rem;
-        font-weight: 700;
-        color: var(--color-primary-dark, #065f46);
-        margin: 0;
-    }
+  .page-title {
+    font-size: map.get($font-sizes, "2xl");
+    font-weight: map.get($font-weights, "bold");
+    color: #111827;
+    margin: 0;
+  }
 
-    .add-btn {
-        background: linear-gradient(135deg, #10b981 0%, #059669 100%);
-        color: white;
-        padding: 0.5rem 1.5rem;
-        border-radius: 12px;
-        font-weight: 600;
-        box-shadow: 0 4px 12px rgba(16, 185, 129, 0.2);
-        transition: all 0.3s ease;
+  .add-btn {
+    background-color: #8B1A2F !important;
+    color: #FFFFFF !important;
+    padding: 8px 24px !important;
+    border-radius: map.get($radius, "md") !important;
+    font-weight: map.get($font-weights, "semibold") !important;
 
-        &:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 6px 16px rgba(16, 185, 129, 0.3);
-        }
-    }
+    mat-icon { margin-right: 8px; }
+  }
 }
 
-.search-panel {
-    margin-bottom: 1.5rem;
+.filters-panel {
+  padding: map.get($spacing, "16") map.get($spacing, "24");
+  margin-bottom: map.get($spacing, "24");
+  background: rgba(255, 255, 255, 0.85);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid rgba(0, 0, 0, 0.08);
+  border-radius: map.get($radius, "lg");
+  box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.04);
+}
 
-    .search-field {
-        width: 100%;
-        max-width: 400px;
-    }
+.search-field {
+  width: 100%;
+  max-width: 400px;
 }
 
 .table-container {
-    background: rgba(255, 255, 255, 0.7);
-    backdrop-filter: blur(12px);
-    -webkit-backdrop-filter: blur(12px);
-    border-radius: 20px;
-    border: 1px solid rgba(255, 255, 255, 0.3);
-    box-shadow: 0 8px 32px rgba(31, 38, 135, 0.1);
-    overflow: hidden;
+  background: rgba(255, 255, 255, 0.85);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid rgba(0, 0, 0, 0.08);
+  border-radius: map.get($radius, "lg");
+  box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.04);
+  padding: map.get($spacing, "16");
+  overflow-x: auto;
 }
 
 .categories-table {
-    width: 100%;
-    background: transparent;
+  width: 100%;
+  background: transparent;
 
-    th.mat-header-cell {
-        color: var(--color-text-secondary, #4b5563);
-        font-weight: 600;
-        text-transform: uppercase;
-        font-size: 0.75rem;
-        letter-spacing: 0.05em;
-        padding: 1rem;
-        border-bottom: 2px solid rgba(0, 0, 0, 0.05);
-    }
+  th.mat-header-cell {
+    color: #4b5563;
+    font-weight: map.get($font-weights, "semibold");
+    border-bottom: 2px solid rgba(0, 0, 0, 0.05);
+    text-transform: uppercase;
+    font-size: 11px;
+    letter-spacing: 0.05em;
+  }
 
-    td.mat-cell {
-        padding: 1rem;
-        color: var(--color-text-primary, #111827);
-        border-bottom: 1px solid rgba(0, 0, 0, 0.05);
-    }
+  td.mat-cell {
+    color: #111827;
+    border-bottom: 1px solid rgba(0, 0, 0, 0.05);
+  }
 
-    .desc-cell {
-        max-width: 300px;
-        white-space: nowrap;
-        overflow: hidden;
-        text-overflow: ellipsis;
-        color: #6b7280;
-    }
+  .desc-cell {
+    max-width: 300px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    color: #6b7280;
+  }
 
-    .has-products {
-        background-color: rgba(0, 0, 0, 0.01);
-    }
+  tr.mat-row:hover {
+    background: rgba(0, 0, 0, 0.02);
+  }
 }
 
-.action-buttons {
-    display: flex;
-    gap: 0.5rem;
-
-    .edit-btn {
-        color: #3b82f6;
-        &:hover { background: rgba(59, 130, 246, 0.1); }
-    }
-
-    .delete-btn {
-        color: #ef4444;
-        &:hover:not([disabled]) { background: rgba(239, 68, 68, 0.1); }
-        
-        &[disabled] {
-            color: #d1d5db;
-            cursor: not-allowed;
-        }
-    }
+.action-menu-btn {
+  color: #424242 !important;
+  &:hover {
+    color: #000000 !important;
+    background-color: #f5f5f5 !important;
+  }
 }
 
 .loading-container {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    padding: 4rem;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 4rem;
 }
 
 .no-data-row {
-    .no-data-cell {
-        text-align: center;
-        padding: 3rem;
-        color: #9ca3af;
-        font-style: italic;
+  .no-data-cell {
+    text-align: center;
+    padding: 3rem;
+    color: #9ca3af;
+    font-style: italic;
+  }
+}
+
+mat-paginator {
+  background: transparent !important;
+  color: #4b5563 !important;
+  margin-top: 16px;
+}
+
+::ng-deep {
+  .mat-mdc-paginator-container {
+    color: #4b5563 !important;
+  }
+  
+  .mat-mdc-icon-button[disabled] {
+    opacity: 0.3;
+  }
+
+  .mat-mdc-form-field {
+    .mdc-text-field--outlined .mdc-notched-outline__leading,
+    .mdc-text-field--outlined .mdc-notched-outline__notch,
+    .mdc-text-field--outlined .mdc-notched-outline__trailing {
+      border-color: rgba(0, 0, 0, 0.12) !important;
     }
+  }
+
+  .mat-mdc-input-element {
+    color: #111827 !important;
+  }
+
+  .mat-mdc-menu-panel.glass-menu {
+    background: rgba(255, 255, 255, 0.95) !important;
+    backdrop-filter: blur(16px) !important;
+    border: 1px solid rgba(0, 0, 0, 0.08) !important;
+    border-radius: map.get($radius, "md") !important;
+    box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.08) !important;
+
+    .mat-mdc-menu-item {
+      color: #1f2937 !important;
+      
+      mat-icon {
+        color: #4b5563 !important;
+      }
+
+      &:hover {
+        background-color: #f5f5f5 !important;
+        color: #000000 !important;
+
+        mat-icon {
+          color: #000000 !important;
+        }
+      }
+    }
+  }
 }
 
 @keyframes fadeIn {
-    from { opacity: 0; transform: translateY(10px); }
-    to { opacity: 1; transform: translateY(0); }
+  from { opacity: 0; transform: translateY(10px); }
+  to { opacity: 1; transform: translateY(0); }
 }

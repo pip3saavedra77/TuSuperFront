@@ -11,15 +11,20 @@
     </div>
   
     <!-- BÚSQUEDA -->
-    <div class="search-panel">
+    <div class="search-panel filters-panel">
       <mat-form-field appearance="outline" class="search-field">
         <mat-label>Buscar por nombre</mat-label>
+        <mat-icon matPrefix>search</mat-icon>
         <input
           matInput
-          [value]="searchTerm"
+          [value]="searchQuery()"
           (input)="onSearchInput($event)"
           placeholder="Escribe para buscar..." />
-        <mat-icon matSuffix>search</mat-icon>
+        @if (searchQuery()) {
+          <button mat-icon-button matSuffix (click)="clearSearch()" aria-label="Limpiar búsqueda">
+            <mat-icon>close</mat-icon>
+          </button>
+        }
       </mat-form-field>
     </div>
   
@@ -67,20 +72,19 @@
             <td mat-cell *matCellDef="let provider">
               @if (auth.hasManagementPrivileges()) {
                 @let hasProducts = (provider._count?.products || 0) > 0;
-                <div class="action-buttons">
-                  <button mat-icon-button class="edit-btn"
-                          (click)="onEdit(provider)" title="Editar">
+                <button mat-icon-button [matMenuTriggerFor]="actionsMenu" aria-label="Acciones de proveedor" class="action-menu-btn">
+                  <mat-icon>more_vert</mat-icon>
+                </button>
+                <mat-menu #actionsMenu="matMenu" xPosition="before" class="glass-menu">
+                  <button mat-menu-item (click)="onEdit(provider)">
                     <mat-icon>edit</mat-icon>
+                    <span>Editar</span>
                   </button>
-                  
-                  <span [matTooltip]="hasProducts ? 'Tiene productos asociados' : ''">
-                      <button mat-icon-button class="delete-btn"
-                              [disabled]="hasProducts"
-                              (click)="onDelete(provider)" title="Eliminar">
-                        <mat-icon>delete</mat-icon>
-                      </button>
-                  </span>
-                </div>
+                  <button mat-menu-item [disabled]="hasProducts" (click)="onDelete(provider)" [matTooltip]="hasProducts ? 'Tiene productos asociados' : ''">
+                    <mat-icon>delete</mat-icon>
+                    <span>Eliminar</span>
+                  </button>
+                </mat-menu>
               }
             </td>
           </ng-container>
