@@ -4,8 +4,17 @@
 
 .dialog-container {
   padding: map.get($spacing, "24");
-  max-width: 500px;
+  max-width: 100%;
   background: transparent;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+
+  form {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+  }
 }
 
 h2[mat-dialog-title] {
@@ -26,8 +35,8 @@ h2[mat-dialog-title] {
 }
 
 mat-dialog-content {
-  overflow-y: visible;
-  max-height: none;
+  overflow-y: auto;
+  flex: 1;
   padding: map.get($spacing, "16") 0;
 }
 

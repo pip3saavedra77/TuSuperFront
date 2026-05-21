@@ -90,3 +90,20 @@ body {
     padding: 0 !important;
   }
 }
+
+// Side Drawer Dialog (MatDialog como panel lateral deslizante)
+// =============================================================================
+
+.side-drawer-dialog {
+  animation: slideInRight 300ms cubic-bezier(0.25, 0.8, 0.25, 1) forwards;
+
+  .mat-mdc-dialog-container .mdc-dialog__surface {
+    border-radius: 16px 0 0 16px !important;
+  }
+}
+
+@keyframes slideInRight {
+  from { transform: translateX(100%); }
+  to   { transform: translateX(0); }
+}
+
