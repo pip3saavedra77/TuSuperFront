@@ -1,88 +1,158 @@
-<div class="login-card-container">
-    <mat-card class="modern-card">
-        <mat-card-header>
-            <div class="header-content">
-                <mat-card-title>Crear Cuenta</mat-card-title>
-                <mat-card-subtitle>Ingresa tus datos para registrarte</mat-card-subtitle>
+<div class="login-page-wrapper">
+    <div class="split-layout-container">
+        <!-- Left Column: Ninth Style (Desktop Only) -->
+        <div class="left-brand-column">
+            <!-- Brand Logo -->
+            <div class="brand-logo-container">
+                <svg class="brand-logo-svg" viewBox="0 0 100 100" fill="none">
+                    <path d="M30 20 H70 L85 50 L70 80 H30 L15 50 Z" stroke="currentColor" stroke-width="8" stroke-linejoin="round" />
+                    <circle cx="50" cy="50" r="12" fill="currentColor" />
+                </svg>
+                <span class="brand-name">TuSuper</span>
             </div>
-        </mat-card-header>
 
-        <mat-card-content>
-            <form [formGroup]="registerForm" (ngSubmit)="onSubmit()" class="login-form">
+            <!-- Join Us Badge -->
+            <div class="brand-badge-container">
+                <span class="brand-badge-pill">TuSuper Premium 😌</span>
+            </div>
+            
+            <!-- Hero Title -->
+            <div class="brand-hero-section">
+                <h1 class="hero-title">Tu súper,<br>a otro nivel.</h1>
+                <p class="hero-subtitle">Compra, ahorra y disfruta de la mejor calidad y frescura directamente en tu hogar.</p>
+            </div>
 
-                <div class="name-grid">
-                    <mat-form-field appearance="outline">
-                        <mat-label>Nombre</mat-label>
-                        <input matInput formControlName="firstName" type="text" placeholder="Juan">
-                        <mat-icon matPrefix>person</mat-icon>
-                        @if (registerForm.get('firstName')?.hasError('required') && registerForm.get('firstName')?.touched) {
-                        <mat-error>El nombre es obligatorio</mat-error>
-                        }
-                    </mat-form-field>
+            <!-- Steps Footer Cards -->
+            <div class="premium-benefits-card-stack">
+                <div class="benefit-card active-card">
+                    <span class="step-number">1</span>
+                    <span class="step-text">Crear tu Cuenta Gratis</span>
+                </div>
+                <div class="benefit-card glassmorphic-benefit">
+                    <span class="step-number">2</span>
+                    <span class="step-text">Explora los Productos Frescos</span>
+                </div>
+                <div class="benefit-card glassmorphic-benefit">
+                    <span class="step-number">3</span>
+                    <span class="step-text">Recibe tu Pedido en Minutos</span>
+                </div>
+            </div>
+        </div>
 
-                    <mat-form-field appearance="outline">
-                        <mat-label>Apellido</mat-label>
-                        <input matInput formControlName="lastName" type="text" placeholder="Pérez">
-                        @if (registerForm.get('lastName')?.hasError('required') && registerForm.get('lastName')?.touched) {
-                        <mat-error>El apellido es obligatorio</mat-error>
-                        }
-                    </mat-form-field>
+        <!-- Right Column: Form Container (Mobile/Desktop) -->
+        <div class="right-form-column">
+            <!-- Mobile Header (Argumind style) -->
+            <div class="mobile-logo-header">
+                <a routerLink="/auth/log-in" class="back-link-btn">
+                    <mat-icon>arrow_back</mat-icon>
+                    <span>Crear Cuenta</span>
+                </a>
+                <span class="version-tag">TuSuper v1.0 Alpha</span>
+            </div>
+
+            <!-- Card/Form Wrapper -->
+            <div class="auth-form-card">
+                <!-- Desktop Header -->
+                <div class="form-header desktop-only-header">
+                    <h1 class="card-title">Crear Cuenta</h1>
+                    <p class="card-subtitle">Ingresa tus datos para registrarte</p>
                 </div>
 
-                <mat-form-field appearance="outline" class="full-width">
-                    <mat-label>Correo electrónico</mat-label>
-                    <input matInput formControlName="email" type="email" placeholder="nombre@ejemplo.com">
-                    <mat-icon matPrefix>mail</mat-icon>
-                    @if (registerForm.get('email')?.hasError('email') && registerForm.get('email')?.touched) {
-                    <mat-error>Ingresa un correo válido</mat-error>
-                    }
-                    @if (registerForm.get('email')?.hasError('required') && registerForm.get('email')?.touched) {
-                    <mat-error>El correo es obligatorio</mat-error>
-                    }
-                </mat-form-field>
+                <form [formGroup]="registerForm" (ngSubmit)="onSubmit()" class="login-form">
+                    
+                    <!-- First Name & Last Name Grid -->
+                    <div class="name-grid">
+                        <div class="input-group">
+                            <label class="input-label">Nombre</label>
+                            <input type="text" formControlName="firstName" class="premium-input-field" placeholder="Juan" required autocomplete="given-name">
+                            @if (registerForm.get('firstName')?.hasError('required') && registerForm.get('firstName')?.touched) {
+                                <span class="error-text">Obligatorio</span>
+                            }
+                        </div>
 
-                <mat-form-field appearance="outline" class="full-width">
-                    <mat-label>Contraseña</mat-label>
-                    <input matInput [type]="hidePassword ? 'password' : 'text'" formControlName="password">
-                    <mat-icon matPrefix>lock</mat-icon>
-                    <button mat-icon-button matSuffix (click)="hidePassword = !hidePassword" type="button">
-                        <mat-icon>{{hidePassword ? 'visibility_off' : 'visibility'}}</mat-icon>
+                        <div class="input-group">
+                            <label class="input-label">Apellido</label>
+                            <input type="text" formControlName="lastName" class="premium-input-field" placeholder="Pérez" required autocomplete="family-name">
+                            @if (registerForm.get('lastName')?.hasError('required') && registerForm.get('lastName')?.touched) {
+                                <span class="error-text">Obligatorio</span>
+                            }
+                        </div>
+                    </div>
+
+                    <!-- Email input group -->
+                    <div class="input-group">
+                        <label class="input-label">Correo electrónico</label>
+                        <input type="email" formControlName="email" class="premium-input-field" placeholder="nombre@ejemplo.com" required autocomplete="email">
+                        <span class="input-warning-note">⚠️ Por favor utiliza tu correo personal o laboral principal</span>
+                        @if (registerForm.get('email')?.hasError('email') && registerForm.get('email')?.touched) {
+                            <span class="error-text">Ingresa un correo válido</span>
+                        }
+                        @if (registerForm.get('email')?.hasError('required') && registerForm.get('email')?.touched) {
+                            <span class="error-text">El correo es obligatorio</span>
+                        }
+                    </div>
+
+                    <!-- Password input group -->
+                    <div class="input-group">
+                        <label class="input-label">Contraseña</label>
+                        <div class="password-input-wrapper">
+                            <input [type]="hidePassword ? 'password' : 'text'" formControlName="password" class="premium-input-field" placeholder="••••••••" required autocomplete="new-password">
+                            <button type="button" class="visibility-toggle" (click)="hidePassword = !hidePassword">
+                                <mat-icon>{{hidePassword ? 'visibility_off' : 'visibility'}}</mat-icon>
+                            </button>
+                        </div>
+                        <span class="input-warning-note">Mínimo 6 caracteres con letras y números</span>
+                        @if (registerForm.get('password')?.hasError('required') && registerForm.get('password')?.touched) {
+                            <span class="error-text">La contraseña es obligatoria</span>
+                        }
+                        @if (registerForm.get('password')?.hasError('minlength') && registerForm.get('password')?.touched) {
+                            <span class="error-text">Debe tener al menos 6 caracteres</span>
+                        }
+                    </div>
+
+                    <!-- Confirm Password input group -->
+                    <div class="input-group">
+                        <label class="input-label">Confirmar Contraseña</label>
+                        <div class="password-input-wrapper">
+                            <input [type]="hideConfirmPassword ? 'password' : 'text'" formControlName="confirmPassword" class="premium-input-field" placeholder="••••••••" required autocomplete="new-password">
+                            <button type="button" class="visibility-toggle" (click)="hideConfirmPassword = !hideConfirmPassword">
+                                <mat-icon>{{hideConfirmPassword ? 'visibility_off' : 'visibility'}}</mat-icon>
+                            </button>
+                        </div>
+                        @if (registerForm.get('confirmPassword')?.hasError('required') && registerForm.get('confirmPassword')?.touched) {
+                            <span class="error-text">Confirma tu contraseña</span>
+                        }
+                        @if (registerForm.get('confirmPassword')?.hasError('passwordMismatch') && registerForm.get('confirmPassword')?.touched) {
+                            <span class="error-text">Las contraseñas no coinciden</span>
+                        }
+                    </div>
+
+                    <!-- Terms & Conditions Checkbox (Argumind style circular check) -->
+                    <div class="form-options">
+                        <label class="remember-me circular-terms">
+                            <input type="checkbox" required>
+                            <span class="checkbox-custom-circle"></span>
+                            <span class="checkbox-label">Acepto los Términos y Condiciones y la Política de Privacidad</span>
+                        </label>
+                    </div>
+
+                    <!-- Submit Button -->
+                    <button type="submit" class="primary-electric-button" [disabled]="registerForm.invalid || loading()">
+                        @if (loading()) {
+                            <span class="spinner-container">
+                                <span class="dot-spinner"></span>
+                            </span>
+                        } @else {
+                            <span>Registrarse</span>
+                        }
                     </button>
-                    @if (registerForm.get('password')?.hasError('required') && registerForm.get('password')?.touched) {
-                    <mat-error>La contraseña es obligatoria</mat-error>
-                    }
-                    @if (registerForm.get('password')?.hasError('minlength') && registerForm.get('password')?.touched) {
-                    <mat-error>Debe tener al menos 6 caracteres</mat-error>
-                    }
-                </mat-form-field>
+                </form>
 
-                <mat-form-field appearance="outline" class="full-width">
-                    <mat-label>Confirmar contraseña</mat-label>
-                    <input matInput [type]="hideConfirmPassword ? 'password' : 'text'" formControlName="confirmPassword">
-                    <mat-icon matPrefix>lock</mat-icon>
-                    <button mat-icon-button matSuffix (click)="hideConfirmPassword = !hideConfirmPassword" type="button">
-                        <mat-icon>{{hideConfirmPassword ? 'visibility_off' : 'visibility'}}</mat-icon>
-                    </button>
-                    @if (registerForm.get('confirmPassword')?.hasError('required') && registerForm.get('confirmPassword')?.touched) {
-                    <mat-error>Confirma tu contraseña</mat-error>
-                    }
-                    @if (registerForm.get('confirmPassword')?.hasError('passwordMismatch') && registerForm.get('confirmPassword')?.touched) {
-                    <mat-error>Las contraseñas no coinciden</mat-error>
-                    }
-                </mat-form-field>
-
-                <button matButton="filled" class="login-button" [disabled]="registerForm.invalid || loading()">
-                    @if (loading()) {
-                        <mat-spinner diameter="20"></mat-spinner>
-                    } @else {
-                        Registrarse
-                    }
-                </button>
-            </form>
-        </mat-card-content>
-
-        <mat-card-footer class="card-footer">
-            <p>¿Ya tienes cuenta? <a routerLink="/auth/login">Inicia sesión</a></p>
-        </mat-card-footer>
-    </mat-card>
+                <!-- Footer link -->
+                <div class="auth-footer">
+                    <p>¿Ya tienes cuenta? <a routerLink="/auth/log-in" class="footer-link">Inicia sesión</a></p>
+                </div>
+            </div>
+        </div>
+    </div>
 </div>

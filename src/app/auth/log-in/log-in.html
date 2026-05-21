@@ -1,82 +1,125 @@
 <div class="login-page-wrapper">
-    <!-- Fluid background with organic green-magenta glow blobs -->
-    <div class="fluid-background-glow">
-        <div class="glow-blob glow-green"></div>
-        <div class="glow-blob glow-magenta"></div>
-    </div>
+    <div class="split-layout-container">
+        <!-- Left Column: Ninth Style (Desktop Only) -->
+        <div class="left-brand-column">
+            <!-- Brand Logo -->
+            <div class="brand-logo-container">
+                <svg class="brand-logo-svg" viewBox="0 0 100 100" fill="none">
+                    <path d="M30 20 H70 L85 50 L70 80 H30 L15 50 Z" stroke="currentColor" stroke-width="8" stroke-linejoin="round" />
+                    <circle cx="50" cy="50" r="12" fill="currentColor" />
+                </svg>
+                <span class="brand-name">TuSuper</span>
+            </div>
 
-    <!-- Main Container -->
-    <div class="main-login-container">
-        <!-- Top Navigation Options -->
-        <header class="top-nav-options">
-            <a class="nav-option">Explorar</a>
-            <a class="nav-option active">
-                <mat-icon class="active-icon">shopping_bag</mat-icon>
-                Comprar
-            </a>
-            <a class="nav-option">Recibir</a>
-        </header>
+            <!-- Join Us Badge -->
+            <div class="brand-badge-container">
+                <span class="brand-badge-pill">JK</span>
+            </div>
+            
+            <!-- Hero Title -->
+            <div class="brand-hero-section">
+                <h1 class="hero-title">Tu súpermercado favorito,<br>a otro nivel.</h1>
+                <p class="hero-subtitle">Compra, ahorra y disfruta de la mejor calidad y frescura directamente en tu hogar.</p>
+            </div>
 
-        <!-- Glassmorphic Card Container -->
-        <mat-card class="glassmorphic-card">
-            <mat-card-header>
-                <div class="header-content">
-                    <h1 class="card-title">Tu súper, a otro nivel</h1>
-                    <p class="card-subtitle">Compra, ahorra y disfruta de la mejor calidad directamente en tu hogar</p>
+            <!-- Steps Footer Cards -->
+            <div class="premium-benefits-card-stack">
+                <div class="benefit-card active-card">
+                    <span class="step-number">1</span>
+                    <span class="step-text">Iniciar Sesión en tu Cuenta</span>
                 </div>
-            </mat-card-header>
+                <div class="benefit-card glassmorphic-benefit">
+                    <span class="step-number">2</span>
+                    <span class="step-text">Explora los Productos Frescos</span>
+                </div>
+                <div class="benefit-card glassmorphic-benefit">
+                    <span class="step-number">3</span>
+                    <span class="step-text">Recibe tu Pedido en Minutos</span>
+                </div>
+            </div>
+        </div>
 
-            <mat-card-content>
+        <!-- Right Column: Form Container (Mobile/Desktop) -->
+        <div class="right-form-column">
+            <!-- Mobile Header (Argumind style) -->
+            <div class="mobile-logo-header">
+                <div class="mobile-logo-left">
+                    <svg class="mobile-logo-svg" viewBox="0 0 100 100" fill="none">
+                        <circle cx="50" cy="50" r="48" fill="#104fed" />
+                        <path d="M50 15 C50 34 34 50 15 50 C34 50 50 66 50 85 C50 66 66 50 85 50 C66 50 50 34 50 15 Z" fill="white" />
+                        <circle cx="50" cy="50" r="8" fill="#104fed" />
+                    </svg>
+                    <span class="brand-name">TuSuper</span>
+                </div>
+                <span class="version-tag">TuSuper v1.0 Alpha</span>
+            </div>
+
+            <!-- Card/Form Wrapper -->
+            <div class="auth-form-card">
+                <div class="form-header">
+                    <h1 class="card-title">Iniciar Sesión</h1>
+                    <p class="card-subtitle">Compra, ahorra y disfruta de la mejor calidad</p>
+                </div>
+
                 <form [formGroup]="loginForm" (ngSubmit)="onSubmit()" class="login-form">
-                    
-                    <div class="input-glass-wrapper">
-                        <mat-icon class="input-icon">mail</mat-icon>
-                        <input type="email" formControlName="email" placeholder="Correo electrónico" required autocomplete="email">
+                    <!-- Email input group -->
+                    <div class="input-group">
+                        <label class="input-label">Correo electrónico</label>
+                        <input type="email" formControlName="email" class="premium-input-field" placeholder="nombre@ejemplo.com" required autocomplete="email">
+                        @if (loginForm.get('email')?.hasError('email') && loginForm.get('email')?.touched) {
+                            <span class="error-text">Ingresa un correo válido</span>
+                        }
+                        @if (loginForm.get('email')?.hasError('required') && loginForm.get('email')?.touched) {
+                            <span class="error-text">El correo es obligatorio</span>
+                        }
                     </div>
-                    @if (loginForm.get('email')?.hasError('email') && loginForm.get('email')?.touched) {
-                        <span class="error-text">Ingresa un correo válido</span>
-                    }
-                    @if (loginForm.get('email')?.hasError('required') && loginForm.get('email')?.touched) {
-                        <span class="error-text">El correo es obligatorio</span>
-                    }
 
-                    <div class="input-glass-wrapper">
-                        <mat-icon class="input-icon">lock</mat-icon>
-                        <input [type]="hidePassword ? 'password' : 'text'" formControlName="password" placeholder="Contraseña" required autocomplete="current-password">
-                        <button type="button" class="visibility-toggle" (click)="hidePassword = !hidePassword">
-                            <mat-icon>{{hidePassword ? 'visibility_off' : 'visibility'}}</mat-icon>
-                        </button>
+                    <!-- Password input group -->
+                    <div class="input-group">
+                        <label class="input-label">Contraseña</label>
+                        <div class="password-input-wrapper">
+                            <input [type]="hidePassword ? 'password' : 'text'" formControlName="password" class="premium-input-field" placeholder="••••••••" required autocomplete="current-password">
+                            <button type="button" class="visibility-toggle" (click)="hidePassword = !hidePassword">
+                                <mat-icon>{{hidePassword ? 'visibility_off' : 'visibility'}}</mat-icon>
+                            </button>
+                        </div>
+                        @if (loginForm.get('password')?.hasError('required') && loginForm.get('password')?.touched) {
+                            <span class="error-text">La contraseña es obligatoria</span>
+                        }
                     </div>
-                    @if (loginForm.get('password')?.hasError('required') && loginForm.get('password')?.touched) {
-                        <span class="error-text">La contraseña es obligatoria</span>
-                    }
 
+                    <!-- Options (Remember me / Forgot password) -->
                     <div class="form-options">
                         <label class="remember-me">
                             <input type="checkbox">
+                            <span class="checkbox-custom"></span>
                             <span class="checkbox-label">Recordarme</span>
                         </label>
                         <a routerLink="/auth/forgot-password" class="forgot-password">¿Olvidaste tu contraseña?</a>
                     </div>
 
-                    <button type="submit" class="primary-emerald-button" [disabled]="loginForm.invalid">
-                        Iniciar Sesión
+                    <!-- Submit Button -->
+                    <button type="submit" class="primary-electric-button" [disabled]="loginForm.invalid">
+                        <span>Ingresar</span>
                     </button>
 
+                    <!-- Divider -->
                     <div class="divider">
                         <span class="divider-text">O continúa con</span>
                     </div>
 
-                    <button type="button" class="google-glass-button" (click)="loginWithGoogle()">
+                    <!-- Social Google Button -->
+                    <button type="button" class="google-social-button" (click)="loginWithGoogle()">
                         <img src="https://fonts.gstatic.com/s/i/productlogos/googleg/v6/24px.svg" alt="Google" class="google-icon">
-                        Continuar con Google
+                        <span>Google</span>
                     </button>
                 </form>
-            </mat-card-content>
 
-            <mat-card-footer class="card-footer">
-                <p>¿No tienes cuenta? <a routerLink="/auth/sign-in">Regístrate aquí</a></p>
-            </mat-card-footer>
-        </mat-card>
+                <!-- Footer link -->
+                <div class="auth-footer">
+                    <p>¿No tienes cuenta? <a routerLink="/auth/sign-in" class="footer-link">Regístrate aquí</a></p>
+                </div>
+            </div>
+        </div>
     </div>
 </div>
