@@ -132,6 +132,41 @@ export interface ProductFormDialogData {
             </mat-form-field>
           </div>
 
+          <!-- CARGA DE IMAGEN -->
+          <div class="image-upload-container">
+            <label class="image-upload-label">Imagen del Producto</label>
+            <div class="image-upload-dropzone" [class.has-file]="selectedFile() || data.product?.imageUrl" (click)="fileInput.click()">
+              <input
+                #fileInput
+                type="file"
+                accept="image/*"
+                class="hidden-file-input"
+                (change)="onFileSelected($event)" />
+
+              @if (previewUrl()) {
+                <div class="preview-wrapper">
+                  <img [src]="previewUrl()" class="preview-img" alt="Vista previa de imagen" />
+                  <button mat-icon-button type="button" class="remove-img-btn" (click)="removeSelectedFile($event)">
+                    <mat-icon>close</mat-icon>
+                  </button>
+                </div>
+              } @else if (data.product?.imageUrl) {
+                <div class="preview-wrapper">
+                  <img [src]="data.product!.imageUrl" class="preview-img" alt="Imagen actual" />
+                  <button mat-icon-button type="button" class="remove-img-btn" (click)="removeSelectedFile($event)">
+                    <mat-icon>close</mat-icon>
+                  </button>
+                </div>
+              } @else {
+                <div class="upload-placeholder">
+                  <mat-icon class="upload-icon">cloud_upload</mat-icon>
+                  <span class="upload-text">Haz clic para subir imagen</span>
+                  <span class="upload-hint">PNG, JPG hasta 5MB</span>
+                </div>
+              }
+            </div>
+          </div>
+
           <mat-slide-toggle formControlName="isActive" color="primary">
             Producto activo
           </mat-slide-toggle>
@@ -199,7 +234,108 @@ export interface ProductFormDialogData {
     mat-slide-toggle {
       margin-bottom: 8px;
     }
+    .image-upload-container {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      margin-bottom: 16px;
+    }
+    .image-upload-label {
+      font-size: 0.85rem;
+      font-weight: 600;
+      color: #475569;
+    }
+    .image-upload-dropzone {
+      border: 2px dashed #cbd5e1;
+      border-radius: 12px;
+      padding: 20px;
+      text-align: center;
+      cursor: pointer;
+      background-color: #f8fafc;
+      transition: all 0.2s ease;
+      position: relative;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      min-height: 120px;
+    }
+    .image-upload-dropzone:hover {
+      border-color: #2980B9;
+      background-color: #f1f5f9;
+    }
+    .image-upload-dropzone.has-file {
+      border-style: solid;
+      border-color: #e2e8f0;
+      padding: 8px;
+      background-color: #ffffff;
+    }
+    .hidden-file-input {
+      display: none;
+    }
+    .upload-placeholder {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 4px;
+      color: #64748b;
+    }
+    .upload-placeholder .upload-icon {
+      font-size: 32px;
+      width: 32px;
+      height: 32px;
+      color: #94a3b8;
+      margin-bottom: 4px;
+    }
+    .upload-placeholder .upload-text {
+      font-size: 0.9rem;
+      font-weight: 600;
+      color: #334155;
+    }
+    .upload-placeholder .upload-hint {
+      font-size: 0.75rem;
+      color: #94a3b8;
+    }
+    .preview-wrapper {
+      position: relative;
+      width: 100%;
+      max-width: 160px;
+      height: 120px;
+      border-radius: 8px;
+      overflow: hidden;
+      border: 1px solid #e2e8f0;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
+    .preview-img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+    .remove-img-btn {
+      position: absolute;
+      top: 4px;
+      right: 4px;
+      background: rgba(15, 23, 42, 0.6) !important;
+      color: #ffffff !important;
+      width: 24px !important;
+      height: 24px !important;
+      line-height: 24px !important;
+      display: flex !important;
+      align-items: center !important;
+      justify-content: center !important;
+    }
+    .remove-img-btn mat-icon {
+      font-size: 14px;
+      width: 14px;
+      height: 14px;
+      line-height: 14px;
+    }
+    .remove-img-btn:hover {
+      background: rgba(15, 23, 42, 0.8) !important;
+    }
   `],
+
 })
 export class ProductFormDialogComponent implements OnInit {
   private readonly fb = inject(FormBuilder);
@@ -213,6 +349,29 @@ export class ProductFormDialogComponent implements OnInit {
   readonly loadingSelects = signal<boolean>(true);
 
   readonly isEditMode: boolean = !!this.data.product;
+
+  readonly selectedFile = signal<File | null>(null);
+  readonly previewUrl = signal<string | null>(null);
+
+  onFileSelected(event: Event): void {
+    const input = event.target as HTMLInputElement;
+    if (input.files && input.files.length > 0) {
+      const file = input.files[0];
+      this.selectedFile.set(file);
+
+      const reader = new FileReader();
+      reader.onload = () => {
+        this.previewUrl.set(reader.result as string);
+      };
+      reader.readAsDataURL(file);
+    }
+  }
+
+  removeSelectedFile(event: Event): void {
+    event.stopPropagation();
+    this.selectedFile.set(null);
+    this.previewUrl.set(null);
+  }
 
   readonly form = this.fb.nonNullable.group({
     name:        ['', [Validators.required, Validators.maxLength(255)]],
@@ -251,13 +410,14 @@ export class ProductFormDialogComponent implements OnInit {
     if (this.form.invalid) return;
 
     const raw = this.form.getRawValue();
+    const file = this.selectedFile();
 
     if (this.isEditMode) {
       const payload: UpdateProductPayload = {
         ...raw,
         barcode: raw.barcode || null,
       };
-      this.dialogRef.close(payload);
+      this.dialogRef.close({ payload, file });
     } else {
       const payload: CreateProductPayload = {
         name: raw.name,
@@ -269,7 +429,7 @@ export class ProductFormDialogComponent implements OnInit {
         providerId: raw.providerId,
         barcode: raw.barcode || null,
       };
-      this.dialogRef.close(payload);
+      this.dialogRef.close({ payload, file });
     }
   }
 
