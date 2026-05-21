@@ -43,11 +43,23 @@ export class NotificationsService {
       this.socket?.emit('authenticate', { token });
     });
 
-    this.socket.on('new-order', (data: any) => {
+    this.socket.on('new-order', (data: string) => {
       this.addNotification({
-        id: Math.random().toString(36).substr(2, 9),
+        id: Math.random().toString(36).substring(2, 11),
         title: '¡Nuevo Pedido!',
-        message: `Cliente: ${data.customerName} - Total: $${data.total}`,
+        message: data,
+        type: 'new-order',
+        timestamp: new Date().toISOString(),
+        isRead: false,
+        data,
+      });
+    });
+
+    this.socket.on('new_order', (data: string) => {
+      this.addNotification({
+        id: Math.random().toString(36).substring(2, 11),
+        title: '¡Nuevo Pedido!',
+        message: data,
         type: 'new-order',
         timestamp: new Date().toISOString(),
         isRead: false,
