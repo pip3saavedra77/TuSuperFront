@@ -1,6 +1,5 @@
 @use '../../../styles/tokens' as *;
 @use '../../../styles/glass' as *;
-@use '../../../styles/order-badges';
 @use 'sass:map';
 
 :host {
@@ -23,7 +22,7 @@
 }
 
 .new-user-btn {
-  background-color: #8B1A2F !important;
+  background-color: var(--profile-primary, #8B1A2F) !important;
   color: #FFFFFF !important;
   padding: 8px 24px !important;
   border-radius: map.get($radius, "md") !important;
@@ -47,118 +46,240 @@
   max-width: 400px;
 }
 
-.table-container {
-  background: rgba(255, 255, 255, 0.85);
+// ─── Grid de Tarjetas ───────────────────────────────────────────────────────────
+
+.users-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: 1.5rem;
+  margin-bottom: map.get($spacing, "24");
+}
+
+.user-card {
+  background: rgba(255, 255, 255, 0.88);
   backdrop-filter: blur(12px);
   -webkit-backdrop-filter: blur(12px);
   border: 1px solid rgba(0, 0, 0, 0.08);
   border-radius: map.get($radius, "lg");
-  box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.04);
-  padding: map.get($spacing, "16");
-  overflow-x: auto;
-}
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.04);
+  padding: map.get($spacing, "24");
+  transition: transform map.get($transitions, "normal"),
+              box-shadow map.get($transitions, "normal"),
+              border-color map.get($transitions, "normal"),
+              opacity map.get($transitions, "normal");
+  display: flex;
+  flex-direction: column;
+  gap: map.get($spacing, "16");
 
-.users-table {
-  width: 100%;
-  background: transparent;
-
-  th.mat-header-cell {
-    color: #4b5563;
-    font-weight: map.get($font-weights, "semibold");
-    border-bottom: 2px solid rgba(0, 0, 0, 0.05);
-    text-transform: uppercase;
-    font-size: 11px;
-    letter-spacing: 0.05em;
+  &:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 12px 32px rgba(0, 0, 0, 0.1);
+    border-color: rgba(0, 0, 0, 0.12);
   }
 
-  td.mat-cell {
-    color: #111827;
-    border-bottom: 1px solid rgba(0, 0, 0, 0.05);
-  }
+  &--inactive {
+    opacity: 0.65;
 
-  tr.mat-row:hover {
-    background: rgba(0, 0, 0, 0.02);
+    &:hover {
+      opacity: 1;
+    }
   }
 }
 
-.user-avatar {
-  width: 36px;
-  height: 36px;
-  background: #8B1A2F;
+.user-card__header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.user-card__avatar {
+  width: 48px;
+  height: 48px;
+  background: var(--profile-primary, #2980B9);
   color: #FFFFFF;
   border-radius: 50%;
   display: flex;
   align-items: center;
   justify-content: center;
-  font-size: 14px;
-  font-weight: 600;
-  border: 1px solid rgba(255, 255, 255, 0.2);
+  font-size: 16px;
+  font-weight: map.get($font-weights, "semibold");
+  border: 2px solid rgba(255, 255, 255, 0.3);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
 }
 
-.role-chip-set, .status-chip-set {
-  ::ng-deep {
-    .mat-mdc-standard-chip {
-      min-height: 24px !important;
-      border-radius: map.get($radius, "md") !important;
-      font-size: 11px !important;
-      font-weight: map.get($font-weights, "semibold") !important;
-      border-width: 1px !important;
-      border-style: solid !important;
+.user-card__status-badge {
+  display: inline-flex;
+  align-items: center;
+  padding: 3px 12px;
+  border-radius: map.get($radius, "full");
+  font-size: 11px;
+  font-weight: map.get($font-weights, "semibold");
+  border: 1px solid;
+  letter-spacing: 0.02em;
 
-      &.admin {
-        background-color: #FAEDED !important;
-        color: #c62828 !important;
-        border-color: rgba(198, 40, 40, 0.2) !important;
-      }
-      &.tender {
-        background-color: #FAF0ED !important;
-        color: #bf360c !important;
-        border-color: rgba(191, 54, 12, 0.2) !important;
-      }
-      &.user {
-        background-color: #EDF3FA !important;
-        color: #1565c0 !important;
-        border-color: rgba(21, 101, 192, 0.2) !important;
-      }
-      &.activo {
-        background-color: #EDFAEE !important;
-        color: #2e7d32 !important;
-        border-color: rgba(46, 125, 50, 0.2) !important;
-      }
-      &.inactivo {
-        background-color: #FAEDED !important;
-        color: #c62828 !important;
-        border-color: rgba(198, 40, 40, 0.2) !important;
-      }
+  &.active {
+    background-color: #EDFAEE;
+    color: #2e7d32;
+    border-color: rgba(46, 125, 50, 0.2);
+  }
+
+  &.inactive {
+    background-color: #FAEDED;
+    color: #c62828;
+    border-color: rgba(198, 40, 40, 0.2);
+  }
+}
+
+// ─── Card Body ──────────────────────────────────────────────────────────────────
+
+.user-card__body {
+  display: flex;
+  flex-direction: column;
+  gap: map.get($spacing, "4");
+  flex: 1;
+}
+
+.user-card__name {
+  font-size: map.get($font-sizes, "md");
+  font-weight: map.get($font-weights, "semibold");
+  color: #111827;
+  margin: 0;
+  line-height: 1.4;
+}
+
+.user-card__email {
+  font-size: map.get($font-sizes, "sm");
+  color: #6B7280;
+  margin: 0;
+  line-height: 1.4;
+}
+
+.user-card__roles {
+  display: flex;
+  flex-wrap: wrap;
+  gap: map.get($spacing, "4");
+  margin-top: map.get($spacing, "4");
+}
+
+.role-chip {
+  display: inline-block;
+  padding: 2px 10px;
+  border-radius: map.get($radius, "md");
+  font-size: 11px;
+  font-weight: map.get($font-weights, "semibold");
+  border: 1px solid;
+  line-height: 1.6;
+
+  &.admin {
+    background-color: #FAEDED;
+    color: #c62828;
+    border-color: rgba(198, 40, 40, 0.2);
+  }
+
+  &.tender {
+    background-color: #FAF0ED;
+    color: #bf360c;
+    border-color: rgba(191, 54, 12, 0.2);
+  }
+
+  &.user {
+    background-color: #EDF3FA;
+    color: #1565c0;
+    border-color: rgba(21, 101, 192, 0.2);
+  }
+}
+
+// ─── Card Actions ───────────────────────────────────────────────────────────────
+
+.user-card__actions {
+  display: flex;
+  align-items: center;
+  gap: map.get($spacing, "8");
+  padding-top: map.get($spacing, "12");
+  border-top: 1px solid rgba(0, 0, 0, 0.06);
+  min-height: 40px;
+
+  mat-spinner {
+    margin: 0 auto;
+  }
+}
+
+.action-btn {
+  flex: 1;
+  font-size: map.get($font-sizes, "xs") !important;
+  padding: 4px 12px !important;
+  border-radius: map.get($radius, "md") !important;
+  transition: background-color map.get($transitions, "fast"),
+              border-color map.get($transitions, "fast");
+
+  mat-icon {
+    font-size: 16px;
+    width: 16px;
+    height: 16px;
+    margin-right: 4px;
+  }
+
+  &.edit-btn {
+    color: #1565c0 !important;
+    border-color: rgba(21, 101, 192, 0.3) !important;
+
+    &:hover {
+      background-color: rgba(21, 101, 192, 0.08) !important;
+    }
+  }
+
+  &.deactivate {
+    color: #c62828 !important;
+    border-color: rgba(198, 40, 40, 0.3) !important;
+
+    &:hover {
+      background-color: rgba(198, 40, 40, 0.08) !important;
+    }
+  }
+
+  &.activate {
+    color: #2e7d32 !important;
+    border-color: rgba(46, 125, 50, 0.3) !important;
+
+    &:hover {
+      background-color: rgba(46, 125, 50, 0.08) !important;
     }
   }
 }
 
-.action-menu-btn {
-  color: #424242 !important;
-  &:hover {
-    color: #000000 !important;
-    background-color: #f5f5f5 !important;
-  }
+// ─── Estados ────────────────────────────────────────────────────────────────────
+
+.loading-state,
+.empty-state {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: map.get($spacing, "16");
+  padding: map.get($spacing, "64") map.get($spacing, "24");
+  color: #9ca3af;
 }
 
-.no-data-cell {
-  text-align: center;
-  padding: 40px !important;
-  color: #9ca3af !important;
+.empty-state mat-icon {
+  font-size: 64px;
+  width: 64px;
+  height: 64px;
+  opacity: 0.4;
 }
+
+// ─── Paginator ──────────────────────────────────────────────────────────────────
 
 mat-paginator {
   background: transparent !important;
   color: #4b5563 !important;
-  margin-top: 16px;
+  margin-top: map.get($spacing, "8");
 }
 
 ::ng-deep {
   .mat-mdc-paginator-container {
     color: #4b5563 !important;
   }
-  
+
   .mat-mdc-icon-button[disabled] {
     opacity: 0.3;
   }
@@ -173,30 +294,5 @@ mat-paginator {
 
   .mat-mdc-input-element {
     color: #111827 !important;
-  }
-
-  .mat-mdc-menu-panel.glass-menu {
-    background: rgba(255, 255, 255, 0.95) !important;
-    backdrop-filter: blur(16px) !important;
-    border: 1px solid rgba(0, 0, 0, 0.08) !important;
-    border-radius: map.get($radius, "md") !important;
-    box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.08) !important;
-
-    .mat-mdc-menu-item {
-      color: #1f2937 !important;
-      
-      mat-icon {
-        color: #4b5563 !important;
-      }
-
-      &:hover {
-        background-color: #f5f5f5 !important;
-        color: #000000 !important;
-
-        mat-icon {
-          color: #000000 !important;
-        }
-      }
-    }
   }
 }

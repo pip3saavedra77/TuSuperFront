@@ -1,18 +1,13 @@
-import { CommonModule } from '@angular/common';
-import { Component, OnInit, ViewChild, inject, DestroyRef, ChangeDetectorRef, signal } from '@angular/core';
+import { Component, OnInit, inject, DestroyRef, signal } from '@angular/core';
 import { takeUntilDestroyed, toObservable } from '@angular/core/rxjs-interop';
-import { ReactiveFormsModule } from '@angular/forms';
 import { MatButtonModule } from '@angular/material/button';
-import { MatChipsModule } from '@angular/material/chips';
 import { MatDialog, MatDialogModule } from '@angular/material/dialog';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatIconModule } from '@angular/material/icon';
 import { MatInputModule } from '@angular/material/input';
-import { MatMenuModule } from '@angular/material/menu';
-import { MatPaginator, MatPaginatorModule, PageEvent } from '@angular/material/paginator';
+import { MatPaginatorModule, PageEvent } from '@angular/material/paginator';
+import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
-import { MatTableModule } from '@angular/material/table';
-import { MatTooltipModule } from '@angular/material/tooltip';
 import { debounceTime, distinctUntilChanged, finalize } from 'rxjs/operators';
 import { User } from '../../../core/models/user.model';
 import { UsersService } from '../../services/users.service';
@@ -22,19 +17,14 @@ import { UserFormDialogComponent } from '../user-form-dialog/user-form-dialog.co
   selector: 'app-users-list',
   standalone: true,
   imports: [
-    CommonModule,
-    ReactiveFormsModule,
-    MatTableModule,
     MatPaginatorModule,
     MatButtonModule,
     MatIconModule,
-    MatChipsModule,
     MatFormFieldModule,
     MatInputModule,
-    MatMenuModule,
     MatDialogModule,
     MatSnackBarModule,
-    MatTooltipModule
+    MatProgressSpinnerModule
   ],
   templateUrl: './users-list.component.html',
   styleUrls: ['./users-list.component.scss']
@@ -44,18 +34,15 @@ export class UsersListComponent implements OnInit {
   private readonly dialog = inject(MatDialog);
   private readonly snackBar = inject(MatSnackBar);
   private readonly destroyRef = inject(DestroyRef);
-  private readonly cdr = inject(ChangeDetectorRef);
 
-  @ViewChild(MatPaginator) paginator!: MatPaginator;
-
-  users: User[] = [];
-  totalUsers = 0;
-  pageSize = 10;
-  currentPage = 0;
-  isLoading = false;
+  readonly users = signal<User[]>([]);
+  readonly totalUsers = signal<number>(0);
+  readonly isLoading = signal<boolean>(false);
   readonly searchQuery = signal<string>('');
+  readonly currentPage = signal<number>(0);
+  readonly togglingUserId = signal<number | null>(null);
 
-  displayedColumns: string[] = ['avatar', 'fullName', 'email', 'roles', 'status', 'actions'];
+  pageSize = 10;
 
   constructor() {
     toObservable(this.searchQuery)
@@ -65,8 +52,7 @@ export class UsersListComponent implements OnInit {
         takeUntilDestroyed(this.destroyRef)
       )
       .subscribe(() => {
-        this.currentPage = 0;
-        if (this.paginator) this.paginator.pageIndex = 0;
+        this.currentPage.set(0);
         this.loadUsers();
       });
   }
@@ -76,23 +62,22 @@ export class UsersListComponent implements OnInit {
   }
 
   loadUsers(): void {
-    this.isLoading = true;
+    this.isLoading.set(true);
     const params = {
       limit: this.pageSize,
-      offset: this.currentPage * this.pageSize,
+      offset: this.currentPage() * this.pageSize,
       search: this.searchQuery().trim() || undefined
     };
 
     this.usersService.getUsers(params)
       .pipe(
         takeUntilDestroyed(this.destroyRef),
-        finalize(() => this.isLoading = false)
+        finalize(() => this.isLoading.set(false))
       )
       .subscribe({
         next: (result) => {
-          this.users = result.data;
-          this.totalUsers = result.total;
-          this.cdr.detectChanges();
+          this.users.set(result.data);
+          this.totalUsers.set(result.total);
         },
         error: () => this.snackBar.open('Error al cargar usuarios', 'Cerrar', { duration: 3000 })
       });
@@ -109,13 +94,16 @@ export class UsersListComponent implements OnInit {
 
   onPageChange(event: PageEvent): void {
     this.pageSize = event.pageSize;
-    this.currentPage = event.pageIndex;
+    this.currentPage.set(event.pageIndex);
     this.loadUsers();
   }
 
   openUserForm(user?: User): void {
     const dialogRef = this.dialog.open(UserFormDialogComponent, {
-      width: '600px',
+      width: '480px',
+      height: '100vh',
+      position: { right: '0', top: '0' },
+      panelClass: 'side-drawer-dialog',
       data: { user },
       disableClose: true
     });
@@ -126,18 +114,29 @@ export class UsersListComponent implements OnInit {
   }
 
   toggleStatus(user: User): void {
+    this.togglingUserId.set(user.id);
     this.usersService.toggleStatus(user.id)
-      .pipe(takeUntilDestroyed(this.destroyRef))
+      .pipe(
+        takeUntilDestroyed(this.destroyRef),
+        finalize(() => this.togglingUserId.set(null))
+      )
       .subscribe({
-      next: () => {
-        user.isActive = !user.isActive;
-        this.snackBar.open(`Usuario ${user.isActive ? 'activado' : 'desactivado'}`, 'Cerrar', { duration: 2000 });
-      },
-      error: () => this.snackBar.open('Error al cambiar estado', 'Cerrar', { duration: 3000 })
-    });
+        next: () => {
+          this.users.update(list =>
+            list.map(u => u.id === user.id ? { ...u, isActive: !u.isActive } : u)
+          );
+          const updated = this.users().find(u => u.id === user.id);
+          this.snackBar.open(
+            `Usuario ${updated?.isActive ? 'activado' : 'desactivado'}`,
+            'Cerrar',
+            { duration: 2000 }
+          );
+        },
+        error: () => this.snackBar.open('Error al cambiar estado', 'Cerrar', { duration: 3000 })
+      });
   }
 
   getInitials(user: User): string {
-    return `${user.firstName[0]}${user.lastName[0]}`.toUpperCase();
+    return `${user.firstName?.[0] ?? ''}${user.lastName?.[0] ?? ''}`.toUpperCase();
   }
 }

@@ -1,6 +1,6 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable, inject } from '@angular/core';
-import { Observable } from 'rxjs';
+import { Observable, map } from 'rxjs';
 import { environment } from '../../../environments/environment';
 import { Role } from '../../core/models/auth.models';
 import { 
@@ -46,7 +46,9 @@ export class UsersService {
   }
 
   getRoles(): Observable<Role[]> {
-    return this.http.get<Role[]>(`${environment.apiUrl}/roles`);
+    return this.http.get<{ data: Role[] }>(`${environment.apiUrl}/roles`).pipe(
+      map(res => res.data)
+    );
   }
 
   updateMyProfile(payload: { firstName: string; lastName: string }): Observable<User> {
