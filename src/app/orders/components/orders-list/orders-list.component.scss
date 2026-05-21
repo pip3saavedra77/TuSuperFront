@@ -164,32 +164,32 @@
     /* Semantics */
     &.pending, &.pendiente {
       background-color: rgba(245, 124, 0, 0.12) !important;
-      color: #e65100 !important;
+      color: #bf360c !important; /* Aumentado para WCAG AA */
     }
 
     &.preparing, &.preparando {
       background-color: rgba(251, 192, 45, 0.12) !important;
-      color: #b7791f !important;
+      color: #7b5800 !important; /* Aumentado para WCAG AA */
     }
 
     &.ready_for_dispatch, &.listo {
       background-color: rgba(2, 136, 209, 0.12) !important;
-      color: #01579b !important;
+      color: #003c6e !important; /* Aumentado para WCAG AA */
     }
 
     &.dispatched, &.despachado {
       background-color: rgba(21, 101, 192, 0.12) !important;
-      color: #0d47a1 !important;
+      color: #00297a !important; /* Aumentado para WCAG AA */
     }
 
     &.delivered, &.entregado {
       background-color: rgba(76, 175, 80, 0.12) !important;
-      color: #1b5e20 !important;
+      color: #0a3d0c !important; /* Aumentado para WCAG AA */
     }
 
     &.cancelled, &.cancelado {
       background-color: rgba(211, 47, 47, 0.12) !important;
-      color: #c62828 !important;
+      color: #7f0000 !important; /* Aumentado para WCAG AA */
     }
   }
 }
@@ -609,6 +609,45 @@
 
   .side-drawer {
     width: 100vw;
+  }
+}
+
+::ng-deep .cdk-overlay-container {
+  .mat-mdc-option {
+    &.pending .mdc-list-item__primary-text {
+      color: #bf360c !important;
+      font-weight: 600;
+    }
+    &.preparing .mdc-list-item__primary-text {
+      color: #7b5800 !important;
+      font-weight: 600;
+    }
+    &.ready_for_dispatch .mdc-list-item__primary-text {
+      color: #003c6e !important;
+      font-weight: 600;
+    }
+    &.dispatched .mdc-list-item__primary-text {
+      color: #00297a !important;
+      font-weight: 600;
+    }
+    &.delivered .mdc-list-item__primary-text {
+      color: #0a3d0c !important;
+      font-weight: 600;
+    }
+    &.cancelled .mdc-list-item__primary-text {
+      color: #7f0000 !important;
+      font-weight: 600;
+    }
+
+    &.mdc-list-item--disabled {
+      opacity: 0.38 !important;
+      cursor: not-allowed;
+      
+      .mdc-list-item__primary-text {
+        color: inherit !important;
+        font-weight: normal;
+      }
+    }
   }
 }
 

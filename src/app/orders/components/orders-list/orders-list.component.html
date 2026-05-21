@@ -160,7 +160,13 @@
 
 <!-- BACKDROP BLUR -->
 @if (drawerOpen()) {
-  <div class="backdrop-blur" (click)="closeDrawer()"></div>
+  <div class="backdrop-blur"
+       role="button"
+       tabindex="0"
+       (click)="closeDrawer()"
+       (keydown.enter)="closeDrawer()"
+       (keydown.space)="closeDrawer()"
+       aria-label="Cerrar panel de detalles"></div>
 }
 
 <!-- SIDE DRAWER DE DETALLES -->
@@ -187,9 +193,11 @@
       <div class="drawer-section state-section">
         <div class="state-display">
           <span class="label">Estado Actual:</span>
-          <mat-chip [class]="order.status.toLowerCase()">
-            {{ getStatusLabel(order.status) }}
-          </mat-chip>
+          <span class="status-chip-wrapper">
+            <mat-chip [class]="order.status.toLowerCase()">
+              {{ getStatusLabel(order.status) }}
+            </mat-chip>
+          </span>
         </div>
 
         @if (auth.hasManagementPrivileges() && !isTerminal(order.status)) {
@@ -198,8 +206,13 @@
             <mat-form-field appearance="outline" class="w-100">
               <mat-label>Seleccionar nuevo estado</mat-label>
               <mat-select [value]="order.status" (selectionChange)="executeStatusChange(order.id, $event.value)">
-                @for (status of getTransitions(order.status); track status) {
-                  <mat-option [value]="status">{{ getStatusLabel(status) }}</mat-option>
+                @for (status of statusOptions; track status) {
+                  <mat-option
+                    [value]="status"
+                    [disabled]="!isValidTransition(order.status, status)"
+                    [ngClass]="status.toLowerCase()">
+                    {{ getStatusLabel(status) }}
+                  </mat-option>
                 }
               </mat-select>
             </mat-form-field>

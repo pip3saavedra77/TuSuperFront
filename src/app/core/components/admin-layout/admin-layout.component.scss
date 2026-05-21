@@ -45,7 +45,6 @@
       padding: 40px 24px;
       font-size: 1.5rem;
       font-weight: 800;
-      color: pos.$pos-text;
       cursor: pointer;
       text-decoration: none;
       color: inherit;
@@ -120,28 +119,7 @@
   justify-content: space-between;
   align-items: center;
 
-  .toolbar-search {
-    background: #F1F3F9;
-    border-radius: 16px;
-    padding: 10px 20px;
-    display: flex;
-    align-items: center;
-    gap: 12px;
-    width: 320px;
-    
-    .search-icon { color: pos.$pos-text-muted; font-size: 20px; width: 20px; height: 20px; }
-    .search-placeholder { color: pos.$pos-text-muted; font-size: 0.85rem; font-weight: 500; }
-    .search-shortcut { 
-      margin-left: auto;
-      background: white;
-      padding: 2px 6px;
-      border-radius: 6px;
-      font-size: 0.65rem;
-      font-weight: 700;
-      color: pos.$pos-text-muted;
-      box-shadow: 0 2px 4px rgba(0,0,0,0.05);
-    }
-  }
+
 
   .toolbar-actions {
     margin-left: auto;

@@ -215,6 +215,10 @@ export class OrdersListComponent implements OnInit {
     return getValidTransitions(status);
   }
 
+  isValidTransition(current: OrderStatus, target: OrderStatus): boolean {
+    return this.getTransitions(current).includes(target);
+  }
+
   viewDetails(order: Order): void {
     this.selectedOrder.set(order);
     this.drawerOpen.set(true);
@@ -247,7 +251,7 @@ export class OrdersListComponent implements OnInit {
 
           // Sincronizar selectedOrder en caliente
           const current = this.selectedOrder();
-          if (current && current.id === orderId) {
+          if (current?.id === orderId) {
             this.selectedOrder.set({ ...current, status: newStatus });
           }
 
