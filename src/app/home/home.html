@@ -150,6 +150,52 @@
         </div>
 
       </div>
+
+      <!-- ── ZONA 3: Descubre TuSuper (Recomendados) ──────────────── -->
+      <div class="user-recommended-section">
+        <div class="user-recommended-header">
+          <h3 class="user-recommended-header__title">
+            <mat-icon style="color:#2563eb;">auto_awesome</mat-icon>
+            Descubre TuSuper
+          </h3>
+          <a class="view-orders-link" [routerLink]="['/product']">
+            Ver todo el catálogo <mat-icon>arrow_forward</mat-icon>
+          </a>
+        </div>
+
+        <div class="user-recommended-grid">
+          @for (product of featuredProducts(); track product.id) {
+            <a class="recommended-card" [routerLink]="['/product']">
+              <div class="recommended-card__image">
+                @if (product.imageUrl) {
+                  <img [src]="product.imageUrl" [alt]="product.name" />
+                } @else {
+                  <div class="recommended-card__placeholder">
+                    <mat-icon>inventory_2</mat-icon>
+                  </div>
+                }
+              </div>
+              <div class="recommended-card__body">
+                <span class="recommended-card__category">{{ product.category.name }}</span>
+                <p class="recommended-card__name">{{ product.name }}</p>
+                <div class="recommended-card__footer">
+                  <span class="recommended-card__price">
+                    {{ product.price | currency:'COP':'symbol-narrow':'1.0-0' }}
+                  </span>
+                  <span class="recommended-card__cta" aria-hidden="true">
+                    <mat-icon>add_shopping_cart</mat-icon>
+                  </span>
+                </div>
+              </div>
+            </a>
+          } @empty {
+            <p class="recommended-empty">
+              <mat-icon>storefront</mat-icon>
+              No hay productos disponibles en este momento.
+            </p>
+          }
+        </div>
+      </div>
     }
 
   } @else {

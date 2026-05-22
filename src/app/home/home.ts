@@ -78,7 +78,7 @@ export class Home implements OnInit {
   /** @deprecated - mantenido por compatibilidad de tipos; no usado en template USER v2 */
   readonly latestOrder = signal<Order | null>(null);
 
-  /** @deprecated - mantenido por compatibilidad de tipos; no usado en template USER v2 */
+  /** Productos destacados para el widget 'Descubre TuSuper' (limit=4) */
   readonly featuredProducts = signal<Product[]>([]);
 
   /** Historial de pedidos del usuario autenticado (limit=5) */
@@ -231,8 +231,8 @@ export class Home implements OnInit {
   }
 
   /**
-   * Carga en paralelo el historial de pedidos (limit=5) y el total de productos
-   * del catálogo para el rol USER. Construye el donut de estados client-side O(N).
+   * Carga en paralelo el historial de pedidos (limit=5) y los 4 productos
+   * destacados del catálogo para el widget 'Descubre TuSuper'.
    */
   private loadDashboardData(): void {
     this.loadingDashboard.set(true);
@@ -242,14 +242,15 @@ export class Home implements OnInit {
         .getMyOrders({ limit: 5, offset: 0 })
         .pipe(catchError(() => of({ data: [], total: 0, limit: 5, offset: 0 }))),
       products: this.productService
-        .getAll({ limit: 1, offset: 0 })
-        .pipe(catchError(() => of({ data: [], total: 0, limit: 1, offset: 0 }))),
+        .getAll({ limit: 4, offset: 0 })
+        .pipe(catchError(() => of({ data: [], total: 0, limit: 4, offset: 0 }))),
     })
     .pipe(takeUntilDestroyed(this.destroyRef))
     .subscribe(({ orders, products }) => {
       this.myOrders.set(orders.data);
       this.totalOrdersCount.set(orders.total);
       this.totalProductsCount.set(products.total);
+      this.featuredProducts.set(products.data);
 
       // Distribución por estado: O(N), N≤5 — Map garantiza un único pass
       const statusCounts = new Map<OrderStatus, number>();
