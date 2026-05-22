@@ -10,7 +10,7 @@ import {
 import { takeUntilDestroyed, toObservable } from '@angular/core/rxjs-interop';
 import { CommonModule, CurrencyPipe } from '@angular/common';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
-import { debounceTime, distinctUntilChanged, finalize, forkJoin, of, switchMap } from 'rxjs';
+import { catchError, debounceTime, distinctUntilChanged, finalize, forkJoin, of, switchMap } from 'rxjs';
 import { HttpErrorResponse } from '@angular/common/http';
 
 import { MatTableModule } from '@angular/material/table';
@@ -42,6 +42,7 @@ import {
 } from './components/confirm-delete-dialog.component';
 
 import { AuthService } from '../core/services/auth';
+import { getHttpErrorMessage } from '../core/utils/http-error-message';
 
 @Component({
   selector: 'app-product',
@@ -374,26 +375,15 @@ export class Product implements OnInit {
   submitForm(): void {
     if (this.form.invalid) return;
 
-    const raw = this.form.getRawValue();
     const editing = this.editingProduct();
 
     if (editing) {
-      const payload: UpdateProductPayload = {
-        ...raw,
-        barcode: raw.barcode || null,
-      };
+      const payload = this.buildProductPayload();
+      if (!payload) return;
       this.updateProduct(editing.id, payload);
     } else {
-      const payload: CreateProductPayload = {
-        name: raw.name,
-        description: raw.description || undefined,
-        price: raw.price,
-        stock: raw.stock,
-        isActive: raw.isActive,
-        categoryId: raw.categoryId,
-        providerId: raw.providerId,
-        barcode: raw.barcode || null,
-      };
+      const payload = this.buildProductPayload();
+      if (!payload) return;
       this.createProduct(payload);
     }
   }
@@ -428,19 +418,31 @@ export class Product implements OnInit {
       .pipe(
         switchMap((product) => {
           const file = this.selectedFile();
-          if (file) {
-            return this.productService.uploadProductImage(product.id, file);
+          if (!file) {
+            return of({ product, imageWarning: null as string | null });
           }
-          return of(product);
+          return this.productService.uploadProductImage(product.id, file).pipe(
+            switchMap((updated) => of({ product: updated, imageWarning: null })),
+            catchError((imgErr: HttpErrorResponse) =>
+              of({
+                product,
+                imageWarning: getHttpErrorMessage(
+                  imgErr,
+                  'No se pudo subir la imagen del producto',
+                ),
+              }),
+            ),
+          );
         }),
         finalize(() => this.loading.set(false)),
         takeUntilDestroyed(this.destroyRef),
       )
       .subscribe({
-        next: () => {
-          this.snackBar.open('Producto creado exitosamente', 'Cerrar', {
-            duration: 3000,
-          });
+        next: ({ imageWarning }) => {
+          const message = imageWarning
+            ? `Producto creado, pero la imagen falló: ${imageWarning}`
+            : 'Producto creado exitosamente';
+          this.snackBar.open(message, 'Cerrar', { duration: 5000 });
           this.closeDrawer();
           this.loadProducts();
         },
@@ -458,19 +460,30 @@ export class Product implements OnInit {
       .pipe(
         switchMap((product) => {
           const file = this.selectedFile();
-          if (file) {
-            return this.productService.uploadProductImage(product.id, file);
+          if (!file) {
+            return of({ imageWarning: null as string | null });
           }
-          return of(product);
+          return this.productService.uploadProductImage(product.id, file).pipe(
+            switchMap(() => of({ imageWarning: null })),
+            catchError((imgErr: HttpErrorResponse) =>
+              of({
+                imageWarning: getHttpErrorMessage(
+                  imgErr,
+                  'No se pudo subir la imagen del producto',
+                ),
+              }),
+            ),
+          );
         }),
         finalize(() => this.loading.set(false)),
         takeUntilDestroyed(this.destroyRef),
       )
       .subscribe({
-        next: () => {
-          this.snackBar.open('Producto actualizado exitosamente', 'Cerrar', {
-            duration: 3000,
-          });
+        next: ({ imageWarning }) => {
+          const message = imageWarning
+            ? `Producto actualizado, pero la imagen falló: ${imageWarning}`
+            : 'Producto actualizado exitosamente';
+          this.snackBar.open(message, 'Cerrar', { duration: 5000 });
           this.closeDrawer();
           this.loadProducts();
         },
@@ -504,10 +517,51 @@ export class Product implements OnInit {
 
   // ── Error handling ───────────────────────────────────
 
+  private buildProductPayload(): CreateProductPayload | null {
+    const raw = this.form.getRawValue();
+    const price = Number(raw.price);
+    const stock = Number.parseInt(String(raw.stock), 10);
+    const categoryId = Number(raw.categoryId);
+    const providerId = Number(raw.providerId);
+
+    if (
+      !Number.isFinite(price) ||
+      price <= 0 ||
+      !Number.isInteger(stock) ||
+      stock < 0 ||
+      !Number.isInteger(categoryId) ||
+      categoryId < 1 ||
+      !Number.isInteger(providerId) ||
+      providerId < 1
+    ) {
+      this.snackBar.open(
+        'Revisa precio, stock, categoría y proveedor antes de guardar',
+        'Cerrar',
+        { duration: 5000 },
+      );
+      return null;
+    }
+
+    return {
+      name: raw.name.trim(),
+      description: raw.description?.trim() || undefined,
+      price,
+      stock,
+      isActive: raw.isActive,
+      categoryId,
+      providerId,
+      barcode: raw.barcode?.trim() || null,
+    };
+  }
+
   private showError(err: HttpErrorResponse): void {
-    const message =
-      (err.error as { message?: string })?.message ??
-      'Error al procesar la solicitud';
+    let message = getHttpErrorMessage(err);
+
+    if (err.status === 403) {
+      message =
+        'No tienes permisos para gestionar productos. Solicita el rol TENDERO o ADMIN.';
+    }
+
     this.snackBar.open(message, 'Cerrar', { duration: 5000 });
   }
 }

@@ -1,0 +1,15 @@
+# Blueprint de Render para el frontend (Static Site)
+# Documentación: https://render.com/docs/blueprint-spec
+services:
+  - type: web
+    name: tusuper-frontend
+    runtime: static
+    buildCommand: npm ci && node scripts/set-env.js && npm run build
+    staticPublishPath: dist/adso_3063267/browser
+    envVars:
+      - key: API_URL
+        sync: false
+    routes:
+      - type: rewrite
+        source: /*
+        destination: /index.html

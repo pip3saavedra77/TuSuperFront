@@ -8,19 +8,11 @@
                  aria-label="Información de la marca TuSuper">
             <!-- Brand Logo -->
             <div class="brand-logo-container">
-                <!-- SVG de Canasta Corriendo Vectorizado de Alta Fidelidad -->
-                <svg class="brand-logo-svg" viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
-                    <path d="M15 50L6 52" stroke="currentColor" stroke-width="4.5" stroke-linecap="round" />
-                    <path d="M12 60L4 62" stroke="currentColor" stroke-width="4.5" stroke-linecap="round" />
-                    <path d="M42 24C42 24 53 11 67 15C74 17 73 28 73 28" stroke="currentColor" stroke-width="5" stroke-linecap="round" />
-                    <rect x="23" y="27" width="54" height="7" rx="3.5" transform="rotate(11 50 30.5)" fill="currentColor" />
-                    <path d="M28 41L68 49L59 70L25 62Z" fill="none" stroke="currentColor" stroke-width="5" stroke-linejoin="round" />
-                    <line x1="39" y1="46" x2="35" y2="59" stroke="currentColor" stroke-width="4.5" stroke-linecap="round" />
-                    <line x1="47" y1="47" x2="43" y2="60" stroke="currentColor" stroke-width="4.5" stroke-linecap="round" />
-                    <line x1="55" y1="49" x2="51" y2="62" stroke="currentColor" stroke-width="4.5" stroke-linecap="round" />
-                    <path d="M52 69C52 69 57 79 66 76C71 74 74 70 77 70" stroke="currentColor" stroke-width="5" stroke-linecap="round" stroke-linejoin="round" />
-                    <path d="M37 66C37 74 32 79 24 79C19 79 17 76 17 76" stroke="currentColor" stroke-width="5" stroke-linecap="round" stroke-linejoin="round" />
-                </svg>
+                <img
+                    src="/branding/tusuper-logo.png"
+                    alt="Logo TuSuper"
+                    class="brand-logo-img"
+                />
                 <span class="brand-name">TuSuper</span>
             </div>
 
@@ -67,8 +59,15 @@
             <div class="mobile-logo-header">
                 <a routerLink="/auth/log-in" class="back-link-btn" aria-label="Volver al inicio de sesión">
                     <mat-icon>arrow_back</mat-icon>
-                    <span>Crear Cuenta</span>
                 </a>
+                <div class="mobile-logo-left">
+                    <img
+                        src="/branding/tusuper-logo.png"
+                        alt="Logo TuSuper"
+                        class="brand-logo-img brand-logo-img--mobile"
+                    />
+                    <span class="brand-name">TuSuper</span>
+                </div>
             </div>
 
             <!-- Card/Form Wrapper -->

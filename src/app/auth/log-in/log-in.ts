@@ -11,7 +11,10 @@ import { MatCheckboxModule } from '@angular/material/checkbox';
 import { LoginCredentials } from '../interfaces/login';
 import { AuthService } from '../../core/services/auth';
 import { Router, RouterModule } from '@angular/router';
+import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
 import { environment } from '../../../environments/environment';
+import { getHttpErrorMessage } from '../../core/utils/http-error-message';
+import { HttpErrorResponse } from '@angular/common/http';
 
 @Component({
   selector: 'app-log-in',
@@ -26,6 +29,7 @@ import { environment } from '../../../environments/environment';
     MatFormFieldModule,
     MatIconModule,
     MatCheckboxModule,
+    MatSnackBarModule,
   ],
   templateUrl: './log-in.html',
   styleUrl: './log-in.scss',
@@ -35,6 +39,7 @@ export class LogIn {
   private readonly fb = inject(FormBuilder);
   private readonly authService = inject(AuthService);
   private readonly router = inject(Router);
+  private readonly snackBar = inject(MatSnackBar);
   hidePassword = true;
   activeStep = 1;
 
@@ -61,9 +66,11 @@ export class LogIn {
         this.router.navigate(['/home']);
       },
       error: (err: unknown) => {
-        const message = (err as { error?: { message?: string } })?.error?.message
-          ?? 'Error de autenticación';
-        alert(message);
+        const message = getHttpErrorMessage(
+          err as HttpErrorResponse,
+          'Error de autenticación',
+        );
+        this.snackBar.open(message, 'Cerrar', { duration: 5000 });
       },
     });
   }
