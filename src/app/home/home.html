@@ -1,11 +1,11 @@
 <div class="home-container">
 
   @if (isUserRole()) {
-    <!-- ═══════════════════════════════════════════════ -->
-    <!--  DASHBOARD DE BIENVENIDA — ROL USUARIO          -->
-    <!-- ═══════════════════════════════════════════════ -->
+    <!-- ═══════════════════════════════════════════════════════════ -->
+    <!--  DASHBOARD PREMIUM v2 — ROL USUARIO                        -->
+    <!-- ═══════════════════════════════════════════════════════════ -->
 
-    <!-- Header personalizado con avatar inicial -->
+    <!-- Welcome Header -->
     <div class="dashboard-welcome">
       <div class="welcome-avatar">
         {{ currentUser()?.firstName?.charAt(0)?.toUpperCase() }}
@@ -16,92 +16,185 @@
       </div>
     </div>
 
-    <!-- Loading global del dashboard -->
     @if (loadingDashboard()) {
       <div class="dashboard-loading">
         <mat-progress-spinner mode="indeterminate" diameter="48"></mat-progress-spinner>
       </div>
     } @else {
-      <div class="dashboard-grid">
 
-        <!-- ── Widget: Actividad Reciente ─────────────── -->
-        <div class="widget-card">
-          <div class="widget-header">
-            <mat-icon>receipt_long</mat-icon>
-            <h2 class="widget-title">Actividad Reciente</h2>
+      <!-- ── ZONA 1: KPI Summary Row (4 cards) ──────────────────── -->
+      <div class="user-kpi-grid">
+
+        <!-- KPI 1: Total Pedidos -->
+        <div class="user-kpi-card">
+          <div class="user-kpi-card__header">
+            <span class="user-kpi-card__label">Mis Pedidos</span>
+            <div class="user-kpi-card__icon" style="background: rgba(37,99,235,0.1);">
+              <mat-icon style="color:#2563eb; font-size:20px; width:20px; height:20px;">receipt_long</mat-icon>
+            </div>
           </div>
-
-          @if (latestOrder()) {
-            <div class="mini-order-card">
-              <div class="mini-order-card__header">
-                <span class="mini-order-card__id">
-                  <mat-icon>receipt</mat-icon>
-                  Pedido #{{ latestOrder()!.id }}
-                </span>
-                <span class="status-badge" [ngClass]="getStatusClass(latestOrder()!.status)">
-                  {{ getStatusLabel(latestOrder()!.status) }}
-                </span>
-              </div>
-              <div class="mini-order-card__meta">
-                <span class="mini-order-card__date">
-                  <mat-icon>calendar_today</mat-icon>
-                  {{ latestOrder()!.createdAt | date:'dd/MM/yyyy · HH:mm' }}
-                </span>
-                <span class="mini-order-card__total">
-                  {{ latestOrder()!.totalAmount | currency:'COP':'symbol-narrow':'1.0-0' }}
-                </span>
-              </div>
-              <div class="mini-order-card__footer">
-                <a class="view-orders-link" [routerLink]="['/orders/my-orders']">
-                  Ver todos mis pedidos
-                  <mat-icon>arrow_forward</mat-icon>
-                </a>
-              </div>
-            </div>
-          } @else {
-            <div class="widget-empty">
-              <mat-icon>inbox</mat-icon>
-              <p>Aún no tienes pedidos. ¡Explora el catálogo!</p>
-              <a class="view-orders-link" [routerLink]="['/product']">Ir al catálogo</a>
-            </div>
-          }
+          <div class="user-kpi-card__value" style="color:#2563eb;">{{ totalOrdersCount() }}</div>
+          <div class="user-kpi-card__trend">Total histórico</div>
         </div>
 
-        <!-- ── Widget: Descubre TuSuper ───────────────── -->
-        <div class="widget-card">
-          <div class="widget-header">
-            <mat-icon>storefront</mat-icon>
-            <h2 class="widget-title">Descubre TuSuper</h2>
+        <!-- KPI 2: Pendientes -->
+        <div class="user-kpi-card">
+          <div class="user-kpi-card__header">
+            <span class="user-kpi-card__label">Pendientes</span>
+            <div class="user-kpi-card__icon" style="background: rgba(217,119,6,0.1);">
+              <mat-icon style="color:#d97706; font-size:20px; width:20px; height:20px;">pending_actions</mat-icon>
+            </div>
           </div>
+          <div class="user-kpi-card__value" style="color:#d97706;">{{ pendingOrdersUserCount() }}</div>
+          <div class="user-kpi-card__trend">Por procesar</div>
+        </div>
 
-          @if (featuredProducts().length > 0) {
-            <div class="product-preview-grid">
-              @for (product of featuredProducts(); track product.id) {
-                <a class="product-preview-card" [routerLink]="['/product']">
-                  <div class="product-preview-card__image">
-                    @if (product.imageUrl) {
-                      <img [src]="product.imageUrl" [alt]="product.name" />
-                    } @else {
-                      <mat-icon>inventory_2</mat-icon>
-                    }
-                  </div>
-                  <div class="product-preview-card__info">
-                    <span class="product-preview-card__name">{{ product.name }}</span>
-                    <span class="product-preview-card__price">
-                      {{ product.price | currency:'COP':'symbol-narrow':'1.0-0' }}
+        <!-- KPI 3: Total Gastado -->
+        <div class="user-kpi-card">
+          <div class="user-kpi-card__header">
+            <span class="user-kpi-card__label">Total Gastado</span>
+            <div class="user-kpi-card__icon" style="background: rgba(5,150,105,0.1);">
+              <mat-icon style="color:#059669; font-size:20px; width:20px; height:20px;">payments</mat-icon>
+            </div>
+          </div>
+          <div class="user-kpi-card__value" style="color:#059669; font-size:1.4rem;">
+            {{ totalSpent() | currency:'COP':'symbol-narrow':'1.0-0' }}
+          </div>
+          <div class="user-kpi-card__trend">En todos mis pedidos</div>
+        </div>
+
+        <!-- KPI 4: Catálogo -->
+        <div class="user-kpi-card">
+          <div class="user-kpi-card__header">
+            <span class="user-kpi-card__label">Catálogo</span>
+            <div class="user-kpi-card__icon" style="background: rgba(124,58,237,0.1);">
+              <mat-icon style="color:#7c3aed; font-size:20px; width:20px; height:20px;">storefront</mat-icon>
+            </div>
+          </div>
+          <div class="user-kpi-card__value" style="color:#7c3aed;">{{ totalProductsCount() }}</div>
+          <div class="user-kpi-card__trend">Productos disponibles</div>
+        </div>
+
+      </div>
+
+      <!-- ── ZONA 2: Tabla + Gráfico ────────────────────────────── -->
+      <div class="user-content-grid">
+
+        <!-- Panel: Últimas Compras -->
+        <div class="user-orders-panel">
+          <h3 class="user-orders-panel__title">
+            <mat-icon style="vertical-align:middle; margin-right:8px; color:#2563eb;">shopping_bag</mat-icon>
+            Últimas Compras
+          </h3>
+          <table class="user-orders-table">
+            <thead>
+              <tr>
+                <th>#</th>
+                <th>Fecha</th>
+                <th>Ítems</th>
+                <th>Total</th>
+                <th>Estado</th>
+              </tr>
+            </thead>
+            <tbody>
+              @for (order of myOrders(); track order.id) {
+                <tr>
+                  <td><span class="order-id-cell">#{{ order.id }}</span></td>
+                  <td>{{ order.createdAt | date:'dd/MM/yy' }}</td>
+                  <td>{{ order.items.length }} ítem{{ order.items.length !== 1 ? 's' : '' }}</td>
+                  <td class="td-amount">{{ order.totalAmount | currency:'COP':'symbol-narrow':'1.0-0' }}</td>
+                  <td>
+                    <span class="status-badge" [ngClass]="getStatusClass(order.status)">
+                      {{ getStatusLabel(order.status) }}
                     </span>
-                  </div>
-                </a>
+                  </td>
+                </tr>
+              } @empty {
+                <tr>
+                  <td colspan="5" class="td-empty">
+                    <mat-icon>inbox</mat-icon>
+                    <p>Aún no tienes pedidos. <a [routerLink]="['/product']" style="color:#2563eb;">Explorar catálogo</a></p>
+                  </td>
+                </tr>
               }
+            </tbody>
+          </table>
+          <div class="user-orders-panel__footer">
+            <a class="view-orders-link" [routerLink]="['/orders/my-orders']">
+              Ver todos mis pedidos
+              <mat-icon>arrow_forward</mat-icon>
+            </a>
+          </div>
+        </div>
+
+        <!-- Panel: Gráfico Estado de Pedidos -->
+        <div class="user-chart-panel">
+          <h3 class="user-chart-panel__title">
+            <mat-icon style="vertical-align:middle; margin-right:8px; color:#7c3aed;">donut_large</mat-icon>
+            Estado de Pedidos
+          </h3>
+          @if (myOrders().length > 0) {
+            <div class="user-chart-panel__canvas">
+              <canvas baseChart
+                [data]="userStatusChartData"
+                [options]="userStatusChartOptions"
+                type="doughnut">
+              </canvas>
             </div>
           } @else {
-            <div class="widget-empty">
-              <mat-icon>inventory_2</mat-icon>
-              <p>No hay productos disponibles en este momento.</p>
+            <div class="widget-empty" style="height:220px;">
+              <mat-icon>donut_large</mat-icon>
+              <p>Sin datos para visualizar.</p>
             </div>
           }
         </div>
 
+      </div>
+
+      <!-- ── ZONA 3: Descubre TuSuper (Recomendados) ──────────────── -->
+      <div class="user-recommended-section">
+        <div class="user-recommended-header">
+          <h3 class="user-recommended-header__title">
+            <mat-icon style="color:#2563eb;">auto_awesome</mat-icon>
+            Descubre TuSuper
+          </h3>
+          <a class="view-orders-link" [routerLink]="['/product']">
+            Ver todo el catálogo <mat-icon>arrow_forward</mat-icon>
+          </a>
+        </div>
+
+        <div class="user-recommended-grid">
+          @for (product of featuredProducts(); track product.id) {
+            <a class="recommended-card" [routerLink]="['/product']">
+              <div class="recommended-card__image">
+                @if (product.imageUrl) {
+                  <img [src]="product.imageUrl" [alt]="product.name" />
+                } @else {
+                  <div class="recommended-card__placeholder">
+                    <mat-icon>inventory_2</mat-icon>
+                  </div>
+                }
+              </div>
+              <div class="recommended-card__body">
+                <span class="recommended-card__category">{{ product.category.name }}</span>
+                <p class="recommended-card__name">{{ product.name }}</p>
+                <div class="recommended-card__footer">
+                  <span class="recommended-card__price">
+                    {{ product.price | currency:'COP':'symbol-narrow':'1.0-0' }}
+                  </span>
+                  <span class="recommended-card__cta" aria-hidden="true">
+                    <mat-icon>add_shopping_cart</mat-icon>
+                  </span>
+                </div>
+              </div>
+            </a>
+          } @empty {
+            <p class="recommended-empty">
+              <mat-icon>storefront</mat-icon>
+              No hay productos disponibles en este momento.
+            </p>
+          }
+        </div>
       </div>
     }
 

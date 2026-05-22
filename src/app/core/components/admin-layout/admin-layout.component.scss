@@ -49,7 +49,12 @@
       text-decoration: none;
       color: inherit;
 
-      mat-icon { color: var(--profile-primary); transform: scale(1.2); }
+      .brand-logo-img {
+        width: 36px;
+        height: 36px;
+        object-fit: contain;
+        flex-shrink: 0;
+      }
     }
 
     .nav-content {

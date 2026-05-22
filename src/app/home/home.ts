@@ -75,11 +75,39 @@ export class Home implements OnInit {
     this.currentUser()?.roles.some(r => ['TENDERO', 'TENDER'].includes(r.name.toUpperCase())) ?? false
   );
 
-  /** Último pedido activo del usuario comercial (limit=1) */
+  /** @deprecated - mantenido por compatibilidad de tipos; no usado en template USER v2 */
   readonly latestOrder = signal<Order | null>(null);
 
-  /** Productos destacados para el widget comercial (limit=4) */
+  /** Productos destacados para el widget 'Descubre TuSuper' (limit=4) */
   readonly featuredProducts = signal<Product[]>([]);
+
+  /** Historial de pedidos del usuario autenticado (limit=5) */
+  readonly myOrders = signal<Order[]>([]);
+
+  /** Total histórico de pedidos del usuario (desde PaginatedResult.total) */
+  readonly totalOrdersCount = signal<number>(0);
+
+  /**
+   * Pedidos activos (PENDING | PREPARING). Computed O(N), N≤5.
+   * No usar reduce ni filter anidados — un solo pass basta.
+   */
+  readonly pendingOrdersUserCount = computed(() =>
+    this.myOrders().filter(o =>
+      o.status === OrderStatus.PENDING || o.status === OrderStatus.PREPARING
+    ).length
+  );
+
+  /**
+   * Suma acumulada de totalAmount ÚNICAMENTE sobre pedidos DELIVERED.
+   * Pedidos en estados intermedios (PENDING, PREPARING, DISPATCHED, etc.)
+   * o CANCELLED no representan ingreso efectivo y se excluyen.
+   * Complejidad: O(N), N≤5 — filter + reduce en un solo encadenamiento de array.
+   */
+  readonly totalSpent = computed(() =>
+    this.myOrders()
+      .filter(o => o.status === OrderStatus.DELIVERED)
+      .reduce((acc, o) => acc + (o.totalAmount ?? 0), 0)
+  );
 
   /** Métricas operacionales y globales (optimizadas con limit=1) */
   readonly pendingOrdersCount = signal<number>(0);
@@ -91,6 +119,34 @@ export class Home implements OnInit {
 
   /** Loading state unificado del dashboard */
   readonly loadingDashboard = signal<boolean>(false);
+
+  // ── Donut del ROL USUARIO (instancia SEPARADA del donut Admin para evitar colisión) ──
+  public userStatusChartData: ChartData<'doughnut'> = {
+    labels: [],
+    datasets: [{
+      data: [],
+      backgroundColor: ['#f59e0b', '#3b82f6', '#10b981', '#8b5cf6', '#ef4444', '#64748b'],
+      borderWidth: 0,
+    }]
+  };
+  public readonly userStatusChartOptions: ChartOptions<'doughnut'> = {
+    responsive: true,
+    maintainAspectRatio: false,
+    cutout: '70%',
+    plugins: {
+      legend: {
+        display: true,
+        position: 'right',
+        labels: {
+          color: '#64748b',
+          font: { family: 'Inter, sans-serif', size: 11 },
+          padding: 12,
+          boxWidth: 12,
+          boxHeight: 12,
+        }
+      }
+    }
+  };
 
   // ── CONFIGURACIÓN DE GRÁFICOS (Chart.js / ng2-charts) ──────────────
 
@@ -175,23 +231,42 @@ export class Home implements OnInit {
   }
 
   /**
-   * Carga en paralelo el último pedido y los productos destacados (Flujo de rol USER).
+   * Carga en paralelo el historial de pedidos (limit=5) y los 4 productos
+   * destacados del catálogo para el widget 'Descubre TuSuper'.
    */
   private loadDashboardData(): void {
     this.loadingDashboard.set(true);
 
     forkJoin({
       orders: this.ordersService
-        .getMyOrders({ limit: 1, offset: 0 })
-        .pipe(catchError(() => of({ data: [], total: 0, limit: 1, offset: 0 }))),
+        .getMyOrders({ limit: 5, offset: 0 })
+        .pipe(catchError(() => of({ data: [], total: 0, limit: 5, offset: 0 }))),
       products: this.productService
         .getAll({ limit: 4, offset: 0 })
         .pipe(catchError(() => of({ data: [], total: 0, limit: 4, offset: 0 }))),
     })
     .pipe(takeUntilDestroyed(this.destroyRef))
     .subscribe(({ orders, products }) => {
-      this.latestOrder.set(orders.data[0] ?? null);
+      this.myOrders.set(orders.data);
+      this.totalOrdersCount.set(orders.total);
+      this.totalProductsCount.set(products.total);
       this.featuredProducts.set(products.data);
+
+      // Distribución por estado: O(N), N≤5 — Map garantiza un único pass
+      const statusCounts = new Map<OrderStatus, number>();
+      for (const order of orders.data) {
+        statusCounts.set(order.status, (statusCounts.get(order.status) ?? 0) + 1);
+      }
+
+      this.userStatusChartData = {
+        labels: [...statusCounts.keys()].map(s => ORDER_STATUS_LABELS[s]),
+        datasets: [{
+          data: [...statusCounts.values()],
+          backgroundColor: ['#f59e0b', '#3b82f6', '#10b981', '#8b5cf6', '#ef4444', '#64748b'],
+          borderWidth: 0,
+        }]
+      };
+
       this.loadingDashboard.set(false);
     });
   }

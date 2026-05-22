@@ -596,3 +596,416 @@
   }
 }
 
+// ════════════════════════════════════════════════════════
+//  DASHBOARD PREMIUM v2 — ROL USUARIO
+//  ⚠️  Append-only: no modifica secciones Admin/Tendero
+// ════════════════════════════════════════════════════════
+
+// ── KPI Summary Row ────────────────────────────────────
+.user-kpi-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 20px;
+  margin-bottom: 28px;
+}
+
+.user-kpi-card {
+  background: #ffffff;
+  border-radius: 16px;
+  border: 1px solid rgba(0, 0, 0, 0.05);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.04);
+  padding: 22px 24px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  transition: transform 0.25s cubic-bezier(0.4, 0, 0.2, 1),
+              box-shadow 0.25s cubic-bezier(0.4, 0, 0.2, 1),
+              border-color 0.25s ease;
+
+  &:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 12px 28px rgba(0, 0, 0, 0.09);
+    backdrop-filter: blur(2px); // glassmorphism sutil
+  }
+
+  &__header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+
+  &__label {
+    font-size: 0.78rem;
+    font-weight: 700;
+    color: #64748b;
+    text-transform: uppercase;
+    letter-spacing: 0.07em;
+    font-family: 'Inter', sans-serif;
+  }
+
+  &__icon {
+    width: 40px;
+    height: 40px;
+    border-radius: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+  }
+
+  &__value {
+    font-size: 2rem;
+    font-weight: 800;
+    color: #0f172a;
+    letter-spacing: -0.025em;
+    font-family: 'Inter', sans-serif;
+    line-height: 1;
+  }
+
+  &__trend {
+    font-size: 0.75rem;
+    color: #94a3b8;
+    font-family: 'Inter', sans-serif;
+  }
+}
+
+// ── Content Grid (2fr tabla + 1fr chart) ───────────────
+.user-content-grid {
+  display: grid;
+  grid-template-columns: 2fr 1fr;
+  gap: 24px;
+  align-items: start;
+}
+
+// ── Orders Panel ───────────────────────────────────────
+.user-orders-panel {
+  background: #ffffff;
+  border-radius: 16px;
+  border: 1px solid rgba(0, 0, 0, 0.05);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.04);
+  padding: 24px;
+  overflow: hidden;
+
+  &__title {
+    font-size: 1rem;
+    font-weight: 700;
+    color: #0f172a;
+    margin: 0 0 20px;
+    display: flex;
+    align-items: center;
+    font-family: 'Inter', sans-serif;
+  }
+
+  &__footer {
+    padding-top: 16px;
+    border-top: 1px solid #f1f5f9;
+    margin-top: 4px;
+  }
+}
+
+// ── Orders Table ───────────────────────────────────────
+.user-orders-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.875rem;
+  font-family: 'Inter', sans-serif;
+
+  thead th {
+    text-align: left;
+    padding: 6px 12px 12px;
+    font-size: 0.7rem;
+    font-weight: 700;
+    color: #94a3b8;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    border-bottom: 1px solid #f1f5f9;
+    white-space: nowrap;
+  }
+
+  tbody tr {
+    transition: background 0.15s ease;
+
+    &:hover {
+      background: #f8fafc;
+    }
+
+    &:last-child td {
+      border-bottom: none;
+    }
+  }
+
+  tbody td {
+    padding: 14px 12px;
+    border-bottom: 1px solid #f1f5f9;
+    color: #334155;
+    vertical-align: middle;
+  }
+
+  .order-id-cell {
+    font-weight: 700;
+    color: #1e293b;
+    font-size: 0.85rem;
+    font-variant-numeric: tabular-nums;
+  }
+
+  .td-amount {
+    font-weight: 700;
+    color: #0f172a;
+    font-variant-numeric: tabular-nums;
+    white-space: nowrap;
+  }
+
+  .td-empty {
+    text-align: center;
+    padding: 40px 16px;
+    color: #94a3b8;
+
+    mat-icon {
+      font-size: 36px;
+      width: 36px;
+      height: 36px;
+      display: block;
+      margin: 0 auto 8px;
+    }
+
+    p { margin: 0; font-size: 0.875rem; }
+  }
+}
+
+// ── Chart Panel ────────────────────────────────────────
+.user-chart-panel {
+  background: #ffffff;
+  border-radius: 16px;
+  border: 1px solid rgba(0, 0, 0, 0.05);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.04);
+  padding: 24px;
+
+  &__title {
+    font-size: 1rem;
+    font-weight: 700;
+    color: #0f172a;
+    margin: 0 0 20px;
+    display: flex;
+    align-items: center;
+    font-family: 'Inter', sans-serif;
+  }
+
+  &__canvas {
+    position: relative;
+    height: 220px;
+    width: 100%;
+  }
+}
+
+// ── Responsive usuario ─────────────────────────────────
+@media (max-width: 1200px) {
+  .user-kpi-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (max-width: 900px) {
+  .user-content-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 600px) {
+  .user-kpi-grid {
+    grid-template-columns: 1fr 1fr;
+    gap: 12px;
+  }
+
+  .user-kpi-card {
+    padding: 16px;
+
+    &__value { font-size: 1.5rem; }
+  }
+}
+
+@media (max-width: 400px) {
+  .user-kpi-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+// ════════════════════════════════════════════════════════
+//  SECCIÓN RECOMENDADOS — ROL USUARIO
+//  Append-only: no modifica secciones existentes
+// ════════════════════════════════════════════════════════
+
+.user-recommended-section {
+  margin-top: 28px;
+}
+
+.user-recommended-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20px;
+
+  &__title {
+    font-size: 1rem;
+    font-weight: 700;
+    color: #0f172a;
+    margin: 0;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-family: 'Inter', sans-serif;
+  }
+}
+
+.user-recommended-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 20px;
+}
+
+.recommended-card {
+  background: #ffffff;
+  border-radius: 16px;
+  border: 1px solid rgba(0, 0, 0, 0.05);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.04);
+  text-decoration: none;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  transition: transform 0.25s cubic-bezier(0.4, 0, 0.2, 1),
+              box-shadow 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+
+  &:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 12px 28px rgba(0, 0, 0, 0.10);
+  }
+
+  &__image {
+    height: 160px;
+    width: 100%;
+    overflow: hidden;
+    background: #f8fafc;
+    flex-shrink: 0;
+
+    img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      display: block;
+      transition: transform 0.3s ease;
+    }
+  }
+
+  &:hover &__image img {
+    transform: scale(1.04);
+  }
+
+  &__placeholder {
+    width: 100%;
+    height: 100%;
+    background: #f1f5f9;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    mat-icon {
+      font-size: 40px;
+      width: 40px;
+      height: 40px;
+      color: #c8d3de;
+    }
+  }
+
+  &__body {
+    padding: 14px 16px 16px;
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    flex: 1;
+  }
+
+  &__category {
+    display: inline-block;
+    background: #f1f5f9;
+    color: #64748b;
+    font-size: 0.7rem;
+    font-weight: 600;
+    padding: 3px 8px;
+    border-radius: 20px;
+    width: fit-content;
+    font-family: 'Inter', sans-serif;
+  }
+
+  &__name {
+    font-size: 0.9rem;
+    font-weight: 700;
+    color: #0f172a;
+    margin: 0;
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+    line-height: 1.4;
+    font-family: 'Inter', sans-serif;
+  }
+
+  &__footer {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-top: auto;
+    padding-top: 8px;
+  }
+
+  &__price {
+    font-size: 1rem;
+    font-weight: 800;
+    color: #059669;
+    font-family: 'Inter', sans-serif;
+    font-variant-numeric: tabular-nums;
+  }
+
+  &__cta {
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    background: #2563eb;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+
+    mat-icon {
+      color: #ffffff;
+      font-size: 16px;
+      width: 16px;
+      height: 16px;
+    }
+  }
+}
+
+.recommended-empty {
+  grid-column: 1 / -1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 40px;
+  color: #94a3b8;
+  font-size: 0.875rem;
+  font-family: 'Inter', sans-serif;
+
+  mat-icon { font-size: 20px; width: 20px; height: 20px; }
+}
+
+// ── Responsive recomendados ────────────────────────────
+@media (max-width: 900px) {
+  .user-recommended-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (max-width: 480px) {
+  .user-recommended-grid {
+    grid-template-columns: 1fr;
+  }
+}
