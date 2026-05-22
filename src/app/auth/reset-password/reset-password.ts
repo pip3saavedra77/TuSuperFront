@@ -41,6 +41,11 @@ export class ResetPassword implements OnInit {
   hidePassword = signal(true);
   hideConfirmPassword = signal(true);
   errorMessage = signal('');
+  activeStep = 1;
+
+  selectStep(step: number): void {
+    this.activeStep = step;
+  }
 
   resetForm = this.fb.group({
     password: ['', [Validators.required, Validators.minLength(8)]],

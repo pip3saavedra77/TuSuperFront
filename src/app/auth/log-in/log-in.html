@@ -1,105 +1,157 @@
-<div class="login-page-wrapper">
+<main class="login-page-wrapper">
     <div class="split-layout-container">
         <!-- Left Column: Ninth Style (Desktop Only) -->
-        <div class="left-brand-column">
+        <section class="left-brand-column" 
+                 [class.bg-step-1]="activeStep === 1"
+                 [class.bg-step-2]="activeStep === 2"
+                 [class.bg-step-3]="activeStep === 3"
+                 aria-label="Información de la marca TuSuper">
             <!-- Brand Logo -->
             <div class="brand-logo-container">
-                <svg class="brand-logo-svg" viewBox="0 0 100 100" fill="none">
-                    <path d="M30 20 H70 L85 50 L70 80 H30 L15 50 Z" stroke="currentColor" stroke-width="8" stroke-linejoin="round" />
-                    <circle cx="50" cy="50" r="12" fill="currentColor" />
+                <!-- SVG de Canasta Corriendo Vectorizado de Alta Fidelidad -->
+                <svg class="brand-logo-svg" viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+                    <!-- Líneas de movimiento traseras -->
+                    <path d="M15 50L6 52" stroke="currentColor" stroke-width="4.5" stroke-linecap="round" />
+                    <path d="M12 60L4 62" stroke="currentColor" stroke-width="4.5" stroke-linecap="round" />
+                    
+                    <!-- Asa de la canasta (Inclinada y dinámica) -->
+                    <path d="M42 24C42 24 53 11 67 15C74 17 73 28 73 28" stroke="currentColor" stroke-width="5" stroke-linecap="round" />
+                    
+                    <!-- Cuerpo de la canasta (Inclinado) -->
+                    <!-- Borde superior -->
+                    <rect x="23" y="27" width="54" height="7" rx="3.5" transform="rotate(11 50 30.5)" fill="currentColor" />
+                    
+                    <!-- Cuerpo central -->
+                    <path d="M28 41L68 49L59 70L25 62Z" fill="none" stroke="currentColor" stroke-width="5" stroke-linejoin="round" />
+                    
+                    <!-- Ranuras verticales de la cesta -->
+                    <line x1="39" y1="46" x2="35" y2="59" stroke="currentColor" stroke-width="4.5" stroke-linecap="round" />
+                    <line x1="47" y1="47" x2="43" y2="60" stroke="currentColor" stroke-width="4.5" stroke-linecap="round" />
+                    <line x1="55" y1="49" x2="51" y2="62" stroke="currentColor" stroke-width="4.5" stroke-linecap="round" />
+                    
+                    <!-- Piernas corriendo estilizadas -->
+                    <!-- Pierna delantera (Derecha) -->
+                    <path d="M52 69C52 69 57 79 66 76C71 74 74 70 77 70" stroke="currentColor" stroke-width="5" stroke-linecap="round" stroke-linejoin="round" />
+                    <!-- Pierna trasera (Izquierda) -->
+                    <path d="M37 66C37 74 32 79 24 79C19 79 17 76 17 76" stroke="currentColor" stroke-width="5" stroke-linecap="round" stroke-linejoin="round" />
                 </svg>
                 <span class="brand-name">TuSuper</span>
             </div>
 
             <!-- Join Us Badge -->
             <div class="brand-badge-container">
-                <span class="brand-badge-pill">JK</span>
+                <span class="brand-badge-pill" role="status">Tu súper a otro nivel</span>
             </div>
             
-            <!-- Hero Title -->
+            <!-- Hero Title (Principal para SEO en Escritorio) -->
             <div class="brand-hero-section">
-                <h1 class="hero-title">Tu súpermercado favorito,<br>a otro nivel.</h1>
-                <p class="hero-subtitle">Compra, ahorra y disfruta de la mejor calidad y frescura directamente en tu hogar.</p>
+                <h1 class="hero-title">Empieza tu compra</h1>
+                <p class="hero-subtitle">Sigue estos sencillos pasos para realizar tu compra en minutos con la mejor calidad y frescura.</p>
             </div>
 
             <!-- Steps Footer Cards -->
-            <div class="premium-benefits-card-stack">
-                <div class="benefit-card active-card">
-                    <span class="step-number">1</span>
-                    <span class="step-text">Iniciar Sesión en tu Cuenta</span>
+            <div class="premium-benefits-card-stack" aria-label="Pasos para realizar el pedido">
+                <div class="benefit-card" 
+                     [class.active-card]="activeStep === 1"
+                     [class.glassmorphic-benefit]="activeStep !== 1"
+                     (click)="selectStep(1)">
+                    <span class="step-number" aria-hidden="true">1</span>
+                    <span class="step-text">Inicia sesión en tu cuenta</span>
                 </div>
-                <div class="benefit-card glassmorphic-benefit">
-                    <span class="step-number">2</span>
-                    <span class="step-text">Explora los Productos Frescos</span>
+                <div class="benefit-card" 
+                     [class.active-card]="activeStep === 2"
+                     [class.glassmorphic-benefit]="activeStep !== 2"
+                     (click)="selectStep(2)">
+                    <span class="step-number" aria-hidden="true">2</span>
+                    <span class="step-text">Explora productos y ofertas</span>
                 </div>
-                <div class="benefit-card glassmorphic-benefit">
-                    <span class="step-number">3</span>
-                    <span class="step-text">Recibe tu Pedido en Minutos</span>
+                <div class="benefit-card" 
+                     [class.active-card]="activeStep === 3"
+                     [class.glassmorphic-benefit]="activeStep !== 3"
+                     (click)="selectStep(3)">
+                    <span class="step-number" aria-hidden="true">3</span>
+                    <span class="step-text">Recibe tu pedido a domicilio</span>
                 </div>
             </div>
-        </div>
+        </section>
 
         <!-- Right Column: Form Container (Mobile/Desktop) -->
-        <div class="right-form-column">
-            <!-- Mobile Header (Argumind style) -->
+        <section class="right-form-column" aria-label="Formulario de acceso">
+            <!-- Mobile Header (Visible únicamente en smartphone sobre el degradado) -->
             <div class="mobile-logo-header">
                 <div class="mobile-logo-left">
-                    <svg class="mobile-logo-svg" viewBox="0 0 100 100" fill="none">
-                        <circle cx="50" cy="50" r="48" fill="#104fed" />
-                        <path d="M50 15 C50 34 34 50 15 50 C34 50 50 66 50 85 C50 66 66 50 85 50 C66 50 50 34 50 15 Z" fill="white" />
-                        <circle cx="50" cy="50" r="8" fill="#104fed" />
+                    <!-- SVG Canasta Corriendo para Móvil en Contraste Blanco -->
+                    <svg class="mobile-logo-svg" viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+                        <path d="M15 50L6 52" stroke="currentColor" stroke-width="4.5" stroke-linecap="round" />
+                        <path d="M12 60L4 62" stroke="currentColor" stroke-width="4.5" stroke-linecap="round" />
+                        <path d="M42 24C42 24 53 11 67 15C74 17 73 28 73 28" stroke="currentColor" stroke-width="5" stroke-linecap="round" />
+                        <rect x="23" y="27" width="54" height="7" rx="3.5" transform="rotate(11 50 30.5)" fill="currentColor" />
+                        <path d="M28 41L68 49L59 70L25 62Z" fill="none" stroke="currentColor" stroke-width="5" stroke-linejoin="round" />
+                        <line x1="39" y1="46" x2="35" y2="59" stroke="currentColor" stroke-width="4.5" stroke-linecap="round" />
+                        <line x1="47" y1="47" x2="43" y2="60" stroke="currentColor" stroke-width="4.5" stroke-linecap="round" />
+                        <line x1="55" y1="49" x2="51" y2="62" stroke="currentColor" stroke-width="4.5" stroke-linecap="round" />
+                        <path d="M52 69C52 69 57 79 66 76C71 74 74 70 77 70" stroke="currentColor" stroke-width="5" stroke-linecap="round" stroke-linejoin="round" />
+                        <path d="M37 66C37 74 32 79 24 79C19 79 17 76 17 76" stroke="currentColor" stroke-width="5" stroke-linecap="round" stroke-linejoin="round" />
                     </svg>
                     <span class="brand-name">TuSuper</span>
                 </div>
-                <span class="version-tag">TuSuper v1.0 Alpha</span>
             </div>
 
             <!-- Card/Form Wrapper -->
             <div class="auth-form-card">
-                <div class="form-header">
-                    <h1 class="card-title">Iniciar Sesión</h1>
+                <header class="form-header">
+                    <!-- Título secundario estructurado para SEO -->
+                    <h2 class="card-title">Iniciar Sesión</h2>
                     <p class="card-subtitle">Compra, ahorra y disfruta de la mejor calidad</p>
-                </div>
+                </header>
 
                 <form [formGroup]="loginForm" (ngSubmit)="onSubmit()" class="login-form">
                     <!-- Email input group -->
                     <div class="input-group">
-                        <label class="input-label">Correo electrónico</label>
-                        <input type="email" formControlName="email" class="premium-input-field" placeholder="nombre@ejemplo.com" required autocomplete="email">
+                        <label for="email" class="input-label">Correo electrónico</label>
+                        <div class="input-container">
+                            <input id="email" type="email" formControlName="email" class="premium-input-field" placeholder="nombre@ejemplo.com" required autocomplete="email" aria-label="Ingresa tu correo electrónico">
+                        </div>
                         @if (loginForm.get('email')?.hasError('email') && loginForm.get('email')?.touched) {
-                            <span class="error-text">Ingresa un correo válido</span>
+                            <span class="error-text" role="alert">
+                                <mat-icon class="error-icon">warning</mat-icon> Ingresa un correo electrónico válido
+                            </span>
                         }
                         @if (loginForm.get('email')?.hasError('required') && loginForm.get('email')?.touched) {
-                            <span class="error-text">El correo es obligatorio</span>
+                            <span class="error-text" role="alert">
+                                <mat-icon class="error-icon">warning</mat-icon> El correo electrónico es obligatorio
+                            </span>
                         }
                     </div>
 
                     <!-- Password input group -->
                     <div class="input-group">
-                        <label class="input-label">Contraseña</label>
+                        <label for="password" class="input-label">Contraseña</label>
                         <div class="password-input-wrapper">
-                            <input [type]="hidePassword ? 'password' : 'text'" formControlName="password" class="premium-input-field" placeholder="••••••••" required autocomplete="current-password">
-                            <button type="button" class="visibility-toggle" (click)="hidePassword = !hidePassword">
+                            <input id="password" [type]="hidePassword ? 'password' : 'text'" formControlName="password" class="premium-input-field" placeholder="••••••••" required autocomplete="current-password" aria-label="Ingresa tu contraseña">
+                            <button type="button" class="visibility-toggle" (click)="hidePassword = !hidePassword" [attr.aria-label]="hidePassword ? 'Mostrar contraseña' : 'Ocultar contraseña'">
                                 <mat-icon>{{hidePassword ? 'visibility_off' : 'visibility'}}</mat-icon>
                             </button>
                         </div>
                         @if (loginForm.get('password')?.hasError('required') && loginForm.get('password')?.touched) {
-                            <span class="error-text">La contraseña es obligatoria</span>
+                            <span class="error-text" role="alert">
+                                <mat-icon class="error-icon">warning</mat-icon> La contraseña es obligatoria
+                            </span>
                         }
                     </div>
 
                     <!-- Options (Remember me / Forgot password) -->
                     <div class="form-options">
-                        <label class="remember-me">
-                            <input type="checkbox">
+                        <label class="remember-me" for="remember-checkbox">
+                            <input id="remember-checkbox" type="checkbox">
                             <span class="checkbox-custom"></span>
                             <span class="checkbox-label">Recordarme</span>
                         </label>
-                        <a routerLink="/auth/forgot-password" class="forgot-password">¿Olvidaste tu contraseña?</a>
+                        <a routerLink="/auth/forgot-password" class="forgot-password" aria-label="Recuperar contraseña olvidada">¿Olvidaste tu contraseña?</a>
                     </div>
 
                     <!-- Submit Button -->
-                    <button type="submit" class="primary-electric-button" [disabled]="loginForm.invalid">
+                    <button type="submit" class="primary-electric-button" [disabled]="loginForm.invalid" aria-label="Iniciar sesión con tu correo y contraseña">
                         <span>Ingresar</span>
                     </button>
 
@@ -109,17 +161,17 @@
                     </div>
 
                     <!-- Social Google Button -->
-                    <button type="button" class="google-social-button" (click)="loginWithGoogle()">
-                        <img src="https://fonts.gstatic.com/s/i/productlogos/googleg/v6/24px.svg" alt="Google" class="google-icon">
+                    <button type="button" class="google-social-button" (click)="loginWithGoogle()" aria-label="Iniciar sesión con tu cuenta de Google">
+                        <img src="https://fonts.gstatic.com/s/i/productlogos/googleg/v6/24px.svg" alt="Icono de Google" class="google-icon">
                         <span>Google</span>
                     </button>
                 </form>
 
                 <!-- Footer link -->
-                <div class="auth-footer">
-                    <p>¿No tienes cuenta? <a routerLink="/auth/sign-in" class="footer-link">Regístrate aquí</a></p>
-                </div>
+                <footer class="auth-footer">
+                    <p>¿No tienes cuenta? <a routerLink="/auth/sign-in" class="footer-link" aria-label="Crear una nueva cuenta">Regístrate aquí</a></p>
+                </footer>
             </div>
-        </div>
+        </section>
     </div>
-</div>
+</main>

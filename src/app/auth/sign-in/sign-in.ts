@@ -59,6 +59,11 @@ export class SignIn {
   public hidePassword = true;
   public hideConfirmPassword = true;
   public loading = signal<boolean>(false);
+  public activeStep = 1;
+
+  public selectStep(step: number): void {
+    this.activeStep = step;
+  }
 
   public registerForm = this.fb.group({
     firstName: ['', [Validators.required]],

@@ -1,143 +1,176 @@
-<div class="login-page-wrapper">
+<main class="login-page-wrapper">
     <div class="split-layout-container">
         <!-- Left Column: Ninth Style (Desktop Only) -->
-        <div class="left-brand-column">
+        <section class="left-brand-column" 
+                 [class.bg-step-1]="activeStep === 1"
+                 [class.bg-step-2]="activeStep === 2"
+                 [class.bg-step-3]="activeStep === 3"
+                 aria-label="Información de la marca TuSuper">
             <!-- Brand Logo -->
             <div class="brand-logo-container">
-                <svg class="brand-logo-svg" viewBox="0 0 100 100" fill="none">
-                    <path d="M30 20 H70 L85 50 L70 80 H30 L15 50 Z" stroke="currentColor" stroke-width="8" stroke-linejoin="round" />
-                    <circle cx="50" cy="50" r="12" fill="currentColor" />
+                <!-- SVG de Canasta Corriendo Vectorizado de Alta Fidelidad -->
+                <svg class="brand-logo-svg" viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+                    <path d="M15 50L6 52" stroke="currentColor" stroke-width="4.5" stroke-linecap="round" />
+                    <path d="M12 60L4 62" stroke="currentColor" stroke-width="4.5" stroke-linecap="round" />
+                    <path d="M42 24C42 24 53 11 67 15C74 17 73 28 73 28" stroke="currentColor" stroke-width="5" stroke-linecap="round" />
+                    <rect x="23" y="27" width="54" height="7" rx="3.5" transform="rotate(11 50 30.5)" fill="currentColor" />
+                    <path d="M28 41L68 49L59 70L25 62Z" fill="none" stroke="currentColor" stroke-width="5" stroke-linejoin="round" />
+                    <line x1="39" y1="46" x2="35" y2="59" stroke="currentColor" stroke-width="4.5" stroke-linecap="round" />
+                    <line x1="47" y1="47" x2="43" y2="60" stroke="currentColor" stroke-width="4.5" stroke-linecap="round" />
+                    <line x1="55" y1="49" x2="51" y2="62" stroke="currentColor" stroke-width="4.5" stroke-linecap="round" />
+                    <path d="M52 69C52 69 57 79 66 76C71 74 74 70 77 70" stroke="currentColor" stroke-width="5" stroke-linecap="round" stroke-linejoin="round" />
+                    <path d="M37 66C37 74 32 79 24 79C19 79 17 76 17 76" stroke="currentColor" stroke-width="5" stroke-linecap="round" stroke-linejoin="round" />
                 </svg>
                 <span class="brand-name">TuSuper</span>
             </div>
 
             <!-- Join Us Badge -->
             <div class="brand-badge-container">
-                <span class="brand-badge-pill">TuSuper Premium 😌</span>
+                <span class="brand-badge-pill" role="status">Tu súper a otro nivel</span>
             </div>
             
-            <!-- Hero Title -->
+            <!-- Hero Title (Principal para SEO en Escritorio) -->
             <div class="brand-hero-section">
-                <h1 class="hero-title">Tu súper,<br>a otro nivel.</h1>
-                <p class="hero-subtitle">Compra, ahorra y disfruta de la mejor calidad y frescura directamente en tu hogar.</p>
+                <h1 class="hero-title">Empieza tu compra</h1>
+                <p class="hero-subtitle">Sigue estos sencillos pasos para realizar tu compra en minutos con la mejor calidad y frescura.</p>
             </div>
 
             <!-- Steps Footer Cards -->
-            <div class="premium-benefits-card-stack">
-                <div class="benefit-card active-card">
-                    <span class="step-number">1</span>
-                    <span class="step-text">Crear tu Cuenta Gratis</span>
+            <div class="premium-benefits-card-stack" aria-label="Pasos para realizar el pedido">
+                <div class="benefit-card" 
+                     [class.active-card]="activeStep === 1"
+                     [class.glassmorphic-benefit]="activeStep !== 1"
+                     (click)="selectStep(1)">
+                    <span class="step-number" aria-hidden="true">1</span>
+                    <span class="step-text">Crear tu cuenta gratis</span>
                 </div>
-                <div class="benefit-card glassmorphic-benefit">
-                    <span class="step-number">2</span>
-                    <span class="step-text">Explora los Productos Frescos</span>
+                <div class="benefit-card" 
+                     [class.active-card]="activeStep === 2"
+                     [class.glassmorphic-benefit]="activeStep !== 2"
+                     (click)="selectStep(2)">
+                    <span class="step-number" aria-hidden="true">2</span>
+                    <span class="step-text">Explora productos y ofertas</span>
                 </div>
-                <div class="benefit-card glassmorphic-benefit">
-                    <span class="step-number">3</span>
-                    <span class="step-text">Recibe tu Pedido en Minutos</span>
+                <div class="benefit-card" 
+                     [class.active-card]="activeStep === 3"
+                     [class.glassmorphic-benefit]="activeStep !== 3"
+                     (click)="selectStep(3)">
+                    <span class="step-number" aria-hidden="true">3</span>
+                    <span class="step-text">Recibe tu pedido a domicilio</span>
                 </div>
             </div>
-        </div>
+        </section>
 
         <!-- Right Column: Form Container (Mobile/Desktop) -->
-        <div class="right-form-column">
-            <!-- Mobile Header (Argumind style) -->
+        <section class="right-form-column" aria-label="Formulario de registro">
+            <!-- Mobile Header (Visible únicamente en smartphone sobre el degradado) -->
             <div class="mobile-logo-header">
-                <a routerLink="/auth/log-in" class="back-link-btn">
+                <a routerLink="/auth/log-in" class="back-link-btn" aria-label="Volver al inicio de sesión">
                     <mat-icon>arrow_back</mat-icon>
                     <span>Crear Cuenta</span>
                 </a>
-                <span class="version-tag">TuSuper v1.0 Alpha</span>
             </div>
 
             <!-- Card/Form Wrapper -->
             <div class="auth-form-card">
-                <!-- Desktop Header -->
-                <div class="form-header desktop-only-header">
-                    <h1 class="card-title">Crear Cuenta</h1>
+                <header class="form-header">
+                    <h2 class="card-title">Crear Cuenta</h2>
                     <p class="card-subtitle">Ingresa tus datos para registrarte</p>
-                </div>
+                </header>
 
                 <form [formGroup]="registerForm" (ngSubmit)="onSubmit()" class="login-form">
-                    
                     <!-- First Name & Last Name Grid -->
                     <div class="name-grid">
                         <div class="input-group">
-                            <label class="input-label">Nombre</label>
-                            <input type="text" formControlName="firstName" class="premium-input-field" placeholder="Juan" required autocomplete="given-name">
+                            <label for="firstName" class="input-label">Nombre</label>
+                            <input id="firstName" type="text" formControlName="firstName" class="premium-input-field" placeholder="Juan" required autocomplete="given-name" aria-label="Ingresa tu primer nombre">
                             @if (registerForm.get('firstName')?.hasError('required') && registerForm.get('firstName')?.touched) {
-                                <span class="error-text">Obligatorio</span>
+                                <span class="error-text" role="alert">
+                                    <mat-icon class="error-icon">warning</mat-icon> Obligatorio
+                                </span>
                             }
                         </div>
 
                         <div class="input-group">
-                            <label class="input-label">Apellido</label>
-                            <input type="text" formControlName="lastName" class="premium-input-field" placeholder="Pérez" required autocomplete="family-name">
+                            <label for="lastName" class="input-label">Apellido</label>
+                            <input id="lastName" type="text" formControlName="lastName" class="premium-input-field" placeholder="Pérez" required autocomplete="family-name" aria-label="Ingresa tu apellido">
                             @if (registerForm.get('lastName')?.hasError('required') && registerForm.get('lastName')?.touched) {
-                                <span class="error-text">Obligatorio</span>
+                                <span class="error-text" role="alert">
+                                    <mat-icon class="error-icon">warning</mat-icon> Obligatorio
+                                </span>
                             }
                         </div>
                     </div>
 
                     <!-- Email input group -->
                     <div class="input-group">
-                        <label class="input-label">Correo electrónico</label>
-                        <input type="email" formControlName="email" class="premium-input-field" placeholder="nombre@ejemplo.com" required autocomplete="email">
-                        <span class="input-warning-note">⚠️ Por favor utiliza tu correo personal o laboral principal</span>
+                        <label for="email" class="input-label">Correo electrónico</label>
+                        <input id="email" type="email" formControlName="email" class="premium-input-field" placeholder="nombre@ejemplo.com" required autocomplete="email" aria-label="Ingresa tu correo electrónico">
                         @if (registerForm.get('email')?.hasError('email') && registerForm.get('email')?.touched) {
-                            <span class="error-text">Ingresa un correo válido</span>
+                            <span class="error-text" role="alert">
+                                <mat-icon class="error-icon">warning</mat-icon> Ingresa un correo válido
+                            </span>
                         }
                         @if (registerForm.get('email')?.hasError('required') && registerForm.get('email')?.touched) {
-                            <span class="error-text">El correo es obligatorio</span>
+                            <span class="error-text" role="alert">
+                                <mat-icon class="error-icon">warning</mat-icon> El correo es obligatorio
+                            </span>
                         }
                     </div>
 
                     <!-- Password input group -->
                     <div class="input-group">
-                        <label class="input-label">Contraseña</label>
+                        <label for="password" class="input-label">Contraseña</label>
                         <div class="password-input-wrapper">
-                            <input [type]="hidePassword ? 'password' : 'text'" formControlName="password" class="premium-input-field" placeholder="••••••••" required autocomplete="new-password">
-                            <button type="button" class="visibility-toggle" (click)="hidePassword = !hidePassword">
+                            <input id="password" [type]="hidePassword ? 'password' : 'text'" formControlName="password" class="premium-input-field" placeholder="••••••••" required autocomplete="new-password" aria-label="Ingresa una contraseña de mínimo 6 caracteres">
+                            <button type="button" class="visibility-toggle" (click)="hidePassword = !hidePassword" [attr.aria-label]="hidePassword ? 'Mostrar contraseña' : 'Ocultar contraseña'">
                                 <mat-icon>{{hidePassword ? 'visibility_off' : 'visibility'}}</mat-icon>
                             </button>
                         </div>
-                        <span class="input-warning-note">Mínimo 6 caracteres con letras y números</span>
                         @if (registerForm.get('password')?.hasError('required') && registerForm.get('password')?.touched) {
-                            <span class="error-text">La contraseña es obligatoria</span>
+                            <span class="error-text" role="alert">
+                                <mat-icon class="error-icon">warning</mat-icon> La contraseña es obligatoria
+                            </span>
                         }
                         @if (registerForm.get('password')?.hasError('minlength') && registerForm.get('password')?.touched) {
-                            <span class="error-text">Debe tener al menos 6 caracteres</span>
+                            <span class="error-text" role="alert">
+                                <mat-icon class="error-icon">warning</mat-icon> Debe tener al menos 6 caracteres
+                            </span>
                         }
                     </div>
 
                     <!-- Confirm Password input group -->
                     <div class="input-group">
-                        <label class="input-label">Confirmar Contraseña</label>
+                        <label for="confirmPassword" class="input-label">Confirmar Contraseña</label>
                         <div class="password-input-wrapper">
-                            <input [type]="hideConfirmPassword ? 'password' : 'text'" formControlName="confirmPassword" class="premium-input-field" placeholder="••••••••" required autocomplete="new-password">
-                            <button type="button" class="visibility-toggle" (click)="hideConfirmPassword = !hideConfirmPassword">
+                            <input id="confirmPassword" [type]="hideConfirmPassword ? 'password' : 'text'" formControlName="confirmPassword" class="premium-input-field" placeholder="••••••••" required autocomplete="new-password" aria-label="Confirma tu contraseña">
+                            <button type="button" class="visibility-toggle" (click)="hideConfirmPassword = !hideConfirmPassword" [attr.aria-label]="hideConfirmPassword ? 'Mostrar confirmación de contraseña' : 'Ocultar confirmación'">
                                 <mat-icon>{{hideConfirmPassword ? 'visibility_off' : 'visibility'}}</mat-icon>
                             </button>
                         </div>
                         @if (registerForm.get('confirmPassword')?.hasError('required') && registerForm.get('confirmPassword')?.touched) {
-                            <span class="error-text">Confirma tu contraseña</span>
+                            <span class="error-text" role="alert">
+                                <mat-icon class="error-icon">warning</mat-icon> Confirma tu contraseña
+                            </span>
                         }
                         @if (registerForm.get('confirmPassword')?.hasError('passwordMismatch') && registerForm.get('confirmPassword')?.touched) {
-                            <span class="error-text">Las contraseñas no coinciden</span>
+                            <span class="error-text" role="alert">
+                                <mat-icon class="error-icon">warning</mat-icon> Las contraseñas no coinciden
+                            </span>
                         }
                     </div>
 
-                    <!-- Terms & Conditions Checkbox (Argumind style circular check) -->
+                    <!-- Terms & Conditions Checkbox -->
                     <div class="form-options">
-                        <label class="remember-me circular-terms">
-                            <input type="checkbox" required>
-                            <span class="checkbox-custom-circle"></span>
+                        <label class="remember-me circular-terms" for="terms-checkbox">
+                            <input id="terms-checkbox" type="checkbox" required>
+                            <span class="checkbox-custom"></span>
                             <span class="checkbox-label">Acepto los Términos y Condiciones y la Política de Privacidad</span>
                         </label>
                     </div>
 
                     <!-- Submit Button -->
-                    <button type="submit" class="primary-electric-button" [disabled]="registerForm.invalid || loading()">
+                    <button type="submit" class="primary-electric-button" [disabled]="registerForm.invalid || loading()" aria-label="Crear mi cuenta">
                         @if (loading()) {
                             <span class="spinner-container">
                                 <span class="dot-spinner"></span>
@@ -149,10 +182,10 @@
                 </form>
 
                 <!-- Footer link -->
-                <div class="auth-footer">
-                    <p>¿Ya tienes cuenta? <a routerLink="/auth/log-in" class="footer-link">Inicia sesión</a></p>
-                </div>
+                <footer class="auth-footer">
+                    <p>¿Ya tienes cuenta? <a routerLink="/auth/log-in" class="footer-link" aria-label="Volver al inicio de sesión">Inicia sesión</a></p>
+                </footer>
             </div>
-        </div>
+        </section>
     </div>
-</div>
+</main>

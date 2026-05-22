@@ -36,6 +36,11 @@ export class LogIn {
   private readonly authService = inject(AuthService);
   private readonly router = inject(Router);
   hidePassword = true;
+  activeStep = 1;
+
+  selectStep(step: number): void {
+    this.activeStep = step;
+  }
 
   loginForm = this.fb.group({
     email: ['', [Validators.required, Validators.email]],
