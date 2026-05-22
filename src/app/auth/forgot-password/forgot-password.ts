@@ -33,6 +33,11 @@ export class ForgotPassword {
 
   isLoading = signal(false);
   successMessage = signal('');
+  activeStep = 1;
+
+  selectStep(step: number): void {
+    this.activeStep = step;
+  }
 
   forgotForm = this.fb.group({
     email: ['', [Validators.required, Validators.email]],
