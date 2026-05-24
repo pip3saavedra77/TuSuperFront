@@ -10,9 +10,91 @@
 
       <div class="profile-avatar-wrapper">
 
-        <div class="profile-avatar">
+        @if (avatarPreviewUrl()) {
 
-          {{ currentUser()?.firstName?.charAt(0) }}
+          <img [src]="avatarPreviewUrl()" class="profile-avatar profile-avatar--img" alt="Vista previa" />
+
+        } @else if (currentUser()?.avatarUrl) {
+
+          <img [src]="currentUser()?.avatarUrl" class="profile-avatar profile-avatar--img" alt="Foto de perfil" referrerpolicy="no-referrer" />
+
+        } @else {
+
+          <div class="profile-avatar">
+
+            {{ currentUser()?.firstName?.charAt(0) }}
+
+          </div>
+
+        }
+
+
+
+        <div class="avatar-overlay">
+
+          <input
+
+            type="file"
+
+            accept="image/png,image/jpeg,image/jpg,image/webp"
+
+            #avatarInput
+
+            class="hidden-input"
+
+            (change)="onAvatarSelected($event)" />
+
+
+
+          @if (avatarPreviewUrl()) {
+
+            <div class="avatar-actions preview-actions">
+
+              <button mat-icon-button type="button" class="avatar-btn avatar-btn--confirm" (click)="uploadAvatar()" [disabled]="isUploadingAvatar()">
+
+                @if (isUploadingAvatar()) {
+
+                  <mat-spinner diameter="18"></mat-spinner>
+
+                } @else {
+
+                  <mat-icon>check</mat-icon>
+
+                }
+
+              </button>
+
+              <button mat-icon-button type="button" class="avatar-btn avatar-btn--cancel" (click)="clearAvatarSelection()">
+
+                <mat-icon>close</mat-icon>
+
+              </button>
+
+            </div>
+
+          } @else {
+
+            <div class="avatar-actions">
+
+              <button mat-icon-button type="button" class="avatar-btn" (click)="avatarInput.click()">
+
+                <mat-icon>photo_camera</mat-icon>
+
+              </button>
+
+              @if (currentUser()?.avatarUrl) {
+
+                <button mat-icon-button type="button" class="avatar-btn avatar-btn--delete" (click)="removeAvatar()">
+
+                  <mat-icon>delete</mat-icon>
+
+                </button>
+
+              }
+
+            </div>
+
+          }
 
         </div>
 

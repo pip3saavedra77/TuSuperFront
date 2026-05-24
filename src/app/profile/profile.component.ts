@@ -96,6 +96,14 @@ export class ProfileComponent implements OnInit {
 
 
 
+  public selectedAvatarFile = signal<File | null>(null);
+
+  public avatarPreviewUrl = signal<string | null>(null);
+
+  public isUploadingAvatar = signal(false);
+
+
+
   ngOnInit(): void {
 
     this.initForms();
@@ -271,6 +279,142 @@ export class ProfileComponent implements OnInit {
       }
 
     });
+
+  }
+
+
+
+
+
+  // ── Avatar handlers ────────────────────────────────────
+
+
+
+  onAvatarSelected(event: Event): void {
+
+    const input = event.target as HTMLInputElement;
+
+    if (!input.files || input.files.length === 0) return;
+
+
+
+    const file = input.files[0];
+
+    const maxSize = 5 * 1024 * 1024; // 5 MB
+
+    const allowedTypes = ['image/png', 'image/jpeg', 'image/jpg', 'image/webp'];
+
+
+
+    if (file.size > maxSize) {
+
+      this.snackBar.open('La imagen no debe superar 5 MB', 'Cerrar', { duration: 4000 });
+
+      return;
+
+    }
+
+
+
+    if (!allowedTypes.includes(file.type)) {
+
+      this.snackBar.open('Solo se permiten imágenes PNG, JPG o WebP', 'Cerrar', { duration: 4000 });
+
+      return;
+
+    }
+
+
+
+    this.selectedAvatarFile.set(file);
+
+    const reader = new FileReader();
+
+    reader.onload = () => this.avatarPreviewUrl.set(reader.result as string);
+
+    reader.readAsDataURL(file);
+
+  }
+
+
+
+
+
+  uploadAvatar(): void {
+
+    const file = this.selectedAvatarFile();
+
+    if (!file) return;
+
+
+
+    this.isUploadingAvatar.set(true);
+
+    this.usersService.uploadMyAvatar(file).subscribe({
+
+      next: () => {
+
+        this.snackBar.open('Foto de perfil actualizada', 'Cerrar', { duration: 3000 });
+
+        this.selectedAvatarFile.set(null);
+
+        this.avatarPreviewUrl.set(null);
+
+        this.isUploadingAvatar.set(false);
+
+        this.authService.checkAuthStatus().subscribe();
+
+      },
+
+      error: (err) => {
+
+        const msg = err.error?.message || 'Error al subir la imagen';
+
+        this.snackBar.open(msg, 'Cerrar', { duration: 4000 });
+
+        this.isUploadingAvatar.set(false);
+
+      }
+
+    });
+
+  }
+
+
+
+
+
+  removeAvatar(): void {
+
+    this.usersService.removeMyAvatar().subscribe({
+
+      next: () => {
+
+        this.snackBar.open('Foto de perfil eliminada', 'Cerrar', { duration: 3000 });
+
+        this.authService.checkAuthStatus().subscribe();
+
+      },
+
+      error: () => {
+
+        this.snackBar.open('Error al eliminar la foto de perfil', 'Cerrar', { duration: 4000 });
+
+      }
+
+    });
+
+  }
+
+
+
+
+
+  clearAvatarSelection(): void {
+
+    this.selectedAvatarFile.set(null);
+
+    this.avatarPreviewUrl.set(null);
 
   }
 
