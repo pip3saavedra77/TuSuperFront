@@ -96,7 +96,11 @@
           <!-- Empty state -->
           <tr class="mat-row no-data-row" *matNoDataRow>
             <td class="mat-cell no-data-cell" [attr.colspan]="displayedColumns.length">
-              No se encontraron categorías
+              <div class="empty-state">
+                <mat-icon>category</mat-icon>
+                <p class="empty-title">No hay categorías</p>
+                <p class="empty-desc">Crea una categoría para organizar tus productos.</p>
+              </div>
             </td>
           </tr>
         </table>

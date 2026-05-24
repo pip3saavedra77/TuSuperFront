@@ -103,7 +103,11 @@
           <!-- Empty state -->
           <tr class="mat-row no-data-row" *matNoDataRow>
             <td class="mat-cell no-data-cell" [attr.colspan]="displayedColumns.length">
-              No se encontraron proveedores
+              <div class="empty-state">
+                <mat-icon>local_shipping</mat-icon>
+                <p class="empty-title">No hay proveedores</p>
+                <p class="empty-desc">Registra los proveedores que abastecen tu inventario.</p>
+              </div>
             </td>
           </tr>
         </table>

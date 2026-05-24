@@ -118,5 +118,29 @@ export class UsersService {
 
   }
 
+
+
+
+
+  uploadMyAvatar(file: File): Observable<User> {
+
+    const formData = new FormData();
+
+    formData.append('avatar', file);
+
+    return this.http.post<User>(`${this.apiUrl}/me/avatar`, formData);
+
+  }
+
+
+
+
+
+  removeMyAvatar(): Observable<User> {
+
+    return this.http.delete<User>(`${this.apiUrl}/me/avatar`);
+
+  }
+
 }
 
