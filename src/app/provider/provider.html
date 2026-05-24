@@ -1,12 +1,20 @@
 <div class="provider-container">
-    <!-- HEADER -->
-    <div class="page-header">
-      <h2 class="page-title">Gestión de Proveedores</h2>
+    <!-- HEADER UNIFICADO -->
+    <div class="page-hero">
+      <div class="page-hero__icon">
+        <mat-icon>local_shipping</mat-icon>
+      </div>
+      <div class="page-hero__text">
+        <h2>Gestión de Proveedores</h2>
+        <p class="page-hero__subtitle">Administra los proveedores que abastecen tu inventario.</p>
+      </div>
       @if (auth.hasManagementPrivileges()) {
-      <button mat-flat-button class="add-btn" (click)="onAdd()">
-        <mat-icon>add</mat-icon>
-        Nuevo Proveedor
-      </button>
+        <div class="page-hero__actions">
+          <button mat-flat-button class="add-btn" (click)="onAdd()">
+            <mat-icon>add</mat-icon>
+            Nuevo Proveedor
+          </button>
+        </div>
       }
     </div>
   

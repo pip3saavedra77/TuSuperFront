@@ -1,6 +1,7 @@
 import { Component, inject } from '@angular/core';
 import { MatButtonModule } from '@angular/material/button';
 import { MatDialog, MatDialogModule } from '@angular/material/dialog';
+import { MatIconModule } from '@angular/material/icon';
 import { ModulesStore } from './store/modules.store';
 import { ModulesForm } from './components/modules-form/modules-form';
 import { ModuleModel } from './models/module.model';
@@ -12,6 +13,7 @@ import { CustomTable, TableColumn } from '../shared/components/custom-table/cust
   imports: [
     MatButtonModule,
     MatDialogModule,
+    MatIconModule,
     CustomTable,
   ],
   templateUrl: './modules.html',

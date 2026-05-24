@@ -1,100 +1,51 @@
-@use '../../../styles/tokens' as *;
-@use '../../../styles/glass' as *;
-@use 'sass:map';
+// =============================================================================
+// USER FORM DIALOG — Estilo local
+// El layout principal proviene del partial global `_dialog.scss` (.form-dialog)
+// Aquí solo agregamos secciones agrupadas y ajustes específicos del modal lateral.
+// =============================================================================
 
-.dialog-container {
-  padding: map.get($spacing, "24");
-  max-width: 100%;
-  background: transparent;
+:host {
+  display: block;
   height: 100%;
+  background: transparent;
+}
+
+// Si el diálogo se abre como side drawer (height 100vh + position right),
+// hacemos que el form ocupe toda la altura disponible.
+:host ::ng-deep .form-dialog {
+  min-height: 100%;
+  border-radius: 16px 0 0 16px;
+}
+
+// Secciones agrupadas dentro del body
+:host ::ng-deep .form-section {
   display: flex;
   flex-direction: column;
+  gap: 12px;
+  padding-bottom: 16px;
+  border-bottom: 1px dashed rgba(15, 23, 42, 0.08);
 
-  form {
-    flex: 1;
-    display: flex;
-    flex-direction: column;
+  &:last-of-type {
+    border-bottom: none;
+    padding-bottom: 0;
   }
 }
 
-h2[mat-dialog-title] {
-  color: #FFFFFF;
-  font-weight: map.get($font-weights, "bold");
-  margin-bottom: map.get($spacing, "24");
-  font-family: $font-family;
-}
+:host ::ng-deep .form-section__label {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 0.72rem;
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: #64748b;
+  margin-bottom: 4px;
 
-.form-grid {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: map.get($spacing, "16");
-
-  .full-width {
-    grid-column: span 2;
-  }
-}
-
-mat-dialog-content {
-  overflow-y: auto;
-  flex: 1;
-  padding: map.get($spacing, "16") 0;
-}
-
-mat-dialog-actions {
-  padding: map.get($spacing, "16") 0 0 0;
-  gap: map.get($spacing, "12");
-}
-
-.save-btn {
-  background-color: #8B1A2F !important;
-  color: #FFFFFF !important;
-  
-  &:hover:not(:disabled) {
-    background-color: #6B1424 !important;
-  }
-}
-
-::ng-deep {
-  .mat-mdc-dialog-container {
-    .mdc-dialog__surface {
-      @include glass-card("admin");
-      background: rgba(15, 15, 26, 0.9) !important; // Un poco más oscuro para legibilidad de inputs
-    }
-  }
-
-  .mat-mdc-form-field {
-    .mdc-text-field--outlined .mdc-notched-outline__leading,
-    .mdc-text-field--outlined .mdc-notched-outline__notch,
-    .mdc-text-field--outlined .mdc-notched-outline__trailing {
-      border-color: rgba(255, 255, 255, 0.2);
-    }
-
-    &.mat-focused {
-      .mdc-text-field--outlined .mdc-notched-outline__leading,
-      .mdc-text-field--outlined .mdc-notched-outline__notch,
-      .mdc-text-field--outlined .mdc-notched-outline__trailing {
-        border-color: #8B1A2F !important;
-      }
-    }
-  }
-
-  .mat-mdc-select-value,
-  .mat-mdc-input-element,
-  .mat-mdc-select-arrow {
-    color: #FFFFFF !important;
-  }
-
-  .mat-mdc-form-field-label,
-  .mdc-floating-label {
-    color: rgba(255, 255, 255, 0.7) !important;
-  }
-
-  .mat-mdc-option {
-    background-color: #1b1011 !important;
-    color: #FFFFFF !important;
-    &:hover { background-color: rgba(139, 26, 47, 0.2) !important; }
-    &.mdc-list-item--selected {
-      background-color: rgba(139, 26, 47, 0.4) !important;
-    }
+  mat-icon {
+    font-size: 18px;
+    width: 18px;
+    height: 18px;
+    color: var(--profile-primary, #2980B9);
   }
 }

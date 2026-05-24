@@ -1,15 +1,21 @@
-.header {
-  background-color: var(--color-surface);
-  border-radius: var(--radius-card);
-  padding: 24px;
-  box-shadow: var(--shadow-card);
-  border: 1px solid var(--color-border, #E5E7EB);
-  margin-bottom: 24px;
-  
-  h1 {
-    font-size: 1.5rem;
-    color: var(--color-text-primary);
-    margin-bottom: 16px;
-    font-weight: 700;
-  }
+@use '../styles/page-shell';
+
+.modules-container {
+  padding: 32px;
+  animation: fadeIn 0.4s ease-out;
+}
+
+.add-btn {
+  background-color: var(--profile-primary, #8B1A2F) !important;
+  color: #FFFFFF !important;
+  padding: 8px 24px !important;
+  border-radius: 8px !important;
+  font-weight: 600 !important;
+
+  mat-icon { margin-right: 8px; }
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(10px); }
+  to { opacity: 1; transform: translateY(0); }
 }

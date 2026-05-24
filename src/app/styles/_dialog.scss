@@ -1,0 +1,185 @@
+// =============================================================================
+// DIALOG SHELL — Estilo unificado para diálogos de creación / edición
+// =============================================================================
+// Uso:
+//   <div class="form-dialog">
+//     <header class="form-dialog__header">
+//       <div class="form-dialog__icon"><mat-icon>category</mat-icon></div>
+//       <div class="form-dialog__heading">
+//         <h2 class="form-dialog__title">Nueva Categoría</h2>
+//         <p class="form-dialog__subtitle">Crea una categoría para organizar productos.</p>
+//       </div>
+//       <button mat-icon-button class="form-dialog__close" (click)="onCancel()">
+//         <mat-icon>close</mat-icon>
+//       </button>
+//     </header>
+//     <mat-dialog-content class="form-dialog__body">...</mat-dialog-content>
+//     <mat-dialog-actions class="form-dialog__actions">...</mat-dialog-actions>
+//   </div>
+// =============================================================================
+
+@use 'tokens' as *;
+@use 'sass:map';
+
+.form-dialog {
+  display: flex;
+  flex-direction: column;
+  background: #FFFFFF;
+  min-width: 420px;
+  max-width: 520px;
+  border-radius: 16px;
+  overflow: hidden;
+  animation: dialogFadeIn 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+
+  // ── HEADER ────────────────────────────────────────────────
+  &__header {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    padding: 24px 24px 18px;
+    background: linear-gradient(135deg, #FFFFFF 0%, #F8FAFC 100%);
+    border-bottom: 1px solid rgba(15, 23, 42, 0.06);
+  }
+
+  &__icon {
+    width: 48px;
+    height: 48px;
+    border-radius: 14px;
+    background: var(--profile-primary, #2980B9);
+    color: #FFFFFF;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.12);
+
+    mat-icon {
+      font-size: 24px;
+      width: 24px;
+      height: 24px;
+    }
+  }
+
+  &__heading {
+    flex: 1;
+    min-width: 0;
+  }
+
+  &__title {
+    font-size: 1.25rem;
+    font-weight: 800;
+    color: #0f172a;
+    margin: 0 0 2px;
+    letter-spacing: -0.025em;
+    line-height: 1.2;
+  }
+
+  &__subtitle {
+    margin: 0;
+    font-size: 0.825rem;
+    color: #64748b;
+    font-weight: 500;
+    line-height: 1.4;
+  }
+
+  &__close {
+    flex-shrink: 0;
+    color: #94a3b8 !important;
+
+    &:hover { color: #0f172a !important; }
+  }
+
+  // ── BODY ──────────────────────────────────────────────────
+  &__body {
+    padding: 24px !important;
+    display: flex;
+    flex-direction: column;
+    gap: map.get($spacing, "16");
+    overflow-y: auto;
+    max-height: 60vh;
+  }
+
+  &__row {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: map.get($spacing, "16");
+
+    &--full {
+      grid-template-columns: 1fr;
+    }
+  }
+
+  &__hint {
+    font-size: 0.8rem;
+    color: #64748b;
+    line-height: 1.45;
+    margin: 0;
+  }
+
+  // ── ACTIONS ───────────────────────────────────────────────
+  &__actions {
+    padding: 16px 24px !important;
+    background: #FAFBFC;
+    border-top: 1px solid rgba(15, 23, 42, 0.06);
+    display: flex;
+    justify-content: flex-end;
+    gap: 10px;
+    margin: 0 !important;
+  }
+
+  &__btn-cancel {
+    color: #475569 !important;
+    font-weight: 600 !important;
+    padding: 8px 18px !important;
+    border-radius: 10px !important;
+
+    &:hover:not(:disabled) {
+      background: rgba(15, 23, 42, 0.04) !important;
+    }
+  }
+
+  &__btn-submit {
+    background: var(--profile-primary, #2980B9) !important;
+    color: #FFFFFF !important;
+    font-weight: 700 !important;
+    padding: 8px 22px !important;
+    border-radius: 10px !important;
+    box-shadow: 0 4px 14px rgba(0, 0, 0, 0.12);
+
+    &:disabled {
+      opacity: 0.5;
+      box-shadow: none;
+    }
+  }
+
+  // ── Inputs full-width helper ─────────────────────────────
+  .full-width {
+    width: 100%;
+  }
+}
+
+// ── Animación de entrada ────────────────────────────────────
+@keyframes dialogFadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(-12px) scale(0.98);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+// ── Override del contenedor de Material para limpiar padding ──
+::ng-deep .mat-mdc-dialog-container {
+  &:has(.form-dialog) {
+    .mdc-dialog__surface {
+      border-radius: 16px !important;
+      overflow: hidden !important;
+    }
+
+    .mat-mdc-dialog-content {
+      padding: 0 !important;
+    }
+  }
+}

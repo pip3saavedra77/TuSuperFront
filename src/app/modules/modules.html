@@ -1,10 +1,25 @@
-<div class="header">
-    <h1>Gestión de Módulos</h1>
-    <button mat-raised-button color="primary" (click)="openDialog()">
-        Nuevo Módulo
-    </button>
+<div class="modules-container">
+    <!-- HEADER UNIFICADO -->
+    <div class="page-hero">
+        <div class="page-hero__icon">
+            <mat-icon>view_module</mat-icon>
+        </div>
+        <div class="page-hero__text">
+            <h1>Gestión de Módulos</h1>
+            <p class="page-hero__subtitle">Define los módulos funcionales disponibles en la plataforma.</p>
+        </div>
+        <div class="page-hero__actions">
+            <button mat-raised-button color="primary" class="add-btn" (click)="openDialog()">
+                <mat-icon>add</mat-icon>
+                Nuevo Módulo
+            </button>
+        </div>
+    </div>
 
-    <app-custom-table [data]="store.modules()" [columns]="columns" (edit)="handleEdit($event)"
+    <app-custom-table
+        [data]="store.modules()"
+        [columns]="columns"
+        (edit)="handleEdit($event)"
         (delete)="handleDelete($event)">
     </app-custom-table>
 </div>

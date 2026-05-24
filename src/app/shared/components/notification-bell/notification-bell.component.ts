@@ -5,6 +5,7 @@ import { MatIconModule } from '@angular/material/icon';
 import { MatBadgeModule } from '@angular/material/badge';
 import { MatMenuModule } from '@angular/material/menu';
 import { MatDividerModule } from '@angular/material/divider';
+import { MatTooltipModule } from '@angular/material/tooltip';
 import { NotificationsService } from '../../../core/services/notifications.service';
 import { AuthService } from '../../../core/services/auth';
 
@@ -17,7 +18,8 @@ import { AuthService } from '../../../core/services/auth';
     MatIconModule,
     MatBadgeModule,
     MatMenuModule,
-    MatDividerModule
+    MatDividerModule,
+    MatTooltipModule,
   ],
   templateUrl: './notification-bell.component.html',
   styleUrls: ['./notification-bell.component.scss']

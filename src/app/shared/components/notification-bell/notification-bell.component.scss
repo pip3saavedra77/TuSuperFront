@@ -1,42 +1,82 @@
 @use 'sass:color';
 
+// =============================================================================
+// NOTIFICATION BELL — Diseño moderno y profesional
+// =============================================================================
+
+// ── HEADER PREMIUM ──────────────────────────────────────────────────────────
 .notification-header {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 16px 20px;
-  background: rgba(255, 255, 255, 0.5);
+  padding: 16px 20px 12px;
+  background: linear-gradient(180deg, #FFFFFF 0%, #F8FAFC 100%);
+  border-bottom: 1px solid rgba(15, 23, 42, 0.06);
+
+  .header-title-block {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+  }
 
   .header-title {
-    font-weight: 700;
+    font-weight: 800;
     font-size: 1.05rem;
-    color: #111827; // Alto contraste WCAG AA
+    color: #0f172a;
+    letter-spacing: -0.015em;
+  }
+
+  .header-badge {
+    display: inline-flex;
+    align-items: center;
+    padding: 2px 8px;
+    border-radius: 999px;
+    font-size: 0.7rem;
+    font-weight: 700;
+    background: rgba(220, 38, 38, 0.1);
+    color: #dc2626;
+    width: fit-content;
+    letter-spacing: 0.02em;
+
+    &--neutral {
+      background: rgba(16, 185, 129, 0.1);
+      color: #059669;
+    }
   }
 
   .header-actions {
     display: flex;
     align-items: center;
-    gap: 8px;
+    gap: 4px;
 
     .mark-read-btn {
-      font-size: 0.775rem;
+      font-size: 0.75rem;
       font-weight: 600;
-      color: #3b82f6;
-      padding: 0 8px;
+      color: #2563eb;
+      padding: 0 10px;
       min-width: auto;
-      line-height: 28px;
-      height: 28px;
+      line-height: 30px;
+      height: 30px;
+      border-radius: 8px;
+
+      mat-icon {
+        font-size: 16px;
+        width: 16px;
+        height: 16px;
+        margin-right: 4px;
+      }
 
       &:hover {
-        background: rgba(59, 130, 246, 0.04);
+        background: rgba(37, 99, 235, 0.08);
       }
     }
 
     .clear-all-btn {
-      color: #4b5563;
-      width: 28px;
-      height: 28px;
-      line-height: 28px;
+      color: #64748b;
+      width: 30px;
+      height: 30px;
+      line-height: 30px;
+      border-radius: 8px;
 
       mat-icon {
         font-size: 18px;
@@ -45,15 +85,16 @@
       }
 
       &:hover {
-        background: rgba(0, 0, 0, 0.04);
+        background: rgba(220, 38, 38, 0.08);
         color: #dc2626;
       }
     }
   }
 }
 
+// ── LISTA SCROLLABLE ────────────────────────────────────────────────────────
 .notification-list-container {
-  max-height: 380px;
+  max-height: 420px;
   overflow-y: auto;
   background: transparent;
 
@@ -61,46 +102,79 @@
     width: 6px;
   }
 
+  &::-webkit-scrollbar-track {
+    background: transparent;
+  }
+
   &::-webkit-scrollbar-thumb {
-    background: rgba(0, 0, 0, 0.1);
+    background: rgba(15, 23, 42, 0.12);
     border-radius: 10px;
+
+    &:hover {
+      background: rgba(15, 23, 42, 0.2);
+    }
   }
 }
 
+// ── EMPTY STATE PREMIUM ─────────────────────────────────────────────────────
 .empty-state {
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  padding: 40px 20px;
-  color: #6b7280; // Legible
+  padding: 56px 24px;
+  text-align: center;
 
-  mat-icon {
-    font-size: 40px;
-    width: 40px;
-    height: 40px;
-    margin-bottom: 8px;
-    color: #9ca3af;
+  .empty-state__icon-wrapper {
+    width: 64px;
+    height: 64px;
+    border-radius: 20px;
+    background: linear-gradient(135deg, #F1F5F9 0%, #E2E8F0 100%);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 16px;
+    box-shadow: 0 4px 16px rgba(15, 23, 42, 0.06);
+
+    mat-icon {
+      font-size: 32px;
+      width: 32px;
+      height: 32px;
+      color: #94a3b8;
+    }
   }
 
-  p {
-    margin: 0;
-    font-size: 0.875rem;
+  .empty-state__title {
+    margin: 0 0 4px;
+    font-size: 1rem;
+    font-weight: 700;
+    color: #0f172a;
+  }
+
+  .empty-state__subtitle {
+    font-size: 0.825rem;
+    color: #64748b;
     font-weight: 500;
   }
 }
 
+// ── ITEM DE NOTIFICACIÓN ────────────────────────────────────────────────────
 .notification-item {
   position: relative;
   display: flex;
   gap: 14px;
-  padding: 16px 20px;
+  padding: 14px 20px;
   cursor: pointer;
-  transition: background-color 0.2s ease;
-  border-bottom: 1px solid rgba(0, 0, 0, 0.04);
+  transition: background-color 0.2s ease, transform 0.2s ease;
+  border-bottom: 1px solid rgba(15, 23, 42, 0.04);
 
   &:hover {
-    background-color: rgba(0, 0, 0, 0.02);
+    background-color: #F8FAFC;
+  }
+
+  &:focus-visible {
+    outline: 2px solid #2563eb;
+    outline-offset: -2px;
   }
 
   &:last-child {
@@ -108,58 +182,63 @@
   }
 
   &.unread {
-    background-color: rgba(59, 130, 246, 0.03); // Azul sutil de interactividad
+    background: linear-gradient(90deg, rgba(37, 99, 235, 0.04) 0%, transparent 60%);
 
-    .notification-content {
-      .content-header {
-        .title {
-          font-weight: 700;
-        }
-      }
+    &::before {
+      content: '';
+      position: absolute;
+      left: 0;
+      top: 0;
+      bottom: 0;
+      width: 3px;
+      background: #2563eb;
+    }
+
+    .notification-content .content-header .title {
+      font-weight: 700;
+      color: #0f172a;
     }
   }
 
-  .unread-indicator {
-    position: absolute;
-    left: 6px;
-    top: 50%;
-    transform: translateY(-50%);
-    width: 6px;
-    height: 6px;
-    border-radius: 50%;
-    background: #dc2626; // Red unread dot
-    box-shadow: 0 0 6px rgba(220, 38, 38, 0.5);
-  }
-
+  // ── Wrapper de icono temático ──────────────────────────────
   .notification-icon-wrapper {
     display: flex;
     align-items: center;
     justify-content: center;
-    width: 38px;
-    height: 38px;
-    border-radius: 50%;
+    width: 40px;
+    height: 40px;
+    border-radius: 12px;
     flex-shrink: 0;
+    transition: transform 0.2s ease;
 
     mat-icon {
-      font-size: 18px;
-      width: 18px;
-      height: 18px;
+      font-size: 20px;
+      width: 20px;
+      height: 20px;
     }
 
     &.new-order {
-      background: rgba(16, 185, 129, 0.1);
+      background: linear-gradient(135deg, rgba(16, 185, 129, 0.15) 0%, rgba(16, 185, 129, 0.05) 100%);
       color: #059669;
+      border: 1px solid rgba(16, 185, 129, 0.2);
     }
 
     &.status-change {
-      background: rgba(59, 130, 246, 0.1);
+      background: linear-gradient(135deg, rgba(37, 99, 235, 0.15) 0%, rgba(37, 99, 235, 0.05) 100%);
       color: #2563eb;
+      border: 1px solid rgba(37, 99, 235, 0.2);
     }
   }
 
+  &:hover .notification-icon-wrapper {
+    transform: scale(1.05);
+  }
+
+  // ── Contenido textual ──────────────────────────────────────
   .notification-content {
     flex-grow: 1;
     overflow: hidden;
+    min-width: 0;
 
     .content-header {
       display: flex;
@@ -171,30 +250,60 @@
       .title {
         font-size: 0.875rem;
         font-weight: 600;
-        color: #111827; // Alto contraste WCAG AA
+        color: #1e293b;
         white-space: nowrap;
         overflow: hidden;
         text-overflow: ellipsis;
+        line-height: 1.3;
       }
 
       .time {
-        font-size: 0.725rem;
-        color: #6b7280; // Gris conforme WCAG AA para textos secundarios pequeños
+        font-size: 0.7rem;
+        color: #94a3b8;
         white-space: nowrap;
         flex-shrink: 0;
+        font-weight: 500;
       }
     }
 
     .message {
       margin: 0;
       font-size: 0.8125rem;
-      line-height: 1.4;
-      color: #374151; // Gris oscuro WCAG AA
+      line-height: 1.45;
+      color: #475569;
       display: -webkit-box;
       -webkit-line-clamp: 2;
       line-clamp: 2;
       -webkit-box-orient: vertical;
       overflow: hidden;
     }
+  }
+
+  // ── Punto rojo de "no leída" ───────────────────────────────
+  .unread-dot {
+    position: absolute;
+    top: 18px;
+    right: 16px;
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background: #dc2626;
+    box-shadow: 0 0 0 3px rgba(220, 38, 38, 0.15);
+    flex-shrink: 0;
+  }
+}
+
+// ── FOOTER ──────────────────────────────────────────────────────────────────
+.notification-footer {
+  padding: 10px 20px;
+  background: #F8FAFC;
+  border-top: 1px solid rgba(15, 23, 42, 0.04);
+  text-align: center;
+
+  .footer-text {
+    font-size: 0.7rem;
+    color: #94a3b8;
+    font-weight: 600;
+    letter-spacing: 0.02em;
   }
 }

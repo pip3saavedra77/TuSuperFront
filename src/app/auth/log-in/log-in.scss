@@ -387,9 +387,15 @@ $turquesa-gradient-3: linear-gradient(135deg, #01579b 0%, #00606f 40%, #00838f 7
         }
       }
 
-      &:hover input ~ .checkbox-custom {
+      &:hover input:not(:checked) ~ .checkbox-custom {
         border-color: #006d77;
-        background-color: rgba(0, 109, 119, 0.04);
+        background-color: rgba(0, 109, 119, 0.06);
+      }
+
+      // Mantener el color sólido del checkmark al hover sobre un checkbox marcado
+      &:hover input:checked ~ .checkbox-custom {
+        background-color: #00838f;
+        border-color: #00838f;
       }
 
       .checkbox-label {

@@ -1,5 +1,6 @@
 @use '../styles/tokens' as *;
 @use '../styles/glass' as *;
+@use '../styles/page-shell';
 @use 'sass:map';
 
 :host {

@@ -1,109 +1,220 @@
 @use '@angular/material' as mat;
+
 @use './app/styles/tokens' as tk;
+
 @use './app/styles/glass' as gs;
+
 @use './app/styles/typography';
 
+@use './app/styles/dialog';
+
+
+
 // Angular Material Theme Configuration (Material 3)
+
 // =============================================================================
+
+
 
 html {
+
   @include mat.theme((
+
     color: (
+
       primary: mat.$red-palette,
+
       tertiary: mat.$blue-palette,
+
     ),
+
     typography: tk.$font-family,
+
     density: 0,
+
   ));
+
 }
+
+
 
 // Global Styles
+
 // =============================================================================
+
+
 
 html, body {
+
   height: 100%;
+
   margin: 0;
+
 }
+
+
 
 body {
+
   background-color: var(--color-background);
+
   font-family: tk.$font-family;
+
   color: var(--color-text-primary);
+
   color-scheme: light;
+
   -webkit-font-smoothing: antialiased;
+
   -moz-osx-font-smoothing: grayscale;
+
 }
+
+
 
 * {
+
   box-sizing: border-box;
+
 }
+
+
 
 // Profile Classes - Definición de variables CSS dinámicas
+
 // =============================================================================
+
+
 
 .profile-admin {
+
   --profile-primary: #8B1A2F;
+
   --profile-glass: rgba(139, 26, 47, 0.85);
+
 }
+
+
 
 .profile-tendero {
+
   --profile-primary: #2980B9;
+
   --profile-glass: rgba(41, 128, 185, 0.85);
+
 }
+
+
 
 .profile-usuario {
+
   --profile-primary: #2ECC71;
+
   --profile-glass: rgba(46, 204, 113, 0.85);
+
 }
+
+
 
 // Sobreescritura para asegurar que la Navbar y Sidebar tomen el color del perfil
+
 .sidenav-container {
+
   &.profile-admin {
+
     --profile-primary: #8B1A2F;
+
     --profile-glass: rgba(139, 26, 47, 0.85);
+
   }
+
   &.profile-tendero {
+
     --profile-primary: #2980B9;
+
     --profile-glass: rgba(41, 128, 185, 0.85);
+
   }
+
   &.profile-usuario {
+
     --profile-primary: #2ECC71;
+
     --profile-glass: rgba(46, 204, 113, 0.85);
+
   }
+
 }
+
+
 
 // Estilos globales del panel de notificaciones (Angular Material mat-menu overlay)
+
 .notification-panel-menu {
+
   background: rgba(255, 255, 255, 0.98) !important;
+
   backdrop-filter: blur(16px) !important;
+
   -webkit-backdrop-filter: blur(16px) !important;
+
   min-width: 360px !important;
+
   width: 360px !important;
+
   border-radius: 16px !important;
+
   box-shadow: 0 12px 40px rgba(0, 0, 0, 0.12) !important;
+
   border: 1px solid rgba(0, 0, 0, 0.08) !important;
+
   overflow: hidden !important;
+
   padding: 0 !important;
+
   margin-top: 8px !important;
 
+
+
   .mat-mdc-menu-content {
+
     padding: 0 !important;
+
   }
+
 }
+
+
 
 // Side Drawer Dialog (MatDialog como panel lateral deslizante)
+
 // =============================================================================
 
+
+
 .side-drawer-dialog {
+
   animation: slideInRight 300ms cubic-bezier(0.25, 0.8, 0.25, 1) forwards;
 
+
+
   .mat-mdc-dialog-container .mdc-dialog__surface {
+
     border-radius: 16px 0 0 16px !important;
+
   }
+
 }
 
+
+
 @keyframes slideInRight {
+
   from { transform: translateX(100%); }
+
   to   { transform: translateX(0); }
+
 }
+
+
 

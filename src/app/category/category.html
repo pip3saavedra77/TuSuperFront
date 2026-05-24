@@ -1,12 +1,20 @@
 <div class="category-container">
-    <!-- HEADER -->
-    <div class="page-header">
-      <h2 class="page-title">Gestión de Categorías</h2>
+    <!-- HEADER UNIFICADO -->
+    <div class="page-hero">
+      <div class="page-hero__icon">
+        <mat-icon>category</mat-icon>
+      </div>
+      <div class="page-hero__text">
+        <h2>Gestión de Categorías</h2>
+        <p class="page-hero__subtitle">Organiza el catálogo agrupando productos por tipo o familia.</p>
+      </div>
       @if (auth.hasManagementPrivileges()) {
-      <button mat-flat-button color="primary" class="add-btn" (click)="onAdd()">
-        <mat-icon>add</mat-icon>
-        Nueva Categoría
-      </button>
+        <div class="page-hero__actions">
+          <button mat-flat-button color="primary" class="add-btn" (click)="onAdd()">
+            <mat-icon>add</mat-icon>
+            Nueva Categoría
+          </button>
+        </div>
       }
     </div>
   

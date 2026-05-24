@@ -15,12 +15,12 @@
       <!-- HEADER -->
       <div class="page-header">
         <div class="header-titles">
-          <h2 class="page-title">TuSuper Catalog</h2>
-          <p class="page-subtitle">Fresh products delivered to your door</p>
+          <h2 class="page-title">Catálogo TuSuper</h2>
+          <p class="page-subtitle">Productos frescos entregados en tu puerta</p>
         </div>
         <button mat-flat-button class="cart-toggle-btn" (click)="toggleCart()">
           <mat-icon>shopping_cart</mat-icon>
-          <span>My Cart</span>
+          <span>Mi Carrito</span>
           @if (!cartStore.isEmpty()) {
             <span class="cart-count">{{ cartStore.totalItems() }}</span>
           }
@@ -30,21 +30,21 @@
       <!-- FILTROS -->
       <div class="filters-panel">
         <mat-form-field appearance="outline" class="search-field">
-          <mat-label>Search products</mat-label>
+          <mat-label>Buscar productos</mat-label>
           <input
             matInput
             [value]="searchTerm"
             (input)="onSearchInput($event)"
-            placeholder="Type to search..." />
+            placeholder="Escribe para buscar..." />
           <mat-icon matSuffix>search</mat-icon>
         </mat-form-field>
 
         <mat-form-field appearance="outline" class="category-field">
-          <mat-label>Category</mat-label>
+          <mat-label>Categoría</mat-label>
           <mat-select
             [value]="selectedCategoryId()"
             (selectionChange)="onCategoryChange($event.value)">
-            <mat-option [value]="null">All Categories</mat-option>
+            <mat-option [value]="null">Todas las categorías</mat-option>
             @for (cat of categories(); track cat.id) {
               <mat-option [value]="cat.id">{{ cat.name }}</mat-option>
             }
@@ -64,7 +64,7 @@
             <div class="empty-icon-wrapper">
               <mat-icon>inventory_2</mat-icon>
             </div>
-            <p>No products found in this category</p>
+            <p>No se encontraron productos en esta categoría</p>
           </div>
         } @else {
           <!-- GRID -->
@@ -92,11 +92,11 @@
                     </p>
                     <div class="stock-info">
                       @if (product.stock > 10) {
-                        <span class="stock-badge stock-ok">{{ product.stock }} in stock</span>
+                        <span class="stock-badge stock-ok">{{ product.stock }} en stock</span>
                       } @else if (product.stock > 0) {
-                        <span class="stock-badge stock-low">Low stock</span>
+                        <span class="stock-badge stock-low">Stock bajo</span>
                       } @else {
-                        <span class="stock-badge stock-out">Out of stock</span>
+                        <span class="stock-badge stock-out">Agotado</span>
                       }
                     </div>
                   </div>
@@ -107,7 +107,7 @@
                     [disabled]="product.stock === 0"
                     (click)="onAddToCart(product)">
                     <mat-icon>add_shopping_cart</mat-icon>
-                    <span>{{ product.stock === 0 ? 'Unavailable' : 'Add to Cart' }}</span>
+                    <span>{{ product.stock === 0 ? 'No disponible' : 'Añadir al carrito' }}</span>
                   </button>
                 </div>
               </div>

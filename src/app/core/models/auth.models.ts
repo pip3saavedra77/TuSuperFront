@@ -20,6 +20,10 @@ export interface User {
   email: string;
   isActive: boolean;
   roles: Role[];
+  avatarUrl?: string | null;
+  displayName?: string | null;
+  googleId?: string | null;
+  isEmailVerified?: boolean;
 }
 
 export interface AuthResponse {

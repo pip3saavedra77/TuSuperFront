@@ -1,19 +1,37 @@
 .custom-table-viewport {
+
   width: 100%;
+
   overflow: auto;
+
 }
+
+
 
 table {
+
   width: 100%;
+
 }
+
+
 
 .action-buttons {
+
   display: flex;
+
   gap: 8px;
+
   justify-content: center;
+
 }
 
+
+
 .mat-column-actions {
+
   text-align: center;
+
   width: 120px;
+
 }

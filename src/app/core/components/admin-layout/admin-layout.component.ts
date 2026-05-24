@@ -81,4 +81,20 @@ export class AdminLayoutComponent {
       this.cartStore.openCart();
     });
   }
+
+  /**
+   * Etiqueta legible y consistente para cada módulo del menú lateral.
+   */
+  getModuleLabel(moduleName: string): string {
+    const labels: Record<string, string> = {
+      users: 'Usuarios',
+      roles: 'Roles',
+      product: 'Productos',
+      category: 'Categorías',
+      provider: 'Proveedores',
+      orders: 'Pedidos',
+      modules: 'Módulos',
+    };
+    return labels[moduleName] ?? moduleName;
+  }
 }
