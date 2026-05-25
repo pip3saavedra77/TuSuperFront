@@ -4,6 +4,39 @@
 // NOTIFICATION BELL — Diseño moderno y profesional
 // =============================================================================
 
+// ── BACKDROP (cierra el panel al hacer click fuera) ───────────────────────────
+// Nota: .notif-panel y sus hijos están en styles.scss (global) porque
+// cdkConnectedOverlay renderiza fuera del shadow DOM del componente.
+
+// ── TRIGGER BUTTON ───────────────────────────────────────────────────────────
+.notification-trigger.toolbar-icon-btn {
+  position: relative;
+  transition: background 0.2s ease, transform 0.2s ease;
+
+  mat-icon {
+    transition: color 0.2s ease, transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+  }
+
+  &.has-unread {
+    mat-icon {
+      color: var(--profile-primary, #006d77);
+      animation: bellRing 2.4s ease-in-out infinite;
+    }
+  }
+
+  &:hover {
+    transform: scale(1.08);
+  }
+}
+
+@keyframes bellRing {
+  0%, 100%  { transform: rotate(0deg); }
+  5%        { transform: rotate(12deg); }
+  10%       { transform: rotate(-10deg); }
+  15%       { transform: rotate(8deg); }
+  20%       { transform: rotate(0deg); }
+}
+
 // ── HEADER PREMIUM ──────────────────────────────────────────────────────────
 .notification-header {
   display: flex;
@@ -52,7 +85,7 @@
     .mark-read-btn {
       font-size: 0.75rem;
       font-weight: 600;
-      color: #2563eb;
+      color: #006d77;
       padding: 0 10px;
       min-width: auto;
       line-height: 30px;
@@ -67,7 +100,7 @@
       }
 
       &:hover {
-        background: rgba(37, 99, 235, 0.08);
+        background: rgba(0, 109, 119, 0.08);
       }
     }
 
@@ -94,8 +127,9 @@
 
 // ── LISTA SCROLLABLE ────────────────────────────────────────────────────────
 .notification-list-container {
-  max-height: 420px;
+  max-height: 380px;
   overflow-y: auto;
+  overflow-x: hidden;
   background: transparent;
 
   &::-webkit-scrollbar {
@@ -122,24 +156,24 @@
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  padding: 56px 24px;
+  padding: 28px 24px 24px;
   text-align: center;
 
   .empty-state__icon-wrapper {
-    width: 64px;
-    height: 64px;
-    border-radius: 20px;
+    width: 52px;
+    height: 52px;
+    border-radius: 16px;
     background: linear-gradient(135deg, #F1F5F9 0%, #E2E8F0 100%);
     display: flex;
     align-items: center;
     justify-content: center;
-    margin-bottom: 16px;
+    margin-bottom: 12px;
     box-shadow: 0 4px 16px rgba(15, 23, 42, 0.06);
 
     mat-icon {
-      font-size: 32px;
-      width: 32px;
-      height: 32px;
+      font-size: 26px;
+      width: 26px;
+      height: 26px;
       color: #94a3b8;
     }
   }
@@ -173,7 +207,7 @@
   }
 
   &:focus-visible {
-    outline: 2px solid #2563eb;
+    outline: 2px solid #006d77;
     outline-offset: -2px;
   }
 
@@ -182,7 +216,7 @@
   }
 
   &.unread {
-    background: linear-gradient(90deg, rgba(37, 99, 235, 0.04) 0%, transparent 60%);
+    background: linear-gradient(90deg, rgba(0, 109, 119, 0.05) 0%, transparent 60%);
 
     &::before {
       content: '';
@@ -191,7 +225,8 @@
       top: 0;
       bottom: 0;
       width: 3px;
-      background: #2563eb;
+      background: #006d77;
+      border-radius: 0 2px 2px 0;
     }
 
     .notification-content .content-header .title {
@@ -224,9 +259,9 @@
     }
 
     &.status-change {
-      background: linear-gradient(135deg, rgba(37, 99, 235, 0.15) 0%, rgba(37, 99, 235, 0.05) 100%);
-      color: #2563eb;
-      border: 1px solid rgba(37, 99, 235, 0.2);
+      background: linear-gradient(135deg, rgba(0, 109, 119, 0.12) 0%, rgba(0, 109, 119, 0.04) 100%);
+      color: #006d77;
+      border: 1px solid rgba(0, 109, 119, 0.18);
     }
   }
 

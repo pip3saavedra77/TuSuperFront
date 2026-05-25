@@ -29,21 +29,20 @@
 
       <!-- FILTROS -->
       <div class="filters-panel">
-        <mat-form-field appearance="outline" class="search-field">
-          <mat-label>Buscar productos</mat-label>
+        <mat-form-field appearance="outline" class="search-field" subscriptSizing="dynamic">
           <input
             matInput
             [value]="searchTerm"
             (input)="onSearchInput($event)"
-            placeholder="Escribe para buscar..." />
+            placeholder="Buscar productos..." />
           <mat-icon matSuffix>search</mat-icon>
         </mat-form-field>
 
-        <mat-form-field appearance="outline" class="category-field">
-          <mat-label>Categoría</mat-label>
+        <mat-form-field appearance="outline" class="category-field" subscriptSizing="dynamic">
           <mat-select
             [value]="selectedCategoryId()"
-            (selectionChange)="onCategoryChange($event.value)">
+            (selectionChange)="onCategoryChange($event.value)"
+            placeholder="Categoría">
             <mat-option [value]="null">Todas las categorías</mat-option>
             @for (cat of categories(); track cat.id) {
               <mat-option [value]="cat.id">{{ cat.name }}</mat-option>

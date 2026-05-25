@@ -33,23 +33,25 @@
                 <span matListItemTitle>Inicio</span>
               </a>
               @for (moduleName of menuItems(); track moduleName) {
-                <a mat-list-item
-                  [routerLink]="'/' + moduleName.toLowerCase()"
-                  routerLinkActive="active-link">
-                  <span matListItemIcon class="nav-icon material-symbols-rounded">
-                    {{
-                      moduleName === 'users' ? 'group' :
-                      moduleName === 'roles' ? 'shield' :
-                      moduleName === 'product' ? 'inventory_2' :
-                      moduleName === 'category' ? 'category' :
-                      moduleName === 'provider' ? 'local_shipping' :
-                      moduleName === 'orders' ? 'receipt_long' :
-                      moduleName === 'modules' ? 'view_module' :
-                      'folder'
-                    }}
-                  </span>
-                  <span matListItemTitle>{{ getModuleLabel(moduleName) }}</span>
-                </a>
+                @if (!(isUserRole() && moduleName === 'category')) {
+                  <a mat-list-item
+                    [routerLink]="'/' + moduleName.toLowerCase()"
+                    routerLinkActive="active-link">
+                    <span matListItemIcon class="nav-icon material-symbols-rounded">
+                      {{
+                        moduleName === 'users' ? 'group' :
+                        moduleName === 'roles' ? 'shield' :
+                        moduleName === 'product' ? 'inventory_2' :
+                        moduleName === 'category' ? 'category' :
+                        moduleName === 'provider' ? 'local_shipping' :
+                        moduleName === 'orders' ? 'receipt_long' :
+                        moduleName === 'modules' ? 'view_module' :
+                        'folder'
+                      }}
+                    </span>
+                    <span matListItemTitle>{{ getModuleLabel(moduleName) }}</span>
+                  </a>
+                }
               }
             </mat-nav-list>
           </div>
@@ -93,9 +95,6 @@
             <mat-icon>shopping_cart</mat-icon>
           </button>
         }
-        <button matIconButton class="toolbar-icon-btn">
-          <mat-icon>mail_outline</mat-icon>
-        </button>
         <app-notification-bell />
         <div class="toolbar-user" routerLink="/profile">
           @if (currentUser()?.avatarUrl) {

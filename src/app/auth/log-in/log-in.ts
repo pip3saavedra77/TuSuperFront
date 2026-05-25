@@ -100,6 +100,10 @@ export class LogIn implements OnInit {
           err as HttpErrorResponse,
           'Correo o contraseña incorrectos',
         );
+        // Translate common backend English messages
+        if (message.toLowerCase().includes('invalid credentials')) {
+          message = 'Correo o contraseña incorrectos';
+        }
         if (attempts >= 3) {
           message += '. ¿Olvidaste tu contraseña? Usa el enlace de recuperación.';
         }

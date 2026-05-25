@@ -3,10 +3,10 @@
   <!-- HEADER -->
   <div class="cart-header">
     <div class="header-left">
-      <h3 class="cart-title">Your Order</h3>
-      <span class="item-count">{{ cartStore.totalItems() }} items</span>
+      <h3 class="cart-title">Mi Carrito</h3>
+      <span class="item-count">{{ cartStore.totalItems() }} {{ cartStore.totalItems() === 1 ? 'producto' : 'productos' }}</span>
     </div>
-    <button mat-icon-button class="close-btn" (click)="cartStore.closeCart()">
+    <button mat-icon-button class="close-btn" (click)="cartStore.closeCart()" aria-label="Cerrar carrito">
       <mat-icon>close</mat-icon>
     </button>
   </div>
@@ -17,8 +17,9 @@
       <div class="empty-icon-wrapper">
         <mat-icon>shopping_basket</mat-icon>
       </div>
-      <p>Your basket is empty</p>
-      <button mat-stroked-button (click)="cartStore.closeCart()">Continue Shopping</button>
+      <p>Tu carrito está vacío</p>
+      <span class="empty-hint">Agrega productos del catálogo para comenzar tu pedido</span>
+      <button mat-stroked-button (click)="cartStore.closeCart()">Explorar catálogo</button>
     </div>
   } @else {
     <!-- ITEMS -->
@@ -77,11 +78,11 @@
         <span>{{ cartStore.totalAmount() | currency:'COP':'symbol-narrow':'1.0-0' }}</span>
       </div>
       <div class="summary-row">
-        <span>Delivery Fee</span>
-        <span class="free-text">FREE</span>
+        <span>Envío</span>
+        <span class="free-text">GRATIS</span>
       </div>
       <div class="summary-row total">
-        <span>Total</span>
+        <span>Total a pagar</span>
         <span class="total-amount">
           {{ cartStore.totalAmount() | currency:'COP':'symbol-narrow':'1.0-0' }}
         </span>
@@ -105,7 +106,7 @@
             <mat-spinner diameter="24"></mat-spinner>
           } @else {
             <ng-container>
-              <span>Place Order</span>
+              <span>Confirmar pedido</span>
               <mat-icon>arrow_forward</mat-icon>
             </ng-container>
           }
@@ -115,7 +116,7 @@
                 class="btn-clear-minimal"
                 (click)="onClearCart()"
                 [disabled]="cartStore.loading()">
-          Clear shopping basket
+          Vaciar carrito
         </button>
       </div>
     </div>
