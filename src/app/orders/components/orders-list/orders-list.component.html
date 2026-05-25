@@ -9,23 +9,24 @@
       <h2>Gestión de Ventas</h2>
       <p class="page-hero__subtitle">Monitorea y despacha los pedidos de los clientes en tiempo real.</p>
     </div>
+  </div>
 
-    <div class="page-hero__actions">
-      <mat-form-field appearance="outline" class="search-field">
-        <mat-label>Buscar por ID o cliente</mat-label>
-        <mat-icon matPrefix>search</mat-icon>
-        <input
-          matInput
-          [value]="searchQuery()"
-          (input)="onSearchInput($event)"
-          placeholder="Escribe para buscar..." />
-        @if (searchQuery()) {
-          <button mat-icon-button matSuffix (click)="clearSearch()" aria-label="Limpiar búsqueda">
-            <mat-icon>close</mat-icon>
-          </button>
-        }
-      </mat-form-field>
-    </div>
+  <!-- BÚSQUEDA -->
+  <div class="search-panel filters-panel">
+    <mat-form-field appearance="outline" class="search-field">
+      <mat-label>Buscar por ID o cliente</mat-label>
+      <mat-icon matPrefix>search</mat-icon>
+      <input
+        matInput
+        [value]="searchQuery()"
+        (input)="onSearchInput($event)"
+        placeholder="Escribe para buscar..." />
+      @if (searchQuery()) {
+        <button mat-icon-button matSuffix (click)="clearSearch()" aria-label="Limpiar búsqueda">
+          <mat-icon>close</mat-icon>
+        </button>
+      }
+    </mat-form-field>
   </div>
 
   <!-- FILTROS DE FECHA (OPCIONALES) -->

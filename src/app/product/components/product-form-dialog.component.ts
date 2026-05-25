@@ -156,7 +156,7 @@ export interface ProductFormDialogData {
 
               </div>
 
-              <mat-form-field appearance="outline" class="full-width">
+              <mat-form-field appearance="outline" class="full-width" subscriptSizing="dynamic">
 
                 <mat-label>Código de Barras</mat-label>
 

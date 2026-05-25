@@ -299,6 +299,21 @@
   transition: all 0.2s ease !important;
   box-shadow: 0 4px 14px color-mix(in srgb, var(--profile-primary, #{pos.$pos-primary}) 30%, transparent);
 
+  .mat-icon, mat-icon {
+    font-size: 18px;
+    width: 18px;
+    height: 18px;
+    line-height: 18px;
+    flex-shrink: 0;
+  }
+
+  ::ng-deep .mat-mdc-button-touch-target,
+  ::ng-deep .mdc-button__label {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+
   &:hover:not(:disabled) {
     transform: translateY(-1px);
     box-shadow: 0 8px 20px color-mix(in srgb, var(--profile-primary, #{pos.$pos-primary}) 40%, transparent);

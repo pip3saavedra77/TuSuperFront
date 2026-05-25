@@ -1,24 +1,39 @@
-<h2 mat-dialog-title>{{ isEditMode ? 'Editar' : 'Crear' }} Módulo</h2>
+<form [formGroup]="form" (ngSubmit)="onSave()" class="form-dialog">
 
-<mat-dialog-content [formGroup]="form">
-  <div style="display: flex; flex-direction: column; gap: 1rem; padding-top: 10px;">
+  <header class="form-dialog__header">
+    <div class="form-dialog__icon">
+      <mat-icon>view_module</mat-icon>
+    </div>
+    <div class="form-dialog__heading">
+      <h2 class="form-dialog__title">{{ isEditMode ? 'Editar Módulo' : 'Nuevo Módulo' }}</h2>
+      <p class="form-dialog__subtitle">
+        {{ isEditMode ? 'Actualiza los datos de este módulo.' : 'Define un nuevo módulo funcional de la plataforma.' }}
+      </p>
+    </div>
+    <button mat-icon-button type="button" class="form-dialog__close" (click)="onCancel()" aria-label="Cerrar">
+      <mat-icon>close</mat-icon>
+    </button>
+  </header>
 
-    <mat-form-field appearance="outline">
+  <mat-dialog-content class="form-dialog__body">
+    <mat-form-field appearance="outline" class="full-width">
       <mat-label>Nombre</mat-label>
       <input matInput formControlName="name" placeholder="Ej: auth">
+      <mat-icon matSuffix>label</mat-icon>
+      <mat-error *ngIf="form.get('name')?.hasError('required')">El nombre es obligatorio</mat-error>
     </mat-form-field>
 
-    <mat-form-field appearance="outline">
+    <mat-form-field appearance="outline" class="full-width">
       <mat-label>Descripción</mat-label>
-      <textarea matInput formControlName="description" placeholder="Descripción del módulo"></textarea>
+      <textarea matInput formControlName="description" rows="3" placeholder="Descripción del módulo"></textarea>
     </mat-form-field>
+  </mat-dialog-content>
 
-  </div>
-</mat-dialog-content>
+  <mat-dialog-actions class="form-dialog__actions">
+    <button mat-button type="button" class="form-dialog__btn-cancel" (click)="onCancel()">Cancelar</button>
+    <button mat-flat-button type="submit" class="form-dialog__btn-submit" [disabled]="form.invalid">
+      {{ isEditMode ? 'Actualizar' : 'Crear módulo' }}
+    </button>
+  </mat-dialog-actions>
 
-<mat-dialog-actions align="end">
-  <button mat-button (click)="onCancel()">Cancelar</button>
-  <button mat-raised-button color="primary" (click)="onSave()" [disabled]="form.invalid">
-    {{ isEditMode ? 'Actualizar' : 'Guardar' }}
-  </button>
-</mat-dialog-actions>
+</form>

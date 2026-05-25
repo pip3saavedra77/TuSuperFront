@@ -104,7 +104,7 @@ export interface ProviderDialogData {
 
 
 
-        <mat-form-field appearance="outline" class="full-width">
+        <mat-form-field appearance="outline" class="full-width" subscriptSizing="dynamic">
 
           <mat-label>Teléfono</mat-label>
 
