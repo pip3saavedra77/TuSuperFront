@@ -86,7 +86,7 @@ export interface ProviderDialogData {
 
       <mat-dialog-content class="form-dialog__body">
 
-        <mat-form-field appearance="outline" class="full-width" subscriptSizing="dynamic">
+        <mat-form-field appearance="outline" class="full-width" subscriptSizing="fixed">
 
           <mat-label>Nombre / Razón Social</mat-label>
 
@@ -104,7 +104,7 @@ export interface ProviderDialogData {
 
 
 
-        <mat-form-field appearance="outline" class="full-width" subscriptSizing="dynamic">
+        <mat-form-field appearance="outline" class="full-width" subscriptSizing="fixed">
 
           <mat-label>Teléfono</mat-label>
 
@@ -124,7 +124,7 @@ export interface ProviderDialogData {
 
 
 
-        <mat-form-field appearance="outline" class="full-width" subscriptSizing="dynamic">
+        <mat-form-field appearance="outline" class="full-width" subscriptSizing="fixed">
 
           <mat-label>Correo electrónico</mat-label>
 

@@ -162,11 +162,19 @@ body {
       border-radius: 28px 0 0 28px !important;
       width: 28px !important;
     }
+    // Por defecto el notch tiene border-top para cerrar el outline (campos sin label)
     .mdc-notched-outline__notch {
-      border-top: none;
+      border-top: 1px solid currentColor;
     }
     .mdc-notched-outline__trailing {
       border-radius: 0 28px 28px 0 !important;
+    }
+  }
+
+  // Solo cuando el label flota quitar el border-top del notch
+  .mdc-notched-outline.mdc-notched-outline--notched {
+    .mdc-notched-outline__notch {
+      border-top: none !important;
     }
   }
 }

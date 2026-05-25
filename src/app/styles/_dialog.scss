@@ -92,20 +92,18 @@
   // ── BODY ──────────────────────────────────────────────────
   &__body {
     padding: 24px !important;
-    display: flex;
-    flex-direction: column;
-    gap: 4px;             // reducido: el margin-bottom del form-field ya da el espacio
     overflow-y: auto;
     max-height: 60vh;
 
+    // mat-dialog-content es display:block — gap no funciona.
+    // Angular Material resetea margin-bottom en :last-child pero no margin-top.
     .mat-mdc-form-field {
       width: 100%;
-      // Garantiza que el subscript (mat-error / mat-hint) no solape el siguiente campo
-      margin-bottom: 16px;
+      display: block;
+      margin-top: 32px;
 
-      // Cuando subscriptSizing=dynamic el wrapper ya crece — evitar margin doble
-      &.mat-form-field-invalid {
-        margin-bottom: 4px;
+      &:first-child {
+        margin-top: 0;
       }
     }
   }
