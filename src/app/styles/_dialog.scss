@@ -92,14 +92,19 @@
   // ── BODY ──────────────────────────────────────────────────
   &__body {
     padding: 24px !important;
-    display: flex;
-    flex-direction: column;
-    gap: 20px;
     overflow-y: auto;
     max-height: 60vh;
 
+    // mat-dialog-content es display:block — gap no funciona.
+    // Angular Material resetea margin-bottom en :last-child pero no margin-top.
     .mat-mdc-form-field {
       width: 100%;
+      display: block;
+      margin-top: 32px;
+
+      &:first-child {
+        margin-top: 0;
+      }
     }
   }
 

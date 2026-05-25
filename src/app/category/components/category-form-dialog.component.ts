@@ -86,7 +86,7 @@ export interface CategoryDialogData {
 
       <mat-dialog-content class="form-dialog__body">
 
-        <mat-form-field appearance="outline" class="full-width" subscriptSizing="dynamic">
+        <mat-form-field appearance="outline" class="full-width" subscriptSizing="fixed">
 
           <mat-label>Nombre</mat-label>
 

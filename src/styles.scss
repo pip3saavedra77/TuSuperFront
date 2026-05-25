@@ -105,32 +105,40 @@ body {
 // ── mat-form-field outline: píldora completa ─────────────────────────────
 // Approach: sobreescribir directamente el wrapper y los 3 segmentos del outline
 
-// Variable oficial MDC — misma especificidad que el @include mat.theme() en html
+// Variables que Angular Material 18+ realmente consume para los form-fields
 :root, html {
-  --mdc-outlined-text-field-container-shape: 28px;
+  // ── Color primario del tema: sobreescribir el rojo que genera el tema ──
+  --mat-sys-primary:                                  #006d77;
+  --mat-sys-on-primary:                               #ffffff;
+  --mat-sys-primary-container:                        #b2ebf2;
+  --mat-sys-on-primary-container:                     #004f58;
 
-  // ── Colores del form field: verde marca en lugar del rojo del tema ──────
-  --mdc-outlined-text-field-focus-outline-color:      #006d77;
-  --mdc-outlined-text-field-focus-label-text-color:   #006d77;
+  // ── Outline del mat-form-field (variables que usa Angular Material 18+) ─
+  --mat-form-field-outlined-outline-color:            #CBD5E1;
+  --mat-form-field-outlined-hover-outline-color:      #006d77;
+  --mat-form-field-outlined-focus-outline-color:      #006d77;
+  --mat-form-field-outlined-focus-outline-width:      2px;
+
+  // ── Label y caret del form field ────────────────────────────────────────
+  --mdc-outlined-text-field-container-shape:          28px;
   --mdc-outlined-text-field-label-text-color:         #64748b;
-  --mdc-outlined-text-field-outline-color:            #CBD5E1;
-  --mdc-outlined-text-field-hover-outline-color:      #006d77;
+  --mdc-outlined-text-field-focus-label-text-color:   #006d77;
   --mdc-outlined-text-field-input-text-color:         #0f172a;
   --mdc-outlined-text-field-caret-color:              #006d77;
-  --mdc-outlined-text-field-focus-outline-width:      2px;
-  // ── Estados de error: rojo semántico (no verde) ──────────────────
-  --mdc-outlined-text-field-error-focus-outline-color: #dc2626;
-  --mdc-outlined-text-field-error-outline-color:       #f87171;
-  --mdc-outlined-text-field-error-hover-outline-color: #ef4444;
-  --mdc-outlined-text-field-error-label-text-color:    #dc2626;
-  --mdc-outlined-text-field-error-focus-label-text-color: #dc2626;
-  --mdc-outlined-text-field-error-caret-color:         #dc2626;
 
-  // ── mat-form-field error subscript text color (hint/error text) ──────────────
+  // ── Estados de error: rojo semántico ────────────────────────────────────
+  --mat-form-field-error-outline-color:               #f87171;
+  --mat-form-field-error-hover-outline-color:         #ef4444;
+  --mat-form-field-error-focus-outline-color:         #dc2626;
+  --mdc-outlined-text-field-error-label-text-color:   #dc2626;
+  --mdc-outlined-text-field-error-focus-label-text-color: #dc2626;
+  --mdc-outlined-text-field-error-caret-color:        #dc2626;
+
+  // ── Texto de subscript (mat-error / mat-hint) ────────────────────────────
   --mat-form-field-error-text-color:                  #dc2626;
   --mat-form-field-subscript-text-color:              #64748b;
 
-  // mat-select
+  // ── mat-select ───────────────────────────────────────────────────────────
   --mat-select-panel-background-color:                #FFFFFF;
   --mat-option-selected-state-label-text-color:       #006d77;
   --mat-option-focus-state-layer-color:               rgba(0, 109, 119, 0.08);
@@ -154,11 +162,19 @@ body {
       border-radius: 28px 0 0 28px !important;
       width: 28px !important;
     }
+    // Por defecto el notch tiene border-top para cerrar el outline (campos sin label)
     .mdc-notched-outline__notch {
-      border-top: none;
+      border-top: 1px solid currentColor;
     }
     .mdc-notched-outline__trailing {
       border-radius: 0 28px 28px 0 !important;
+    }
+  }
+
+  // Solo cuando el label flota quitar el border-top del notch
+  .mdc-notched-outline.mdc-notched-outline--notched {
+    .mdc-notched-outline__notch {
+      border-top: none !important;
     }
   }
 }
