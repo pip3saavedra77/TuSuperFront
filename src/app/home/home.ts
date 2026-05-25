@@ -106,7 +106,7 @@ export class Home implements OnInit {
   readonly totalSpent = computed(() =>
     this.myOrders()
       .filter(o => o.status === OrderStatus.DELIVERED)
-      .reduce((acc, o) => acc + (o.totalAmount ?? 0), 0)
+      .reduce((acc, o) => acc + Number(o.totalAmount ?? 0), 0)
   );
 
   /** Métricas operacionales y globales (optimizadas con limit=1) */

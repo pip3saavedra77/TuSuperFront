@@ -16,7 +16,11 @@
 </button>
 
 <!-- BACKDROP para cerrar al click fuera -->
-<div *ngIf="isOpen" class="notif-backdrop" (click)="closePanel()"></div>
+<div *ngIf="isOpen"
+     class="notif-backdrop"
+     role="presentation"
+     (click)="closePanel()"
+     (keydown.escape)="closePanel()"></div>
 
 <!-- PANEL CUSTOM con cdkConnectedOverlay -->
 <ng-template
@@ -28,7 +32,12 @@
   [cdkConnectedOverlayPanelClass]="'notif-overlay-pane'"
   (overlayOutsideClick)="closePanel()">
 
-  <div class="notif-panel" role="dialog" aria-label="Notificaciones" (click)="$event.stopPropagation()">
+  <div class="notif-panel"
+       role="dialog"
+       aria-label="Notificaciones"
+       aria-modal="true"
+       (click)="$event.stopPropagation()"
+       (keydown)="$event.stopPropagation()">
 
     <!-- HEADER -->
     <div class="notification-header">
