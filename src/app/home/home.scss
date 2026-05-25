@@ -8,14 +8,13 @@
 // ════════════════════════════════════════════════════════
 
 .home-container {
-  padding: 40px;
+  padding: 0;
   max-width: 1300px;
   margin: 0 auto;
-  min-height: 100vh;
   background-color: #FAFAFA;
 
   @media (max-width: 768px) {
-    padding: 20px 16px;
+    padding: 0;
   }
 
   h1 {
@@ -946,6 +945,7 @@
     margin: 0;
     display: -webkit-box;
     -webkit-line-clamp: 2;
+    line-clamp: 2;
     -webkit-box-orient: vertical;
     overflow: hidden;
     line-height: 1.4;

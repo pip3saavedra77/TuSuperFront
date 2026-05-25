@@ -85,6 +85,7 @@ body {
 // =============================================================================
 
 // ── Botones Material (filled, outlined, text) ─────────────────────────────
+// Excluimos mat-icon-button: ya es circular por diseño MDC
 .mat-mdc-button,
 .mat-mdc-unelevated-button,
 .mat-mdc-raised-button,
@@ -92,6 +93,13 @@ body {
   border-radius: 999px !important;
   font-weight: 600 !important;
   letter-spacing: 0.01em !important;
+
+  // ícono + texto: garantizar gap
+  ::ng-deep .mdc-button__label {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+  }
 }
 
 // ── mat-form-field outline: píldora completa ─────────────────────────────
@@ -102,19 +110,25 @@ body {
   --mdc-outlined-text-field-container-shape: 28px;
 
   // ── Colores del form field: verde marca en lugar del rojo del tema ──────
-  --mdc-outlined-text-field-focus-outline-color:      #006d77 !important;
-  --mdc-outlined-text-field-focus-label-text-color:   #006d77 !important;
+  --mdc-outlined-text-field-focus-outline-color:      #006d77;
+  --mdc-outlined-text-field-focus-label-text-color:   #006d77;
   --mdc-outlined-text-field-label-text-color:         #64748b;
   --mdc-outlined-text-field-outline-color:            #CBD5E1;
   --mdc-outlined-text-field-hover-outline-color:      #006d77;
   --mdc-outlined-text-field-input-text-color:         #0f172a;
   --mdc-outlined-text-field-caret-color:              #006d77;
   --mdc-outlined-text-field-focus-outline-width:      2px;
-  --mdc-outlined-text-field-error-focus-outline-color: #006d77;
-  --mdc-outlined-text-field-error-outline-color:      #CBD5E1;
-  --mdc-outlined-text-field-error-hover-outline-color: #006d77;
-  --mdc-outlined-text-field-error-label-text-color:   #64748b;
-  --mdc-outlined-text-field-error-focus-label-text-color: #006d77;
+  // ── Estados de error: rojo semántico (no verde) ──────────────────
+  --mdc-outlined-text-field-error-focus-outline-color: #dc2626;
+  --mdc-outlined-text-field-error-outline-color:       #f87171;
+  --mdc-outlined-text-field-error-hover-outline-color: #ef4444;
+  --mdc-outlined-text-field-error-label-text-color:    #dc2626;
+  --mdc-outlined-text-field-error-focus-label-text-color: #dc2626;
+  --mdc-outlined-text-field-error-caret-color:         #dc2626;
+
+  // ── mat-form-field error subscript text color (hint/error text) ──────────────
+  --mat-form-field-error-text-color:                  #dc2626;
+  --mat-form-field-subscript-text-color:              #64748b;
 
   // mat-select
   --mat-select-panel-background-color:                #FFFFFF;
