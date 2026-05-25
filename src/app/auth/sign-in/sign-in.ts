@@ -10,6 +10,7 @@ import { MatIconModule } from '@angular/material/icon';
 import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { AuthService } from '../../core/services/auth';
+import { PasswordStrengthComponent } from '../../shared/components/password-strength/password-strength';
 
 const passwordMatchValidator: ValidatorFn = (control: AbstractControl): ValidationErrors | null => {
   const password = control.get('password');
@@ -45,7 +46,8 @@ const passwordMatchValidator: ValidatorFn = (control: AbstractControl): Validati
     MatButtonModule,
     MatIconModule,
     MatSnackBarModule,
-    MatProgressSpinnerModule
+    MatProgressSpinnerModule,
+    PasswordStrengthComponent
   ],
   templateUrl: './sign-in.html',
   styleUrls: ['./sign-in.scss']
@@ -69,7 +71,7 @@ export class SignIn {
     firstName: ['', [Validators.required]],
     lastName: ['', [Validators.required]],
     email: ['', [Validators.required, Validators.email]],
-    password: ['', [Validators.required, Validators.minLength(6)]],
+    password: ['', [Validators.required, Validators.minLength(8)]],
     confirmPassword: ['', [Validators.required]]
   }, { validators: passwordMatchValidator });
 
