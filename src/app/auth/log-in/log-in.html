@@ -75,7 +75,7 @@
                     <p class="card-subtitle">Compra, ahorra y disfruta de la mejor calidad</p>
                 </header>
 
-                <form [formGroup]="loginForm" (ngSubmit)="onSubmit()" class="login-form">
+                <form [formGroup]="loginForm" (ngSubmit)="onSubmit()" class="login-form" [class.shake-form]="shakeForm()">
                     <!-- Email input group -->
                     <div class="input-group">
                         <label for="email" class="input-label">Correo electrónico</label>
@@ -114,6 +114,14 @@
                             </span>
                         }
                     </div>
+
+                    <!-- Forgot password hint (visible after 3 failed attempts) -->
+                    @if (failedAttempts() >= 3) {
+                        <div class="forgot-password-hint" role="alert">
+                            <mat-icon>lock_reset</mat-icon>
+                            <span>Demasiados intentos fallidos. <a routerLink="/auth/forgot-password" class="forgot-password-link">Recupera tu contraseña aquí</a>.</span>
+                        </div>
+                    }
 
                     <!-- Options (Remember me / Forgot password) -->
                     <div class="form-options">

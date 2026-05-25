@@ -44,6 +44,8 @@ export class LogIn implements OnInit {
   activeStep = 1;
   loading = signal(false);
   rememberMe = signal(false);
+  failedAttempts = signal(0);
+  shakeForm = signal(false);
 
   ngOnInit(): void {
     const rememberedEmail = localStorage.getItem('remember_email');
@@ -85,11 +87,26 @@ export class LogIn implements OnInit {
       },
       error: (err: unknown) => {
         this.loading.set(false);
-        const message = getHttpErrorMessage(
+        this.shakeForm.set(true);
+        setTimeout(() => this.shakeForm.set(false), 500);
+
+        // Clear password field so user can retype quickly
+        this.loginForm.patchValue({ password: '' });
+
+        const attempts = this.failedAttempts() + 1;
+        this.failedAttempts.set(attempts);
+
+        let message = getHttpErrorMessage(
           err as HttpErrorResponse,
-          'Error de autenticación',
+          'Correo o contraseña incorrectos',
         );
-        this.snackBar.open(message, 'Cerrar', { duration: 5000 });
+
+        // Suggest forgot-password after 3 failed attempts
+        if (attempts >= 3) {
+          message += '. ¿Olvidaste tu contraseña? Usa el enlace de recuperación abajo.';
+        }
+
+        this.snackBar.open(message, 'Cerrar', { duration: 6000 });
       },
     });
   }
