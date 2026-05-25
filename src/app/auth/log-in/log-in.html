@@ -108,12 +108,17 @@
                                 <mat-icon class="error-icon">warning</mat-icon> La contraseña es obligatoria
                             </span>
                         }
+                        @if (loginForm.get('password')?.hasError('minlength') && loginForm.get('password')?.touched) {
+                            <span class="error-text" role="alert">
+                                <mat-icon class="error-icon">warning</mat-icon> Mínimo 8 caracteres
+                            </span>
+                        }
                     </div>
 
                     <!-- Options (Remember me / Forgot password) -->
                     <div class="form-options">
                         <label class="remember-me" for="remember-checkbox">
-                            <input id="remember-checkbox" type="checkbox">
+                            <input id="remember-checkbox" type="checkbox" [checked]="rememberMe()" (change)="rememberMe.set(!rememberMe())">
                             <span class="checkbox-custom"></span>
                             <span class="checkbox-label">Recordarme</span>
                         </label>
@@ -121,8 +126,14 @@
                     </div>
 
                     <!-- Submit Button -->
-                    <button type="submit" class="primary-electric-button" [disabled]="loginForm.invalid" aria-label="Iniciar sesión con tu correo y contraseña">
-                        <span>Ingresar</span>
+                    <button type="submit" class="primary-electric-button" [disabled]="loginForm.invalid || loading()" aria-label="Iniciar sesión con tu correo y contraseña">
+                        @if (loading()) {
+                            <span class="spinner-container">
+                                <span class="dot-spinner"></span>
+                            </span>
+                        } @else {
+                            <span>Ingresar</span>
+                        }
                     </button>
 
                     <!-- Divider -->

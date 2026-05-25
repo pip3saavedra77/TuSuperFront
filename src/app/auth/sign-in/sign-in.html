@@ -133,9 +133,10 @@
                         }
                         @if (registerForm.get('password')?.hasError('minlength') && registerForm.get('password')?.touched) {
                             <span class="error-text" role="alert">
-                                <mat-icon class="error-icon">warning</mat-icon> Debe tener al menos 6 caracteres
+                                <mat-icon class="error-icon">warning</mat-icon> Debe tener al menos 8 caracteres
                             </span>
                         }
+                        <app-password-strength [password]="registerForm.get('password')?.value ?? ''"></app-password-strength>
                     </div>
 
                     <!-- Confirm Password input group -->

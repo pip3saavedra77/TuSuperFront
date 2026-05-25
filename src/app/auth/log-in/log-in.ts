@@ -1,4 +1,4 @@
-import { Component, inject } from '@angular/core';
+import { Component, inject, signal, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ReactiveFormsModule, FormBuilder, Validators } from '@angular/forms';
 
@@ -34,7 +34,7 @@ import { HttpErrorResponse } from '@angular/common/http';
   templateUrl: './log-in.html',
   styleUrl: './log-in.scss',
 })
-export class LogIn {
+export class LogIn implements OnInit {
 
   private readonly fb = inject(FormBuilder);
   private readonly authService = inject(AuthService);
@@ -42,6 +42,16 @@ export class LogIn {
   private readonly snackBar = inject(MatSnackBar);
   hidePassword = true;
   activeStep = 1;
+  loading = signal(false);
+  rememberMe = signal(false);
+
+  ngOnInit(): void {
+    const rememberedEmail = localStorage.getItem('remember_email');
+    if (rememberedEmail) {
+      this.loginForm.patchValue({ email: rememberedEmail });
+      this.rememberMe.set(true);
+    }
+  }
 
   selectStep(step: number): void {
     this.activeStep = step;
@@ -49,11 +59,13 @@ export class LogIn {
 
   loginForm = this.fb.group({
     email: ['', [Validators.required, Validators.email]],
-    password: ['', [Validators.required, Validators.minLength(6)]],
+    password: ['', [Validators.required, Validators.minLength(8)]],
   });
 
   onSubmit(): void {
-    if (this.loginForm.invalid) return;
+    if (this.loginForm.invalid || this.loading()) return;
+
+    this.loading.set(true);
 
     const { email, password } = this.loginForm.getRawValue();
     const credentials: LoginCredentials = {
@@ -63,9 +75,16 @@ export class LogIn {
 
     this.authService.login(credentials).subscribe({
       next: () => {
+        if (this.rememberMe()) {
+          localStorage.setItem('remember_email', email ?? '');
+        } else {
+          localStorage.removeItem('remember_email');
+        }
+        this.loading.set(false);
         this.router.navigate(['/home']);
       },
       error: (err: unknown) => {
+        this.loading.set(false);
         const message = getHttpErrorMessage(
           err as HttpErrorResponse,
           'Error de autenticación',
