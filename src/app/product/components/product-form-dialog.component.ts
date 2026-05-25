@@ -170,7 +170,7 @@ export interface ProductFormDialogData {
 
 
 
-              <mat-form-field appearance="outline" class="full-width">
+              <mat-form-field appearance="outline" class="full-width" subscriptSizing="dynamic">
 
                 <mat-label>Nombre del producto</mat-label>
 
@@ -222,7 +222,7 @@ export interface ProductFormDialogData {
 
               <div class="form-dialog__row">
 
-                <mat-form-field appearance="outline">
+                <mat-form-field appearance="outline" subscriptSizing="dynamic">
 
                   <mat-label>Precio</mat-label>
 
@@ -246,7 +246,7 @@ export interface ProductFormDialogData {
 
 
 
-                <mat-form-field appearance="outline">
+                <mat-form-field appearance="outline" subscriptSizing="dynamic">
 
                   <mat-label>Stock disponible</mat-label>
 
@@ -288,7 +288,7 @@ export interface ProductFormDialogData {
 
               <div class="form-dialog__row">
 
-                <mat-form-field appearance="outline">
+                <mat-form-field appearance="outline" subscriptSizing="dynamic">
 
                   <mat-label>Categoría</mat-label>
 
@@ -312,7 +312,7 @@ export interface ProductFormDialogData {
 
 
 
-                <mat-form-field appearance="outline">
+                <mat-form-field appearance="outline" subscriptSizing="dynamic">
 
                   <mat-label>Proveedor</mat-label>
 
