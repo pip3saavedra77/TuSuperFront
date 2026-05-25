@@ -11,7 +11,7 @@ import { MatCheckboxModule } from '@angular/material/checkbox';
 import { LoginCredentials } from '../interfaces/login';
 import { AuthService } from '../../core/services/auth';
 import { Router, RouterModule } from '@angular/router';
-import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
+import { MatSnackBarModule } from '@angular/material/snack-bar';
 import { environment } from '../../../environments/environment';
 import { getHttpErrorMessage } from '../../core/utils/http-error-message';
 import { HttpErrorResponse } from '@angular/common/http';
@@ -39,11 +39,13 @@ export class LogIn implements OnInit {
   private readonly fb = inject(FormBuilder);
   private readonly authService = inject(AuthService);
   private readonly router = inject(Router);
-  private readonly snackBar = inject(MatSnackBar);
   hidePassword = true;
   activeStep = 1;
   loading = signal(false);
   rememberMe = signal(false);
+  failedAttempts = signal(0);
+  shakeForm = signal(false);
+  errorMessage = signal('');
 
   ngOnInit(): void {
     const rememberedEmail = localStorage.getItem('remember_email');
@@ -66,6 +68,7 @@ export class LogIn implements OnInit {
     if (this.loginForm.invalid || this.loading()) return;
 
     this.loading.set(true);
+    this.errorMessage.set('');
 
     const { email, password } = this.loginForm.getRawValue();
     const credentials: LoginCredentials = {
@@ -75,6 +78,7 @@ export class LogIn implements OnInit {
 
     this.authService.login(credentials).subscribe({
       next: () => {
+        this.failedAttempts.set(0);
         if (this.rememberMe()) {
           localStorage.setItem('remember_email', email ?? '');
         } else {
@@ -85,11 +89,21 @@ export class LogIn implements OnInit {
       },
       error: (err: unknown) => {
         this.loading.set(false);
-        const message = getHttpErrorMessage(
+        this.shakeForm.set(true);
+        setTimeout(() => this.shakeForm.set(false), 500);
+
+        this.loginForm.patchValue({ password: '' });
+        const attempts = this.failedAttempts() + 1;
+        this.failedAttempts.set(attempts);
+
+        let message = getHttpErrorMessage(
           err as HttpErrorResponse,
-          'Error de autenticación',
+          'Correo o contraseña incorrectos',
         );
-        this.snackBar.open(message, 'Cerrar', { duration: 5000 });
+        if (attempts >= 3) {
+          message += '. ¿Olvidaste tu contraseña? Usa el enlace de recuperación.';
+        }
+        this.errorMessage.set(message);
       },
     });
   }

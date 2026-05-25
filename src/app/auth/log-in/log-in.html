@@ -75,7 +75,7 @@
                     <p class="card-subtitle">Compra, ahorra y disfruta de la mejor calidad</p>
                 </header>
 
-                <form [formGroup]="loginForm" (ngSubmit)="onSubmit()" class="login-form">
+                <form [formGroup]="loginForm" (ngSubmit)="onSubmit()" class="login-form" [class.shake-form]="shakeForm()">
                     <!-- Email input group -->
                     <div class="input-group">
                         <label for="email" class="input-label">Correo electrónico</label>
@@ -114,6 +114,22 @@
                             </span>
                         }
                     </div>
+
+                    <!-- Inline error banner (replaces ugly snackbar) -->
+                    @if (errorMessage()) {
+                        <div class="login-error-banner" role="alert">
+                            <mat-icon class="error-banner-icon">error_outline</mat-icon>
+                            <span class="error-banner-text">{{ errorMessage() }}</span>
+                        </div>
+                    }
+
+                    <!-- Forgot-password hint after 3 failed attempts -->
+                    @if (failedAttempts() >= 3 && !errorMessage()) {
+                        <div class="forgot-password-hint" role="alert">
+                            <mat-icon>lock_reset</mat-icon>
+                            <span>Demasiados intentos. <a routerLink="/auth/forgot-password">Recupera tu contraseña</a></span>
+                        </div>
+                    }
 
                     <!-- Options (Remember me / Forgot password) -->
                     <div class="form-options">
