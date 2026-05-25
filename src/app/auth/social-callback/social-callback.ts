@@ -32,7 +32,15 @@ export class SocialCallback implements OnInit {
   private readonly authService = inject(AuthService);
 
   ngOnInit(): void {
-    const token = this.route.snapshot.queryParamMap.get('token');
+    // Read from window.location.hash since the backend redirects using fragment (#token=)
+    // instead of query parameter (?token=) to protect the JWT from proxy/CDN logs and referer leaks.
+    let token = this.route.snapshot.queryParamMap.get('token');
+
+    if (!token && window.location.hash) {
+      const hash = window.location.hash.slice(1); // remove '#'
+      const params = new URLSearchParams(hash);
+      token = params.get('token');
+    }
     
     if (token) {
       localStorage.setItem('token', token);
