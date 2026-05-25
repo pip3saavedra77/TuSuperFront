@@ -1,99 +1,109 @@
-<div class="orders-container">
-  <div class="glass-card orders-card">
+<div class="orders-page">
 
-    <header class="orders-header">
-      <h1>Mis Pedidos</h1>
-      <button mat-icon-button (click)="loadOrders()" [disabled]="loading()">
-        <mat-icon [class.spin]="loading()">refresh</mat-icon>
-      </button>
-    </header>
+  <!-- HEADER -->
+  <header class="orders-page__header">
+    <div class="orders-page__title-block">
+      <div class="orders-page__icon-wrap">
+        <mat-icon>receipt_long</mat-icon>
+      </div>
+      <div>
+        <h1 class="orders-page__title">Mis Pedidos</h1>
+        <p class="orders-page__subtitle">Historial de tus compras</p>
+      </div>
+    </div>
+    <button class="refresh-btn" (click)="loadOrders()" [disabled]="loading()" aria-label="Actualizar pedidos">
+      <mat-icon [class.spin]="loading()">refresh</mat-icon>
+    </button>
+  </header>
 
-    <div class="orders-list-wrapper">
+  <!-- LOADING -->
+  @if (loading()) {
+    <div class="loading-state">
+      <mat-progress-spinner mode="indeterminate" diameter="44"></mat-progress-spinner>
+      <p>Cargando pedidos...</p>
+    </div>
+  }
 
-      @if (loading()) {
-        <mat-progress-spinner
-          mode="indeterminate"
-          diameter="40"
-          class="spinner">
-        </mat-progress-spinner>
-      }
+  <!-- EMPTY STATE -->
+  @if (!loading() && orders().length === 0) {
+    <div class="empty-state">
+      <div class="empty-state__icon-wrap">
+        <mat-icon>shopping_bag</mat-icon>
+      </div>
+      <p class="empty-state__title">Sin pedidos aún</p>
+      <span class="empty-state__subtitle">Cuando hagas un pedido, aparecerá aquí.</span>
+    </div>
+  }
 
-      @if (!loading() && orders().length === 0) {
-        <div class="empty-state">
-          <mat-icon>receipt_long</mat-icon>
-          <p>Aún no has realizado ningún pedido.</p>
-        </div>
-      }
+  <!-- LISTA -->
+  @if (!loading() && orders().length > 0) {
+    <div class="orders-list">
+      @for (order of orders(); track order.id) {
+        <article class="order-card" [class.order-card--expanded]="isExpanded(order.id)">
 
-      @if (!loading() && orders().length > 0) {
-        <div class="orders-list">
-          @for (order of orders(); track order.id) {
-            <article class="order-card">
+          <!-- TOP ROW: ID + STATUS -->
+          <div class="order-card__top">
+            <div class="order-card__id-block">
+              <span class="order-card__num">Pedido <strong>#{{ order.id }}</strong></span>
+              <span class="order-card__date">
+                <mat-icon>schedule</mat-icon>
+                {{ order.createdAt | date:'dd MMM yyyy · HH:mm' }}
+              </span>
+            </div>
+            <span class="status-badge" [ngClass]="getStatusClass(order.status)">
+              {{ getStatusLabel(order.status) }}
+            </span>
+          </div>
 
-              <div class="order-card__header">
-                <span class="order-card__id">
-                  <mat-icon class="order-card__icon">receipt</mat-icon>
-                  Pedido #{{ order.id }}
-                </span>
-                <span class="status-badge" [ngClass]="getStatusClass(order.status)">
-                  {{ getStatusLabel(order.status) }}
-                </span>
-              </div>
+          <!-- DIVIDER -->
+          <div class="order-card__divider"></div>
 
-              <div class="order-card__meta">
-                <span class="order-card__date">
-                  <mat-icon>calendar_today</mat-icon>
-                  {{ order.createdAt | date:'dd/MM/yyyy · HH:mm' }}
-                </span>
-                <span class="order-card__total">
-                  {{ order.totalAmount | currency:'COP':'symbol-narrow':'1.0-0' }}
-                </span>
-              </div>
+          <!-- BOTTOM ROW: TOTAL + ACCIÓN -->
+          <div class="order-card__bottom">
+            <div class="order-card__total-block">
+              <span class="order-card__total-label">Total</span>
+              <span class="order-card__total">
+                {{ order.totalAmount | currency:'COP':'symbol-narrow':'1.0-0' }}
+              </span>
+            </div>
+            <button
+              class="details-btn"
+              (click)="toggleExpanded(order.id)"
+              [attr.aria-expanded]="isExpanded(order.id)">
+              <span>{{ isExpanded(order.id) ? 'Ocultar' : 'Ver detalles' }}</span>
+              <mat-icon>{{ isExpanded(order.id) ? 'expand_less' : 'expand_more' }}</mat-icon>
+            </button>
+          </div>
 
-              <div class="order-card__footer">
-                <button
-                  class="details-btn"
-                  (click)="toggleExpanded(order.id)"
-                  [attr.aria-expanded]="isExpanded(order.id)"
-                  [attr.aria-controls]="'order-items-' + order.id">
-                  <mat-icon>{{ isExpanded(order.id) ? 'expand_less' : 'expand_more' }}</mat-icon>
-                  {{ isExpanded(order.id) ? 'Ocultar detalles' : 'Ver detalles' }}
-                </button>
-              </div>
-
-              @if (isExpanded(order.id)) {
-                <div class="order-card__items" [id]="'order-items-' + order.id">
-                  <div class="order-card__items-header">
-                    <span>Producto</span>
-                    <span>Cant.</span>
-                    <span>Precio unit.</span>
-                    <span>Subtotal</span>
+          <!-- ITEMS EXPANDIBLES -->
+          @if (isExpanded(order.id)) {
+            <div class="order-card__items" [id]="'order-items-' + order.id">
+              @for (item of order.items; track item.id) {
+                <div class="order-item">
+                  <div class="order-item__name">{{ item.product?.name || 'Producto #' + item.productId }}</div>
+                  <div class="order-item__meta">
+                    <span class="order-item__qty">×{{ item.quantity }}</span>
+                    <span class="order-item__price">{{ item.unitPrice | currency:'COP':'symbol-narrow':'1.0-0' }}</span>
+                    <span class="order-item__sub">{{ item.subTotal | currency:'COP':'symbol-narrow':'1.0-0' }}</span>
                   </div>
-                  @for (item of order.items; track item.id) {
-                    <div class="order-card__item-row">
-                      <span>{{ item.product?.name || 'Producto #' + item.productId }}</span>
-                      <span>{{ item.quantity }}</span>
-                      <span>{{ item.unitPrice | currency:'COP':'symbol-narrow':'1.0-0' }}</span>
-                      <span>{{ item.subTotal | currency:'COP':'symbol-narrow':'1.0-0' }}</span>
-                    </div>
-                  }
                 </div>
               }
-
-            </article>
+            </div>
           }
-        </div>
-      }
 
+        </article>
+      }
     </div>
 
-    <mat-paginator
-      [length]="totalOrders()"
-      [pageSize]="currentLimit()"
-      [pageSizeOptions]="[5, 10, 25]"
-      (page)="onPageChange($event)"
-      aria-label="Seleccionar página">
-    </mat-paginator>
+    <div class="paginator-wrap">
+      <mat-paginator
+        [length]="totalOrders()"
+        [pageSize]="currentLimit()"
+        [pageSizeOptions]="[5, 10, 25]"
+        (page)="onPageChange($event)"
+        aria-label="Seleccionar página">
+      </mat-paginator>
+    </div>
+  }
 
-  </div>
 </div>

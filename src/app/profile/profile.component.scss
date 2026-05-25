@@ -1,758 +1,367 @@
 @use 'sass:map';
-
 @use '../styles/tokens' as *;
-
 @use '../styles/pos_tokens' as pos;
 
-
+// =============================================================================
+// PERFIL — Premium mobile-first
+// =============================================================================
 
 .profile-container {
-
-  padding: map.get($spacing, "48") map.get($spacing, "24");
-
+  padding: 32px 24px;
   min-height: calc(100vh - 80px);
-
   background: transparent;
 
+  @media (max-width: 600px) { padding: 16px 12px; }
 }
-
-
 
 .profile-page {
-
-  max-width: 700px;
-
+  max-width: 600px;
   margin: 0 auto;
-
   display: flex;
-
   flex-direction: column;
-
-  gap: map.get($spacing, "32");
-
+  gap: 20px;
+  animation: fadeIn 0.3s ease-out;
 }
 
-
-
-// ── Header del Perfil ─────────────────────────────────
-
+// ── Header: avatar centrado + nombre ──────────────────────────────────────────
 .profile-header {
-
   display: flex;
-
-  align-items: center;
-
-  gap: map.get($spacing, "24");
-
-
-
-  .profile-avatar-wrapper {
-
-    position: relative;
-
-  }
-
-
-
-  .profile-avatar {
-
-    width: 84px;
-
-    height: 84px;
-
-    border-radius: 50%;
-
-    background: var(--profile-primary, #{pos.$pos-primary});
-
-    color: #ffffff;
-
-    font-size: 2.25rem;
-
-    font-weight: 800;
-
-    display: flex;
-
-    align-items: center;
-
-    justify-content: center;
-
-    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.08);
-
-    border: 3px solid #ffffff;
-
-    object-fit: cover;
-
-    transition: transform 0.3s ease;
-
-  }
-
-
-
-  .avatar-overlay {
-
-    position: absolute;
-
-    inset: 0;
-
-    border-radius: 50%;
-
-    display: flex;
-
-    align-items: center;
-
-    justify-content: center;
-
-    background: rgba(15, 23, 42, 0.45);
-
-    opacity: 0;
-
-    transition: opacity 0.25s ease;
-
-    cursor: pointer;
-
-
-
-    .hidden-input { display: none; }
-
-
-
-    .avatar-actions {
-
-      display: flex;
-
-      gap: 8px;
-
-      align-items: center;
-
-    }
-
-
-
-    .avatar-btn {
-
-      width: 32px;
-
-      height: 32px;
-
-      line-height: 32px;
-
-      background: rgba(255, 255, 255, 0.9) !important;
-
-      color: #0f172a !important;
-
-      border-radius: 50% !important;
-
-      display: flex;
-
-      align-items: center;
-
-      justify-content: center;
-
-      transition: transform 0.2s ease, background 0.2s ease;
-
-
-
-      mat-icon {
-
-        font-size: 16px;
-
-        width: 16px;
-
-        height: 16px;
-
-        line-height: 16px;
-
-      }
-
-
-
-      &:hover:not(:disabled) {
-
-        transform: scale(1.1);
-
-        background: #ffffff !important;
-
-      }
-
-
-
-      &--delete {
-
-        background: rgba(239, 68, 68, 0.9) !important;
-
-        color: #ffffff !important;
-
-        &:hover:not(:disabled) { background: #ef4444 !important; }
-
-      }
-
-
-
-      &--confirm {
-
-        background: rgba(34, 197, 94, 0.9) !important;
-
-        color: #ffffff !important;
-
-        &:hover:not(:disabled) { background: #22c55e !important; }
-
-      }
-
-
-
-      &--cancel {
-
-        background: rgba(148, 163, 184, 0.9) !important;
-
-        color: #ffffff !important;
-
-        &:hover:not(:disabled) { background: #94a3b8 !important; }
-
-      }
-
-    }
-
-  }
-
-
-
-  .profile-avatar-wrapper:hover .avatar-overlay {
-
-    opacity: 1;
-
-  }
-
-
-
-  .profile-avatar-wrapper:has(.avatar-overlay .preview-actions) .avatar-overlay {
-
-    opacity: 1;
-
-  }
-
-
-
-  .profile-title-block {
-
-    h1 {
-
-      font-size: map.get($font-sizes, "2xl");
-
-      font-weight: 800;
-
-      color: pos.$pos-text;
-
-      margin: 0;
-
-      letter-spacing: -0.025em;
-
-    }
-
-
-
-    .profile-subtitle {
-
-      font-size: map.get($font-sizes, "sm");
-
-      color: pos.$pos-text-muted;
-
-      margin: 4px 0 0;
-
-    }
-
-  }
-
-}
-
-
-
-// ── Cuerpo y Tarjetas ─────────────────────────────────
-
-.profile-body {
-
-  display: flex;
-
   flex-direction: column;
-
-  gap: map.get($spacing, "24");
-
+  align-items: center;
+  text-align: center;
+  gap: 14px;
+  padding-bottom: 8px;
 }
 
+.profile-avatar-wrapper {
+  position: relative;
+  width: 96px;
+  height: 96px;
+}
 
+.profile-avatar {
+  width: 96px;
+  height: 96px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, var(--profile-primary, #{pos.$pos-primary}) 0%, color-mix(in srgb, var(--profile-primary, #{pos.$pos-primary}) 70%, #000) 100%);
+  color: #ffffff;
+  font-size: 2.5rem;
+  font-weight: 800;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 8px 28px color-mix(in srgb, var(--profile-primary, #{pos.$pos-primary}) 35%, transparent);
+  border: 3px solid #ffffff;
+  object-fit: cover;
+  transition: transform 0.3s ease;
+}
+
+.avatar-overlay {
+  position: absolute;
+  inset: 0;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(15, 23, 42, 0.5);
+  opacity: 0;
+  transition: opacity 0.25s ease;
+  cursor: pointer;
+
+  .hidden-input { display: none; }
+
+  .avatar-actions {
+    display: flex;
+    gap: 8px;
+    align-items: center;
+  }
+
+  .avatar-btn {
+    width: 34px;
+    height: 34px;
+    background: rgba(255, 255, 255, 0.92) !important;
+    color: #0f172a !important;
+    border-radius: 50% !important;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: transform 0.2s ease, background 0.2s ease;
+
+    mat-icon { font-size: 16px; width: 16px; height: 16px; }
+
+    &:hover:not(:disabled) { transform: scale(1.1); background: #fff !important; }
+
+    &--delete {
+      background: rgba(239, 68, 68, 0.9) !important;
+      color: #fff !important;
+      &:hover:not(:disabled) { background: #ef4444 !important; }
+    }
+
+    &--confirm {
+      background: rgba(34, 197, 94, 0.9) !important;
+      color: #fff !important;
+      &:hover:not(:disabled) { background: #22c55e !important; }
+    }
+
+    &--cancel {
+      background: rgba(148, 163, 184, 0.9) !important;
+      color: #fff !important;
+      &:hover:not(:disabled) { background: #94a3b8 !important; }
+    }
+  }
+}
+
+.profile-avatar-wrapper:hover .avatar-overlay { opacity: 1; }
+.profile-avatar-wrapper:has(.avatar-overlay .preview-actions) .avatar-overlay { opacity: 1; }
+
+.profile-title-block {
+  h1 {
+    font-size: 1.6rem;
+    font-weight: 800;
+    color: #0f172a;
+    margin: 0;
+    letter-spacing: -0.025em;
+  }
+
+  .profile-subtitle {
+    font-size: 0.82rem;
+    color: #94a3b8;
+    margin: 4px 0 0;
+    font-weight: 500;
+  }
+}
+
+// ── Cuerpo y Tarjetas ─────────────────────────────────────────────────────────
+.profile-body {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
 
 .profile-card {
-
   background: #ffffff;
-
-  border-radius: 16px;
-
-  border: 1px solid rgba(0, 0, 0, 0.06);
-
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
-
-  padding: map.get($spacing, "24");
-
+  border-radius: 20px;
+  border: 1px solid #F1F5F9;
+  box-shadow: 0 2px 10px rgba(0,0,0,0.05), 0 0 0 1px rgba(0,0,0,0.03);
+  padding: 20px 22px;
   display: flex;
-
   flex-direction: column;
+  gap: 16px;
 
-  gap: map.get($spacing, "20");
-
-
+  @media (max-width: 600px) { padding: 16px; }
 
   .card-header {
-
     display: flex;
-
     justify-content: space-between;
-
     align-items: center;
-
-    border-bottom: 1px solid rgba(0, 0, 0, 0.05);
-
-    padding-bottom: map.get($spacing, "16");
-
-
+    gap: 10px;
+    border-bottom: 1px solid #F1F5F9;
+    padding-bottom: 14px;
+    flex-wrap: wrap;
 
     .card-title-group {
-
       display: flex;
-
       align-items: center;
-
       gap: 10px;
-
-
+      min-width: 0;
+      flex: 1 1 auto;
 
       .title-icon {
-
         color: var(--profile-primary, #{pos.$pos-primary});
-
+        flex-shrink: 0;
       }
-
-
 
       h2 {
-
-        font-size: map.get($font-sizes, "md");
-
+        font-size: 0.95rem;
         font-weight: 700;
-
-        color: pos.$pos-text;
-
+        color: #0f172a;
         margin: 0;
-
+        white-space: normal;
+        word-break: break-word;
       }
-
     }
 
+    // Botón siempre visible sin solaparse
+    button {
+      flex-shrink: 0;
+    }
   }
-
 }
 
-
-
-// ── Personal Info: Modo Lectura ────────────────────────
-
+// ── Modo Lectura ──────────────────────────────────────────────────────────────
 .profile-read-mode {
-
   display: flex;
-
   flex-direction: column;
-
-  gap: map.get($spacing, "16");
-
-
+  gap: 0;
 
   .info-row {
-
     display: flex;
-
     justify-content: space-between;
-
     align-items: center;
+    padding: 10px 0;
+    border-bottom: 1px solid #F8FAFC;
+    gap: 12px;
 
-    padding: 8px 0;
-
-    border-bottom: 1px dashed rgba(0, 0, 0, 0.04);
-
-
-
-    &:last-child {
-
-      border: none;
-
-    }
-
-
+    &:last-child { border: none; padding-bottom: 0; }
 
     .info-label {
-
-      font-size: map.get($font-sizes, "sm");
-
-      color: pos.$pos-text-muted;
-
+      font-size: 0.82rem;
+      color: #94a3b8;
       font-weight: 600;
-
+      white-space: nowrap;
+      flex-shrink: 0;
     }
-
-
 
     .info-value {
-
-      font-size: map.get($font-sizes, "sm");
-
-      color: pos.$pos-text;
-
+      font-size: 0.875rem;
+      color: #0f172a;
       font-weight: 700;
-
+      text-align: right;
+      word-break: break-all;
     }
-
-
 
     .roles-badges {
-
       display: flex;
-
-      gap: 8px;
-
+      gap: 6px;
       flex-wrap: wrap;
-
-
+      justify-content: flex-end;
 
       .role-badge {
-
-        background: var(--profile-primary-soft, #f1f3f9);
-
-        color: var(--profile-primary, #{pos.$pos-primary});
-
-        padding: 4px 12px;
-
-        border-radius: map.get($radius, "full");
-
-        font-size: map.get($font-sizes, "xs");
-
-        font-weight: 700;
-
+        background: color-mix(in srgb, var(--profile-primary, #{pos.$pos-primary}) 12%, transparent);
+        color: color-mix(in srgb, var(--profile-primary, #{pos.$pos-primary}) 85%, #000);
+        padding: 3px 10px;
+        border-radius: 999px;
+        font-size: 0.72rem;
+        font-weight: 800;
         text-transform: uppercase;
-
-        letter-spacing: 0.5px;
-
+        letter-spacing: 0.06em;
       }
-
     }
-
   }
-
 }
 
-
-
-// ── Formularios y Acciones ────────────────────────────
-
+// ── Formularios ───────────────────────────────────────────────────────────────
 .profile-edit-form, .password-change-form {
-
   display: flex;
-
   flex-direction: column;
-
-  gap: map.get($spacing, "16");
-
+  gap: 14px;
 }
-
-
 
 .form-grid {
-
   display: grid;
-
   grid-template-columns: 1fr 1fr;
+  gap: 14px;
 
-  gap: 16px;
-
+  @media (max-width: 480px) { grid-template-columns: 1fr; }
 }
-
-
 
 .form-vertical-stack {
-
   display: flex;
-
   flex-direction: column;
-
-  gap: 12px;
-
+  gap: 10px;
 }
-
-
 
 .password-form-actions {
-
   display: flex;
-
   justify-content: flex-end;
-
-  gap: 12px;
-
-  margin-top: 8px;
-
+  gap: 10px;
+  margin-top: 4px;
+  flex-wrap: wrap;
 }
 
-
-
-// ── Botones Estilizados ────────────────────────────────
-
+// ── Botones ───────────────────────────────────────────────────────────────────
 .btn-edit-toggle, .btn-change-password-toggle, .btn-cancel-password {
-
   border-color: var(--profile-primary, #{pos.$pos-primary}) !important;
-
   color: var(--profile-primary, #{pos.$pos-primary}) !important;
-
-  border-radius: 12px !important;
-
+  border-radius: 999px !important;
   font-weight: 700 !important;
-
+  font-size: 0.82rem !important;
+  padding: 0 16px !important;
+  height: 36px !important;
   transition: all 0.2s ease !important;
-
-
+  white-space: nowrap;
 
   &:hover {
-
-    background: var(--profile-primary-soft) !important;
-
-    transform: translateY(-1px);
-
-    filter: brightness(0.95);
-
+    background: color-mix(in srgb, var(--profile-primary, #{pos.$pos-primary}) 8%, transparent) !important;
   }
-
 }
-
-
 
 .btn-save-profile, .btn-save-password {
-
-  height: 48px;
-
+  height: 46px;
   background: var(--profile-primary, #{pos.$pos-primary}) !important;
-
   color: #ffffff !important;
-
-  border-radius: 12px !important;
-
+  border-radius: 999px !important;
   font-weight: 700 !important;
-
   display: flex;
-
   align-items: center;
-
   justify-content: center;
-
   gap: 8px;
-
   transition: all 0.2s ease !important;
-
-  box-shadow: 0 6px 16px rgba(0, 0, 0, 0.05);
-
-
+  box-shadow: 0 4px 14px color-mix(in srgb, var(--profile-primary, #{pos.$pos-primary}) 30%, transparent);
 
   &:hover:not(:disabled) {
-
     transform: translateY(-1px);
-
-    filter: brightness(0.95);
-
-    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.08);
-
+    box-shadow: 0 8px 20px color-mix(in srgb, var(--profile-primary, #{pos.$pos-primary}) 40%, transparent);
   }
-
-
 
   &:disabled {
-
-    background: #e9ecef !important;
-
-    color: pos.$pos-text-muted !important;
-
+    background: #e2e8f0 !important;
+    color: #94a3b8 !important;
     box-shadow: none;
-
-    cursor: not-allowed;
-
   }
-
 }
 
-
-
-// ── Sección Seguridad Estática ────────────────────────
-
+// ── Seguridad estática ────────────────────────────────────────────────────────
 .security-static-info {
-
   display: flex;
-
   align-items: flex-start;
-
-  gap: 16px;
-
-  background: #f8f9fa;
-
-  padding: map.get($spacing, "16");
-
-  border-radius: 12px;
-
-  border: 1px solid rgba(0, 0, 0, 0.04);
-
-
+  gap: 14px;
+  background: linear-gradient(135deg, #F0FDF4 0%, #ECFDF5 100%);
+  padding: 16px;
+  border-radius: 14px;
+  border: 1px solid rgba(34, 197, 94, 0.15);
 
   mat-icon {
-
-    color: #00a651;
-
-    font-size: 28px;
-
-    width: 28px;
-
-    height: 28px;
-
+    color: #22c55e;
+    font-size: 26px;
+    width: 26px;
+    height: 26px;
+    flex-shrink: 0;
+    margin-top: 2px;
   }
-
-
 
   div {
-
     display: flex;
-
     flex-direction: column;
-
     gap: 4px;
 
-
-
     .security-status {
-
-      font-size: map.get($font-sizes, "sm");
-
+      font-size: 0.875rem;
       font-weight: 700;
-
-      color: pos.$pos-text;
-
+      color: #0f172a;
     }
-
-
 
     .security-desc {
-
-      font-size: map.get($font-sizes, "xs");
-
-      color: pos.$pos-text-muted;
-
+      font-size: 0.78rem;
+      color: #64748b;
       margin: 0;
-
+      line-height: 1.5;
     }
-
   }
-
 }
 
-
-
-// ── Glassmorphism Inputs ──────────────────────────────
-
+// ── Inputs dentro de la tarjeta ───────────────────────────────────────────────
 ::ng-deep {
-
   .profile-card {
-
     .mat-mdc-form-field {
-
       width: 100%;
-
-
-
-      .mdc-text-field--outlined {
-
-        background: rgba(255, 255, 255, 0.8) !important;
-
-        backdrop-filter: blur(4px);
-
-        border-radius: 12px !important;
-
-      }
-
-
-
-      .mdc-notched-outline__leading,
-
-      .mdc-notched-outline__notch,
-
-      .mdc-notched-outline__trailing {
-
-        border-color: rgba(0, 0, 0, 0.1) !important;
-
-      }
-
-
-
-      &.mat-focused {
-
-        .mdc-notched-outline__leading,
-
-        .mdc-notched-outline__notch,
-
-        .mdc-notched-outline__trailing {
-
-          border-color: var(--profile-primary, #{pos.$pos-primary}) !important;
-
-          border-width: 2px !important;
-
-        }
-
-      }
-
     }
-
   }
-
 }
 
-
-
-// ── Responsive ────────────────────────────────────────
-
-@media (max-width: 600px) {
-
-  .profile-container {
-
-    padding: map.get($spacing, "24") map.get($spacing, "16");
-
-  }
-
-
-
-  .profile-header {
-
-    flex-direction: column;
-
-    text-align: center;
-
-    gap: map.get($spacing, "12");
-
-  }
-
-
-
-  .form-grid {
-
-    grid-template-columns: 1fr;
-
-  }
-
-
-
-  .profile-card {
-
-    padding: map.get($spacing, "16");
-
-  }
-
+// ── Animación ─────────────────────────────────────────────────────────────────
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(8px); }
+  to   { opacity: 1; transform: translateY(0); }
 }
 

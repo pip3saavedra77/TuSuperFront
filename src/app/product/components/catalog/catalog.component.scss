@@ -20,6 +20,36 @@
   }
 }
 
+// ── Mobile: force cart drawer to full-screen fixed overlay ────────────────
+@media (max-width: 640px) {
+  ::ng-deep .catalog-container.modern-pos {
+    .mat-drawer-container {
+      overflow: visible !important;
+    }
+
+    .mat-drawer.cart-drawer {
+      position: fixed !important;
+      top: 0 !important;
+      right: 0 !important;
+      bottom: 0 !important;
+      left: 0 !important;
+      width: 100vw !important;
+      height: 100dvh !important;
+      z-index: 1000 !important;
+      transform: translateX(100%) !important;
+      transition: transform 0.3s cubic-bezier(0.22, 1, 0.36, 1) !important;
+    }
+
+    .mat-drawer.cart-drawer.mat-drawer-opened {
+      transform: translateX(0) !important;
+    }
+  }
+
+  .catalog-container.modern-pos .cart-drawer {
+    width: 100vw !important;
+  }
+}
+
 .catalog-content {
   padding: map.get($spacing, "48");
   max-width: 1400px;
@@ -336,6 +366,7 @@
         font-size: 0.8rem;
         height: auto;
         -webkit-line-clamp: 2;
+        line-clamp: 2;
         display: -webkit-box;
         -webkit-box-orient: vertical;
         overflow: hidden;
