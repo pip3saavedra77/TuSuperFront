@@ -123,7 +123,25 @@ export class Product implements OnInit {
     barcode:     [''],
   });
 
-  constructor() {}
+  constructor() {
+    // Debounce automático al escribir en el buscador (350 ms)
+    toObservable(this.searchQuery)
+      .pipe(
+        debounceTime(350),
+        distinctUntilChanged(),
+        takeUntilDestroyed(this.destroyRef),
+      )
+      .subscribe((query) => {
+        // Solo búsqueda simple por texto — el smart-search (barcode) se activa con Enter/botón
+        this.currentOffset.set(0);
+        if (!query.trim()) {
+          this.loadProducts();
+        } else {
+          this.filterByName(query.trim());
+        }
+        // El debounce no abre el drawer — eso solo lo hace onSmartSearch (Enter/botón)
+      });
+  }
 
   ngOnInit(): void {
     this.loadProducts();
@@ -323,6 +341,39 @@ export class Product implements OnInit {
     }
   }
 
+  // Búsqueda silenciosa (debounce): filtra la tabla sin abrir el drawer
+  private filterByName(query: string): void {
+    this.loading.set(true);
+
+    const filters: ProductFilterParams = {
+      limit: this.currentLimit(),
+      offset: 0,
+      search: query,
+    };
+
+    const catId = this.selectedCategoryId();
+    if (catId !== 'todos') {
+      filters.categoryId = catId;
+    }
+
+    this.productService
+      .getAll(filters)
+      .pipe(
+        finalize(() => this.loading.set(false)),
+        takeUntilDestroyed(this.destroyRef)
+      )
+      .subscribe({
+        next: (result) => {
+          this.products.set(result.data);
+          this.totalProducts.set(result.total);
+        },
+        error: (err: HttpErrorResponse) => {
+          this.showError(err);
+        },
+      });
+  }
+
+  // Búsqueda completa (Enter/botón): filtra y ofrece crear si no hay resultados
   private performNameSearch(query: string): void {
     this.searchQuery.set(query);
     this.currentOffset.set(0);

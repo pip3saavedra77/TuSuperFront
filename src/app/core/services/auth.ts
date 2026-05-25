@@ -1,6 +1,6 @@
 import { Injectable, inject, signal, computed } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
-import { catchError, map, Observable, of, tap, shareReplay } from 'rxjs';
+import { catchError, map, Observable, of, tap } from 'rxjs';
 import { AuthResponse, LoginCredentials, RegisterPayload } from '../models/auth.models';
 import { Router } from '@angular/router';
 import { environment } from '../../../environments/environment';
@@ -58,7 +58,6 @@ export class AuthService {
   public logout(): void {
     localStorage.removeItem('token');
     this._authStatus.set(null);
-    this._checkStatus$ = undefined;
     this.router.navigateByUrl('/auth');
   }
 
@@ -74,14 +73,11 @@ export class AuthService {
     return this.http.post<{ message: string }>(`${this.API_URL}/reset-password`, { token, newPassword });
   }
 
-  private _checkStatus$?: Observable<boolean>;
   public checkAuthStatus(): Observable<boolean> {
-    if (this._checkStatus$) return this._checkStatus$;
-
     const token = localStorage.getItem('token');
     if (!token) return of(false);
 
-    this._checkStatus$ = this.http.get<AuthResponse>(`${this.API_URL}/check-status`).pipe(
+    return this.http.get<AuthResponse>(`${this.API_URL}/check-status`).pipe(
       tap((response) => {
         this._authStatus.set(response);
         if (response.access_token) {
@@ -89,13 +85,10 @@ export class AuthService {
         }
       }),
       map(() => true),
-      catchError((error) => {
+      catchError(() => {
         this.logout();
         return of(false);
       }),
-      shareReplay(1)
     );
-
-    return this._checkStatus$;
   }
 }
