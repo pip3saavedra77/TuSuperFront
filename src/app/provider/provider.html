@@ -54,23 +54,42 @@
   
           <!-- Nombre -->
           <ng-container matColumnDef="name">
-            <th mat-header-cell *matHeaderCellDef>Nombre</th>
-            <td mat-cell *matCellDef="let provider">{{ provider.name }}</td>
+            <th mat-header-cell *matHeaderCellDef>Proveedor</th>
+            <td mat-cell *matCellDef="let provider">
+              <div class="provider-name-cell">
+                <div class="prov-avatar">{{ provider.name.charAt(0).toUpperCase() }}</div>
+                <span class="prov-name">{{ provider.name }}</span>
+              </div>
+            </td>
           </ng-container>
   
           <!-- Teléfono -->
           <ng-container matColumnDef="phone">
             <th mat-header-cell *matHeaderCellDef>Teléfono</th>
             <td mat-cell *matCellDef="let provider">
-              {{ provider.phone || 'N/A' }}
+              @if (provider.phone) {
+                <div class="contact-cell">
+                  <mat-icon>call</mat-icon>
+                  {{ provider.phone }}
+                </div>
+              } @else {
+                <span class="na-text">Sin teléfono</span>
+              }
             </td>
           </ng-container>
 
           <!-- Email -->
           <ng-container matColumnDef="email">
-            <th mat-header-cell *matHeaderCellDef>Email</th>
+            <th mat-header-cell *matHeaderCellDef>Correo</th>
             <td mat-cell *matCellDef="let provider">
-              {{ provider.email || 'N/A' }}
+              @if (provider.email) {
+                <div class="contact-cell">
+                  <mat-icon>mail</mat-icon>
+                  {{ provider.email }}
+                </div>
+              } @else {
+                <span class="na-text">Sin correo</span>
+              }
             </td>
           </ng-container>
   

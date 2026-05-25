@@ -17,6 +17,15 @@
     background: transparent;
     border-left: none;
     box-shadow: -10px 0 30px rgba(0, 0, 0, 0.05);
+
+    // El wrapper interno del mat-sidenav debe tener height:100% para que
+    // cart-panel pueda usar flex y pegar el summary al fondo sin scroll
+    ::ng-deep .mat-drawer-inner-container {
+      height: 100%;
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+    }
   }
 }
 

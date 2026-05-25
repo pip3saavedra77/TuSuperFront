@@ -104,43 +104,42 @@
 
 /* --- TABLA PREMIUM --- */
 .table-container {
-  background: rgba(255, 255, 255, 0.4);
-  backdrop-filter: blur(16px);
-  -webkit-backdrop-filter: blur(16px);
-  border: 1px solid rgba(255, 255, 255, 0.5);
-  border-radius: 24px;
-  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.03);
-  padding: 16px;
-  overflow-x: auto;
+  background: #ffffff;
+  border: 1px solid #e2e8f0;
+  border-radius: 16px;
+  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.06);
+  overflow: hidden;
 }
 
 .orders-table {
   width: 100%;
   background: transparent !important;
-  border-collapse: collapse;
+}
 
-  th.mat-header-cell {
-    color: #5c5e66;
-    font-weight: 600;
-    font-size: 0.85rem;
-    border-bottom: 1px solid rgba(0, 0, 0, 0.05);
-    padding: 16px;
+::ng-deep .orders-table {
+  th.mat-mdc-header-cell {
+    color: #64748b !important;
+    font-weight: 600 !important;
+    font-size: 11px !important;
+    letter-spacing: 0.06em !important;
+    text-transform: uppercase !important;
+    border-bottom: 1px solid #e2e8f0 !important;
+    padding: 14px 16px !important;
+    background: #f8fafc !important;
   }
 
-  td.mat-cell {
-    color: #1a1c1e;
-    font-size: 0.92rem;
-    border-bottom: 1px solid rgba(0, 0, 0, 0.04);
-    padding: 16px;
-    vertical-align: middle;
+  td.mat-mdc-cell {
+    color: #1e293b !important;
+    font-size: 0.92rem !important;
+    border-bottom: 1px solid #f1f5f9 !important;
+    padding: 14px 16px !important;
+    vertical-align: middle !important;
   }
 
-  tr.mat-row {
-    transition: background-color 0.2s ease;
-    
-    &:hover {
-      background-color: rgba(255, 255, 255, 0.6) !important;
-    }
+  tr.mat-mdc-row {
+    transition: background-color 0.15s ease !important;
+    &:hover { background: #f8fafc !important; }
+    &:last-child td.mat-mdc-cell { border-bottom: none !important; }
   }
 }
 

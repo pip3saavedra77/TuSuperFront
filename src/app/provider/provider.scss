@@ -47,38 +47,113 @@
   max-width: 400px;
 }
 
+.add-btn {
+  background: #006d77 !important;
+  color: #ffffff !important;
+  border-radius: 12px !important;
+  font-weight: 600 !important;
+  height: 44px;
+  padding: 0 20px !important;
+  box-shadow: 0 4px 12px rgba(0, 109, 119, 0.25) !important;
+  transition: all 0.2s ease !important;
+
+  &:hover:not(:disabled) {
+    filter: brightness(0.92);
+    box-shadow: 0 6px 18px rgba(0, 109, 119, 0.35) !important;
+  }
+}
+
 .table-container {
-  background: rgba(255, 255, 255, 0.85);
-  backdrop-filter: blur(12px);
-  -webkit-backdrop-filter: blur(12px);
-  border: 1px solid rgba(0, 0, 0, 0.08);
-  border-radius: map.get($radius, "lg");
-  box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.04);
-  padding: map.get($spacing, "16");
-  overflow-x: auto;
+  background: #ffffff;
+  border: 1px solid #e2e8f0;
+  border-radius: 16px;
+  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.06);
+  overflow: hidden;
+
+  @media (max-width: 600px) {
+    .mat-column-id,
+    .mat-column-email {
+      display: none !important;
+    }
+
+    td.mat-cell,
+    th.mat-header-cell {
+      padding: 12px 10px !important;
+      font-size: 0.82rem;
+    }
+  }
 }
 
 .providers-table {
   width: 100%;
   background: transparent;
+}
 
-  th.mat-header-cell {
-    color: #4b5563;
-    font-weight: map.get($font-weights, "semibold");
-    border-bottom: 2px solid rgba(0, 0, 0, 0.05);
-    text-transform: uppercase;
-    font-size: 11px;
-    letter-spacing: 0.05em;
+::ng-deep .providers-table {
+  th.mat-mdc-header-cell {
+    color: #64748b !important;
+    font-weight: 600 !important;
+    font-size: 11px !important;
+    letter-spacing: 0.06em !important;
+    text-transform: uppercase !important;
+    border-bottom: 1px solid #e2e8f0 !important;
+    padding: 14px 16px !important;
+    background: #f8fafc !important;
   }
 
-  td.mat-cell {
-    color: #111827;
-    border-bottom: 1px solid rgba(0, 0, 0, 0.05);
+  td.mat-mdc-cell {
+    color: #1e293b !important;
+    font-size: 0.92rem !important;
+    border-bottom: 1px solid #f1f5f9 !important;
+    padding: 14px 16px !important;
+    vertical-align: middle !important;
   }
 
-  tr.mat-row:hover {
-    background: rgba(0, 0, 0, 0.02);
+  tr.mat-mdc-row {
+    transition: background-color 0.15s ease !important;
+    &:hover { background: #f8fafc !important; }
+    &:last-child td.mat-mdc-cell { border-bottom: none !important; }
   }
+
+  // Nombre con avatar
+  .provider-name-cell {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+
+    .prov-avatar {
+      width: 36px;
+      height: 36px;
+      background: linear-gradient(135deg, #006d77, #00a693);
+      border-radius: 10px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+      color: #fff;
+      font-size: 14px;
+      font-weight: 700;
+    }
+
+    .prov-name { font-weight: 600; }
+  }
+
+  // Teléfono / email con icono
+  .contact-cell {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    color: #475569;
+
+    mat-icon {
+      font-size: 15px;
+      width: 15px;
+      height: 15px;
+      color: #94a3b8;
+    }
+  }
+
+  .na-text { color: #cbd5e1; font-style: italic; font-size: 0.85rem; }
 }
 
 .action-menu-btn {
@@ -139,9 +214,9 @@
 }
 
 mat-paginator {
-  background: transparent !important;
+  background: #f8fafc !important;
   color: #4b5563 !important;
-  margin-top: 16px;
+  border-top: 1px solid #e2e8f0;
 }
 
 ::ng-deep {

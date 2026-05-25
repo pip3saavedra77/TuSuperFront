@@ -55,7 +55,12 @@
           <!-- Nombre -->
           <ng-container matColumnDef="name">
             <th mat-header-cell *matHeaderCellDef>Nombre</th>
-            <td mat-cell *matCellDef="let category">{{ category.name }}</td>
+            <td mat-cell *matCellDef="let category">
+              <div class="category-name-cell">
+                <div class="cat-avatar"><mat-icon>label</mat-icon></div>
+                <span class="cat-name">{{ category.name }}</span>
+              </div>
+            </td>
           </ng-container>
   
           <!-- Descripción -->
@@ -66,6 +71,17 @@
             </td>
           </ng-container>
   
+          <!-- Productos -->
+          <ng-container matColumnDef="products">
+            <th mat-header-cell *matHeaderCellDef>Productos</th>
+            <td mat-cell *matCellDef="let category">
+              @let count = category._count?.products || 0;
+              <span class="products-badge" [class.empty]="count === 0">
+                {{ count }} {{ count === 1 ? 'producto' : 'productos' }}
+              </span>
+            </td>
+          </ng-container>
+
           <!-- Acciones -->
           <ng-container matColumnDef="actions">
             <th mat-header-cell *matHeaderCellDef>Acciones</th>

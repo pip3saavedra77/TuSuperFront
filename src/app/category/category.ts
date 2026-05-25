@@ -75,7 +75,7 @@ export class CategoryComponent implements OnInit {
   readonly searchQuery = signal<string>('');
 
   // ── Table config ─────────────────────────────────────
-  readonly displayedColumns: string[] = ['id', 'name', 'description', 'actions'];
+  readonly displayedColumns: string[] = ['id', 'name', 'description', 'products', 'actions'];
 
   constructor() {
     toObservable(this.searchQuery)
