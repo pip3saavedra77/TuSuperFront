@@ -8,6 +8,10 @@
   padding: 32px;
   min-height: 100vh;
   background-color: #fafafa;
+
+  @media (max-width: 768px) {
+    padding: 16px 12px;
+  }
 }
 
 // ── BARRA DE HERRAMIENTAS SUPERIOR ──────────────────────

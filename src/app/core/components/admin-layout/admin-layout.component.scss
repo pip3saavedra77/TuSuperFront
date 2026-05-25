@@ -367,3 +367,37 @@
   padding: 40px;
 }
 
+// ── Responsive mobile ───────────────────────────────────────
+@media (max-width: 768px) {
+  .top-toolbar {
+    height: 64px !important;
+    padding: 0 16px !important;
+
+    .toolbar-actions {
+      gap: 8px;
+
+      .toolbar-user-info {
+        display: none;
+      }
+
+      .toolbar-user {
+        padding-left: 8px;
+        border-left: none;
+        gap: 0;
+      }
+
+      .toolbar-avatar {
+        width: 36px;
+        height: 36px;
+        font-size: 0.85rem;
+        border-radius: 10px;
+      }
+    }
+  }
+
+  .main-content {
+    padding: 16px 12px;
+    min-height: calc(100vh - 64px);
+  }
+}
+

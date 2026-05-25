@@ -6,6 +6,10 @@
 :host {
   display: block;
   padding: map.get($spacing, "32");
+
+  @media (max-width: 768px) {
+    padding: 16px 12px;
+  }
 }
 
 .orders-list-container {
