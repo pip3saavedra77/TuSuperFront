@@ -32,7 +32,7 @@
         <mat-form-field appearance="outline" class="search-field" subscriptSizing="dynamic">
           <input
             matInput
-            [value]="searchTerm"
+            [value]="searchQuery()"
             (input)="onSearchInput($event)"
             placeholder="Buscar productos..." />
           <mat-icon matSuffix>search</mat-icon>

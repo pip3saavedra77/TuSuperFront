@@ -5,9 +5,9 @@ import {
   inject,
   signal,
 } from '@angular/core';
-import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
+import { takeUntilDestroyed, toObservable } from '@angular/core/rxjs-interop';
 import { CommonModule, CurrencyPipe } from '@angular/common';
-import { Subject, debounceTime, distinctUntilChanged, finalize } from 'rxjs';
+import { BehaviorSubject, combineLatest, debounceTime, distinctUntilChanged, finalize } from 'rxjs';
 import { HttpErrorResponse } from '@angular/common/http';
 
 import { MatSidenavModule } from '@angular/material/sidenav';
@@ -63,19 +63,25 @@ export class CatalogComponent implements OnInit {
   readonly currentOffset = signal<number>(0);
   readonly selectedCategoryId = signal<number | null>(null);
 
-  searchTerm = '';
-  private readonly searchSubject = new Subject<string>();
+  readonly searchQuery = signal<string>('');
+  private readonly reload$ = new BehaviorSubject<void>(undefined);
 
   constructor() {
-    this.searchSubject
-      .pipe(
-        debounceTime(300),
-        distinctUntilChanged(),
-        takeUntilDestroyed(this.destroyRef),
-      )
-      .subscribe(() => {
-        this.currentOffset.set(0);
-        this.loadProducts();
+    const debouncedSearch$ = toObservable(this.searchQuery).pipe(
+      debounceTime(300),
+      distinctUntilChanged(),
+    );
+
+    combineLatest([
+      debouncedSearch$,
+      toObservable(this.selectedCategoryId),
+      toObservable(this.currentLimit),
+      toObservable(this.currentOffset),
+      this.reload$,
+    ])
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe(([search, categoryId, limit, offset]) => {
+        this.fetchProducts(search.trim(), categoryId, limit, offset);
       });
   }
 
@@ -85,18 +91,26 @@ export class CatalogComponent implements OnInit {
   }
 
   loadProducts(): void {
+    this.reload$.next();
+  }
+
+  private fetchProducts(
+    search: string,
+    categoryId: number | null,
+    limit: number,
+    offset: number,
+  ): void {
     this.loading.set(true);
 
     const filters: ProductFilterParams = {
-      limit: this.currentLimit(),
-      offset: this.currentOffset(),
+      limit,
+      offset,
     };
 
-    if (this.searchTerm.trim()) {
-      filters.search = this.searchTerm.trim();
+    if (search) {
+      filters.search = search;
     }
 
-    const categoryId = this.selectedCategoryId();
     if (categoryId !== null) {
       filters.categoryId = categoryId;
     }
@@ -120,20 +134,17 @@ export class CatalogComponent implements OnInit {
 
   onSearchInput(event: Event): void {
     const input = event.target as HTMLInputElement;
-    this.searchTerm = input.value;
-    this.searchSubject.next(this.searchTerm);
+    this.searchQuery.set(input.value);
   }
 
   onCategoryChange(categoryId: number | null): void {
     this.selectedCategoryId.set(categoryId);
     this.currentOffset.set(0);
-    this.loadProducts();
   }
 
   onPageChange(event: PageEvent): void {
     this.currentLimit.set(event.pageSize);
     this.currentOffset.set(event.pageIndex * event.pageSize);
-    this.loadProducts();
   }
 
   onAddToCart(product: Product): void {

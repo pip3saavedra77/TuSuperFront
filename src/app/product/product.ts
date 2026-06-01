@@ -96,6 +96,7 @@ export class Product implements OnInit {
 
   // ── Search ───────────────────────────────────────────
   readonly searchQuery = signal<string>('');
+  private lastSmartSearchQuery = '';
 
   // ── Image Upload State ───────────────────────────────
   readonly selectedFile = signal<File | null>(null);
@@ -132,12 +133,17 @@ export class Product implements OnInit {
         takeUntilDestroyed(this.destroyRef),
       )
       .subscribe((query) => {
+        const cleaned = query.trim();
+        if (cleaned === this.lastSmartSearchQuery) {
+          return;
+        }
+        this.lastSmartSearchQuery = '';
         // Solo búsqueda simple por texto — el smart-search (barcode) se activa con Enter/botón
         this.currentOffset.set(0);
-        if (!query.trim()) {
+        if (!cleaned) {
           this.loadProducts();
         } else {
-          this.filterByName(query.trim());
+          this.filterByName(cleaned);
         }
         // El debounce no abre el drawer — eso solo lo hace onSmartSearch (Enter/botón)
       });
@@ -214,6 +220,7 @@ export class Product implements OnInit {
   }
 
   clearSearch(input?: HTMLInputElement): void {
+    this.lastSmartSearchQuery = '';
     this.searchQuery.set('');
     if (input) {
       input.value = '';
@@ -305,6 +312,7 @@ export class Product implements OnInit {
       return;
     }
 
+    this.lastSmartSearchQuery = cleaned;
     this.isSearching.set(true);
 
     const isCodeLike = !cleaned.includes(' ') && (/^\d+$/.test(cleaned) || /^[a-zA-Z0-9-]{5,50}$/.test(cleaned));
