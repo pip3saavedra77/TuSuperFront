@@ -20,7 +20,8 @@
           [value]="searchQuery()"
           (input)="onSearchInput($event)"
           placeholder="Buscar por nombre o código de barras..."
-          (keyup.enter)="onSmartSearch(searchInput.value)"
+          (keydown.enter)="$event.preventDefault()"
+          (keyup.enter)="onSmartSearch(searchInput.value); $event.preventDefault()"
           [disabled]="loading() || isSearching()" />
         @if (searchQuery() || searchInput.value) {
           <button mat-icon-button class="clear-btn" (click)="clearSearch(searchInput)" aria-label="Limpiar búsqueda">
