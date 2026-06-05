@@ -49,7 +49,7 @@ export class CheckoutComponent {
   constructor() {
     this.checkoutForm = this.fb.group({
       deliveryAddress: ['', [Validators.required, Validators.minLength(5)]],
-      contactPhone: ['', [Validators.required, Validators.pattern(/^[0-9+ ]+$/)]],
+      contactPhone: ['', [Validators.required, Validators.pattern(/^3\d{9}$/)]],
       paymentMethod: ['', [Validators.required]],
     });
 

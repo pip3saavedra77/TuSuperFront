@@ -59,10 +59,13 @@
 
             <mat-form-field appearance="outline">
               <mat-label>Teléfono de Contacto</mat-label>
-              <input matInput formControlName="contactPhone" placeholder="Ej: 3001234567">
+              <input matInput formControlName="contactPhone" placeholder="Ej: 3001234567" maxlength="10">
               <mat-icon matSuffix>phone</mat-icon>
               <mat-error *ngIf="checkoutForm.get('contactPhone')?.hasError('required')">
                 El teléfono es obligatorio
+              </mat-error>
+              <mat-error *ngIf="checkoutForm.get('contactPhone')?.hasError('pattern')">
+                El formato debe ser de 10 dígitos y comenzar con 3 (ej. 3001234567)
               </mat-error>
             </mat-form-field>
 
