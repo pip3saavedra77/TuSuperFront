@@ -1,9 +1,16 @@
 {
-  // For more information, visit: https://angular.dev/ai/mcp
   "servers": {
     "angular-cli": {
       "command": "npx",
       "args": ["-y", "@angular/cli", "mcp"]
+    },
+    "magic": {
+      "type": "stdio",
+      "command": "npx",
+      "args": ["-y", "@21st-dev/magic@latest"],
+      "env": {
+        "API_KEY": "2d9e9d91d25a1a51e146f58296d315abdc834651b5a9b5cf8c8b13914d2b6b9e"
+      }
     }
   }
 }
