@@ -47,5 +47,9 @@ export class OrdersService {
       { status },
     );
   }
+
+  cancelOrder(id: number): Observable<void> {
+    return this.http.delete<void>(`${this.API_URL}/${id}/cancel`);
+  }
 }
 
