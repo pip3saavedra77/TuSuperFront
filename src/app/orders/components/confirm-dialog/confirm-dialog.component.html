@@ -1,0 +1,17 @@
+<div class="confirm-dialog">
+  <div class="confirm-dialog__icon-wrap">
+    <mat-icon class="confirm-dialog__icon">{{ icon }}</mat-icon>
+  </div>
+
+  <h2 class="confirm-dialog__title">{{ title }}</h2>
+  <p class="confirm-dialog__message">{{ message }}</p>
+
+  <div class="confirm-dialog__actions">
+    <button mat-stroked-button class="confirm-dialog__btn cancel" (click)="close(false)">
+      {{ cancelText }}
+    </button>
+    <button mat-raised-button class="confirm-dialog__btn confirm" (click)="close(true)">
+      {{ confirmText }}
+    </button>
+  </div>
+</div>

@@ -59,21 +59,33 @@
           <div class="order-card__divider"></div>
 
           <!-- BOTTOM ROW: TOTAL + ACCIÓN -->
-          <div class="order-card__bottom">
-            <div class="order-card__total-block">
-              <span class="order-card__total-label">Total</span>
-              <span class="order-card__total">
-                {{ order.totalAmount | currency:'COP':'symbol-narrow':'1.0-0' }}
-              </span>
+            <div class="order-card__bottom">
+              <div class="order-card__total-block">
+                <span class="order-card__total-label">Total</span>
+                <span class="order-card__total">
+                  {{ order.totalAmount | currency:'COP':'symbol-narrow':'1.0-0' }}
+                </span>
+              </div>
+              <div class="order-card__actions">
+                @if (isCancellable(order.status)) {
+                  <button
+                    mat-button
+                    class="cancel-action-btn"
+                    (click)="cancelOrder(order)"
+                    aria-label="Cancelar pedido">
+                    <mat-icon>cancel</mat-icon>
+                    <span>Cancelar</span>
+                  </button>
+                }
+                <button
+                  class="details-btn"
+                  (click)="toggleExpanded(order.id)"
+                  [attr.aria-expanded]="isExpanded(order.id)">
+                  <span>{{ isExpanded(order.id) ? 'Ocultar' : 'Ver detalles' }}</span>
+                  <mat-icon>{{ isExpanded(order.id) ? 'expand_less' : 'expand_more' }}</mat-icon>
+                </button>
+              </div>
             </div>
-            <button
-              class="details-btn"
-              (click)="toggleExpanded(order.id)"
-              [attr.aria-expanded]="isExpanded(order.id)">
-              <span>{{ isExpanded(order.id) ? 'Ocultar' : 'Ver detalles' }}</span>
-              <mat-icon>{{ isExpanded(order.id) ? 'expand_less' : 'expand_more' }}</mat-icon>
-            </button>
-          </div>
 
           <!-- ITEMS EXPANDIBLES -->
           @if (isExpanded(order.id)) {
