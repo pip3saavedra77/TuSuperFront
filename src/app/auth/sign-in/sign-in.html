@@ -1,6 +1,10 @@
+@if (loading()) {
+    <app-loading-screen message="Preparando tu experiencia" submessage="Estamos organizando los productos para ti"></app-loading-screen>
+}
+
 <main class="login-page-wrapper">
     <div class="split-layout-container">
-        <!-- Left Column: Ninth Style (Desktop Only) -->
+        <!-- Left Column: Brand Side (Desktop Only) -->
         <section class="left-brand-column" 
                  [class.bg-step-1]="activeStep === 1"
                  [class.bg-step-2]="activeStep === 2"
@@ -8,69 +12,69 @@
                  aria-label="Información de la marca TuSuper">
             <!-- Brand Logo -->
             <div class="brand-logo-container">
-                <img
-                    src="/branding/tusuper-logo.png"
-                    alt="Logo TuSuper"
-                    class="brand-logo-img"
-                />
+                <img src="/branding/tusuper-logo.png" alt="Logo TuSuper" class="brand-logo-img" />
                 <span class="brand-name">TuSuper</span>
             </div>
 
-            <!-- Join Us Badge -->
+            <!-- Badge -->
             <div class="brand-badge-container">
                 <span class="brand-badge-pill" role="status">Tu súper a otro nivel</span>
             </div>
             
-            <!-- Hero Title (Principal para SEO en Escritorio) -->
+            <!-- Hero (Compact) -->
             <div class="brand-hero-section">
                 <h1 class="hero-title">Empieza tu compra</h1>
-                <p class="hero-subtitle">Sigue estos sencillos pasos para realizar tu compra en minutos con la mejor calidad y frescura.</p>
+                <p class="hero-subtitle">Regístrate y descubre ofertas exclusivas.</p>
             </div>
 
-            <!-- Steps Footer Cards -->
+            <!-- Animated Characters -->
+            <div class="characters-wrapper">
+                <app-animated-characters
+                    [hidePassword]="hidePassword"
+                    [isTyping]="isTyping()"
+                    [passwordLength]="(registerForm.get('password')?.value ?? '').length">
+                </app-animated-characters>
+            </div>
+
+            <!-- Steps Cards (Compact) -->
             <div class="premium-benefits-card-stack" aria-label="Pasos para realizar el pedido">
                 <div class="benefit-card" 
                      [class.active-card]="activeStep === 1"
                      [class.glassmorphic-benefit]="activeStep !== 1"
                      (click)="selectStep(1)">
                     <span class="step-number" aria-hidden="true">1</span>
-                    <span class="step-text">Crear tu cuenta gratis</span>
+                    <span class="step-text">Crea tu cuenta</span>
                 </div>
                 <div class="benefit-card" 
                      [class.active-card]="activeStep === 2"
                      [class.glassmorphic-benefit]="activeStep !== 2"
                      (click)="selectStep(2)">
                     <span class="step-number" aria-hidden="true">2</span>
-                    <span class="step-text">Explora productos y ofertas</span>
+                    <span class="step-text">Explora y ahorra</span>
                 </div>
                 <div class="benefit-card" 
                      [class.active-card]="activeStep === 3"
                      [class.glassmorphic-benefit]="activeStep !== 3"
                      (click)="selectStep(3)">
                     <span class="step-number" aria-hidden="true">3</span>
-                    <span class="step-text">Recibe tu pedido a domicilio</span>
+                    <span class="step-text">Recibe en casa</span>
                 </div>
             </div>
         </section>
 
-        <!-- Right Column: Form Container (Mobile/Desktop) -->
+        <!-- Right Column: Form -->
         <section class="right-form-column" aria-label="Formulario de registro">
-            <!-- Mobile Header (Visible únicamente en smartphone sobre el degradado) -->
+            <!-- Mobile Header -->
             <div class="mobile-logo-header">
                 <a routerLink="/auth/log-in" class="back-link-btn" aria-label="Volver al inicio de sesión">
                     <mat-icon>arrow_back</mat-icon>
                 </a>
                 <div class="mobile-logo-left">
-                    <img
-                        src="/branding/tusuper-logo.png"
-                        alt="Logo TuSuper"
-                        class="brand-logo-img brand-logo-img--mobile"
-                    />
+                    <img src="/branding/tusuper-logo.png" alt="Logo TuSuper" class="brand-logo-img brand-logo-img--mobile" />
                     <span class="brand-name">TuSuper</span>
                 </div>
             </div>
 
-            <!-- Card/Form Wrapper -->
             <div class="auth-form-card">
                 <header class="form-header">
                     <h2 class="card-title">Crear Cuenta</h2>
@@ -78,7 +82,7 @@
                 </header>
 
                 <form [formGroup]="registerForm" (ngSubmit)="onSubmit()" class="login-form">
-                    <!-- First Name & Last Name Grid -->
+                    <!-- First Name & Last Name -->
                     <div class="name-grid">
                         <div class="input-group">
                             <label for="firstName" class="input-label">Nombre</label>
@@ -101,7 +105,7 @@
                         </div>
                     </div>
 
-                    <!-- Email input group -->
+                    <!-- Email -->
                     <div class="input-group">
                         <label for="email" class="input-label">Correo electrónico</label>
                         <input id="email" type="email" formControlName="email" class="premium-input-field" placeholder="nombre@ejemplo.com" required autocomplete="email" aria-label="Ingresa tu correo electrónico">
@@ -117,11 +121,11 @@
                         }
                     </div>
 
-                    <!-- Password input group -->
+                    <!-- Password -->
                     <div class="input-group">
                         <label for="password" class="input-label">Contraseña</label>
                         <div class="password-input-wrapper">
-                            <input id="password" [type]="hidePassword ? 'password' : 'text'" formControlName="password" class="premium-input-field" placeholder="••••••••" required autocomplete="new-password" aria-label="Ingresa una contraseña de mínimo 6 caracteres">
+                            <input id="password" [type]="hidePassword ? 'password' : 'text'" formControlName="password" class="premium-input-field" placeholder="••••••••" required autocomplete="new-password" aria-label="Ingresa una contraseña de mínimo 8 caracteres" (input)="onTyping()">
                             <button type="button" class="visibility-toggle" (click)="hidePassword = !hidePassword" [attr.aria-label]="hidePassword ? 'Mostrar contraseña' : 'Ocultar contraseña'">
                                 <mat-icon>{{hidePassword ? 'visibility_off' : 'visibility'}}</mat-icon>
                             </button>
@@ -139,11 +143,11 @@
                         <app-password-strength [password]="registerForm.get('password')?.value ?? ''"></app-password-strength>
                     </div>
 
-                    <!-- Confirm Password input group -->
+                    <!-- Confirm Password -->
                     <div class="input-group">
                         <label for="confirmPassword" class="input-label">Confirmar Contraseña</label>
                         <div class="password-input-wrapper">
-                            <input id="confirmPassword" [type]="hideConfirmPassword ? 'password' : 'text'" formControlName="confirmPassword" class="premium-input-field" placeholder="••••••••" required autocomplete="new-password" aria-label="Confirma tu contraseña">
+                            <input id="confirmPassword" [type]="hideConfirmPassword ? 'password' : 'text'" formControlName="confirmPassword" class="premium-input-field" placeholder="••••••••" required autocomplete="new-password" aria-label="Confirma tu contraseña" (input)="onTyping()">
                             <button type="button" class="visibility-toggle" (click)="hideConfirmPassword = !hideConfirmPassword" [attr.aria-label]="hideConfirmPassword ? 'Mostrar confirmación de contraseña' : 'Ocultar confirmación'">
                                 <mat-icon>{{hideConfirmPassword ? 'visibility_off' : 'visibility'}}</mat-icon>
                             </button>
@@ -160,16 +164,16 @@
                         }
                     </div>
 
-                    <!-- Terms & Conditions Checkbox -->
+                    <!-- Terms -->
                     <div class="form-options">
                         <label class="remember-me circular-terms" for="terms-checkbox">
                             <input id="terms-checkbox" type="checkbox" required>
                             <span class="checkbox-custom"></span>
-                            <span class="checkbox-label">Acepto los Términos y Condiciones y la Política de Privacidad</span>
+                            <span class="checkbox-label">Acepto los Términos y Condiciones</span>
                         </label>
                     </div>
 
-                    <!-- Submit Button -->
+                    <!-- Submit -->
                     <button type="submit" class="primary-electric-button" [disabled]="registerForm.invalid || loading()" aria-label="Crear mi cuenta">
                         @if (loading()) {
                             <span class="spinner-container">
@@ -181,7 +185,7 @@
                     </button>
                 </form>
 
-                <!-- Footer link -->
+                <!-- Footer -->
                 <footer class="auth-footer">
                     <p>¿Ya tienes cuenta? <a routerLink="/auth/log-in" class="footer-link" aria-label="Volver al inicio de sesión">Inicia sesión</a></p>
                 </footer>

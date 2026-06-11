@@ -16,6 +16,7 @@ import { environment } from '../../../environments/environment';
 import { getHttpErrorMessage } from '../../core/utils/http-error-message';
 import { HttpErrorResponse } from '@angular/common/http';
 import { AnimatedCharacters } from '../animated-characters/animated-characters';
+import { LoadingScreen } from '../../shared/components/loading-screen/loading-screen';
 
 @Component({
   selector: 'app-log-in',
@@ -32,6 +33,7 @@ import { AnimatedCharacters } from '../animated-characters/animated-characters';
     MatCheckboxModule,
     MatSnackBarModule,
     AnimatedCharacters,
+    LoadingScreen,
   ],
   templateUrl: './log-in.html',
   styleUrl: './log-in.scss',

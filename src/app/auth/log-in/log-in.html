@@ -1,6 +1,10 @@
+@if (loading()) {
+    <app-loading-screen message="Preparando tu experiencia" submessage="Estamos organizando los productos para ti"></app-loading-screen>
+}
+
 <main class="login-page-wrapper">
     <div class="split-layout-container">
-        <!-- Left Column: Ninth Style (Desktop Only) -->
+        <!-- Left Column: Brand Side (Desktop Only) -->
         <section class="left-brand-column" 
                  [class.bg-step-1]="activeStep === 1"
                  [class.bg-step-2]="activeStep === 2"
@@ -16,15 +20,15 @@
                 <span class="brand-name">TuSuper</span>
             </div>
 
-            <!-- Join Us Badge -->
+            <!-- Badge -->
             <div class="brand-badge-container">
                 <span class="brand-badge-pill" role="status">Tu súpermercado favorito a un toque</span>
             </div>
             
-            <!-- Hero Title (Principal para SEO en Escritorio) -->
+            <!-- Hero (Compact) -->
             <div class="brand-hero-section">
                 <h1 class="hero-title">Empieza tu compra</h1>
-                <p class="hero-subtitle">Sigue estos sencillos pasos para realizar tu compra en minutos con la mejor calidad y frescura.</p>
+                <p class="hero-subtitle">Sigue estos pasos para realizar tu compra en minutos.</p>
             </div>
 
             <!-- Animated Characters -->
@@ -36,35 +40,35 @@
                 </app-animated-characters>
             </div>
 
-            <!-- Steps Footer Cards -->
+            <!-- Steps Cards (Compact) -->
             <div class="premium-benefits-card-stack" aria-label="Pasos para realizar el pedido">
                 <div class="benefit-card" 
                      [class.active-card]="activeStep === 1"
                      [class.glassmorphic-benefit]="activeStep !== 1"
                      (click)="selectStep(1)">
                     <span class="step-number" aria-hidden="true">1</span>
-                    <span class="step-text">Inicia sesión en tu cuenta</span>
+                    <span class="step-text">Inicia sesión</span>
                 </div>
                 <div class="benefit-card" 
                      [class.active-card]="activeStep === 2"
                      [class.glassmorphic-benefit]="activeStep !== 2"
                      (click)="selectStep(2)">
                     <span class="step-number" aria-hidden="true">2</span>
-                    <span class="step-text">Explora productos y ofertas</span>
+                    <span class="step-text">Explora y ahorra</span>
                 </div>
                 <div class="benefit-card" 
                      [class.active-card]="activeStep === 3"
                      [class.glassmorphic-benefit]="activeStep !== 3"
                      (click)="selectStep(3)">
                     <span class="step-number" aria-hidden="true">3</span>
-                    <span class="step-text">Recibe tu pedido a domicilio</span>
+                    <span class="step-text">Recibe en casa</span>
                 </div>
             </div>
         </section>
 
-        <!-- Right Column: Form Container (Mobile/Desktop) -->
+        <!-- Right Column: Form -->
         <section class="right-form-column" aria-label="Formulario de acceso">
-            <!-- Mobile Header (Visible únicamente en smartphone sobre el degradado) -->
+            <!-- Mobile Header -->
             <div class="mobile-logo-header">
                 <div class="mobile-logo-left">
                     <img
@@ -76,16 +80,14 @@
                 </div>
             </div>
 
-            <!-- Card/Form Wrapper -->
             <div class="auth-form-card">
                 <header class="form-header">
-                    <!-- Título secundario estructurado para SEO -->
                     <h2 class="card-title">Iniciar Sesión</h2>
                     <p class="card-subtitle">Compra, ahorra y disfruta de la mejor calidad</p>
                 </header>
 
                 <form [formGroup]="loginForm" (ngSubmit)="onSubmit()" class="login-form" [class.shake-form]="shakeForm()">
-                    <!-- Email input group -->
+                    <!-- Email -->
                     <div class="input-group">
                         <label for="email" class="input-label">Correo electrónico</label>
                         <div class="input-container">
@@ -93,17 +95,17 @@
                         </div>
                         @if (loginForm.get('email')?.hasError('email') && loginForm.get('email')?.touched) {
                             <span class="error-text" role="alert">
-                                <mat-icon class="error-icon">warning</mat-icon> Ingresa un correo electrónico válido
+                                <mat-icon class="error-icon">warning</mat-icon> Ingresa un correo válido
                             </span>
                         }
                         @if (loginForm.get('email')?.hasError('required') && loginForm.get('email')?.touched) {
                             <span class="error-text" role="alert">
-                                <mat-icon class="error-icon">warning</mat-icon> El correo electrónico es obligatorio
+                                <mat-icon class="error-icon">warning</mat-icon> El correo es obligatorio
                             </span>
                         }
                     </div>
 
-                    <!-- Password input group -->
+                    <!-- Password -->
                     <div class="input-group">
                         <label for="password" class="input-label">Contraseña</label>
                         <div class="password-input-wrapper">
@@ -124,7 +126,7 @@
                         }
                     </div>
 
-                    <!-- Inline error banner (replaces ugly snackbar) -->
+                    <!-- Error Banner -->
                     @if (errorMessage()) {
                         <div class="login-error-banner" role="alert">
                             <mat-icon class="error-banner-icon">error_outline</mat-icon>
@@ -132,7 +134,7 @@
                         </div>
                     }
 
-                    <!-- Forgot-password hint after 3 failed attempts -->
+                    <!-- Forgot hint -->
                     @if (failedAttempts() >= 3 && !errorMessage()) {
                         <div class="forgot-password-hint" role="alert">
                             <mat-icon>lock_reset</mat-icon>
@@ -140,7 +142,7 @@
                         </div>
                     }
 
-                    <!-- Options (Remember me / Forgot password) -->
+                    <!-- Options -->
                     <div class="form-options">
                         <label class="remember-me" for="remember-checkbox">
                             <input id="remember-checkbox" type="checkbox" [checked]="rememberMe()" (change)="rememberMe.set(!rememberMe())">
@@ -150,7 +152,7 @@
                         <a routerLink="/auth/forgot-password" class="forgot-password" aria-label="Recuperar contraseña olvidada">¿Olvidaste tu contraseña?</a>
                     </div>
 
-                    <!-- Submit Button -->
+                    <!-- Submit -->
                     <button type="submit" class="primary-electric-button" [disabled]="loginForm.invalid || loading()" aria-label="Iniciar sesión con tu correo y contraseña">
                         @if (loading()) {
                             <span class="spinner-container">
@@ -166,14 +168,14 @@
                         <span class="divider-text">O continúa con</span>
                     </div>
 
-                    <!-- Social Google Button -->
+                    <!-- Google -->
                     <button type="button" class="google-social-button" (click)="loginWithGoogle()" aria-label="Iniciar sesión con tu cuenta de Google">
                         <img src="https://fonts.gstatic.com/s/i/productlogos/googleg/v6/24px.svg" alt="Icono de Google" class="google-icon">
                         <span>Google</span>
                     </button>
                 </form>
 
-                <!-- Footer link -->
+                <!-- Footer -->
                 <footer class="auth-footer">
                     <p>¿No tienes cuenta? <a routerLink="/auth/sign-in" class="footer-link" aria-label="Crear una nueva cuenta">Regístrate aquí</a></p>
                 </footer>

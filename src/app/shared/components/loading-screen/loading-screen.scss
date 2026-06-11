@@ -1,0 +1,139 @@
+@use '../../../styles/stitch_tokens' as st;
+
+// ==========================================
+// LOADING SCREEN - Supermarket Theme
+// ==========================================
+
+$green-primary: #22c55e;
+$green-dark: #166534;
+$green-light: #86efac;
+$lime: #a3e635;
+
+.loading-screen-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 9999;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: linear-gradient(135deg, #000000 0%, #0f1a0f 50%, #000000 100%);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+}
+
+.loading-screen-content {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 32px;
+  max-width: 400px;
+  text-align: center;
+  padding: 48px;
+}
+
+// Cart Animation
+.cart-wrapper {
+  position: relative;
+  width: 120px;
+  height: 120px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  animation: cartBounce 2s ease-in-out infinite;
+}
+
+.cart-icon {
+  width: 80px;
+  height: 80px;
+  color: $green-primary;
+  filter: drop-shadow(0 0 20px rgba(34, 197, 94, 0.4));
+}
+
+.cart-wheel {
+  animation: wheelSpin 1s linear infinite;
+  transform-origin: center;
+}
+
+.cart-item {
+  animation: itemBounce 1.5s ease-in-out infinite;
+
+  &.item-1 { animation-delay: 0s; }
+  &.item-2 { animation-delay: 0.2s; }
+  &.item-3 { animation-delay: 0.4s; }
+  &.item-4 { animation-delay: 0.6s; }
+}
+
+// Text
+.loading-text {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.loading-title {
+  font-family: st.$stitch-font-headline;
+  font-size: 24px;
+  font-weight: 700;
+  color: #ffffff;
+  letter-spacing: -0.02em;
+  margin: 0;
+  animation: textPulse 2s ease-in-out infinite;
+}
+
+.loading-subtitle {
+  font-family: st.$stitch-font-body;
+  font-size: 14px;
+  color: #a1a1aa;
+  margin: 0;
+  line-height: 1.5;
+}
+
+// Progress bar
+.loading-progress {
+  width: 200px;
+  height: 4px;
+  background: rgba(255, 255, 255, 0.1);
+  border-radius: 9999px;
+  overflow: hidden;
+  position: relative;
+}
+
+.loading-progress-bar {
+  position: absolute;
+  left: 0;
+  top: 0;
+  height: 100%;
+  width: 40%;
+  background: linear-gradient(90deg, $green-primary, $lime);
+  border-radius: 9999px;
+  animation: progressSlide 2s ease-in-out infinite;
+  box-shadow: 0 0 10px rgba(34, 197, 94, 0.5);
+}
+
+// ==========================================
+// ANIMATIONS
+// ==========================================
+@keyframes cartBounce {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-8px); }
+}
+
+@keyframes wheelSpin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+@keyframes itemBounce {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-4px); }
+}
+
+@keyframes textPulse {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.7; }
+}
+
+@keyframes progressSlide {
+  0% { left: -40%; }
+  100% { left: 100%; }
+}

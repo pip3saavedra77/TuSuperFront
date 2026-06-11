@@ -11,6 +11,8 @@ import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { AuthService } from '../../core/services/auth';
 import { PasswordStrengthComponent } from '../../shared/components/password-strength/password-strength';
+import { AnimatedCharacters } from '../animated-characters/animated-characters';
+import { LoadingScreen } from '../../shared/components/loading-screen/loading-screen';
 
 const passwordMatchValidator: ValidatorFn = (control: AbstractControl): ValidationErrors | null => {
   const password = control.get('password');
@@ -47,7 +49,9 @@ const passwordMatchValidator: ValidatorFn = (control: AbstractControl): Validati
     MatIconModule,
     MatSnackBarModule,
     MatProgressSpinnerModule,
-    PasswordStrengthComponent
+    PasswordStrengthComponent,
+    AnimatedCharacters,
+    LoadingScreen
   ],
   templateUrl: './sign-in.html',
   styleUrls: ['./sign-in.scss']
@@ -62,9 +66,21 @@ export class SignIn {
   public hideConfirmPassword = true;
   public loading = signal<boolean>(false);
   public activeStep = 1;
+  public isTyping = signal(false);
+  private typingTimeout: number | null = null;
 
   public selectStep(step: number): void {
     this.activeStep = step;
+  }
+
+  public onTyping(): void {
+    this.isTyping.set(true);
+    if (this.typingTimeout) {
+      clearTimeout(this.typingTimeout);
+    }
+    this.typingTimeout = window.setTimeout(() => {
+      this.isTyping.set(false);
+    }, 300);
   }
 
   public registerForm = this.fb.group({

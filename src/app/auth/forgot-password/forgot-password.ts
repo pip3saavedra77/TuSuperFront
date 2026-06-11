@@ -9,6 +9,8 @@ import { MatIconModule } from '@angular/material/icon';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { RouterModule } from '@angular/router';
 import { AuthService } from '../../core/services/auth';
+import { AnimatedCharacters } from '../animated-characters/animated-characters';
+import { LoadingScreen } from '../../shared/components/loading-screen/loading-screen';
 
 @Component({
   selector: 'app-forgot-password',
@@ -23,6 +25,8 @@ import { AuthService } from '../../core/services/auth';
     MatFormFieldModule,
     MatIconModule,
     MatProgressSpinnerModule,
+    AnimatedCharacters,
+    LoadingScreen,
   ],
   templateUrl: './forgot-password.html',
   styleUrl: './forgot-password.scss',
@@ -34,9 +38,22 @@ export class ForgotPassword {
   isLoading = signal(false);
   successMessage = signal('');
   activeStep = 1;
+  isTyping = signal(false);
+  private typingTimeout: number | null = null;
+  hidePassword = true;
 
   selectStep(step: number): void {
     this.activeStep = step;
+  }
+
+  onTyping(): void {
+    this.isTyping.set(true);
+    if (this.typingTimeout) {
+      clearTimeout(this.typingTimeout);
+    }
+    this.typingTimeout = window.setTimeout(() => {
+      this.isTyping.set(false);
+    }, 300);
   }
 
   forgotForm = this.fb.group({
