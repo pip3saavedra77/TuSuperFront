@@ -209,7 +209,7 @@
             <span class="label">Actualizar Estado:</span>
             <mat-form-field appearance="outline" class="w-100">
               <mat-label>Seleccionar nuevo estado</mat-label>
-              <mat-select [value]="order.status" (selectionChange)="executeStatusChange(order.id, $event.value)">
+              <mat-select [(ngModel)]="drawerSelectedStatus" (selectionChange)="executeStatusChange(order.id, $event.value)">
                 @for (status of statusOptions; track status) {
                   <mat-option
                     [value]="status"
