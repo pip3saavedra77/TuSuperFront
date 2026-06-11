@@ -27,6 +27,15 @@
                 <p class="hero-subtitle">Sigue estos sencillos pasos para realizar tu compra en minutos con la mejor calidad y frescura.</p>
             </div>
 
+            <!-- Animated Characters -->
+            <div class="characters-wrapper">
+                <app-animated-characters
+                    [hidePassword]="hidePassword"
+                    [isTyping]="isTyping()"
+                    [passwordLength]="(loginForm.get('password')?.value ?? '').length">
+                </app-animated-characters>
+            </div>
+
             <!-- Steps Footer Cards -->
             <div class="premium-benefits-card-stack" aria-label="Pasos para realizar el pedido">
                 <div class="benefit-card" 
@@ -98,7 +107,7 @@
                     <div class="input-group">
                         <label for="password" class="input-label">Contraseña</label>
                         <div class="password-input-wrapper">
-                            <input id="password" [type]="hidePassword ? 'password' : 'text'" formControlName="password" class="premium-input-field" placeholder="••••••••" required autocomplete="current-password" aria-label="Ingresa tu contraseña">
+                            <input id="password" [type]="hidePassword ? 'password' : 'text'" formControlName="password" class="premium-input-field" placeholder="••••••••" required autocomplete="current-password" aria-label="Ingresa tu contraseña" (input)="onTyping()">
                             <button type="button" class="visibility-toggle" (click)="hidePassword = !hidePassword" [attr.aria-label]="hidePassword ? 'Mostrar contraseña' : 'Ocultar contraseña'">
                                 <mat-icon>{{hidePassword ? 'visibility_off' : 'visibility'}}</mat-icon>
                             </button>

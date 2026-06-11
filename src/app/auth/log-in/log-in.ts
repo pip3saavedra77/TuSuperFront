@@ -15,6 +15,7 @@ import { MatSnackBarModule } from '@angular/material/snack-bar';
 import { environment } from '../../../environments/environment';
 import { getHttpErrorMessage } from '../../core/utils/http-error-message';
 import { HttpErrorResponse } from '@angular/common/http';
+import { AnimatedCharacters } from '../animated-characters/animated-characters';
 
 @Component({
   selector: 'app-log-in',
@@ -30,6 +31,7 @@ import { HttpErrorResponse } from '@angular/common/http';
     MatIconModule,
     MatCheckboxModule,
     MatSnackBarModule,
+    AnimatedCharacters,
   ],
   templateUrl: './log-in.html',
   styleUrl: './log-in.scss',
@@ -46,6 +48,8 @@ export class LogIn implements OnInit {
   failedAttempts = signal(0);
   shakeForm = signal(false);
   errorMessage = signal('');
+  isTyping = signal(false);
+  typingTimeout: number | null = null;
 
   ngOnInit(): void {
     const rememberedEmail = localStorage.getItem('remember_email');
@@ -57,6 +61,16 @@ export class LogIn implements OnInit {
 
   selectStep(step: number): void {
     this.activeStep = step;
+  }
+
+  onTyping(): void {
+    this.isTyping.set(true);
+    if (this.typingTimeout) {
+      clearTimeout(this.typingTimeout);
+    }
+    this.typingTimeout = window.setTimeout(() => {
+      this.isTyping.set(false);
+    }, 300);
   }
 
   loginForm = this.fb.group({

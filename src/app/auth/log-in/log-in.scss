@@ -129,6 +129,18 @@ $error-text: #fca5a5;
     }
   }
 
+  .characters-wrapper {
+    display: flex;
+    justify-content: center;
+    align-items: flex-end;
+    margin-top: 24px;
+    margin-bottom: 24px;
+    flex: 1;
+    min-height: 200px;
+    max-height: 400px;
+    overflow: hidden;
+  }
+
   // Steps cards layout at bottom (dark gray variant)
   .premium-benefits-card-stack {
     display: flex;
