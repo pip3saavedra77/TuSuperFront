@@ -87,6 +87,7 @@ export class OrdersListComponent implements OnInit {
   readonly selectedOrder = signal<Order | null>(null);
   readonly drawerOpen = signal<boolean>(false);
   readonly updatingStatus = signal<boolean>(false);
+  drawerSelectedStatus: OrderStatus | null = null;
 
   filterStatus: OrderStatus | '' = '';
   filterStartDate: string = '';
@@ -221,6 +222,7 @@ export class OrdersListComponent implements OnInit {
 
   viewDetails(order: Order): void {
     this.selectedOrder.set(order);
+    this.drawerSelectedStatus = order.status;
     this.drawerOpen.set(true);
   }
 
@@ -254,11 +256,15 @@ export class OrdersListComponent implements OnInit {
           if (current?.id === orderId) {
             this.selectedOrder.set({ ...current, status: newStatus });
           }
+          this.drawerSelectedStatus = newStatus;
 
           this.loadOrders();
         },
         error: (err: HttpErrorResponse) => {
           this.showError(err);
+          // Revertir el valor del select si la petición falló
+          const current = this.selectedOrder();
+          this.drawerSelectedStatus = current?.status ?? null;
         },
       });
   }
