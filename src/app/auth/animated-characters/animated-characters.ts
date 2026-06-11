@@ -31,8 +31,8 @@ export class AnimatedCharacters implements OnDestroy {
   isLookingAtEachOther = signal(false);
   isGreenPeeking = signal(false);
 
-  private blinkTimeouts: number[] = [];
-  private peekTimeout: number | null = null;
+  private blinkTimeoutIds: number[] = [];
+  private peekTimeoutId: number | null = null;
 
   constructor() {
     this.startBlinking('green');
@@ -40,8 +40,8 @@ export class AnimatedCharacters implements OnDestroy {
   }
 
   ngOnDestroy(): void {
-    this.blinkTimeouts.forEach(id => clearTimeout(id));
-    if (this.peekTimeout) clearTimeout(this.peekTimeout);
+    this.blinkTimeoutIds.forEach(id => clearTimeout(id));
+    if (this.peekTimeoutId) clearTimeout(this.peekTimeoutId);
   }
 
   @HostListener('window:mousemove', ['$event'])
@@ -68,32 +68,9 @@ export class AnimatedCharacters implements OnDestroy {
           }, 150);
         }
       }, interval);
-      this.blinkTimeouts.push(timeout);
+      this.blinkTimeoutIds.push(timeout);
     };
     schedule();
-  }
-
-  // When typing starts, characters look at each other briefly
-  typingEffect(): void {
-    this.isLookingAtEachOther.set(true);
-    const timeout = window.setTimeout(() => {
-      this.isLookingAtEachOther.set(false);
-    }, 800);
-    this.blinkTimeouts.push(timeout);
-  }
-
-  // Green peeking when password is visible
-  peekingEffect(): void {
-    if (this.peekTimeout) clearTimeout(this.peekTimeout);
-    const schedulePeek = () => {
-      this.peekTimeout = window.setTimeout(() => {
-        this.isGreenPeeking.set(true);
-        window.setTimeout(() => {
-          this.isGreenPeeking.set(false);
-        }, 800);
-      }, Math.random() * 3000 + 2000);
-    };
-    schedulePeek();
   }
 
   calculatePosition(ref: ElementRef<HTMLDivElement> | HTMLDivElement | undefined): FacePosition {
@@ -122,7 +99,6 @@ export class AnimatedCharacters implements OnDestroy {
     return this.passwordLength > 0 && this.hidePassword;
   }
 
-  // Eye position calculation
   calculateEyePosition(ref: ElementRef<HTMLDivElement> | HTMLDivElement | undefined, maxDistance: number): { x: number; y: number } {
     const el = ref instanceof ElementRef ? ref.nativeElement : ref;
     if (!el) return { x: 0, y: 0 };
@@ -142,7 +118,6 @@ export class AnimatedCharacters implements OnDestroy {
     };
   }
 
-  // For forced look direction (when turning away or looking at each other)
   getForcedLook(lookType: 'away' | 'eachOther' | 'peeking' | undefined): { x: number; y: number } | null {
     if (!lookType) return null;
     if (lookType === 'away') return { x: -4, y: -4 };

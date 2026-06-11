@@ -1,12 +1,7 @@
 import { Component, inject, OnInit, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ReactiveFormsModule, FormBuilder, Validators, AbstractControl, ValidationErrors } from '@angular/forms';
-import { MatCardModule } from '@angular/material/card';
-import { MatInputModule } from '@angular/material/input';
-import { MatButtonModule } from '@angular/material/button';
-import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatIconModule } from '@angular/material/icon';
-import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { ActivatedRoute, Router, RouterModule } from '@angular/router';
 import { AuthService } from '../../core/services/auth';
 import { AnimatedCharacters } from '../animated-characters/animated-characters';
@@ -19,12 +14,7 @@ import { LoadingScreen } from '../../shared/components/loading-screen/loading-sc
     CommonModule,
     ReactiveFormsModule,
     RouterModule,
-    MatCardModule,
-    MatInputModule,
-    MatButtonModule,
-    MatFormFieldModule,
     MatIconModule,
-    MatProgressSpinnerModule,
     AnimatedCharacters,
     LoadingScreen,
   ],
@@ -98,7 +88,7 @@ export class ResetPassword implements OnInit {
 
   private stopLoading(): void {
     const elapsed = Date.now() - this.loadingStartTime;
-    const remaining = Math.max(0, 8000 - elapsed);
+    const remaining = Math.max(0, 5000 - elapsed);
     setTimeout(() => this.isLoading.set(false), remaining);
   }
 

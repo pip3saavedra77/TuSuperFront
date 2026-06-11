@@ -2,10 +2,6 @@ import { Component, inject, signal, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ReactiveFormsModule, FormBuilder, Validators } from '@angular/forms';
 
-import { MatCardModule } from '@angular/material/card';
-import { MatInputModule } from '@angular/material/input';
-import { MatButtonModule } from '@angular/material/button';
-import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatIconModule } from '@angular/material/icon';
 import { MatCheckboxModule } from '@angular/material/checkbox';
 import { LoginCredentials } from '../interfaces/login';
@@ -25,10 +21,6 @@ import { LoadingScreen } from '../../shared/components/loading-screen/loading-sc
     CommonModule,
     ReactiveFormsModule,
     RouterModule,
-    MatCardModule,
-    MatInputModule,
-    MatButtonModule,
-    MatFormFieldModule,
     MatIconModule,
     MatCheckboxModule,
     MatSnackBarModule,
@@ -83,7 +75,7 @@ export class LogIn implements OnInit {
 
   private stopLoading(): void {
     const elapsed = Date.now() - this.loadingStartTime;
-    const remaining = Math.max(0, 8000 - elapsed);
+    const remaining = Math.max(0, 5000 - elapsed);
     setTimeout(() => this.loading.set(false), remaining);
   }
 
