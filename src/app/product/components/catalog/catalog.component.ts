@@ -149,10 +149,11 @@ export class CatalogComponent implements OnInit {
 
   onAddToCart(product: Product): void {
     this.cartStore.addItem(product);
+    this.cartStore.openCart();
     this.snackBar.open(
       `${product.name} agregado al carrito`,
       'OK',
-      { duration: 2000 },
+      { duration: 2000, panelClass: ['success-snackbar'] },
     );
   }
 
@@ -184,6 +185,6 @@ export class CatalogComponent implements OnInit {
     const message =
       (err.error as { message?: string })?.message ??
       'Error al procesar la solicitud';
-    this.snackBar.open(message, 'Cerrar', { duration: 5000 });
+    this.snackBar.open(message, 'Cerrar', { duration: 5000, panelClass: ['error-snackbar'] });
   }
 }

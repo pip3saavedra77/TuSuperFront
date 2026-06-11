@@ -92,6 +92,13 @@
             <div class="order-card__items" [id]="'order-items-' + order.id">
               @for (item of order.items; track item.id) {
                 <div class="order-item">
+                  <div class="order-item__image">
+                    @if (item.product?.imageUrl) {
+                      <img [src]="item.product!.imageUrl" [alt]="item.product!.name" loading="lazy" />
+                    } @else {
+                      <mat-icon>inventory_2</mat-icon>
+                    }
+                  </div>
                   <div class="order-item__name">{{ item.product?.name || 'Producto #' + item.productId }}</div>
                   <div class="order-item__meta">
                     <span class="order-item__qty">×{{ item.quantity }}</span>
@@ -100,6 +107,14 @@
                   </div>
                 </div>
               }
+              <div class="order-card__extra-info">
+                <div class="extra-row"><mat-icon>location_on</mat-icon><span>{{ order.deliveryAddress }}</span></div>
+                <div class="extra-row"><mat-icon>phone</mat-icon><span>{{ order.contactPhone }}</span></div>
+                <div class="extra-row"><mat-icon>payments</mat-icon><span>{{ order.paymentMethod }}</span></div>
+                @if (order.deliveryNotes) {
+                  <div class="extra-row"><mat-icon>notes</mat-icon><span>{{ order.deliveryNotes }}</span></div>
+                }
+              </div>
             </div>
           }
 

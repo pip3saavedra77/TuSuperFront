@@ -3,7 +3,7 @@
 
     <!-- Header -->
     <header class="checkout-header">
-      <button mat-icon-button routerLink="/product">
+      <button mat-icon-button routerLink="/product" aria-label="Volver a la tienda">
         <mat-icon>arrow_back</mat-icon>
       </button>
       <div>
@@ -48,38 +48,45 @@
         <section class="checkout-form-section" [formGroup]="checkoutForm">
           <h2 class="form-title">Datos de Entrega</h2>
           <div class="form-grid">
-            <mat-form-field appearance="outline" class="full-width">
+            <mat-form-field appearance="fill" class="full-width">
               <mat-label>Dirección de Entrega</mat-label>
-              <input matInput formControlName="deliveryAddress" placeholder="Ej: Calle 123 #45-67">
-              <mat-icon matSuffix>location_on</mat-icon>
-              <mat-error *ngIf="checkoutForm.get('deliveryAddress')?.hasError('required')">
-                La dirección es obligatoria
-              </mat-error>
+              <input matInput formControlName="deliveryAddress" placeholder="Ej: Calle 123 No. 45-67" autocomplete="street-address">
+              <mat-icon matSuffix aria-hidden="true">place</mat-icon>
+              <mat-error>La dirección es obligatoria</mat-error>
             </mat-form-field>
 
-            <mat-form-field appearance="outline">
+            <mat-form-field appearance="fill">
               <mat-label>Teléfono de Contacto</mat-label>
-              <input matInput formControlName="contactPhone" placeholder="Ej: 3001234567" maxlength="10">
-              <mat-icon matSuffix>phone</mat-icon>
-              <mat-error *ngIf="checkoutForm.get('contactPhone')?.hasError('required')">
-                El teléfono es obligatorio
-              </mat-error>
-              <mat-error *ngIf="checkoutForm.get('contactPhone')?.hasError('pattern')">
-                El formato debe ser de 10 dígitos y comenzar con 3 (ej. 3001234567)
-              </mat-error>
+              <input matInput formControlName="contactPhone" placeholder="Ej: 3001234567" type="tel" inputmode="numeric" autocomplete="tel" maxlength="10">
+              <mat-icon matSuffix aria-hidden="true">smartphone</mat-icon>
+              <mat-error>El teléfono es obligatorio</mat-error>
             </mat-form-field>
 
-            <mat-form-field appearance="outline">
+            <mat-form-field appearance="fill">
               <mat-label>Método de Pago</mat-label>
               <mat-select formControlName="paymentMethod">
+                <mat-option value="" disabled>Selecciona un método</mat-option>
                 <mat-option value="EFECTIVO">Efectivo</mat-option>
                 <mat-option value="TARJETA">Tarjeta (Débito/Crédito)</mat-option>
                 <mat-option value="TRANSFERENCIA">Transferencia</mat-option>
               </mat-select>
-              <mat-icon matSuffix>payments</mat-icon>
-              <mat-error *ngIf="checkoutForm.get('paymentMethod')?.hasError('required')">
-                Selecciona un método de pago
-              </mat-error>
+              <mat-icon matSuffix aria-hidden="true">credit_card</mat-icon>
+              <mat-error>Selecciona un método de pago</mat-error>
+            </mat-form-field>
+
+            @if (checkoutForm.get('paymentMethod')?.value === 'EFECTIVO') {
+              <mat-form-field appearance="fill">
+                <mat-label>¿Necesitas cambio? (opcional)</mat-label>
+                <input matInput formControlName="cashChangeRequested" type="number" min="0" placeholder="Ej: 50000">
+                <mat-icon matSuffix aria-hidden="true">monetization_on</mat-icon>
+                <mat-hint>Indica el monto para el cual necesitas cambio</mat-hint>
+              </mat-form-field>
+            }
+
+            <mat-form-field appearance="fill" class="full-width">
+              <mat-label>Notas de entrega (opcional)</mat-label>
+              <textarea matInput formControlName="deliveryNotes" placeholder="Ej: Apartamento 501, dejar en portería" rows="2"></textarea>
+              <mat-icon matSuffix aria-hidden="true">note_alt</mat-icon>
             </mat-form-field>
           </div>
         </section>

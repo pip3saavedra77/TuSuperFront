@@ -75,8 +75,7 @@ export class Home implements OnInit {
     this.currentUser()?.roles.some(r => ['TENDERO', 'TENDER'].includes(r.name.toUpperCase())) ?? false
   );
 
-  /** @deprecated - mantenido por compatibilidad de tipos; no usado en template USER v2 */
-  readonly latestOrder = signal<Order | null>(null);
+  // Removed: latestOrder was not used in template
 
   /** Productos destacados para el widget 'Descubre TuSuper' (limit=4) */
   readonly featuredProducts = signal<Product[]>([]);
@@ -98,14 +97,13 @@ export class Home implements OnInit {
   );
 
   /**
-   * Suma acumulada de totalAmount ÚNICAMENTE sobre pedidos DELIVERED.
-   * Pedidos en estados intermedios (PENDING, PREPARING, DISPATCHED, etc.)
-   * o CANCELLED no representan ingreso efectivo y se excluyen.
-   * Complejidad: O(N), N≤5 — filter + reduce en un solo encadenamiento de array.
+   * Suma acumulada de totalAmount sobre pedidos NO cancelados ni pendientes.
+   * Incluye todos los pedidos en curso (PREPARING, READY_FOR_DISPATCH, DISPATCHED, DELIVERED).
+   * Complejidad: O(N).
    */
   readonly totalSpent = computed(() =>
     this.myOrders()
-      .filter(o => o.status === OrderStatus.DELIVERED)
+      .filter(o => o.status !== OrderStatus.CANCELLED && o.status !== OrderStatus.PENDING)
       .reduce((acc, o) => acc + Number(o.totalAmount ?? 0), 0)
   );
 
@@ -239,8 +237,8 @@ export class Home implements OnInit {
 
     forkJoin({
       orders: this.ordersService
-        .getMyOrders({ limit: 5, offset: 0 })
-        .pipe(catchError(() => of({ data: [], total: 0, limit: 5, offset: 0 }))),
+        .getMyOrders({ limit: 50, offset: 0 })
+        .pipe(catchError(() => of({ data: [], total: 0, limit: 50, offset: 0 }))),
       products: this.productService
         .getAll({ limit: 4, offset: 0 })
         .pipe(catchError(() => of({ data: [], total: 0, limit: 4, offset: 0 }))),

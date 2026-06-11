@@ -1,10 +1,8 @@
-import { Component, inject, computed, effect, DestroyRef } from '@angular/core';
+import { Component, inject, effect, DestroyRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { Router, RouterLink } from '@angular/router';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
-import { MatTableModule } from '@angular/material/table';
-import { MatDividerModule } from '@angular/material/divider';
 import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
 import { ReactiveFormsModule, FormBuilder, Validators, FormGroup } from '@angular/forms';
 import { MatFormFieldModule } from '@angular/material/form-field';
@@ -24,7 +22,6 @@ import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
     RouterLink,
     MatButtonModule,
     MatIconModule,
-    MatDividerModule,
     MatSnackBarModule,
     ReactiveFormsModule,
     MatFormFieldModule,
@@ -45,17 +42,20 @@ export class CheckoutComponent {
 
   public readonly checkoutForm: FormGroup;
   public isProcessing = false;
+  private justPlacedOrder = false;
 
   constructor() {
     this.checkoutForm = this.fb.group({
-      deliveryAddress: ['', [Validators.required, Validators.minLength(5)]],
+      deliveryAddress: ['', [Validators.required, Validators.minLength(8)]],
       contactPhone: ['', [Validators.required, Validators.pattern(/^3\d{9}$/)]],
       paymentMethod: ['', [Validators.required]],
+      deliveryNotes: [''],
+      cashChangeRequested: [null],
     });
 
-    // Redirigir si el carrito está vacío al entrar
+    // Redirigir si el carrito está vacío al entrar (excepto justo después de crear pedido)
     effect(() => {
-      if (this.cartStore.isEmpty()) {
+      if (this.cartStore.isEmpty() && !this.justPlacedOrder) {
         this.router.navigate(['/product']);
       }
     });
@@ -66,26 +66,38 @@ export class CheckoutComponent {
 
     this.isProcessing = true;
     const formValues = this.checkoutForm.value;
-    
+
     const payload: CreateOrderPayload = {
-      ...formValues,
+      deliveryAddress: (formValues.deliveryAddress ?? '').trim(),
+      contactPhone: (formValues.contactPhone ?? '').trim().replace(/\s+/g, ''),
+      paymentMethod: formValues.paymentMethod,
       items: this.cartStore.items().map(item => ({
         productId: item.product.id,
         quantity: item.quantity
-      }))
+      })),
+      deliveryNotes: (formValues.deliveryNotes ?? '').trim() || undefined,
     };
+
+    if (formValues.cashChangeRequested !== null && formValues.cashChangeRequested !== undefined && formValues.cashChangeRequested !== '') {
+      payload.cashChangeRequested = Number(formValues.cashChangeRequested);
+    }
 
     this.ordersService.createOrder(payload)
       .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe({
         next: (order) => {
-          this.snackBar.open('¡Pedido realizado con éxito!', 'Cerrar', { duration: 3000 });
+          this.justPlacedOrder = true;
+          this.snackBar.open('¡Pedido realizado con éxito!', 'Cerrar', { duration: 3000, panelClass: ['success-snackbar'] });
           this.cartStore.clearCart();
-          this.router.navigate(['/orders/my-orders']);
+          this.router.navigate(['/orders/my-orders']).then(() => {
+            this.isProcessing = false;
+          });
         },
         error: (err) => {
           this.isProcessing = false;
-          this.snackBar.open('Error al crear el pedido. Intenta de nuevo.', 'Cerrar', { duration: 5000 });
+          console.error('Error al crear el pedido:', err);
+          const message = (err.error as { message?: string })?.message ?? 'Error al crear el pedido. Intenta de nuevo.';
+          this.snackBar.open(message, 'Cerrar', { duration: 5000, panelClass: ['error-snackbar'] });
         }
       });
   }

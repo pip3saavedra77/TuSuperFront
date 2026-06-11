@@ -95,4 +95,6 @@ export interface CreateOrderPayload {
   deliveryAddress: string;
   contactPhone: string;
   paymentMethod: string;
+  deliveryNotes?: string;
+  cashChangeRequested?: number;
 }

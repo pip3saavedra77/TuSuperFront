@@ -148,7 +148,7 @@ export class MyOrdersComponent implements OnInit {
   }
 
   isCancellable(status: OrderStatus): boolean {
-    return status !== OrderStatus.DELIVERED && status !== OrderStatus.CANCELLED;
+    return status === OrderStatus.PENDING || status === OrderStatus.PREPARING;
   }
 
   toggleExpanded(id: number): void {
