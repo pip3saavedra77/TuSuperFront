@@ -1,18 +1,38 @@
 @use '../../styles/stitch_tokens' as st;
 @use "sass:color";
 
-// Turquoise Gradient representing the exact brand palette from reference
-$turquesa-gradient-1: linear-gradient(135deg, #004d57 0%, #00606f 35%, #58a4a8 65%, #cce3e4 85%, #f2f8f8 100%);
-$turquesa-gradient-2: linear-gradient(135deg, #00363a 0%, #004d40 40%, #00695c 70%, #80cbc4 90%, #e0f2f1 100%);
-$turquesa-gradient-3: linear-gradient(135deg, #01579b 0%, #00606f 40%, #00838f 70%, #80deea 90%, #e0f7fa 100%);
+// ==========================================
+// DARK AUTH THEME - Inspired by 21st.dev animated login
+// ==========================================
+
+// Dark palette
+$dark-bg: #000000;
+$dark-surface: #111111;
+$dark-border: #222222;
+$dark-border-hover: #333333;
+$dark-text-primary: #ffffff;
+$dark-text-secondary: #a1a1aa;
+$dark-text-muted: #71717a;
+$light-gray-bg: #d4d4d8;
+$light-gray-text: #27272a;
+$light-gray-muted: #52525b;
+$button-primary-bg: #e4e4e7;
+$button-primary-hover: #fafafa;
+$button-primary-text: #18181b;
+$input-bg: #111111;
+$input-border: #27272a;
+$input-focus-border: #3f3f46;
+$input-focus-ring: rgba(255, 255, 255, 0.08);
+$error-color: #ef4444;
+$error-text: #fca5a5;
 
 // Page Wrapper
 .login-page-wrapper {
   min-height: 100vh;
   width: 100%;
-  background-color: #ffffff;
+  background-color: $dark-bg;
   font-family: st.$stitch-font-body;
-  color: st.$stitch-text-primary;
+  color: $dark-text-primary;
   display: flex;
   box-sizing: border-box;
   overflow: hidden;
@@ -25,28 +45,23 @@ $turquesa-gradient-3: linear-gradient(135deg, #01579b 0%, #00606f 40%, #00838f 7
 }
 
 // ==========================================
-// LEFT COLUMN - NINTH STYLE (DESKTOP ONLY)
+// LEFT COLUMN - GRAY BRAND SIDE (DESKTOP ONLY)
 // ==========================================
 .left-brand-column {
   width: 50%;
-  padding: 64px 48px;
+  padding: 48px 40px;
   display: flex;
   flex-direction: column;
   justify-content: space-between;
   position: relative;
-  color: #ffffff;
+  color: $light-gray-text;
+  background: $light-gray-bg;
   box-sizing: border-box;
-  transition: background 0.8s cubic-bezier(0.16, 1, 0.3, 1);
 
-  // Gradient Steps classes
-  &.bg-step-1 {
-    background: $turquesa-gradient-1;
-  }
-  &.bg-step-2 {
-    background: $turquesa-gradient-2;
-  }
+  &.bg-step-1,
+  &.bg-step-2,
   &.bg-step-3 {
-    background: $turquesa-gradient-3;
+    background: $light-gray-bg;
   }
 
   .brand-logo-container {
@@ -57,37 +72,36 @@ $turquesa-gradient-3: linear-gradient(135deg, #01579b 0%, #00606f 40%, #00838f 7
     font-weight: 700;
     font-size: 24px;
     letter-spacing: -0.02em;
+    color: $light-gray-text;
 
     .brand-logo-img {
       width: 56px;
       height: 56px;
       flex-shrink: 0;
       object-fit: contain;
-      filter: drop-shadow(0px 2px 6px rgba(0, 0, 0, 0.12));
     }
 
     .brand-name {
-      text-shadow: 0px 1px 2px rgba(0, 0, 0, 0.1);
+      color: $light-gray-text;
     }
   }
 
   .brand-badge-container {
     margin-top: 48px;
-    
+
     .brand-badge-pill {
       padding: 8px 16px;
-      background: rgba(255, 255, 255, 0.12);
+      background: rgba(0, 0, 0, 0.06);
       backdrop-filter: blur(12px);
       -webkit-backdrop-filter: blur(12px);
-      color: #ffffff;
+      color: $light-gray-muted;
       border-radius: 9999px;
       font-size: 13px;
       font-weight: 600;
       display: inline-flex;
       align-items: center;
-      border: 1px solid rgba(255, 255, 255, 0.15);
+      border: 1px solid rgba(0, 0, 0, 0.08);
       letter-spacing: 0.02em;
-      box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.03);
     }
   }
 
@@ -102,20 +116,18 @@ $turquesa-gradient-3: linear-gradient(135deg, #01579b 0%, #00606f 40%, #00838f 7
       font-weight: 700;
       line-height: 1.15;
       letter-spacing: -0.03em;
-      color: #ffffff;
+      color: $light-gray-text;
       margin: 24px 0 16px 0;
-      text-shadow: 0px 2px 8px rgba(0, 77, 85, 0.2);
     }
 
     .hero-subtitle {
       font-size: 17px;
       line-height: 1.6;
-      color: rgba(255, 255, 255, 0.9);
+      color: $light-gray-muted;
       margin: 0;
     }
   }
 
-  // Steps cards layout at bottom (Ninth style)
   .premium-benefits-card-stack {
     display: flex;
     gap: 18px;
@@ -155,32 +167,30 @@ $turquesa-gradient-3: linear-gradient(135deg, #01579b 0%, #00606f 40%, #00838f 7
       }
 
       &.active-card {
-        background: #ffffff;
-        color: #004d57;
-        box-shadow: 0px 12px 25px rgba(0, 77, 85, 0.16);
+        background: $light-gray-text;
+        color: $light-gray-bg;
+        box-shadow: 0px 12px 25px rgba(0, 0, 0, 0.12);
         transform: translateY(-6px);
 
         .step-number {
-          background: #004d57;
-          color: #ffffff;
+          background: $light-gray-bg;
+          color: $light-gray-text;
         }
       }
 
       &.glassmorphic-benefit {
-        background: rgba(255, 255, 255, 0.08);
-        border: 1px solid rgba(255, 255, 255, 0.1);
-        color: #ffffff;
-        backdrop-filter: blur(8px);
-        -webkit-backdrop-filter: blur(8px);
+        background: rgba(0, 0, 0, 0.04);
+        border: 1px solid rgba(0, 0, 0, 0.08);
+        color: $light-gray-muted;
 
         .step-number {
-          background: rgba(255, 255, 255, 0.18);
-          color: #ffffff;
+          background: rgba(0, 0, 0, 0.1);
+          color: $light-gray-muted;
         }
 
         &:hover {
-          background: rgba(255, 255, 255, 0.15);
-          border-color: rgba(255, 255, 255, 0.25);
+          background: rgba(0, 0, 0, 0.08);
+          border-color: rgba(0, 0, 0, 0.15);
           transform: translateY(-3px);
         }
       }
@@ -197,13 +207,13 @@ $turquesa-gradient-3: linear-gradient(135deg, #01579b 0%, #00606f 40%, #00838f 7
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  padding: 64px 48px;
-  background-color: #f8fafc;
+  padding: 48px 40px;
+  background-color: $dark-bg;
   box-sizing: border-box;
   overflow-y: auto;
 
   .mobile-logo-header {
-    display: none; // Oculto en vista de escritorio
+    display: none;
   }
 
   .auth-form-card {
@@ -211,28 +221,29 @@ $turquesa-gradient-3: linear-gradient(135deg, #01579b 0%, #00606f 40%, #00838f 7
     max-width: 460px;
     display: flex;
     flex-direction: column;
-    background: #ffffff;
-    border-radius: 24px;
-    padding: 48px 44px;
-    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.04),
-                0 10px 40px -4px rgba(0, 0, 0, 0.07);
+    background: transparent;
+    border-radius: 0;
+    padding: 0;
+    box-shadow: none;
+    border: none;
 
     .form-header {
       margin-bottom: 32px;
+      text-align: center;
 
       .card-title {
         font-family: st.$stitch-font-headline;
         font-size: 32px;
         font-weight: 800;
         letter-spacing: -0.03em;
-        color: #0f172a;
+        color: $dark-text-primary;
         margin: 0 0 8px 0;
       }
 
       .card-subtitle {
         font-family: st.$stitch-font-body;
         font-size: 14px;
-        color: #64748b;
+        color: $dark-text-secondary;
         margin: 0;
         line-height: 1.5;
       }
@@ -264,26 +275,35 @@ $turquesa-gradient-3: linear-gradient(135deg, #01579b 0%, #00606f 40%, #00838f 7
       font-family: st.$stitch-font-headline;
       font-size: 14px;
       font-weight: 600;
-      color: #111827;
+      color: $dark-text-primary;
       letter-spacing: 0.01em;
     }
 
     .premium-input-field {
-      @include st.premium-input;
-      background: #f1f5f9;
-      border: 1.5px solid transparent;
+      font-family: st.$stitch-font-body;
+      background: $input-bg;
+      border: 1.5px solid $input-border;
+      border-radius: 12px;
+      color: $dark-text-primary;
+      padding: 14px 22px;
+      font-size: 15px;
+      transition: all 0.2s ease;
+      width: 100%;
+      outline: none;
       box-shadow: none;
-      transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+
+      &::placeholder {
+        color: $dark-text-muted;
+      }
 
       &:hover {
-        background: #e8f0fe;
-        border-color: rgba(0, 109, 119, 0.15);
+        border-color: $dark-border-hover;
       }
 
       &:focus {
-        background: #ffffff;
-        border-color: #006d77;
-        box-shadow: 0 0 0 4px rgba(0, 109, 119, 0.1);
+        background: $dark-surface;
+        border-color: $input-focus-border;
+        box-shadow: 0 0 0 4px $input-focus-ring;
       }
     }
 
@@ -302,7 +322,7 @@ $turquesa-gradient-3: linear-gradient(135deg, #01579b 0%, #00606f 40%, #00838f 7
         transform: translateY(-50%);
         background: transparent;
         border: none;
-        color: #9ca3af;
+        color: $dark-text-muted;
         cursor: pointer;
         padding: 4px;
         display: flex;
@@ -311,7 +331,7 @@ $turquesa-gradient-3: linear-gradient(135deg, #01579b 0%, #00606f 40%, #00838f 7
         transition: color 0.2s, scale 0.2s;
 
         &:hover {
-          color: #111827;
+          color: $dark-text-primary;
           scale: 1.05;
         }
 
@@ -331,7 +351,7 @@ $turquesa-gradient-3: linear-gradient(135deg, #01579b 0%, #00606f 40%, #00838f 7
       font-family: st.$stitch-font-body;
       font-size: 13px;
       font-weight: 500;
-      color: #dc2626;
+      color: $error-text;
       display: flex;
       align-items: center;
       gap: 6px;
@@ -368,8 +388,8 @@ $turquesa-gradient-3: linear-gradient(135deg, #01579b 0%, #00606f 40%, #00838f 7
         width: 0;
 
         &:checked ~ .checkbox-custom {
-          background-color: #006d77;
-          border-color: #006d77;
+          background-color: $dark-text-primary;
+          border-color: $dark-text-primary;
 
           &::after {
             display: block;
@@ -381,8 +401,8 @@ $turquesa-gradient-3: linear-gradient(135deg, #01579b 0%, #00606f 40%, #00838f 7
         position: relative;
         height: 18px;
         width: 18px;
-        background-color: #f3f4f6;
-        border: 1.5px solid #d1d5db;
+        background-color: $input-bg;
+        border: 1.5px solid $dark-border-hover;
         border-radius: 6px;
         transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
 
@@ -394,71 +414,78 @@ $turquesa-gradient-3: linear-gradient(135deg, #01579b 0%, #00606f 40%, #00838f 7
           top: 2px;
           width: 5px;
           height: 8px;
-          border: solid white;
+          border: solid $dark-bg;
           border-width: 0 2px 2px 0;
           transform: rotate(45deg);
         }
       }
 
       &:hover input:not(:checked) ~ .checkbox-custom {
-        border-color: #006d77;
-        background-color: rgba(0, 109, 119, 0.06);
+        border-color: $dark-text-secondary;
+        background-color: rgba(255, 255, 255, 0.05);
       }
 
-      // Mantener el color sólido del checkmark al hover sobre un checkbox marcado
       &:hover input:checked ~ .checkbox-custom {
-        background-color: #00838f;
-        border-color: #00838f;
+        background-color: $button-primary-hover;
+        border-color: $button-primary-hover;
       }
 
       .checkbox-label {
         font-family: st.$stitch-font-body;
         font-weight: 500;
-        color: #4b5563;
+        color: $dark-text-secondary;
       }
     }
 
     .forgot-password {
       font-family: st.$stitch-font-body;
       font-weight: 600;
-      color: #006d77;
+      color: $dark-text-primary;
       text-decoration: none;
       transition: color 0.2s;
 
       &:hover {
-        color: #00838f;
+        color: $dark-text-secondary;
         text-decoration: underline;
       }
     }
   }
 
   .primary-electric-button {
-    @include st.premium-primary-button;
+    font-family: st.$stitch-font-headline;
+    font-size: 16px;
+    font-weight: 700;
+    letter-spacing: 0.02em;
+    padding: 14px 28px;
+    border-radius: 12px;
+    border: none;
+    background: $button-primary-bg;
+    color: $button-primary-text;
+    cursor: pointer;
+    transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
     height: 52px;
     width: 100%;
     margin-top: 10px;
-    font-size: 16px;
-    font-weight: 700;
-    background: #006d77;
-    box-shadow: 0 4px 14px rgba(0, 109, 119, 0.25);
-    border-radius: 9999px;
-    letter-spacing: 0.02em;
+    box-shadow: none;
 
     &:hover:not(:disabled) {
-      background: #005a63;
-      box-shadow: 0 6px 20px rgba(0, 109, 119, 0.4);
+      background: $button-primary-hover;
       transform: translateY(-1px);
+      box-shadow: 0 4px 12px rgba(255, 255, 255, 0.1);
     }
 
     &:active:not(:disabled) {
       transform: translateY(0);
-      box-shadow: 0 2px 8px rgba(0, 109, 119, 0.25);
+      box-shadow: none;
     }
 
     &:disabled {
-      background: #e2e8f0;
-      color: #94a3b8;
-      box-shadow: none;
+      background: $dark-surface;
+      color: $dark-text-muted;
       cursor: not-allowed;
       transform: none;
       opacity: 0.7;
@@ -474,24 +501,47 @@ $turquesa-gradient-3: linear-gradient(135deg, #01579b 0%, #00606f 40%, #00838f 7
     &::before, &::after {
       content: '';
       flex: 1;
-      border-bottom: 1.5px solid #f3f4f6;
+      border-bottom: 1.5px solid $dark-border;
     }
 
     .divider-text {
       padding: 0 16px;
       font-size: 14px;
-      color: #9ca3af;
+      color: $dark-text-muted;
       font-weight: 500;
       font-family: st.$stitch-font-body;
     }
   }
 
   .google-social-button {
-    @include st.premium-glass-button;
+    font-family: st.$stitch-font-headline;
+    font-size: 15px;
+    font-weight: 500;
+    letter-spacing: 0.01em;
+    padding: 12px 24px;
+    border-radius: 12px;
+    border: 1.5px solid $dark-border-hover;
+    background: transparent;
+    color: $dark-text-primary;
+    cursor: pointer;
+    transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    text-decoration: none;
     height: 52px;
     width: 100%;
-    font-size: 15px;
-    border-radius: 9999px;
+
+    &:hover {
+      background: rgba(255, 255, 255, 0.05);
+      border-color: $dark-text-secondary;
+      transform: translateY(-0.5px);
+    }
+
+    &:active {
+      transform: translateY(0);
+    }
 
     .google-icon {
       width: 22px;
@@ -507,19 +557,19 @@ $turquesa-gradient-3: linear-gradient(135deg, #01579b 0%, #00606f 40%, #00838f 7
   p {
     font-family: st.$stitch-font-body;
     font-size: 15px;
-    color: #4b5563;
+    color: $dark-text-secondary;
     margin: 0;
   }
 
   .footer-link {
     font-family: st.$stitch-font-headline;
     font-weight: 700;
-    color: #006d77;
+    color: $dark-text-primary;
     text-decoration: none;
     transition: color 0.2s;
 
     &:hover {
-      color: #00838f;
+      color: $dark-text-secondary;
       text-decoration: underline;
     }
   }
@@ -537,9 +587,9 @@ $turquesa-gradient-3: linear-gradient(135deg, #01579b 0%, #00606f 40%, #00838f 7
 .dot-spinner {
   width: 20px;
   height: 20px;
-  border: 2px solid rgba(255, 255, 255, 0.3);
+  border: 2px solid rgba(0, 0, 0, 0.2);
   border-radius: 50%;
-  border-top-color: #ffffff;
+  border-top-color: $button-primary-text;
   animation: spin 0.8s linear infinite;
 }
 
@@ -560,12 +610,11 @@ $turquesa-gradient-3: linear-gradient(135deg, #01579b 0%, #00606f 40%, #00838f 7
 }
 
 // ==========================================
-// MOBILE RESPONSIVE LAYOUT (SMARTPHONE FLAT)
+// MOBILE RESPONSIVE LAYOUT (SMARTPHONE)
 // ==========================================
 @media (max-width: 1024px) {
   .login-page-wrapper {
-    background: url('/images/mobile-login-bg.jpg') no-repeat center center;
-    background-size: cover;
+    background: $dark-bg;
     justify-content: center;
     align-items: center;
     padding: 32px 24px;
@@ -580,18 +629,17 @@ $turquesa-gradient-3: linear-gradient(135deg, #01579b 0%, #00606f 40%, #00838f 7
   }
 
   .left-brand-column {
-    display: none; // Ocultar columna de marca
+    display: none;
   }
 
   .right-form-column {
     width: 100%;
-    max-width: 440px;
+    max-width: 460px;
     padding: 0;
     background-color: transparent;
     overflow-y: visible;
     justify-content: center;
 
-    // Header móvil minimalista sin versión estable ni emojis
     .mobile-logo-header {
       display: flex;
       justify-content: space-between;
@@ -603,7 +651,7 @@ $turquesa-gradient-3: linear-gradient(135deg, #01579b 0%, #00606f 40%, #00838f 7
         display: flex;
         align-items: center;
         gap: 10px;
-        color: #ffffff;
+        color: $dark-text-primary;
         text-decoration: none;
         font-family: st.$stitch-font-headline;
         font-weight: 700;
@@ -624,7 +672,6 @@ $turquesa-gradient-3: linear-gradient(135deg, #01579b 0%, #00606f 40%, #00838f 7
         .brand-logo-img--mobile {
           width: 64px;
           height: 64px;
-          filter: drop-shadow(0px 2px 6px rgba(0, 0, 0, 0.1));
         }
 
         .brand-name {
@@ -632,13 +679,11 @@ $turquesa-gradient-3: linear-gradient(135deg, #01579b 0%, #00606f 40%, #00838f 7
           font-weight: 800;
           font-size: 24px;
           letter-spacing: -0.02em;
-          color: #ffffff;
-          text-shadow: 0px 1px 3px rgba(0, 77, 85, 0.25);
+          color: $dark-text-primary;
         }
       }
     }
 
-    // Formulario Plano directamente sobre el degradado sin tarjeta
     .auth-form-card {
       background: transparent;
       border: none;
@@ -653,55 +698,47 @@ $turquesa-gradient-3: linear-gradient(135deg, #01579b 0%, #00606f 40%, #00838f 7
 
         .card-title {
           font-size: 32px;
-          color: #ffffff;
-          text-shadow: 0px 2px 6px rgba(0, 50, 60, 0.2);
+          color: $dark-text-primary;
         }
 
         .card-subtitle {
-          color: rgba(255, 255, 255, 0.9);
+          color: $dark-text-secondary;
           font-size: 15px;
-          text-shadow: 0px 1px 3px rgba(0, 50, 60, 0.15);
         }
       }
     }
   }
 
-  // Estilizado de campos planos de alta legibilidad en Móvil
   .login-form {
     gap: 22px;
 
     .name-grid {
-      grid-template-columns: 1fr; // Una columna en móvil
+      grid-template-columns: 1fr;
       gap: 22px;
     }
 
     .input-group {
       .input-label {
-        color: #ffffff;
+        color: $dark-text-primary;
         font-weight: 700;
-        text-shadow: 0px 1.5px 3px rgba(0, 50, 60, 0.25);
       }
 
-      // Liquid glass input for mobile
       .premium-input-field {
-        background: rgba(255, 255, 255, 0.15);
-        backdrop-filter: blur(16px);
-        -webkit-backdrop-filter: blur(16px);
-        border: 1px solid rgba(255, 255, 255, 0.35);
-        color: #ffffff;
-        font-weight: 600;
-        box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
-        border-radius: 9999px;
+        background: $input-bg;
+        border: 1.5px solid $input-border;
+        color: $dark-text-primary;
+        box-shadow: none;
+        border-radius: 12px;
         padding: 14px 22px;
-        
+
         &::placeholder {
-          color: rgba(255, 255, 255, 0.6);
+          color: $dark-text-muted;
         }
 
         &:focus {
-          background: rgba(255, 255, 255, 0.25);
-          border-color: rgba(255, 255, 255, 0.6);
-          box-shadow: 0 0 0 4px rgba(255, 255, 255, 0.15);
+          background: $dark-surface;
+          border-color: $input-focus-border;
+          box-shadow: 0 0 0 4px $input-focus-ring;
         }
       }
 
@@ -711,18 +748,16 @@ $turquesa-gradient-3: linear-gradient(135deg, #01579b 0%, #00606f 40%, #00838f 7
         }
 
         .visibility-toggle {
-          color: rgba(255, 255, 255, 0.75);
+          color: $dark-text-muted;
 
           &:hover {
-            color: rgba(255, 255, 255, 1);
+            color: $dark-text-primary;
           }
         }
       }
 
-      // Alertas de error brillantes y legibles sobre fondo turquesa
       .error-text {
-        color: #ffe4e6;
-        text-shadow: 0px 1.5px 3px rgba(120, 0, 0, 0.6);
+        color: $error-text;
         font-weight: 700;
       }
     }
@@ -730,92 +765,80 @@ $turquesa-gradient-3: linear-gradient(135deg, #01579b 0%, #00606f 40%, #00838f 7
     .form-options {
       .remember-me {
         .checkbox-custom {
-          background-color: #ffffff;
-          border: 2px solid transparent;
-          box-shadow: 0px 2px 6px rgba(0, 40, 50, 0.1);
+          background-color: $input-bg;
+          border: 1.5px solid $dark-border-hover;
         }
 
         .checkbox-label {
-          color: #ffffff;
+          color: $dark-text-secondary;
           font-weight: 700;
-          text-shadow: 0px 1.5px 3px rgba(0, 50, 60, 0.25);
         }
       }
 
       .forgot-password {
-        color: #ffffff;
-        text-shadow: 0px 1.5px 3px rgba(0, 50, 60, 0.25);
+        color: $dark-text-primary;
         font-weight: 800;
         text-decoration: underline;
 
         &:hover {
-          color: rgba(255, 255, 255, 0.95);
+          color: $dark-text-secondary;
         }
       }
     }
 
-    // Liquid glass submit button for mobile
     .primary-electric-button {
-      background: rgba(255, 255, 255, 0.85);
-      backdrop-filter: blur(12px);
-      -webkit-backdrop-filter: blur(12px);
-      color: #004d57;
-      border: 1px solid rgba(255, 255, 255, 0.4);
-      box-shadow: 0 6px 20px rgba(0, 40, 50, 0.18);
+      background: $button-primary-bg;
+      color: $button-primary-text;
+      border: none;
+      box-shadow: none;
       font-weight: 800;
-      border-radius: 9999px;
+      border-radius: 12px;
 
       &:hover {
-        background: rgba(255, 255, 255, 0.95);
-        box-shadow: 0 8px 25px rgba(0, 40, 50, 0.25);
+        background: $button-primary-hover;
+        box-shadow: 0 4px 12px rgba(255, 255, 255, 0.1);
       }
     }
 
     .divider {
       &::before, &::after {
-        border-bottom: 2px solid rgba(255, 255, 255, 0.35);
+        border-bottom: 1.5px solid $dark-border;
       }
 
       .divider-text {
-        color: #ffffff;
+        color: $dark-text-muted;
         font-weight: 700;
-        text-shadow: 0px 1.5px 3px rgba(0, 50, 60, 0.25);
       }
     }
 
-    // Liquid glass Google button for mobile
     .google-social-button {
-      background: rgba(255, 255, 255, 0.1);
-      backdrop-filter: blur(12px);
-      -webkit-backdrop-filter: blur(12px);
-      border: 1px solid rgba(255, 255, 255, 0.3);
-      color: #ffffff;
+      background: transparent;
+      border: 1.5px solid $dark-border-hover;
+      color: $dark-text-primary;
       font-weight: 800;
-      text-shadow: 0px 1.5px 3px rgba(0, 50, 60, 0.25);
-      border-radius: 9999px;
-      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+      border-radius: 12px;
+      box-shadow: none;
 
       &:hover {
-        background: rgba(255, 255, 255, 0.2);
-        border-color: rgba(255, 255, 255, 0.5);
+        background: rgba(255, 255, 255, 0.05);
+        border-color: $dark-text-secondary;
       }
     }
   }
 
   .auth-footer {
     p {
-      color: #ffffff;
-      text-shadow: 0px 1.5px 3px rgba(0, 50, 60, 0.25);
+      color: $dark-text-secondary;
       font-weight: 600;
     }
 
     .footer-link {
-      color: #ffffff;
+      color: $dark-text-primary;
       font-weight: 800;
       text-decoration: underline;
 
       &:hover {
-        color: rgba(255, 255, 255, 0.9);
+        color: $dark-text-secondary;
       }
     }
   }
