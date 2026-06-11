@@ -6,9 +6,11 @@
 
 .characters-container {
   position: relative;
-  width: 550px;
-  height: 400px;
+  width: 420px;
+  height: 280px;
   margin: 0 auto;
+  transform: scale(0.9);
+  transform-origin: bottom center;
 }
 
 .character {
