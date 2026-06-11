@@ -98,7 +98,7 @@ export class ResetPassword implements OnInit {
 
   private stopLoading(): void {
     const elapsed = Date.now() - this.loadingStartTime;
-    const remaining = Math.max(0, 5000 - elapsed);
+    const remaining = Math.max(0, 8000 - elapsed);
     setTimeout(() => this.isLoading.set(false), remaining);
   }
 

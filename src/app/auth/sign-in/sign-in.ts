@@ -94,7 +94,7 @@ export class SignIn {
 
   private stopLoading(): void {
     const elapsed = Date.now() - this.loadingStartTime;
-    const remaining = Math.max(0, 5000 - elapsed);
+    const remaining = Math.max(0, 8000 - elapsed);
     setTimeout(() => this.loading.set(false), remaining);
   }
 
