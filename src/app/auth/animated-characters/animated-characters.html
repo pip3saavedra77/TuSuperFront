@@ -1,0 +1,211 @@
+<div class="characters-container">
+  <!-- Green tall rectangle character - Back layer -->
+  <div
+    #greenRef
+    class="character green-character"
+    [class.blinking]="isGreenBlinking()"
+    [style.width.px]="130"
+    [style.height.px]="(isTyping || passwordHidden) ? 300 : 270"
+    [style.left.px]="50"
+    [style.z-index]="1"
+    [style.transform]="passwordVisible
+      ? 'skewX(0deg)'
+      : (isTyping || passwordHidden)
+        ? 'skewX(' + ((calculatePosition(greenRef).bodySkew || 0) - 12) + 'deg) translateX(30px)'
+        : 'skewX(' + (calculatePosition(greenRef).bodySkew || 0) + 'deg)'"
+  >
+    <!-- Eyes -->
+    <div
+      class="eyes-container"
+      [style.left.px]="passwordVisible ? 15 : (isLookingAtEachOther() ? 40 : 32 + (calculatePosition(greenRef).faceX || 0))"
+      [style.top.px]="passwordVisible ? 24 : (isLookingAtEachOther() ? 45 : 28 + (calculatePosition(greenRef).faceY || 0))"
+    >
+      <div
+        class="eyeball"
+        [class.blinking]="isGreenBlinking()"
+        [style.width.px]="14"
+        [style.height.px]="isGreenBlinking() ? 2 : 14"
+      >
+        @if (!isGreenBlinking()) {
+          <div
+            class="pupil"
+            [style.width.px]="5"
+            [style.height.px]="5"
+            [style.transform]="'translate(' +
+              (getForcedLook(passwordVisible ? (isGreenPeeking() ? 'peeking' : 'away') : (isLookingAtEachOther() ? 'eachOther' : undefined))?.x ?? calculateEyePosition(greenRef, 4).x) +
+              'px, ' +
+              (getForcedLook(passwordVisible ? (isGreenPeeking() ? 'peeking' : 'away') : (isLookingAtEachOther() ? 'eachOther' : undefined))?.y ?? calculateEyePosition(greenRef, 4).y) +
+              'px)'"
+          ></div>
+        }
+      </div>
+      <div
+        class="eyeball"
+        [class.blinking]="isGreenBlinking()"
+        [style.width.px]="14"
+        [style.height.px]="isGreenBlinking() ? 2 : 14"
+      >
+        @if (!isGreenBlinking()) {
+          <div
+            class="pupil"
+            [style.width.px]="5"
+            [style.height.px]="5"
+            [style.transform]="'translate(' +
+              (getForcedLook(passwordVisible ? (isGreenPeeking() ? 'peeking' : 'away') : (isLookingAtEachOther() ? 'eachOther' : undefined))?.x ?? calculateEyePosition(greenRef, 4).x) +
+              'px, ' +
+              (getForcedLook(passwordVisible ? (isGreenPeeking() ? 'peeking' : 'away') : (isLookingAtEachOther() ? 'eachOther' : undefined))?.y ?? calculateEyePosition(greenRef, 4).y) +
+              'px)'"
+          ></div>
+        }
+      </div>
+    </div>
+  </div>
+
+  <!-- Dark green tall rectangle character - Middle layer -->
+  <div
+    #darkGreenRef
+    class="character dark-green-character"
+    [class.blinking]="isDarkGreenBlinking()"
+    [style.width.px]="85"
+    [style.height.px]="220"
+    [style.left.px]="175"
+    [style.z-index]="2"
+    [style.transform]="passwordVisible
+      ? 'skewX(0deg)'
+      : isLookingAtEachOther()
+        ? 'skewX(' + ((calculatePosition(darkGreenRef).bodySkew || 0) * 1.5 + 10) + 'deg) translateX(15px)'
+        : (isTyping || passwordHidden)
+          ? 'skewX(' + ((calculatePosition(darkGreenRef).bodySkew || 0) * 1.5) + 'deg)'
+          : 'skewX(' + (calculatePosition(darkGreenRef).bodySkew || 0) + 'deg)'"
+  >
+    <!-- Eyes -->
+    <div
+      class="eyes-container"
+      [style.left.px]="passwordVisible ? 8 : (isLookingAtEachOther() ? 22 : 18 + (calculatePosition(darkGreenRef).faceX || 0))"
+      [style.top.px]="passwordVisible ? 20 : (isLookingAtEachOther() ? 8 : 22 + (calculatePosition(darkGreenRef).faceY || 0))"
+    >
+      <div
+        class="eyeball"
+        [class.blinking]="isDarkGreenBlinking()"
+        [style.width.px]="12"
+        [style.height.px]="isDarkGreenBlinking() ? 2 : 12"
+      >
+        @if (!isDarkGreenBlinking()) {
+          <div
+            class="pupil"
+            [style.width.px]="4"
+            [style.height.px]="4"
+            [style.transform]="'translate(' +
+              (getForcedLook(passwordVisible ? 'away' : (isLookingAtEachOther() ? 'away' : undefined))?.x ?? calculateEyePosition(darkGreenRef, 3).x) +
+              'px, ' +
+              (getForcedLook(passwordVisible ? 'away' : (isLookingAtEachOther() ? 'away' : undefined))?.y ?? calculateEyePosition(darkGreenRef, 3).y) +
+              'px)'"
+          ></div>
+        }
+      </div>
+      <div
+        class="eyeball"
+        [class.blinking]="isDarkGreenBlinking()"
+        [style.width.px]="12"
+        [style.height.px]="isDarkGreenBlinking() ? 2 : 12"
+      >
+        @if (!isDarkGreenBlinking()) {
+          <div
+            class="pupil"
+            [style.width.px]="4"
+            [style.height.px]="4"
+            [style.transform]="'translate(' +
+              (getForcedLook(passwordVisible ? 'away' : (isLookingAtEachOther() ? 'away' : undefined))?.x ?? calculateEyePosition(darkGreenRef, 3).x) +
+              'px, ' +
+              (getForcedLook(passwordVisible ? 'away' : (isLookingAtEachOther() ? 'away' : undefined))?.y ?? calculateEyePosition(darkGreenRef, 3).y) +
+              'px)'"
+          ></div>
+        }
+      </div>
+    </div>
+  </div>
+
+  <!-- Light green semi-circle character - Front left -->
+  <div
+    #lightGreenRef
+    class="character light-green-character"
+    [style.width.px]="170"
+    [style.height.px]="140"
+    [style.left.px]="0"
+    [style.z-index]="3"
+    [style.transform]="passwordVisible ? 'skewX(0deg)' : 'skewX(' + (calculatePosition(lightGreenRef).bodySkew || 0) + 'deg)'"
+  >
+    <!-- Pupils only (no white eyeball) -->
+    <div
+      class="eyes-container pupils-only"
+      [style.left.px]="passwordVisible ? 35 : 58 + (calculatePosition(lightGreenRef).faceX || 0)"
+      [style.top.px]="passwordVisible ? 60 : 64 + (calculatePosition(lightGreenRef).faceY || 0)"
+    >
+      <div
+        class="pupil"
+        [style.width.px]="10"
+        [style.height.px]="10"
+        [style.transform]="'translate(' +
+          (getForcedLook(passwordVisible ? 'away' : undefined)?.x ?? calculateEyePosition(lightGreenRef, 4).x) +
+          'px, ' +
+          (getForcedLook(passwordVisible ? 'away' : undefined)?.y ?? calculateEyePosition(lightGreenRef, 4).y) +
+          'px)'"
+      ></div>
+      <div
+        class="pupil"
+        [style.width.px]="10"
+        [style.height.px]="10"
+        [style.transform]="'translate(' +
+          (getForcedLook(passwordVisible ? 'away' : undefined)?.x ?? calculateEyePosition(lightGreenRef, 4).x) +
+          'px, ' +
+          (getForcedLook(passwordVisible ? 'away' : undefined)?.y ?? calculateEyePosition(lightGreenRef, 4).y) +
+          'px)'"
+      ></div>
+    </div>
+  </div>
+
+  <!-- Lime tall rounded character - Front right -->
+  <div
+    #limeRef
+    class="character lime-character"
+    [style.width.px]="100"
+    [style.height.px]="165"
+    [style.left.px]="220"
+    [style.z-index]="4"
+    [style.transform]="passwordVisible ? 'skewX(0deg)' : 'skewX(' + (calculatePosition(limeRef).bodySkew || 0) + 'deg)'"
+  >
+    <!-- Pupils only -->
+    <div
+      class="eyes-container pupils-only"
+      [style.left.px]="passwordVisible ? 14 : 37 + (calculatePosition(limeRef).faceX || 0)"
+      [style.top.px]="passwordVisible ? 26 : 30 + (calculatePosition(limeRef).faceY || 0)"
+    >
+      <div
+        class="pupil"
+        [style.width.px]="10"
+        [style.height.px]="10"
+        [style.transform]="'translate(' +
+          (getForcedLook(passwordVisible ? 'away' : undefined)?.x ?? calculateEyePosition(limeRef, 4).x) +
+          'px, ' +
+          (getForcedLook(passwordVisible ? 'away' : undefined)?.y ?? calculateEyePosition(limeRef, 4).y) +
+          'px)'"
+      ></div>
+      <div
+        class="pupil"
+        [style.width.px]="10"
+        [style.height.px]="10"
+        [style.transform]="'translate(' +
+          (getForcedLook(passwordVisible ? 'away' : undefined)?.x ?? calculateEyePosition(limeRef, 4).x) +
+          'px, ' +
+          (getForcedLook(passwordVisible ? 'away' : undefined)?.y ?? calculateEyePosition(limeRef, 4).y) +
+          'px)'"
+      ></div>
+    </div>
+    <!-- Mouth line -->
+    <div
+      class="mouth-line"
+      [style.left.px]="passwordVisible ? 7 : 28 + (calculatePosition(limeRef).faceX || 0)"
+      [style.top.px]="passwordVisible ? 62 : 62 + (calculatePosition(limeRef).faceY || 0)"
+    ></div>
+  </div>
+</div>

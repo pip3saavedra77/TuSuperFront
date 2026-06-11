@@ -2,15 +2,12 @@ import { Component, inject, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormBuilder, ReactiveFormsModule, Validators, AbstractControl, ValidationErrors, ValidatorFn } from '@angular/forms';
 import { Router, RouterModule } from '@angular/router';
-import { MatCardModule } from '@angular/material/card';
-import { MatFormFieldModule } from '@angular/material/form-field';
-import { MatInputModule } from '@angular/material/input';
-import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
-import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { AuthService } from '../../core/services/auth';
 import { PasswordStrengthComponent } from '../../shared/components/password-strength/password-strength';
+import { AnimatedCharacters } from '../animated-characters/animated-characters';
+import { LoadingScreen } from '../../shared/components/loading-screen/loading-screen';
 
 const passwordMatchValidator: ValidatorFn = (control: AbstractControl): ValidationErrors | null => {
   const password = control.get('password');
@@ -40,17 +37,14 @@ const passwordMatchValidator: ValidatorFn = (control: AbstractControl): Validati
     CommonModule,
     ReactiveFormsModule,
     RouterModule,
-    MatCardModule,
-    MatFormFieldModule,
-    MatInputModule,
-    MatButtonModule,
     MatIconModule,
     MatSnackBarModule,
-    MatProgressSpinnerModule,
-    PasswordStrengthComponent
+    PasswordStrengthComponent,
+    AnimatedCharacters,
+    LoadingScreen
   ],
   templateUrl: './sign-in.html',
-  styleUrls: ['./sign-in.scss']
+  styleUrl: './sign-in.scss'
 })
 export class SignIn {
   private readonly fb = inject(FormBuilder);
@@ -58,16 +52,29 @@ export class SignIn {
   private readonly router = inject(Router);
   private readonly snackBar = inject(MatSnackBar);
 
-  public hidePassword = true;
-  public hideConfirmPassword = true;
-  public loading = signal<boolean>(false);
-  public activeStep = 1;
+  hidePassword = true;
+  hideConfirmPassword = true;
+  loading = signal(false);
+  activeStep = 1;
+  isTyping = signal(false);
+  private typingTimeout: number | null = null;
+  private loadingStartTime = 0;
 
-  public selectStep(step: number): void {
+  selectStep(step: number): void {
     this.activeStep = step;
   }
 
-  public registerForm = this.fb.group({
+  onTyping(): void {
+    this.isTyping.set(true);
+    if (this.typingTimeout) {
+      clearTimeout(this.typingTimeout);
+    }
+    this.typingTimeout = window.setTimeout(() => {
+      this.isTyping.set(false);
+    }, 300);
+  }
+
+  registerForm = this.fb.group({
     firstName: ['', [Validators.required]],
     lastName: ['', [Validators.required]],
     email: ['', [Validators.required, Validators.email]],
@@ -75,10 +82,17 @@ export class SignIn {
     confirmPassword: ['', [Validators.required]]
   }, { validators: passwordMatchValidator });
 
-  public onSubmit(): void {
+  private stopLoading(): void {
+    const elapsed = Date.now() - this.loadingStartTime;
+    const remaining = Math.max(0, 5000 - elapsed);
+    setTimeout(() => this.loading.set(false), remaining);
+  }
+
+  onSubmit(): void {
     if (this.registerForm.invalid) return;
 
     this.loading.set(true);
+    this.loadingStartTime = Date.now();
 
     const { firstName, lastName, email, password, confirmPassword } = this.registerForm.getRawValue();
 
@@ -91,8 +105,8 @@ export class SignIn {
     }).subscribe({
       next: () => {
         this.snackBar.open('Registro exitoso', 'Cerrar', { duration: 3000 });
+        this.stopLoading();
         this.router.navigateByUrl('/home');
-        this.loading.set(false);
       },
       error: (err) => {
         let message = 'Error al registrar usuario';
@@ -106,7 +120,7 @@ export class SignIn {
           duration: 5000,
           panelClass: ['error-snackbar']
         });
-        this.loading.set(false);
+        this.stopLoading();
       }
     });
   }

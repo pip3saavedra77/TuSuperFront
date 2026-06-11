@@ -1,0 +1,99 @@
+@use '../../styles/stitch_tokens' as st;
+
+// ==========================================
+// ANIMATED CHARACTERS - Supermarket Green Theme
+// ==========================================
+
+.characters-container {
+  position: relative;
+  width: 420px;
+  height: 280px;
+  margin: 0 auto;
+  transform: scale(0.9);
+  transform-origin: bottom center;
+}
+
+.character {
+  position: absolute;
+  bottom: 0;
+  transition: all 0.7s cubic-bezier(0.16, 1, 0.3, 1);
+  transform-origin: bottom center;
+}
+
+// Green tall rectangle (back layer)
+.green-character {
+  background-color: #22c55e;
+  border-radius: 10px 10px 0 0;
+}
+
+// Dark green tall rectangle (middle layer)
+.dark-green-character {
+  background-color: #166534;
+  border-radius: 8px 8px 0 0;
+}
+
+// Light green semi-circle (front left)
+.light-green-character {
+  background-color: #86efac;
+  border-radius: 120px 120px 0 0;
+}
+
+// Lime rounded (front right)
+.lime-character {
+  background-color: #a3e635;
+  border-radius: 70px 70px 0 0;
+}
+
+// Eyes container
+.eyes-container {
+  position: absolute;
+  display: flex;
+  gap: 8px;
+  transition: all 0.7s cubic-bezier(0.16, 1, 0.3, 1);
+
+  &.pupils-only {
+    gap: 32px;
+  }
+}
+
+// Eyeball (white circle)
+.eyeball {
+  border-radius: 50%;
+  background-color: white;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+  transition: all 0.15s ease-out;
+
+  &.blinking {
+    height: 2px !important;
+    border-radius: 1px;
+  }
+}
+
+// Pupil (black dot)
+.pupil {
+  border-radius: 50%;
+  background-color: #14532d;
+  transition: transform 0.1s ease-out;
+}
+
+// Mouth line for lime character
+.mouth-line {
+  position: absolute;
+  width: 80px;
+  height: 4px;
+  background-color: #14532d;
+  border-radius: 9999px;
+  transition: all 0.2s ease-out;
+}
+
+// ==========================================
+// RESPONSIVE
+// ==========================================
+@media (max-width: 1024px) {
+  .characters-container {
+    display: none;
+  }
+}

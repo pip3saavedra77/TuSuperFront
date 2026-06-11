@@ -2,10 +2,6 @@ import { Component, inject, signal, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ReactiveFormsModule, FormBuilder, Validators } from '@angular/forms';
 
-import { MatCardModule } from '@angular/material/card';
-import { MatInputModule } from '@angular/material/input';
-import { MatButtonModule } from '@angular/material/button';
-import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatIconModule } from '@angular/material/icon';
 import { MatCheckboxModule } from '@angular/material/checkbox';
 import { LoginCredentials } from '../interfaces/login';
@@ -15,6 +11,8 @@ import { MatSnackBarModule } from '@angular/material/snack-bar';
 import { environment } from '../../../environments/environment';
 import { getHttpErrorMessage } from '../../core/utils/http-error-message';
 import { HttpErrorResponse } from '@angular/common/http';
+import { AnimatedCharacters } from '../animated-characters/animated-characters';
+import { LoadingScreen } from '../../shared/components/loading-screen/loading-screen';
 
 @Component({
   selector: 'app-log-in',
@@ -23,13 +21,11 @@ import { HttpErrorResponse } from '@angular/common/http';
     CommonModule,
     ReactiveFormsModule,
     RouterModule,
-    MatCardModule,
-    MatInputModule,
-    MatButtonModule,
-    MatFormFieldModule,
     MatIconModule,
     MatCheckboxModule,
     MatSnackBarModule,
+    AnimatedCharacters,
+    LoadingScreen,
   ],
   templateUrl: './log-in.html',
   styleUrl: './log-in.scss',
@@ -46,6 +42,9 @@ export class LogIn implements OnInit {
   failedAttempts = signal(0);
   shakeForm = signal(false);
   errorMessage = signal('');
+  isTyping = signal(false);
+  typingTimeout: number | null = null;
+  private loadingStartTime = 0;
 
   ngOnInit(): void {
     const rememberedEmail = localStorage.getItem('remember_email');
@@ -59,15 +58,32 @@ export class LogIn implements OnInit {
     this.activeStep = step;
   }
 
+  onTyping(): void {
+    this.isTyping.set(true);
+    if (this.typingTimeout) {
+      clearTimeout(this.typingTimeout);
+    }
+    this.typingTimeout = window.setTimeout(() => {
+      this.isTyping.set(false);
+    }, 300);
+  }
+
   loginForm = this.fb.group({
     email: ['', [Validators.required, Validators.email]],
     password: ['', [Validators.required, Validators.minLength(8)]],
   });
 
+  private stopLoading(): void {
+    const elapsed = Date.now() - this.loadingStartTime;
+    const remaining = Math.max(0, 5000 - elapsed);
+    setTimeout(() => this.loading.set(false), remaining);
+  }
+
   onSubmit(): void {
     if (this.loginForm.invalid || this.loading()) return;
 
     this.loading.set(true);
+    this.loadingStartTime = Date.now();
     this.errorMessage.set('');
 
     const { email, password } = this.loginForm.getRawValue();
@@ -84,11 +100,11 @@ export class LogIn implements OnInit {
         } else {
           localStorage.removeItem('remember_email');
         }
-        this.loading.set(false);
+        this.stopLoading();
         this.router.navigate(['/home']);
       },
       error: (err: unknown) => {
-        this.loading.set(false);
+        this.stopLoading();
         this.shakeForm.set(true);
         setTimeout(() => this.shakeForm.set(false), 500);
 
