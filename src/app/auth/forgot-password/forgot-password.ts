@@ -63,7 +63,7 @@ export class ForgotPassword {
 
   private stopLoading(): void {
     const elapsed = Date.now() - this.loadingStartTime;
-    const remaining = Math.max(0, 1500 - elapsed);
+    const remaining = Math.max(0, 5000 - elapsed);
     setTimeout(() => this.isLoading.set(false), remaining);
   }
 
