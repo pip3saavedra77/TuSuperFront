@@ -109,29 +109,27 @@ $error-bg: rgba(239, 68, 68, 0.1);
     color: $light-text;
     margin-bottom: 20px;
     flex-shrink: 0;
-    padding: 10px 16px;
-    background: rgba(255, 255, 255, 0.6);
+    padding: 12px 20px;
+    background: rgba(20, 83, 45, 0.85);
     backdrop-filter: blur(12px);
     -webkit-backdrop-filter: blur(12px);
     border-radius: 16px;
-    border: 1px solid rgba(22, 163, 74, 0.15);
+    border: 1px solid rgba(34, 197, 94, 0.3);
     width: fit-content;
-    box-shadow: 0 4px 16px rgba(22, 101, 52, 0.08);
+    box-shadow: 0 4px 20px rgba(22, 101, 52, 0.2);
 
     .brand-logo-img {
-      width: 52px;
-      height: 52px;
+      width: 60px;
+      height: 60px;
       flex-shrink: 0;
       object-fit: contain;
-      filter: drop-shadow(0 2px 8px rgba(22, 101, 52, 0.25));
+      filter: drop-shadow(0 2px 8px rgba(0, 0, 0, 0.3));
     }
 
     .brand-name {
-      color: $light-text;
-      background: linear-gradient(135deg, $green-900, $green-700);
-      -webkit-background-clip: text;
-      -webkit-text-fill-color: transparent;
-      background-clip: text;
+      color: #ffffff;
+      font-size: 28px;
+      letter-spacing: -0.01em;
     }
   }
 

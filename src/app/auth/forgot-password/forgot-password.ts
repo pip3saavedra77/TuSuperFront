@@ -41,6 +41,7 @@ export class ForgotPassword {
   isTyping = signal(false);
   private typingTimeout: number | null = null;
   hidePassword = true;
+  private loadingStartTime = 0;
 
   selectStep(step: number): void {
     this.activeStep = step;
@@ -60,22 +61,29 @@ export class ForgotPassword {
     email: ['', [Validators.required, Validators.email]],
   });
 
+  private stopLoading(): void {
+    const elapsed = Date.now() - this.loadingStartTime;
+    const remaining = Math.max(0, 1500 - elapsed);
+    setTimeout(() => this.isLoading.set(false), remaining);
+  }
+
   onSubmit(): void {
     if (this.forgotForm.invalid || this.isLoading()) return;
 
     this.isLoading.set(true);
+    this.loadingStartTime = Date.now();
     this.successMessage.set('');
 
     const email = this.forgotForm.getRawValue().email ?? '';
 
     this.authService.forgotPassword(email).subscribe({
       next: (response) => {
-        this.isLoading.set(false);
+        this.stopLoading();
         this.successMessage.set(response.message);
         this.forgotForm.reset();
       },
       error: () => {
-        this.isLoading.set(false);
+        this.stopLoading();
         // Mostrar mensaje genérico de todas formas para no enumerar usuarios en el front
         this.successMessage.set('Si el correo electrónico existe, recibirás instrucciones para restablecer tu contraseña.');
       },

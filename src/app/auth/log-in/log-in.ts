@@ -52,6 +52,7 @@ export class LogIn implements OnInit {
   errorMessage = signal('');
   isTyping = signal(false);
   typingTimeout: number | null = null;
+  private loadingStartTime = 0;
 
   ngOnInit(): void {
     const rememberedEmail = localStorage.getItem('remember_email');
@@ -80,10 +81,17 @@ export class LogIn implements OnInit {
     password: ['', [Validators.required, Validators.minLength(8)]],
   });
 
+  private stopLoading(): void {
+    const elapsed = Date.now() - this.loadingStartTime;
+    const remaining = Math.max(0, 1500 - elapsed);
+    setTimeout(() => this.loading.set(false), remaining);
+  }
+
   onSubmit(): void {
     if (this.loginForm.invalid || this.loading()) return;
 
     this.loading.set(true);
+    this.loadingStartTime = Date.now();
     this.errorMessage.set('');
 
     const { email, password } = this.loginForm.getRawValue();
@@ -100,11 +108,11 @@ export class LogIn implements OnInit {
         } else {
           localStorage.removeItem('remember_email');
         }
-        this.loading.set(false);
+        this.stopLoading();
         this.router.navigate(['/home']);
       },
       error: (err: unknown) => {
-        this.loading.set(false);
+        this.stopLoading();
         this.shakeForm.set(true);
         setTimeout(() => this.shakeForm.set(false), 500);
 

@@ -48,6 +48,7 @@ export class ResetPassword implements OnInit {
   activeStep = 1;
   isTyping = signal(false);
   private typingTimeout: number | null = null;
+  private loadingStartTime = 0;
 
   selectStep(step: number): void {
     this.activeStep = step;
@@ -95,21 +96,28 @@ export class ResetPassword implements OnInit {
     return password === confirmPassword ? null : { passwordMismatch: true };
   }
 
+  private stopLoading(): void {
+    const elapsed = Date.now() - this.loadingStartTime;
+    const remaining = Math.max(0, 1500 - elapsed);
+    setTimeout(() => this.isLoading.set(false), remaining);
+  }
+
   onSubmit(): void {
     if (this.resetForm.invalid || this.isLoading()) return;
 
     this.isLoading.set(true);
+    this.loadingStartTime = Date.now();
     this.errorMessage.set('');
 
     const newPassword = this.resetForm.getRawValue().password ?? '';
 
     this.authService.resetPassword(this.token, newPassword).subscribe({
       next: () => {
-        this.isLoading.set(false);
+        this.stopLoading();
         this.isSuccess.set(true);
       },
       error: (err) => {
-        this.isLoading.set(false);
+        this.stopLoading();
         const message = err.error?.message || 'Error al restablecer la contraseña';
         this.errorMessage.set(message);
       },

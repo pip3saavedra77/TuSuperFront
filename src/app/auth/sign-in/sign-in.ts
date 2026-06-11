@@ -68,6 +68,7 @@ export class SignIn {
   public activeStep = 1;
   public isTyping = signal(false);
   private typingTimeout: number | null = null;
+  private loadingStartTime = 0;
 
   public selectStep(step: number): void {
     this.activeStep = step;
@@ -91,10 +92,17 @@ export class SignIn {
     confirmPassword: ['', [Validators.required]]
   }, { validators: passwordMatchValidator });
 
+  private stopLoading(): void {
+    const elapsed = Date.now() - this.loadingStartTime;
+    const remaining = Math.max(0, 1500 - elapsed);
+    setTimeout(() => this.loading.set(false), remaining);
+  }
+
   public onSubmit(): void {
     if (this.registerForm.invalid) return;
 
     this.loading.set(true);
+    this.loadingStartTime = Date.now();
 
     const { firstName, lastName, email, password, confirmPassword } = this.registerForm.getRawValue();
 
@@ -107,8 +115,8 @@ export class SignIn {
     }).subscribe({
       next: () => {
         this.snackBar.open('Registro exitoso', 'Cerrar', { duration: 3000 });
+        this.stopLoading();
         this.router.navigateByUrl('/home');
-        this.loading.set(false);
       },
       error: (err) => {
         let message = 'Error al registrar usuario';
@@ -122,7 +130,7 @@ export class SignIn {
           duration: 5000,
           panelClass: ['error-snackbar']
         });
-        this.loading.set(false);
+        this.stopLoading();
       }
     });
   }
