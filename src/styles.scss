@@ -152,16 +152,56 @@ body {
 .mat-mdc-select .mat-mdc-select-placeholder { color: #94a3b8 !important; }
 .mat-mdc-input-element::placeholder { color: #94a3b8 !important; }
 
+// ── Checkout form fields override ─────────────────────────────────────────
+// Borde dibujado en pseudo-elemento para no interferir con label ni outline
+.checkout-form-section .mat-mdc-form-field {
+  position: relative;
+  border-radius: 28px;
+
+  &::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    border: 1px solid #d1d5db;
+    border-radius: 28px;
+    pointer-events: none;
+    z-index: 1;
+  }
+
+  .mat-mdc-text-field-wrapper {
+    border-radius: 28px !important;
+    background: transparent !important;
+
+    .mat-mdc-form-field-flex {
+      border-radius: 28px !important;
+    }
+
+    .mdc-line-ripple {
+      display: none !important;
+    }
+  }
+
+  &.mat-focused::after {
+    border-color: var(--profile-primary, #00a651);
+    border-width: 2px;
+  }
+
+  &.mat-form-field-invalid::after {
+    border-color: #dc2626;
+    border-width: 2px;
+  }
+}
+
 // Wrapper principal del campo outline
 .mdc-text-field--outlined,
 .mat-mdc-text-field-wrapper.mdc-text-field--outlined {
   border-radius: 28px !important;
 
-  .mdc-notched-outline {
-    .mdc-notched-outline__leading {
-      border-radius: 28px 0 0 28px !important;
-      width: 28px !important;
-    }
+    .mdc-notched-outline {
+      .mdc-notched-outline__leading {
+        border-radius: 28px 0 0 28px !important;
+        width: 28px;
+      }
     // Por defecto el notch tiene border-top para cerrar el outline (campos sin label)
     .mdc-notched-outline__notch {
       border-top: 1px solid currentColor;
@@ -202,9 +242,76 @@ textarea {
 }
 
 // ── Chips, snackbars, dialogs ─────────────────────────────────────────────
-.mdc-snackbar__surface { border-radius: 14px !important; }
+.mdc-snackbar__surface {
+  border-radius: 14px !important;
+}
 .mat-mdc-chip { border-radius: 999px !important; }
 .mat-mdc-dialog-container .mdc-dialog__surface { border-radius: 20px !important; }
+
+// ── Snackbar Branded Styling ───────────────────────────────────────────────
+// Sobrescribe el tema oscuro con tintes rojos del Material theme original
+.mat-mdc-snack-bar-container {
+  &.success-snackbar .mdc-snackbar__surface {
+    background: linear-gradient(135deg, #f0fdf4 0%, #dcfce7 100%) !important;
+    color: #166534 !important;
+    border: 1px solid rgba(22, 101, 52, 0.12);
+    box-shadow: 0 8px 24px rgba(0, 166, 81, 0.18);
+    .mdc-snackbar__label { color: #166534 !important; }
+    .mat-mdc-snack-bar-action {
+      color: #006d77 !important;
+      font-weight: 700;
+    }
+  }
+
+  &.error-snackbar .mdc-snackbar__surface {
+    background: linear-gradient(135deg, #fef2f2 0%, #fee2e2 100%) !important;
+    color: #991b1b !important;
+    border: 1px solid rgba(153, 27, 27, 0.12);
+    box-shadow: 0 8px 24px rgba(220, 38, 38, 0.15);
+    .mdc-snackbar__label { color: #991b1b !important; }
+    .mat-mdc-snack-bar-action {
+      color: #dc2626 !important;
+      font-weight: 700;
+    }
+  }
+
+  &.warning-snackbar .mdc-snackbar__surface {
+    background: linear-gradient(135deg, #fffbeb 0%, #fef3c7 100%) !important;
+    color: #92400e !important;
+    border: 1px solid rgba(146, 64, 14, 0.12);
+    box-shadow: 0 8px 24px rgba(245, 158, 11, 0.15);
+    .mdc-snackbar__label { color: #92400e !important; }
+    .mat-mdc-snack-bar-action {
+      color: #d97706 !important;
+      font-weight: 700;
+    }
+  }
+
+  &.info-snackbar .mdc-snackbar__surface {
+    background: linear-gradient(135deg, #eff6ff 0%, #dbeafe 100%) !important;
+    color: #1e40af !important;
+    border: 1px solid rgba(30, 64, 175, 0.12);
+    box-shadow: 0 8px 24px rgba(59, 130, 246, 0.15);
+    .mdc-snackbar__label { color: #1e40af !important; }
+    .mat-mdc-snack-bar-action {
+      color: #2563eb !important;
+      font-weight: 700;
+    }
+  }
+
+  // Fallback: todos los snackbars sin panelClass tienen tema claro
+  .mdc-snackbar__surface {
+    background: #ffffff !important;
+    color: #1e293b !important;
+    border: 1px solid rgba(0, 0, 0, 0.08);
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.1);
+    .mdc-snackbar__label { color: #1e293b !important; }
+    .mat-mdc-snack-bar-action {
+      color: #006d77 !important;
+      font-weight: 700;
+    }
+  }
+}
 
 
 

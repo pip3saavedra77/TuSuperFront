@@ -28,7 +28,7 @@
         <div class="cart-item-card">
           <div class="item-image">
             @if (item.product.imageUrl) {
-              <img [src]="item.product.imageUrl" [alt]="item.product.name" />
+              <img [src]="item.product.imageUrl" [alt]="item.product.name" loading="lazy" (error)="onImageError($event)" />
             } @else {
               <mat-icon>inventory_2</mat-icon>
             }
@@ -45,14 +45,16 @@
             <button mat-icon-button
                     class="control-btn minus"
                     (click)="onDecrease(item)"
-                    [disabled]="cartStore.loading()">
+                    [disabled]="item.quantity <= 1 || cartStore.loading()"
+                    [attr.aria-label]="'Disminuir cantidad de ' + item.product.name">
               <mat-icon>remove</mat-icon>
             </button>
-            <span class="quantity-text">{{ item.quantity }}</span>
+            <span class="quantity-text" role="status" [attr.aria-label]="item.quantity + ' unidades'">{{ item.quantity }}</span>
             <button mat-icon-button
                     class="control-btn plus"
                     (click)="onIncrease(item)"
-                    [disabled]="item.quantity >= item.product.stock || cartStore.loading()">
+                    [disabled]="item.quantity >= item.product.stock || cartStore.loading()"
+                    [attr.aria-label]="'Aumentar cantidad de ' + item.product.name">
               <mat-icon>add</mat-icon>
             </button>
           </div>
@@ -64,7 +66,8 @@
           <button mat-icon-button
                   class="item-remove-btn"
                   (click)="onRemove(item.product.id)"
-                  [disabled]="cartStore.loading()">
+                  [disabled]="cartStore.loading()"
+                  [attr.aria-label]="'Eliminar ' + item.product.name + ' del carrito'">
             <mat-icon>delete_outline</mat-icon>
           </button>
         </div>
