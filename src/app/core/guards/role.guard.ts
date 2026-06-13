@@ -9,7 +9,11 @@ export const roleGuard: CanActivateFn = (route, _state) => {
   const requiredModule = route.data['module'] as string;
   const userModules = authService.userModules();
 
-  if (!requiredModule) return true;
+  if (!requiredModule) {
+    console.error('roleGuard: ruta sin data.module definido. Acceso denegado por seguridad.');
+    router.navigateByUrl('/home');
+    return false;
+  }
 
   // Módulos exclusivos de gestión — usuarios normales no tienen acceso
   const managementOnlyModules = ['category', 'users', 'roles', 'modules', 'provider'];
