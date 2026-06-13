@@ -1,4 +1,5 @@
-import { Component, inject, computed, signal, OnInit } from '@angular/core';
+import { Component, inject, computed, signal, OnInit, DestroyRef } from '@angular/core';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 
 import { CommonModule } from '@angular/common';
 
@@ -63,6 +64,7 @@ export class ProfileComponent implements OnInit {
   private readonly usersService = inject(UsersService);
 
   private readonly snackBar = inject(MatSnackBar);
+  private readonly destroyRef = inject(DestroyRef);
 
 
 
@@ -212,7 +214,9 @@ export class ProfileComponent implements OnInit {
 
     this.isSavingProfile.set(true);
 
-    this.usersService.updateMyProfile(this.profileForm.value).subscribe({
+    this.usersService.updateMyProfile(this.profileForm.value).pipe(
+      takeUntilDestroyed(this.destroyRef)
+    ).subscribe({
 
       next: () => {
 
@@ -254,7 +258,9 @@ export class ProfileComponent implements OnInit {
 
     
 
-    this.usersService.updateMyPassword({ currentPassword, newPassword }).subscribe({
+    this.usersService.updateMyPassword({ currentPassword, newPassword }).pipe(
+      takeUntilDestroyed(this.destroyRef)
+    ).subscribe({
 
       next: () => {
 
@@ -350,7 +356,9 @@ export class ProfileComponent implements OnInit {
 
     this.isUploadingAvatar.set(true);
 
-    this.usersService.uploadMyAvatar(file).subscribe({
+    this.usersService.uploadMyAvatar(file).pipe(
+      takeUntilDestroyed(this.destroyRef)
+    ).subscribe({
 
       next: () => {
 
@@ -386,7 +394,9 @@ export class ProfileComponent implements OnInit {
 
   removeAvatar(): void {
 
-    this.usersService.removeMyAvatar().subscribe({
+    this.usersService.removeMyAvatar().pipe(
+      takeUntilDestroyed(this.destroyRef)
+    ).subscribe({
 
       next: () => {
 

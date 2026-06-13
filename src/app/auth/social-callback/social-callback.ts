@@ -3,6 +3,12 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { AuthService } from '../../core/services/auth';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 
+const JWT_REGEX = /^[A-Za-z0-9\-._~+/]+=*$/;
+
+function isValidJwtFormat(token: string): boolean {
+  return token.length > 20 && JWT_REGEX.test(token);
+}
+
 @Component({
   selector: 'app-social-callback',
   standalone: true,
@@ -10,7 +16,7 @@ import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
   template: `
     <div class="callback-container">
       <mat-spinner diameter="50"></mat-spinner>
-      <p>Procesando inicio de sesión...</p>
+      <p>Procesando inicio de sesion...</p>
     </div>
   `,
   styles: [`
@@ -32,21 +38,20 @@ export class SocialCallback implements OnInit {
   private readonly authService = inject(AuthService);
 
   ngOnInit(): void {
-    // Read from window.location.hash since the backend redirects using fragment (#token=)
-    // instead of query parameter (?token=) to protect the JWT from proxy/CDN logs and referer leaks.
     let token = this.route.snapshot.queryParamMap.get('token');
 
     if (!token && window.location.hash) {
-      const hash = window.location.hash.slice(1); // remove '#'
+      const hash = window.location.hash.slice(1);
       const params = new URLSearchParams(hash);
       token = params.get('token');
     }
-    
-    if (token) {
+
+    if (token && isValidJwtFormat(token)) {
       localStorage.setItem('token', token);
-      // Opcional: Podrías llamar a un endpoint de 'me' para obtener los datos del usuario 
-      // o simplemente confiar en el check-status posterior.
-      this.router.navigate(['/home']);
+      this.authService.checkAuthStatus().subscribe({
+        next: () => this.router.navigate(['/home']),
+        error: () => this.router.navigate(['/auth/login'], { queryParams: { error: 'social_auth_failed' } }),
+      });
     } else {
       this.router.navigate(['/auth/login'], { queryParams: { error: 'social_auth_failed' } });
     }

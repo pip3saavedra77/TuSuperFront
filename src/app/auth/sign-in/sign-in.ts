@@ -79,7 +79,8 @@ export class SignIn {
     lastName: ['', [Validators.required]],
     email: ['', [Validators.required, Validators.email]],
     password: ['', [Validators.required, Validators.minLength(8)]],
-    confirmPassword: ['', [Validators.required]]
+    confirmPassword: ['', [Validators.required]],
+    termsAccepted: [false, [Validators.requiredTrue]]
   }, { validators: passwordMatchValidator });
 
   private stopLoading(): void {
