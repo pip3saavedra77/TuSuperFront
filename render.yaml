@@ -5,7 +5,7 @@ services:
     name: tusuper-frontend
     runtime: static
     buildCommand: npm ci && npm run build:render
-    staticPublishPath: dist/adso_3063267/browser
+    staticPublishPath: dist/adso_3063267
     envVars:
       - key: API_URL
         sync: false
