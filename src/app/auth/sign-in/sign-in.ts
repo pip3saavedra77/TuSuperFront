@@ -110,11 +110,12 @@ export class SignIn {
         this.router.navigateByUrl('/home');
       },
       error: (err) => {
-        let message = 'Error al registrar usuario';
-        if (err.status === 409) {
-          message = 'Este email ya está registrado';
-        } else if (err.status === 400 && err.error?.message) {
-          message = Array.isArray(err.error.message) ? err.error.message[0] : err.error.message;
+        let message = 'Error al procesar el registro. Intentalo de nuevo.';
+        if (err.status === 400 && err.error?.message) {
+          const msgs = Array.isArray(err.error.message) ? err.error.message[0] : err.error.message;
+          if (typeof msgs === 'string' && !msgs.toLowerCase().includes('registrado')) {
+            message = msgs;
+          }
         }
 
         this.snackBar.open(message, 'Cerrar', {
