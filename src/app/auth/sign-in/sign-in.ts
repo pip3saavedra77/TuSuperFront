@@ -1,34 +1,15 @@
 import { Component, inject, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { FormBuilder, ReactiveFormsModule, Validators, AbstractControl, ValidationErrors, ValidatorFn } from '@angular/forms';
+import { AbstractControl, ValidationErrors } from '@angular/forms';
+import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { Router, RouterModule } from '@angular/router';
+import { passwordMatchValidator } from '../../shared/validators/password-match.validator';
 import { MatIconModule } from '@angular/material/icon';
 import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
 import { AuthService } from '../../core/services/auth';
 import { PasswordStrengthComponent } from '../../shared/components/password-strength/password-strength';
 import { AnimatedCharacters } from '../animated-characters/animated-characters';
 import { LoadingScreen } from '../../shared/components/loading-screen/loading-screen';
-
-const passwordMatchValidator: ValidatorFn = (control: AbstractControl): ValidationErrors | null => {
-  const password = control.get('password');
-  const confirmPassword = control.get('confirmPassword');
-
-  if (!password || !confirmPassword) return null;
-
-  if (password.value !== confirmPassword.value && confirmPassword.value) {
-    confirmPassword.setErrors({ ...confirmPassword.errors, passwordMismatch: true });
-    return { passwordMismatch: true };
-  } else {
-    if (confirmPassword.hasError('passwordMismatch')) {
-      const errors = confirmPassword.errors;
-      if (errors) {
-        delete errors['passwordMismatch'];
-        confirmPassword.setErrors(Object.keys(errors).length > 0 ? errors : null);
-      }
-    }
-    return null;
-  }
-};
 
 @Component({
   selector: 'app-sign-in',
