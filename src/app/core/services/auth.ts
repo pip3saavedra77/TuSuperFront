@@ -34,29 +34,37 @@ export class AuthService {
   });
 
   public login(credentials: LoginCredentials): Observable<AuthResponse> {
-    localStorage.removeItem('token');
-
     return this.http.post<AuthResponse>(`${this.API_URL}/login`, credentials).pipe(
       tap((response) => {
-        localStorage.setItem('token', response.access_token);
+        if (response.access_token) {
+          localStorage.setItem('token', response.access_token);
+        }
         this._authStatus.set(response);
       })
     );
   }
 
   public register(payload: RegisterPayload): Observable<AuthResponse> {
-    localStorage.removeItem('token');
-
     return this.http.post<AuthResponse>(`${this.API_URL}/register`, payload).pipe(
       tap((response) => {
-        localStorage.setItem('token', response.access_token);
+        if (response.access_token) {
+          localStorage.setItem('token', response.access_token);
+        }
         this._authStatus.set(response);
       })
     );
   }
 
   public logout(): void {
+    this.http.post(`${this.API_URL}/logout`, {}).subscribe({
+      complete: () => this.clearSession(),
+      error: () => this.clearSession(),
+    });
+  }
+
+  private clearSession(): void {
     localStorage.removeItem('token');
+    localStorage.removeItem('remember_email');
     this._authStatus.set(null);
     this.router.navigateByUrl('/auth');
   }
@@ -74,9 +82,6 @@ export class AuthService {
   }
 
   public checkAuthStatus(): Observable<boolean> {
-    const token = localStorage.getItem('token');
-    if (!token) return of(false);
-
     return this.http.get<AuthResponse>(`${this.API_URL}/check-status`).pipe(
       tap((response) => {
         this._authStatus.set(response);
@@ -87,7 +92,7 @@ export class AuthService {
       map(() => true),
       catchError((err) => {
         if (err.status === 401) {
-          this.logout();
+          this.clearSession();
         }
         return of(false);
       }),
