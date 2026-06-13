@@ -134,14 +134,6 @@
                         </div>
                     }
 
-                    <!-- Forgot hint -->
-                    @if (failedAttempts() >= 3 && !errorMessage()) {
-                        <div class="forgot-password-hint" role="alert">
-                            <mat-icon>lock_reset</mat-icon>
-                            <span>Demasiados intentos. <a routerLink="/auth/forgot-password">Recupera tu contraseña</a></span>
-                        </div>
-                    }
-
                     <!-- Options -->
                     <div class="form-options">
                         <label class="remember-me" for="remember-checkbox">
