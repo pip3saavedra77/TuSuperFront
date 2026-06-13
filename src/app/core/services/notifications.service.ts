@@ -91,6 +91,7 @@ export class NotificationsService {
       this.socket.disconnect();
       this.socket = null;
     }
+    this.notifications.set([]);
   }
 
   private addNotification(notification: Notification): void {
