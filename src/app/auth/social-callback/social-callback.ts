@@ -50,7 +50,10 @@ export class SocialCallback implements OnInit {
       localStorage.setItem('token', token);
       this.authService.checkAuthStatus().subscribe({
         next: () => this.router.navigate(['/home']),
-        error: () => this.router.navigate(['/auth/login'], { queryParams: { error: 'social_auth_failed' } }),
+        error: () => {
+          localStorage.removeItem('token');
+          this.router.navigate(['/auth/login'], { queryParams: { error: 'social_auth_failed' } });
+        },
       });
     } else {
       this.router.navigate(['/auth/login'], { queryParams: { error: 'social_auth_failed' } });

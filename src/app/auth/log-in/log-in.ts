@@ -39,7 +39,6 @@ export class LogIn implements OnInit {
   activeStep = 1;
   loading = signal(false);
   rememberMe = signal(false);
-  failedAttempts = signal(0);
   shakeForm = signal(false);
   errorMessage = signal('');
   isTyping = signal(false);
@@ -94,7 +93,6 @@ export class LogIn implements OnInit {
 
     this.authService.login(credentials).subscribe({
       next: () => {
-        this.failedAttempts.set(0);
         if (this.rememberMe()) {
           localStorage.setItem('remember_email', email ?? '');
         } else {
@@ -109,8 +107,6 @@ export class LogIn implements OnInit {
         setTimeout(() => this.shakeForm.set(false), 500);
 
         this.loginForm.patchValue({ password: '' });
-        const attempts = this.failedAttempts() + 1;
-        this.failedAttempts.set(attempts);
 
         let message = getHttpErrorMessage(
           err as HttpErrorResponse,
@@ -119,9 +115,6 @@ export class LogIn implements OnInit {
         // Translate common backend English messages
         if (message.toLowerCase().includes('invalid credentials')) {
           message = 'Correo o contraseña incorrectos';
-        }
-        if (attempts >= 3) {
-          message += '. ¿Olvidaste tu contraseña? Usa el enlace de recuperación.';
         }
         this.errorMessage.set(message);
       },
