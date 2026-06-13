@@ -2,13 +2,14 @@ import { Injectable, signal, computed, effect } from '@angular/core';
 import { Subject } from 'rxjs';
 import { io, Socket } from 'socket.io-client';
 import { Notification, NotificationType } from '../models/notification.model';
+import { environment } from '../../../environments/environment';
 
 @Injectable({
   providedIn: 'root',
 })
 export class NotificationsService {
   private socket: Socket | null = null;
-  private readonly apiUrl = 'http://localhost:3000'; // Ajustar segun backend
+  private readonly apiUrl = environment.apiUrl;
 
   // State
   private readonly notifications = signal<Notification[]>([]);

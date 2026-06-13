@@ -1,234 +1,230 @@
-# Guía de despliegue en Render — TuSuper (Frontend + Backend)
+# Guia de despliegue — TuSuper (Backend + Frontend)
 
-Esta guía deja el proyecto listo para **producción** en [Render](https://render.com) con:
+Esta guia describe como desplegar el proyecto en produccion usando:
 
-- PostgreSQL vacía → migraciones → datos reales (categorías, proveedores, ~40 productos, roles, admin).
-- API NestJS en Docker.
-- Angular como **Static Site**.
-
-Repositorios:
-
-| Componente | Carpeta local |
-|------------|---------------|
-| Frontend   | `c:\TuSuperFront` |
-| Backend    | `c:\tusuper-backend` |
+- **Base de datos**: [Clever Cloud](https://clever-cloud.com) PostgreSQL
+- **Backend API**: [Render](https://render.com) Web Service (Docker)
+- **Frontend**: [Render](https://render.com) Static Site
 
 ---
 
 ## Resumen del orden de despliegue
 
-1. Crear cuenta en Render y conectar GitHub (dos repos o monorepo).
-2. Desplegar **PostgreSQL** + **API** (`tusuper-backend`).
-3. Ejecutar **seed de producción** (una sola vez).
-4. Desplegar **frontend** con `API_URL` apuntando al API.
-5. Configurar **Google OAuth** y **Cloudinary** con URLs de producción.
+1. Crear base de datos PostgreSQL en Clever Cloud
+2. Desplegar backend API en Render (con migraciones automaticas)
+3. Ejecutar seed de produccion (bootstrap + inventario)
+4. Desplegar frontend en Render
+5. Configurar servicios externos (Google OAuth, Cloudinary, SMTP)
 
 ---
 
-## Parte 1 — Backend (API + base de datos)
+## Parte 0 — Preparacion local
 
-### 1.1 Subir código
+Asegurate de que ambos repositorios esten en GitHub y la rama `main` tenga los ultimos cambios:
 
-Asegúrate de que `tusuper-backend` esté en GitHub (rama `main`).
+- Backend: `tusuper-backend` (rama `dev`)
+- Frontend: `TuSuperFront` (rama `main`)
 
-### 1.2 Crear Blueprint o servicios manualmente
+---
 
-**Opción A — Blueprint (recomendado)**  
-En Render: **New → Blueprint** → conecta el repo del backend → usa el archivo `render.yaml`.
+## Parte 1 — Base de datos (Clever Cloud)
 
-**Opción B — Manual**
+### 1.1 Crear la base de datos
 
-1. **New → PostgreSQL**  
-   - Nombre: `tusuper-db`  
-   - Plan: Free (o Starter para producción real)
+1. Crear cuenta en [Clever Cloud](https://clever-cloud.com)
+2. **Create → an add-on → PostgreSQL**
+3. Elegir plan (DEV/Free para empezar)
+4. Una vez creada, ir a **Information** y copiar la **Connection URI** (formato: `postgres://user:password@host:port/db`)
 
-2. **New → Web Service**  
-   - Runtime: **Docker**  
-   - Root: raíz del backend  
-   - Dockerfile: `./Dockerfile`  
-   - Plan: Free  
+Guarda esta URI — la necesitaras como `DATABASE_URL` en el backend.
 
-### 1.3 Variables de entorno del API
+### 1.2 Configurar SSL
 
-Copia la plantilla `.env.render.example` y configura en el dashboard del Web Service:
+La conexion a Clever Cloud requiere SSL. El backend ya esta configurado para usar `ssl: { rejectUnauthorized: false }` en produccion.
 
-| Variable | Descripción |
-|----------|-------------|
-| `DATABASE_URL` | Render la inyecta al vincular la BD |
-| `JWT_SECRET` | Generar valor aleatorio largo |
-| `JWT_EXPIRES_IN` | `86400` |
-| `FRONTEND_URL` | URL del static site (la defines después del paso 2) |
-| `GOOGLE_CLIENT_ID` / `SECRET` / `CALLBACK_URL` | OAuth (callback = `https://TU-API.onrender.com/auth/google/callback`) |
-| `MAIL_*` | SMTP para recuperar contraseña |
-| `CLOUDINARY_*` | Subida de imágenes de productos |
-| `SEED_SECRET` | Secreto largo (mín. 16 caracteres) para poblar la BD |
-| `ADMIN_EMAIL` | Ej. `admin@tusuper.com` |
-| `ADMIN_PASSWORD` | Contraseña inicial del administrador |
+---
 
-También define (Render las pone automáticamente si usas blueprint):
+## Parte 2 — Backend API (Render Web Service)
 
-- `NODE_ENV=production`
-- `SKIP_ENV_FILE=true`
-- `RENDER=true`
+### 2.1 Crear el Web Service
 
-### 1.4 Primer deploy del API
+1. En Render: **New → Web Service**
+2. Conecta el repositorio `tusuper-backend`
+3. Configuracion del servicio:
+   - **Name**: `tusuper-api`
+   - **Runtime**: Docker
+   - **Branch**: `dev`
+   - **Root Directory**: (dejar vacio, es la raiz)
+   - **Dockerfile Path**: `./Dockerfile`
+   - **Plan**: Free
 
-El `Dockerfile` ejecuta:
+### 2.2 Variables de entorno
+
+Configura estas en el dashboard de Render (Environment → Environment Variables):
+
+| Variable | Descripcion | Ejemplo |
+|---|---|---|
+| `NODE_ENV` | Entorno de ejecucion | `prod` |
+| `PORT` | Puerto del servidor | `3000` |
+| `SKIP_ENV_FILE` | No cargar archivos .env | `true` |
+| `DATABASE_URL` | URI de Clever Cloud | `postgres://user:pass@host:port/db` |
+| `JWT_SECRET` | Secreto JWT (>= 32 chars) | Generar con `node -e "console.log(require('crypto').randomBytes(64).toString('hex'))"` |
+| `JWT_EXPIRES_IN` | Expiracion del token (seg) | `86400` |
+| `FRONTEND_URL` | URL del frontend en Render | `https://tusuper-frontend.onrender.com` |
+| `MAIL_HOST` | Servidor SMTP | `smtp.gmail.com` |
+| `MAIL_PORT` | Puerto SMTP | `465` |
+| `MAIL_USER` | Usuario SMTP | `tu_correo@gmail.com` |
+| `MAIL_PASSWORD` | App password SMTP | `tu_app_password` |
+| `MAIL_FROM` | Remitente | `"TuSuper <tu_correo@gmail.com>"` |
+| `GOOGLE_CLIENT_ID` | Google OAuth Client ID | (de Google Cloud Console) |
+| `GOOGLE_CLIENT_SECRET` | Google OAuth Client Secret | (de Google Cloud Console) |
+| `GOOGLE_CALLBACK_URL` | Callback OAuth | `https://tusuper-api.onrender.com/auth/google/callback` |
+| `CLOUDINARY_CLOUD_NAME` | Cloudinary cloud name | (opcional) |
+| `CLOUDINARY_API_KEY` | Cloudinary API key | (opcional) |
+| `CLOUDINARY_API_SECRET` | Cloudinary API secret | (opcional) |
+| `SEED_SECRET` | Secreto para seed de produccion (>= 16 chars) | Generar aleatorio |
+| `ADMIN_EMAIL` | Email del admin inicial | `admin@tusuper.com` |
+| `ADMIN_PASSWORD` | Password del admin inicial (>= 8 chars) | `cambiar_tras_primer_login` |
+
+### 2.3 Desplegar
+
+Render ejecutara automaticamente:
+1. `npm ci` (instalar dependencias)
+2. `npm run build` (compilar TypeScript)
+3. Construir imagen Docker
+4. Al iniciar el contenedor: `npm run migration:run && node dist/main.js`
+
+Cuando el servicio este **Live**, anota la URL: `https://tusuper-api.onrender.com`
+
+### 2.4 Verificar salud
 
 ```bash
-npm run migration:run && node dist/main.js
+curl https://tusuper-api.onrender.com/
+# Debe devolver: {"status":"ok","service":"tusuper-api","environment":"prod"}
 ```
 
-Cuando el servicio esté **Live**, anota la URL:  
-`https://tusuper-api.onrender.com` (o el nombre que elijas).
+---
 
-Comprueba salud:
+## Parte 3 — Seed de produccion
 
-```bash
-curl https://TU-API.onrender.com/
-# → {"status":"ok","service":"tusuper-api"}
-```
-
-### 1.5 Cargar la base de datos (seed de producción)
-
-**Solo una vez**, con la BD vacía después de migraciones:
+Ejecuta esto UNA SOLA VEZ con la base de datos vacia:
 
 ```bash
-curl -X POST https://TU-API.onrender.com/seed/production \
+curl -X POST https://tusuper-api.onrender.com/seed/production \
   -H "x-seed-secret: TU_SEED_SECRET" \
-  -H "Content-Type: application/json"
+  -H "Content-Type: application/json" \
+  -d '{"adminEmail": "ADMIN_EMAIL", "adminPassword": "ADMIN_PASSWORD"}'
 ```
 
-Esto ejecuta:
+Esto crea:
+- **9 modulos**: users, roles, modules, product, category, provider, orders, dashboard, notifications
+- **5 roles**: ADMIN, TENDERO, TENDER, VENDEDOR, USER
+- **1 admin**: con el email y password configurados
+- **Inventario**: 6 categorias, 5 proveedores, ~40 productos con precios en COP
 
-1. **Bootstrap**: módulos, roles (ADMIN, TENDERO, USER…), usuario admin.  
-2. **Inventario**: 6 categorías, 5 proveedores (Colanta, Zenú, Fruver del Valle, La Económica, Chocorramo), ~40 productos con precios en COP.
-
-Respuesta esperada (resumen):
+Respuesta esperada:
 
 ```json
 {
-  "bootstrap": { "adminEmail": "admin@tusuper.com", "adminCreated": true, ... },
-  "inventory": { "categoriesInserted": 6, "providersInserted": 5, "productsInserted": 40, ... }
+  "message": "Seeder completado exitosamente",
+  "bootstrap": {
+    "adminEmail": "admin@tusuper.com",
+    "adminCreated": true,
+    "rolesInserted": 5,
+    "modulesInserted": 9
+  },
+  "categoriesInserted": 6,
+  "providersInserted": 5,
+  "productsInserted": 40
 }
 ```
 
-Inicia sesión en el front con `ADMIN_EMAIL` / `ADMIN_PASSWORD`.
+---
 
-> **Desarrollo local:** `GET http://localhost:3000/seed` sigue disponible solo con `NODE_ENV=dev`.
+## Parte 4 — Frontend (Render Static Site)
+
+### 4.1 Crear el Static Site
+
+1. En Render: **New → Static Site**
+2. Conecta el repositorio `TuSuperFront`
+3. Configuracion:
+   - **Name**: `tusuper-frontend`
+   - **Branch**: `main`
+   - **Build Command**: `npm ci && npm run build:render`
+   - **Publish Directory**: `dist/adso_3063267/browser`
+
+### 4.2 Variable de entorno
+
+| Key | Value |
+|---|---|
+| `API_URL` | `https://tusuper-api.onrender.com` |
+
+El script `scripts/set-env.js` genera `environment.prod.ts` con esta URL antes del build.
+
+### 4.3 Desplegar
+
+Render construira el sitio y lo servira como estatico. Las rutas SPA se manejan con `public/_redirects`.
+
+Cuando este **Live**, anota la URL: `https://tusuper-frontend.onrender.com`
 
 ---
 
-## Parte 2 — Frontend (Static Site)
-
-### 2.1 Subir código
-
-Repo: `TuSuperFront` en GitHub.
-
-### 2.2 Crear Static Site en Render
-
-- **New → Static Site** → conecta el repo del frontend.
-- **Build Command:**
-
-  ```bash
-  npm ci && npm run build:render
-  ```
-
-- **Publish directory:** `dist/adso_3063267/browser`
-- **Environment variable:**
-
-  | Key | Value |
-  |-----|--------|
-  | `API_URL` | `https://TU-API.onrender.com` (sin barra final) |
-
-El script `scripts/set-env.js` genera `environment.prod.ts` antes del build.
-
-### 2.3 Rutas SPA
-
-El archivo `public/_redirects` redirige todas las rutas a `index.html` (necesario para Angular Router).
-
-### 2.4 Actualizar el backend
-
-Vuelve al Web Service del API y actualiza:
-
-```
-FRONTEND_URL=https://TU-FRONTEND.onrender.com
-```
-
-Redeploy del API si hace falta.
-
----
-
-## Parte 3 — Servicios externos
+## Parte 5 — Servicios externos
 
 ### Google OAuth
 
-1. [Google Cloud Console](https://console.cloud.google.com/) → Credenciales OAuth.  
-2. **Authorized redirect URI:** `https://TU-API.onrender.com/auth/google/callback`  
-3. **Authorized JavaScript origins:** `https://TU-FRONTEND.onrender.com`  
-4. Copia Client ID y Secret al API.
+1. Ir a [Google Cloud Console](https://console.cloud.google.com/)
+2. **APIs & Services → Credentials → Create OAuth 2.0 Client ID**
+3. Configurar:
+   - **Authorized redirect URI**: `https://tusuper-api.onrender.com/auth/google/callback`
+   - **Authorized JavaScript origins**: `https://tusuper-frontend.onrender.com`
+4. Copiar Client ID y Client Secret al dashboard de Render (backend)
 
-### Cloudinary
+### Cloudinary (subida de imagenes)
 
-1. Cuenta en [cloudinary.com](https://cloudinary.com).  
-2. Copia `cloud_name`, `api_key`, `api_secret` al API.  
-3. Sin esto, los productos se crean pero **falla la subida de imagen** (el front ya avisa si ocurre).
+1. Crear cuenta en [cloudinary.com](https://cloudinary.com)
+2. Copiar `cloud_name`, `api_key`, `api_secret` al dashboard de Render (backend)
+3. Sin esto, los productos se crean pero falla la subida de imagen
 
-### Correo (recuperar contraseña)
+### SMTP (recuperacion de contrasena)
 
-Usa Gmail con contraseña de aplicación o un SMTP transaccional (SendGrid, etc.).
-
----
-
-## Parte 4 — Checklist de producción
-
-- [ ] `JWT_SECRET` y `SEED_SECRET` únicos y largos (no los del repo).  
-- [ ] Cambiar `ADMIN_PASSWORD` tras el primer login.  
-- [ ] `FRONTEND_URL` y `GOOGLE_CALLBACK_URL` con HTTPS reales.  
-- [ ] Plan de BD acorde al tráfico (Free se “duerme” tras inactividad).  
-- [ ] No exponer `GET /seed` en producción (bloqueado por `DevOnlyGuard`).  
-- [ ] Rotar credenciales que hayan estado en chats o commits.  
+Usa Gmail con contraseña de aplicacion:
+1. Activar 2FA en tu cuenta Google
+2. Generar App Password en [myaccount.google.com/apppasswords](https://myaccount.google.com/apppasswords)
+3. Usar esa contraseña como `MAIL_PASSWORD`
 
 ---
 
-## Comandos útiles locales
+## Parte 6 — Verificar todo
 
-```bash
-# Backend
-cd c:\tusuper-backend
-npm run start:dev
-
-# Seed solo inventario (dev)
-curl http://localhost:3000/seed
-
-# Frontend
-cd c:\TuSuperFront
-npm start
-
-# Build como en Render
-set API_URL=http://localhost:3000
-npm run build:render
-```
+1. Abrir `https://tusuper-frontend.onrender.com`
+2. Iniciar sesion con `ADMIN_EMAIL` / `ADMIN_PASSWORD`
+3. Verificar que el dashboard carga con graficos
+4. Navegar a Productos, Categorias, Proveedores — debe haber datos del seed
+5. Crear un pedido de prueba como USER
+6. Verificar notificaciones en el panel admin
 
 ---
 
-## Solución de problemas
+## Parte 7 — Checklist de produccion
 
-| Síntoma | Causa probable | Acción |
-|---------|----------------|--------|
-| API no arranca | Falta variable en Joi | Revisa logs en Render → Environment |
-| Error SSL en BD | Postgres gestionado | Ya configurado con `ssl` si hay `DATABASE_URL` |
-| 403 al crear producto | Rol USER | Usa cuenta ADMIN o TENDERO |
-| 400 al crear producto | Tipos string en JSON | Actualiza front (rama con `buildProductPayload`) |
-| Imagen no sube | Cloudinary | Revisa `CLOUDINARY_*` en el API |
-| Front no carga rutas | SPA | Confirma `_redirects` y rewrite en Render |
+- [ ] `JWT_SECRET` y `SEED_SECRET` unicos y largos (>= 32 y >= 16 chars)
+- [ ] `ADMIN_PASSWORD` cambiado tras el primer login
+- [ ] `FRONTEND_URL` y `GOOGLE_CALLBACK_URL` con HTTPS reales
+- [ ] Plan de Clever Cloud acorde al trafico (Free es suficiente para pruebas)
+- [ ] Endpoint `GET /seed` bloqueado en produccion (solo funciona con `NODE_ENV !== 'prod'`)
+- [ ] Rotar credenciales que hayan estado en chats o commits
 
 ---
 
-## Rama de trabajo actual (frontend)
+## Solucion de problemas
 
-Los cambios de logo, fix de productos y archivos Render están en:
-
-`fix/login-logo-product-create`
-
-Logo: `public/branding/tusuper-logo.png` (fondo transparente).
+| Sintoma | Causa probable | Accion |
+|---|---|---|
+| API no arranca | Falta variable de entorno | Revisar logs en Render → Deploy |
+| Error SSL en BD | `sslmode` no configurado | El backend ya fuerza SSL en produccion |
+| 403 al seed | `SEED_SECRET` no coincide | Verificar `x-seed-secret` header |
+| 403 al crear producto | Rol USER | Usar cuenta ADMIN o TENDERO |
+| Imagen no sube | Cloudinary no configurado | Verificar `CLOUDINARY_*` en el backend |
+| Front no carga rutas | SPA rewrite | Verificar `_redirects` en el despliegue |
+| WebSocket no conecta | URL hardcodeada antigua | Este fix ya esta aplicado en `notifications.service.ts` |
