@@ -32,7 +32,7 @@
                 <span matListItemIcon class="nav-icon material-symbols-rounded">home</span>
                 <span matListItemTitle>Inicio</span>
               </a>
-              @for (moduleName of menuItems(); track moduleName) {
+              @for (moduleName of filterValidModules(menuItems()); track moduleName) {
                 @if (!(isUserRole() && moduleName === 'category')) {
                   <a mat-list-item
                     [routerLink]="'/' + moduleName.toLowerCase()"
