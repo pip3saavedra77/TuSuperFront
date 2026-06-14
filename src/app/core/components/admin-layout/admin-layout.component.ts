@@ -13,6 +13,7 @@ import { Router, RouterLink, RouterLinkActive, RouterOutlet } from '@angular/rou
 import { AuthService } from '../../services/auth';
 import { NotificationsService } from '../../services/notifications.service';
 import { IdleService } from '../../services/idle.service';
+import { PushService } from '../../services/push.service';
 import { NotificationBellComponent } from '../../../shared/components/notification-bell/notification-bell.component';
 import { CartStore } from '../../../product/store/cart.store';
 
@@ -41,6 +42,7 @@ export class AdminLayoutComponent {
   private readonly router = inject(Router);
   private readonly notificationsService = inject(NotificationsService);
   private readonly idleService = inject(IdleService);
+  private readonly pushService = inject(PushService);
   readonly cartStore = inject(CartStore);
 
   public isAuthenticated = this.authService.isAuthenticated;
@@ -50,6 +52,7 @@ export class AdminLayoutComponent {
   constructor() {
     this.notificationsService.connect();
     this.idleService.startWatching();
+    this.pushService.subscribe().catch(() => {});
   }
 
   public profileClass = computed(() => {
