@@ -10,12 +10,16 @@ import { PushService } from '../../../core/services/push.service';
     @if (visible()) {
       <div class="push-prompt-overlay" (click)="dismiss()">
         <div class="push-prompt-card" (click)="$event.stopPropagation()">
-          @if (isIOS()) {
+          @if (isIOSStandalone()) {
+            <!-- iOS PWA: ya instalada, pedir permiso real -->
+            <div class="push-icon-wrap">🔔</div>
+            <strong>Activar notificaciones</strong>
+            <p>Permite que TuSuper te avise cuando tu pedido esté listo</p>
+          } @else if (isIOS()) {
+            <!-- iOS Safari: mostrar instrucciones de instalación -->
             <div class="push-icon-wrap">📲</div>
             <strong>Recibe notificaciones en tu iPhone</strong>
-            <p class="ios-steps">
-              Para activar las notificaciones sigue estos pasos:
-            </p>
+            <p class="ios-steps">Para activar las notificaciones sigue estos pasos:</p>
             <div class="steps-list">
               <div class="step">
                 <span class="step-num">1</span>
@@ -34,13 +38,16 @@ import { PushService } from '../../../core/services/push.service';
               </div>
             </div>
           } @else {
+            <!-- Android / Desktop -->
             <div class="push-icon-wrap">🔔</div>
             <strong>¿Recibir notificaciones de tus pedidos?</strong>
             <p>Te avisaremos cuando tu pedido esté listo para despachar</p>
           }
           <div class="push-actions">
             <button class="btn-secondary" (click)="dismiss()">Ahora no</button>
-            @if (isIOS()) {
+            @if (isIOSStandalone()) {
+              <button class="btn-primary" (click)="accept()">Activar</button>
+            } @else if (isIOS()) {
               <button class="btn-primary" (click)="dismiss()">Entendido</button>
             } @else {
               <button class="btn-primary" (click)="accept()">Activar</button>
@@ -97,6 +104,7 @@ export class PushPromptComponent implements OnInit {
   private pushService = inject(PushService);
   visible = signal(false);
   isIOS = signal(false);
+  isIOSStandalone = signal(false);
 
   private readonly DISMISSED_KEY = 'push_prompt_dismissed_at';
 
@@ -104,23 +112,26 @@ export class PushPromptComponent implements OnInit {
     const raw = localStorage.getItem(this.DISMISSED_KEY);
     if (!raw) return false;
     const dismissedAt = parseInt(raw, 10);
-    // Reaparece después de 24 horas
     return (Date.now() - dismissedAt) < 24 * 60 * 60 * 1000;
   }
 
   private shouldShow(): boolean {
     if (this.wasRecentlyDismissed()) return false;
-    // En iOS siempre mostrar (para instrucciones PWA)
     if (this.isIOS()) return true;
-    // En desktop/Android: mostrar si el push es soportado y el permiso no está granted
     return this.pushService.isSupported && Notification.permission !== 'granted';
   }
 
   ngOnInit(): void {
-    // Limpiar key viejo que bloqueaba permanentemente
     localStorage.removeItem('push_prompt_dismissed');
 
-    this.isIOS.set(/iPhone|iPad|iPod/.test(navigator.userAgent || ''));
+    const ua = navigator.userAgent || '';
+    const isIOSDevice = /iPhone|iPad|iPod/.test(ua);
+    const isStandalone = 'standalone' in navigator && (navigator as any).standalone === true;
+    const displayMode = window.matchMedia('(display-mode: standalone)').matches;
+    const isPWA = isStandalone || displayMode;
+
+    this.isIOS.set(isIOSDevice);
+    this.isIOSStandalone.set(isIOSDevice && isPWA);
 
     setTimeout(() => {
       if (this.shouldShow()) {
@@ -136,7 +147,9 @@ export class PushPromptComponent implements OnInit {
 
   async accept(): Promise<void> {
     this.visible.set(false);
-    await this.pushService.requestPermission();
+    if ('Notification' in window) {
+      await Notification.requestPermission();
+    }
     if (Notification.permission === 'granted') {
       this.pushService.subscribe().catch(() => {});
     }
