@@ -8,54 +8,59 @@ export class PushService {
 
   constructor(private http: HttpClient) {}
 
+  /** Retorna true si el navegador soporta notificaciones push */
+  get isSupported(): boolean {
+    return (
+      'serviceWorker' in navigator &&
+      'PushManager' in window &&
+      'Notification' in window
+    );
+  }
+
+  /** Pide permiso — debe llamarse dentro de un user gesture (click) */
   async requestPermission(): Promise<boolean> {
-    if (!('Notification' in window)) return false;
+    if (!this.isSupported) return false;
+
+    if (Notification.permission === 'granted') return true;
+    if (Notification.permission === 'denied') return false;
+
     const result = await Notification.requestPermission();
     return result === 'granted';
   }
 
+  /** Suscribe al Push Manager y registra en el backend */
   async subscribe(): Promise<boolean> {
-    if (!('serviceWorker' in navigator) || !('PushManager' in window)) return false;
+    if (!this.isSupported) return false;
+    if (Notification.permission !== 'granted') return false;
 
-    const granted = await this.requestPermission();
-    if (!granted) return false;
+    try {
+      const registration = await navigator.serviceWorker.ready;
+      let subscription = await registration.pushManager.getSubscription();
 
-    const registration = await navigator.serviceWorker.ready;
-    let subscription = await registration.pushManager.getSubscription();
+      if (!subscription) {
+        subscription = await registration.pushManager.subscribe({
+          userVisibleOnly: true,
+          applicationServerKey: this.urlBase64ToUint8Array(this.vapidPublicKey) as unknown as BufferSource,
+        });
+      }
 
-    if (!subscription) {
-      subscription = await registration.pushManager.subscribe({
-        userVisibleOnly: true,
-        applicationServerKey: this.urlBase64ToUint8Array(this.vapidPublicKey) as unknown as BufferSource,
-      });
-    }
+      const sub = subscription.toJSON();
+      const endpoint = sub.endpoint!;
+      const keys = sub.keys as { p256dh: string; auth: string };
 
-    const sub = subscription.toJSON();
-    const endpoint = sub.endpoint!;
-    const keys = sub.keys as { p256dh: string; auth: string };
-
-    this.http.post(`${environment.apiUrl}/push/subscribe`, { endpoint, keys }).subscribe();
-    return true;
-  }
-
-  async unsubscribe(): Promise<void> {
-    const registration = await navigator.serviceWorker.ready;
-    const subscription = await registration.pushManager.getSubscription();
-    if (subscription) {
-      const endpoint = subscription.endpoint;
-      await subscription.unsubscribe();
-      this.http.delete(`${environment.apiUrl}/push/unsubscribe`, { body: { endpoint } }).subscribe();
+      this.http.post(`${environment.apiUrl}/push/subscribe`, { endpoint, keys }).subscribe();
+      return true;
+    } catch {
+      return false;
     }
   }
 
-  private urlBase64ToUint8Array(base64String: string): Uint8Array {
-    const padding = '='.repeat((4 - (base64String.length % 4)) % 4);
-    const base64 = (base64String + padding).replace(/-/g, '+').replace(/_/g, '/');
-    const rawData = atob(base64);
-    const outputArray = new Uint8Array(rawData.length);
-    for (let i = 0; i < rawData.length; ++i) {
-      outputArray[i] = rawData.charCodeAt(i);
-    }
-    return outputArray;
+  private urlBase64ToUint8Array(base64: string): Uint8Array {
+    const pad = '='.repeat((4 - (base64.length % 4)) % 4);
+    const b64 = (base64 + pad).replace(/-/g, '+').replace(/_/g, '/');
+    const raw = atob(b64);
+    const arr = new Uint8Array(raw.length);
+    for (let i = 0; i < raw.length; i++) arr[i] = raw.charCodeAt(i);
+    return arr;
   }
 }

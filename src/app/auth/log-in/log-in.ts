@@ -87,6 +87,9 @@ export class LogIn implements OnInit {
     this.loadingStartTime = Date.now();
     this.errorMessage.set('');
 
+    // Pedir permiso de notificaciones dentro del user gesture (click)
+    this.pushService.requestPermission().catch(() => {});
+
     const { email, password } = this.loginForm.getRawValue();
     const credentials: LoginCredentials = {
       email: email ?? '',
@@ -100,8 +103,6 @@ export class LogIn implements OnInit {
         } else {
           localStorage.removeItem('remember_email');
         }
-        // Solicitar permiso de notificaciones dentro del contexto del click
-        this.pushService.requestPermission().catch(() => {});
         this.stopLoading();
         this.router.navigate(['/home']);
       },
