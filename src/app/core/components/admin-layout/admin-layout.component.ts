@@ -92,7 +92,7 @@ export class AdminLayoutComponent {
   }
 
   /**
-   * Etiqueta legible y consistente para cada módulo del menú lateral.
+   * Etiqueta legible y consistente para cada modúlo del menú lateral.
    */
   getModuleLabel(moduleName: string): string {
     const labels: Record<string, string> = {
@@ -105,5 +105,13 @@ export class AdminLayoutComponent {
       modules: 'Módulos',
     };
     return labels[moduleName] ?? moduleName;
+  }
+
+  private readonly validModules = new Set([
+    'users', 'roles', 'product', 'category', 'provider', 'orders', 'modules',
+  ]);
+
+  filterValidModules(modules: Set<string>): string[] {
+    return [...modules].filter((m) => this.validModules.has(m));
   }
 }

@@ -362,4 +362,9 @@ export class Home implements OnInit {
   getStatusClass(status: OrderStatus): string {
     return 'status-' + status.toLowerCase();
   }
+
+  filterValidModules(modules: Set<string>): string[] {
+    const valid = new Set(['users', 'roles', 'product', 'category', 'provider', 'orders', 'modules']);
+    return [...modules].filter((m) => valid.has(m));
+  }
 }
