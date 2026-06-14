@@ -27,11 +27,26 @@ export class PushService {
     if (Notification.permission !== 'granted') return { ok: false, error: 'Permiso no concedido: ' + Notification.permission };
 
     try {
+      // Registrar el SW si no está activo
+      if (!navigator.serviceWorker.controller) {
+        try {
+          const reg = await navigator.serviceWorker.register('/sw.js');
+          await new Promise<void>((resolve) => {
+            if (reg.active) return resolve();
+            const onUpdate = () => { reg.removeEventListener('updatefound', onUpdate); resolve(); };
+            reg.addEventListener('updatefound', onUpdate);
+            setTimeout(resolve, 5000); // timeout de respaldo
+          });
+        } catch (e: any) {
+          return { ok: false, error: 'SW no se pudo registrar: ' + (e.message || 'desconocido') };
+        }
+      }
+
       let registration: ServiceWorkerRegistration;
       try {
         registration = await navigator.serviceWorker.ready;
       } catch {
-        return { ok: false, error: 'Service Worker no registrado. Recarga la app.' };
+        return { ok: false, error: 'Service Worker no disponible' };
       }
 
       let sub = await registration.pushManager.getSubscription();
@@ -43,7 +58,7 @@ export class PushService {
             applicationServerKey: this.urlBase64ToUint8Array(this.vapidPublicKey) as unknown as BufferSource,
           });
         } catch (e: any) {
-          return { ok: false, error: 'Error al suscribir: ' + (e.message || 'desconocido') };
+          return { ok: false, error: 'Error al suscribir Push: ' + (e.message || 'desconocido') };
         }
       }
 
@@ -53,7 +68,7 @@ export class PushService {
       try {
         await firstValueFrom(this.http.post(`${environment.apiUrl}/push/subscribe`, payload));
       } catch (e: any) {
-        return { ok: false, error: 'Error al registrar en servidor: ' + (e.message || 'sin conexion') };
+        return { ok: false, error: 'Error al registrar en servidor: ' + (e.status || e.message || 'sin conexion') };
       }
 
       return { ok: true };
