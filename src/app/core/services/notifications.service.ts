@@ -14,11 +14,13 @@ export class NotificationsService {
   private readonly sound = inject(SoundService);
 
   // State
-  private readonly notifications = signal<Notification[]>([]);
+  private readonly notifications = signal<Notification[]>(this.loadFromStorage());
   private readonly _orderStatusChanged = new Subject<any>();
+  private readonly _newOrderReceived = new Subject<any>();
 
   readonly allNotifications = this.notifications.asReadonly();
   readonly orderStatusChanged$ = this._orderStatusChanged.asObservable();
+  readonly newOrderReceived$ = this._newOrderReceived.asObservable();
   readonly unreadCount = computed(
     () => this.notifications().filter((n) => !n.isRead).length,
   );
@@ -57,6 +59,7 @@ export class NotificationsService {
         isRead: false,
         data,
       });
+      this._newOrderReceived.next(data);
     });
 
     this.socket.on('new_order', (data: string) => {
@@ -70,6 +73,7 @@ export class NotificationsService {
         isRead: false,
         data,
       });
+      this._newOrderReceived.next(data);
     });
 
     this.socket.on('order-status-changed', (data: any) => {
@@ -110,10 +114,27 @@ export class NotificationsService {
       this.socket = null;
     }
     this.notifications.set([]);
+    localStorage.removeItem('tusuper_notifications');
   }
 
   private addNotification(notification: Notification): void {
     this.notifications.update((prev) => [notification, ...prev].slice(0, 20));
+    this.saveToStorage();
+  }
+
+  private loadFromStorage(): Notification[] {
+    try {
+      const raw = localStorage.getItem('tusuper_notifications');
+      return raw ? JSON.parse(raw) : [];
+    } catch {
+      return [];
+    }
+  }
+
+  private saveToStorage(): void {
+    try {
+      localStorage.setItem('tusuper_notifications', JSON.stringify(this.notifications()));
+    } catch { /* storage full */ }
   }
 
   markAsRead(id: string): void {
