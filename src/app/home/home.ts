@@ -364,7 +364,7 @@ export class Home implements OnInit {
   }
 
   filterValidModules(modules: Set<string>): string[] {
-    const valid = new Set(['users', 'roles', 'product', 'category', 'provider', 'orders', 'modules']);
+    const valid = new Set(['users', 'product', 'category', 'provider', 'orders']);
     return [...modules].filter((m) => valid.has(m));
   }
 }
