@@ -1,4 +1,4 @@
-import { Component, inject, computed } from '@angular/core';
+import { Component, inject, computed, viewChild, afterNextRender } from '@angular/core';
 import { BreakpointObserver, Breakpoints } from '@angular/cdk/layout';
 import { AsyncPipe } from '@angular/common';
 import { MatToolbarModule } from '@angular/material/toolbar';
@@ -15,6 +15,7 @@ import { NotificationsService } from '../../services/notifications.service';
 import { IdleService } from '../../services/idle.service';
 import { PushService } from '../../services/push.service';
 import { NotificationBellComponent } from '../../../shared/components/notification-bell/notification-bell.component';
+import { PushPromptComponent } from '../../../shared/components/push-prompt/push-prompt.component';
 import { CartStore } from '../../../product/store/cart.store';
 
 @Component({
@@ -34,6 +35,7 @@ import { CartStore } from '../../../product/store/cart.store';
     MatBadgeModule,
     AsyncPipe,
     NotificationBellComponent,
+    PushPromptComponent,
   ],
 })
 export class AdminLayoutComponent {
@@ -44,6 +46,7 @@ export class AdminLayoutComponent {
   private readonly idleService = inject(IdleService);
   private readonly pushService = inject(PushService);
   readonly cartStore = inject(CartStore);
+  private readonly pushPrompt = viewChild(PushPromptComponent);
 
   public isAuthenticated = this.authService.isAuthenticated;
   public menuItems = this.authService.userModules;
@@ -53,6 +56,9 @@ export class AdminLayoutComponent {
     this.notificationsService.connect();
     this.idleService.startWatching();
     this.pushService.subscribe().catch(() => {});
+    afterNextRender(() => {
+      setTimeout(() => this.pushPrompt()?.show(), 2000);
+    });
   }
 
   public profileClass = computed(() => {
