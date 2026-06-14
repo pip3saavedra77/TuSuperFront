@@ -72,7 +72,7 @@ export class Home implements OnInit {
   );
 
   readonly isTenderoRole = computed(() =>
-    this.currentUser()?.roles.some(r => ['TENDERO', 'TENDER'].includes(r.name.toUpperCase())) ?? false
+    this.currentUser()?.roles.some(r => ['TENDERO'].includes(r.name.toUpperCase())) ?? false
   );
 
   // Removed: latestOrder was not used in template

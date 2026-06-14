@@ -20,8 +20,7 @@ const isAdminGuard: CanMatchFn = () => {
           !!user?.roles.some(r => {
             const roleName = r.name.toUpperCase();
             return roleName.includes('ADMIN') || 
-                   roleName.includes('TENDER') || 
-                   roleName.includes('VENDEDOR');
+                   roleName.includes('TENDERO');
           })
         ),
       );

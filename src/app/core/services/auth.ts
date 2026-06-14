@@ -23,7 +23,7 @@ export class AuthService {
     if (!roles) return false;
     return roles.some(r => {
       const name = r.name.toUpperCase();
-      return name.includes('ADMIN') || name.includes('TENDER') || name.includes('VENDEDOR');
+      return name.includes('ADMIN') || name.includes('TENDERO');
     });
   });
 
