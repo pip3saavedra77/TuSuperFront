@@ -1,4 +1,4 @@
-import { Component, inject, signal, effect, OnInit } from '@angular/core';
+import { Component, inject, signal, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { PushService } from '../../../core/services/push.service';
 
@@ -11,21 +11,38 @@ import { PushService } from '../../../core/services/push.service';
       <div class="push-prompt-overlay" (click)="dismiss()">
         <div class="push-prompt-card" (click)="$event.stopPropagation()">
           @if (isIOS()) {
-            <!-- iOS: Instalar como app -->
             <div class="push-icon-wrap">📲</div>
-            <strong>Instala TuSuper en tu iPhone</strong>
-            <p>Toca <span class="ios-icon">{{ iosShareIcon() }}</span> y luego "Agregar a inicio" para recibir notificaciones</p>
+            <strong>Recibe notificaciones en tu iPhone</strong>
+            <p class="ios-steps">
+              Para activar las notificaciones sigue estos pasos:
+            </p>
+            <div class="steps-list">
+              <div class="step">
+                <span class="step-num">1</span>
+                <span>Toca <b>Compartir</b> en Safari</span>
+                <span class="step-icon">⎋</span>
+              </div>
+              <div class="step">
+                <span class="step-num">2</span>
+                <span>Desliza y toca <b>"Agregar a inicio"</b></span>
+                <span class="step-icon">➕</span>
+              </div>
+              <div class="step">
+                <span class="step-num">3</span>
+                <span>Abre la app desde tu pantalla de inicio</span>
+                <span class="step-icon">🏠</span>
+              </div>
+            </div>
           } @else {
-            <!-- Android/Desktop: Push nativo -->
             <div class="push-icon-wrap">🔔</div>
             <strong>¿Recibir notificaciones de tus pedidos?</strong>
             <p>Te avisaremos cuando tu pedido esté listo para despachar</p>
           }
           <div class="push-actions">
             <button class="btn-secondary" (click)="dismiss()">Ahora no</button>
-            <button class="btn-primary" (click)="accept()">
-              {{ isIOS() ? 'Entendido' : 'Activar' }}
-            </button>
+            @if (!isIOS()) {
+              <button class="btn-primary" (click)="accept()">Activar</button>
+            }
           </div>
         </div>
       </div>
@@ -36,18 +53,26 @@ import { PushService } from '../../../core/services/push.service';
       position: fixed; inset: 0; z-index: 9999;
       background: rgba(0,0,0,0.5); display: flex;
       align-items: flex-end; justify-content: center;
-      padding: 24px; animation: fadeIn 0.3s ease;
+      padding: 20px; animation: fadeIn 0.3s ease;
     }
     .push-prompt-card {
       background: #fff; border-radius: 20px;
-      padding: 28px 24px 20px; max-width: 360px; width: 100%;
+      padding: 28px 24px 20px; max-width: 380px; width: 100%;
       text-align: center; box-shadow: 0 12px 40px rgba(0,0,0,0.25);
       animation: cardUp 0.35s ease;
     }
-    .push-icon-wrap { font-size: 48px; margin-bottom: 12px; }
-    .push-prompt-card strong { display: block; font-size: 17px; color: #1a1a1a; margin-bottom: 8px; }
-    .push-prompt-card p { font-size: 14px; color: #6b7280; line-height: 1.5; margin: 0 0 20px; }
-    .ios-icon { background: #e5e7eb; border-radius: 6px; padding: 2px 8px; font-size: 13px; color: #1a1a1a; }
+    .push-icon-wrap { font-size: 48px; margin-bottom: 10px; }
+    .push-prompt-card strong { display: block; font-size: 17px; color: #1a1a1a; margin-bottom: 6px; }
+    .push-prompt-card > p { font-size: 14px; color: #6b7280; line-height: 1.5; margin: 0 0 16px; }
+    .ios-steps { margin-bottom: 12px !important; }
+
+    .steps-list { display: flex; flex-direction: column; gap: 10px; margin-bottom: 20px; text-align: left; }
+    .step { display: flex; align-items: center; gap: 10px; padding: 10px 14px; background: #f9fafb; border-radius: 12px; }
+    .step-num { width: 24px; height: 24px; border-radius: 50%; background: #22c55e; color: #fff; display: flex; align-items: center; justify-content: center; font-size: 13px; font-weight: 700; flex-shrink: 0; }
+    .step span:nth-child(2) { flex: 1; font-size: 13px; color: #374151; line-height: 1.4; }
+    .step b { color: #16a34a; }
+    .step-icon { font-size: 18px; flex-shrink: 0; }
+
     .push-actions { display: flex; gap: 10px; }
     .btn-secondary, .btn-primary {
       flex: 1; padding: 12px; border-radius: 12px; border: none;
@@ -70,20 +95,12 @@ export class PushPromptComponent implements OnInit {
   private pushService = inject(PushService);
   visible = signal(false);
   isIOS = signal(false);
-  iosShareIcon = signal('↗️');
 
   private readonly DISMISSED_KEY = 'push_prompt_dismissed';
 
   ngOnInit(): void {
-    // Detectar iOS
-    const ua = navigator.userAgent || '';
-    this.isIOS.set(/iPhone|iPad|iPod/.test(ua));
-    // iOS usa el ícono de compartir
-    if (this.isIOS()) {
-      this.iosShareIcon.set(/OS 1[5-9]|OS 2[0-9]/.test(ua) ? '⎋' : '↗️');
-    }
+    this.isIOS.set(/iPhone|iPad|iPod/.test(navigator.userAgent || ''));
 
-    // Mostrar después de 3 segundos si no se ha descartado antes
     if (!localStorage.getItem(this.DISMISSED_KEY)) {
       setTimeout(() => {
         if (this.pushService.isSupported || this.isIOS()) {
@@ -99,10 +116,6 @@ export class PushPromptComponent implements OnInit {
   }
 
   async accept(): Promise<void> {
-    if (this.isIOS()) {
-      this.dismiss();
-      return;
-    }
     this.visible.set(false);
     await this.pushService.requestPermission();
     if (Notification.permission === 'granted') {
