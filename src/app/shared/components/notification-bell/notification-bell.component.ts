@@ -57,7 +57,7 @@ export class NotificationBellComponent {
     if (!user) return 'admin';
     const roleNames = user.roles.map(r => r.name.toUpperCase());
     if (roleNames.some(name => name.includes('ADMIN'))) return 'admin';
-    if (roleNames.some(name => name.includes('TENDER') || name.includes('VENDEDOR'))) return 'seller';
+    if (roleNames.some(name => name.includes('TENDERO'))) return 'seller';
     return 'buyer';
   });
 

@@ -59,7 +59,7 @@ export class AdminLayoutComponent {
     const roleNames = roles.map(r => r.name.toUpperCase());
     
     if (roleNames.some(name => name.includes('ADMIN'))) return 'profile-admin';
-    if (roleNames.some(name => name.includes('TENDER') || name.includes('VENDEDOR'))) return 'profile-tendero';
+    if (roleNames.some(name => name.includes('TENDERO'))) return 'profile-tendero';
     if (roleNames.some(name => name.includes('USER') || name.includes('COMPRADOR'))) return 'profile-usuario';
     
     return 'profile-admin';
