@@ -374,7 +374,22 @@
   }
 }
 
-// ── Animación ─────────────────────────────────────────────────────────────────
+// ── Danger Zone ─────────────────────────────────────────────────────────────────
+.profile-card--danger {
+  border: 1px solid #fecaca;
+  .card-header {
+    .danger-icon { color: #ef4444; }
+  }
+  .delete-btn { width: 100%; }
+  .delete-confirm {
+    display: flex; flex-direction: column; gap: 12px;
+  }
+  .confirm-text { font-size: 14px; color: #991b1b; margin: 0; }
+  .confirm-actions { display: flex; gap: 10px; justify-content: flex-end; }
+  .delete-error { font-size: 13px; color: #ef4444; margin: 0; }
+}
+
+// ── Animacion ─────────────────────────────────────────────────────────────────
 @keyframes fadeIn {
   from { opacity: 0; transform: translateY(8px); }
   to   { opacity: 1; transform: translateY(0); }
