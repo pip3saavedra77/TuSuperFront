@@ -13,6 +13,7 @@ import { getHttpErrorMessage } from '../../core/utils/http-error-message';
 import { HttpErrorResponse } from '@angular/common/http';
 import { AnimatedCharacters } from '../animated-characters/animated-characters';
 import { LoadingScreen } from '../../shared/components/loading-screen/loading-screen';
+import { PushService } from '../../core/services/push.service';
 
 @Component({
   selector: 'app-log-in',
@@ -35,6 +36,7 @@ export class LogIn implements OnInit {
   private readonly fb = inject(FormBuilder);
   private readonly authService = inject(AuthService);
   private readonly router = inject(Router);
+  private readonly pushService = inject(PushService);
   hidePassword = true;
   activeStep = 1;
   loading = signal(false);
@@ -98,6 +100,8 @@ export class LogIn implements OnInit {
         } else {
           localStorage.removeItem('remember_email');
         }
+        // Solicitar permiso de notificaciones dentro del contexto del click
+        this.pushService.requestPermission().catch(() => {});
         this.stopLoading();
         this.router.navigate(['/home']);
       },
