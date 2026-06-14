@@ -92,9 +92,9 @@
                     </p>
                     <div class="stock-info">
                       @if (product.stock > 10) {
-                        <span class="stock-badge stock-ok">{{ product.stock }} en stock</span>
+                        <span class="stock-badge stock-ok">{{ product.stock }} en existencias</span>
                       } @else if (product.stock > 0) {
-                        <span class="stock-badge stock-low">Stock bajo</span>
+                        <span class="stock-badge stock-low">Existencias bajas</span>
                       } @else {
                         <span class="stock-badge stock-out">Agotado</span>
                       }

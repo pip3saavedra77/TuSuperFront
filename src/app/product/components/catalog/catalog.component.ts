@@ -151,7 +151,7 @@ export class CatalogComponent implements OnInit {
     this.cartStore.openCart();
     this.snackBar.open(
       `${product.name} agregado al carrito`,
-      'OK',
+      'Cerrar',
       { duration: 2000, panelClass: ['success-snackbar'] },
     );
   }
