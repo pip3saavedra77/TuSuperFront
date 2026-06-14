@@ -486,43 +486,43 @@
       </section>
 
       <!-- Eliminar cuenta -->
-      <section class="profile-card profile-card--danger">
-        <div class="card-header">
-          <div class="card-icon danger-icon">
-            <mat-icon>delete_forever</mat-icon>
+      <section class="profile-card danger-card">
+        <div class="danger-card__inner">
+          <div class="danger-card__icon">
+            <mat-icon>delete_outline</mat-icon>
           </div>
-          <div class="card-title-group">
+          <div class="danger-card__text">
             <h3>Eliminar cuenta</h3>
-            <p>Esta accion es permanente y no se puede deshacer</p>
+            <p>Esta acción es permanente y no se puede deshacer</p>
           </div>
-        </div>
 
-        @if (!showDeleteConfirm()) {
-          <button mat-stroked-button color="warn" (click)="showDeleteConfirm.set(true)" class="delete-btn">
-            Quiero eliminar mi cuenta
-          </button>
-        } @else {
-          <div class="delete-confirm">
-            <p class="confirm-text">
-              Estas seguro? Perderas acceso a tu cuenta, tus pedidos y notificaciones.
-            </p>
-            <div class="confirm-actions">
-              <button mat-button (click)="showDeleteConfirm.set(false)" [disabled]="deleting()">
-                Cancelar
-              </button>
-              <button mat-flat-button color="warn" (click)="deleteAccount()" [disabled]="deleting()">
-                @if (deleting()) {
-                  Eliminando...
-                } @else {
-                  Si, eliminar mi cuenta
-                }
-              </button>
+          @if (!showDeleteConfirm()) {
+            <button class="danger-card__trigger" (click)="showDeleteConfirm.set(true)">
+              Eliminar
+            </button>
+          } @else {
+            <div class="danger-card__confirm">
+              <p class="confirm-warning">
+                ¿Estás seguro? Se eliminarán tus datos, pedidos y notificaciones de forma permanente.
+              </p>
+              <div class="confirm-actions">
+                <button class="confirm-cancel" (click)="showDeleteConfirm.set(false)" [disabled]="deleting()">
+                  Cancelar
+                </button>
+                <button class="confirm-delete" (click)="deleteAccount()" [disabled]="deleting()">
+                  @if (deleting()) {
+                    Eliminando...
+                  } @else {
+                    Confirmar eliminación
+                  }
+                </button>
+              </div>
+              @if (deleteError()) {
+                <p class="confirm-error">{{ deleteError() }}</p>
+              }
             </div>
-            @if (deleteError()) {
-              <p class="delete-error">{{ deleteError() }}</p>
-            }
-          </div>
-        }
+          }
+        </div>
       </section>
 
     </div>
