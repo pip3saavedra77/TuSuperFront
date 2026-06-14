@@ -24,12 +24,22 @@ self.addEventListener('push', (event) => {
 
 self.addEventListener('notificationclick', (event) => {
   event.notification.close();
+
+  let targetUrl = '/orders/my-orders';
+  // Si la notificacion tiene datos de orden, ir a esa pagina
+  if (event.notification.data?.orderId) {
+    targetUrl = `/orders/my-orders`;
+  }
+
   event.waitUntil(
     self.clients.matchAll({ type: 'window' }).then((clients) => {
-      if (clients.length > 0) {
-        clients[0].focus();
+      // Buscar si ya hay una pestaña abierta
+      const existing = clients.find((c) => c.url.includes('/home') || c.url.includes('/orders'));
+      if (existing) {
+        existing.navigate(targetUrl);
+        existing.focus();
       } else {
-        self.clients.openWindow('/home');
+        self.clients.openWindow(targetUrl);
       }
     }),
   );
