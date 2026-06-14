@@ -44,10 +44,13 @@ import { PushService } from '../../../core/services/push.service';
             <p>Te avisaremos cuando tu pedido esté listo para despachar</p>
           }
           <div class="push-actions">
-            @if (resultMsg()) {
+            @if (loading()) {
+              <div class="result-banner result-loading">Configurando notificaciones...</div>
+            } @else if (resultMsg()) {
               <div class="result-banner" [class.result-ok]="resultOk()" [class.result-err]="!resultOk()">
                 {{ resultMsg() }}
               </div>
+              <button class="btn-primary" (click)="dismiss()" style="margin-top:10px;width:100%">Cerrar</button>
             } @else {
               <button class="btn-secondary" (click)="dismiss()">Ahora no</button>
               @if (isIOSStandalone()) {
@@ -101,6 +104,8 @@ import { PushService } from '../../../core/services/push.service';
     .result-banner { width: 100%; padding: 14px 16px; border-radius: 12px; font-size: 14px; font-weight: 600; text-align: center; animation: fadeIn 0.3s ease; }
     .result-ok { background: #dcfce7; color: #166534; }
     .result-err { background: #fef2f2; color: #991b1b; }
+    .result-loading { background: #eff6ff; color: #1e40af; animation: pulse 1.5s infinite; }
+    @keyframes pulse { 0%,100%{opacity:1} 50%{opacity:0.6} }
 
     @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
     @keyframes cardUp { from { transform: translateY(40px); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
@@ -115,6 +120,7 @@ export class PushPromptComponent implements OnInit {
   visible = signal(false);
   resultMsg = signal('');
   resultOk = signal(false);
+  loading = signal(false);
   isIOS = signal(false);
   isIOSStandalone = signal(false);
 
@@ -159,12 +165,20 @@ export class PushPromptComponent implements OnInit {
   }
 
   async accept(): Promise<void> {
+    this.loading.set(true);
     let result: NotificationPermission | '' = '';
     if ('Notification' in window) {
       result = await Notification.requestPermission();
     }
+
     if (result === 'granted' || Notification.permission === 'granted') {
-      const res = await this.pushService.subscribe();
+      // Timeout de 10s para evitar que se cuelgue
+      const res = await Promise.race([
+        this.pushService.subscribe(),
+        new Promise<{ ok: boolean; error?: string }>((resolve) =>
+          setTimeout(() => resolve({ ok: false, error: 'Timeout: el servicio tardó demasiado' }), 10_000)
+        ),
+      ]);
       if (res.ok) {
         this.resultMsg.set('Notificaciones activadas');
         this.resultOk.set(true);
@@ -175,7 +189,11 @@ export class PushPromptComponent implements OnInit {
     } else if (result === 'denied') {
       this.resultMsg.set('Permiso denegado. Actívalo en Ajustes > Notificaciones.');
       this.resultOk.set(false);
+    } else {
+      this.resultMsg.set('No se obtuvo respuesta del sistema');
+      this.resultOk.set(false);
     }
+    this.loading.set(false);
     localStorage.setItem(this.DISMISSED_KEY, Date.now().toString());
   }
 }
