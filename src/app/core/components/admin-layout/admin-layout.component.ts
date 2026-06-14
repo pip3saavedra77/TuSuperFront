@@ -54,7 +54,7 @@ export class AdminLayoutComponent {
   constructor() {
     this.notificationsService.connect();
     this.idleService.startWatching();
-    this.pushService.subscribe().catch(() => {});
+    this.pushService.subscribe().then(r => { if (!r.ok) console.warn('Push subscribe:', r.error); }).catch(() => {});
   }
 
   public profileClass = computed(() => {
