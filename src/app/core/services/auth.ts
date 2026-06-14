@@ -1,9 +1,11 @@
 import { Injectable, inject, signal, computed } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
-import { catchError, map, Observable, of, tap } from 'rxjs';
+import { catchError, map, Observable, of, shareReplay, tap } from 'rxjs';
 import { AuthResponse, LoginCredentials, RegisterPayload } from '../models/auth.models';
 import { Router } from '@angular/router';
 import { environment } from '../../../environments/environment';
+
+const CACHE_TTL_MS = 10_000;
 
 @Injectable({
   providedIn: 'root',
@@ -15,6 +17,8 @@ export class AuthService {
   private readonly API_URL = `${environment.apiUrl}/auth`;
 
   private readonly _authStatus = signal<AuthResponse | null>(null);
+  private _lastCheckTime = 0;
+  private _cachedCheck$: Observable<boolean> | null = null;
 
   public currentUser = computed(() => this._authStatus()?.user);
   public isAuthenticated = computed(() => !!this._authStatus());
@@ -40,6 +44,7 @@ export class AuthService {
           localStorage.setItem('token', response.access_token);
         }
         this._authStatus.set(response);
+        this._lastCheckTime = Date.now();
       })
     );
   }
@@ -51,6 +56,7 @@ export class AuthService {
           localStorage.setItem('token', response.access_token);
         }
         this._authStatus.set(response);
+        this._lastCheckTime = Date.now();
       })
     );
   }
@@ -66,6 +72,8 @@ export class AuthService {
     localStorage.removeItem('token');
     localStorage.removeItem('remember_email');
     this._authStatus.set(null);
+    this._cachedCheck$ = null;
+    this._lastCheckTime = 0;
     this.router.navigateByUrl('/auth');
   }
 
@@ -82,7 +90,13 @@ export class AuthService {
   }
 
   public checkAuthStatus(): Observable<boolean> {
-    return this.http.get<AuthResponse>(`${this.API_URL}/check-status`).pipe(
+    const now = Date.now();
+    if (this._cachedCheck$ && (now - this._lastCheckTime) < CACHE_TTL_MS) {
+      return this._cachedCheck$;
+    }
+
+    this._lastCheckTime = now;
+    this._cachedCheck$ = this.http.get<AuthResponse>(`${this.API_URL}/check-status`).pipe(
       tap((response) => {
         this._authStatus.set(response);
         if (response.access_token) {
@@ -96,6 +110,9 @@ export class AuthService {
         }
         return of(false);
       }),
+      shareReplay(1),
     );
+
+    return this._cachedCheck$;
   }
 }
