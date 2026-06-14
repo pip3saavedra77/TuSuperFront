@@ -86,7 +86,6 @@ export class CatalogComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    this.loadProducts();
     this.loadCategories();
   }
 

@@ -168,7 +168,7 @@
             <a class="recommended-card" [routerLink]="['/product']">
               <div class="recommended-card__image">
                 @if (product.imageUrl) {
-                  <img [src]="product.imageUrl" [alt]="product.name" />
+                  <img [src]="product.imageUrl" [alt]="product.name" loading="lazy" />
                 } @else {
                   <div class="recommended-card__placeholder">
                     <mat-icon>inventory_2</mat-icon>

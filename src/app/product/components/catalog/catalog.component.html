@@ -74,7 +74,8 @@
                   @if (product.imageUrl) {
                     <img [src]="product.imageUrl"
                          [alt]="product.name"
-                         class="card-image" />
+                         class="card-image"
+                         loading="lazy" />
                   } @else {
                     <div class="card-image-placeholder">
                       <mat-icon>inventory_2</mat-icon>

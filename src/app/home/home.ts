@@ -9,7 +9,7 @@ import { MatIconModule } from '@angular/material/icon';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { MatButtonModule } from '@angular/material/button';
 
-import { Chart, ChartConfiguration, ChartData, ChartType, ChartOptions, registerables } from 'chart.js';
+import { Chart, ChartConfiguration, ChartData, ChartType, ChartOptions, BarController, DoughnutController, ArcElement, BarElement, CategoryScale, LinearScale, Tooltip, Legend } from 'chart.js';
 import { BaseChartDirective } from 'ng2-charts';
 
 import { AuthService } from '../core/services/auth';
@@ -20,8 +20,8 @@ import { DashboardService } from '../core/services/dashboard.service';
 import { Order, ORDER_STATUS_LABELS, OrderStatus } from '../core/models/order.model';
 import { Product } from '../core/models/product.model';
 
-// Registro global de los módulos y componentes de Chart.js (v4)
-Chart.register(...registerables);
+// Registro selectivo de Chart.js - solo los necesarios
+Chart.register(BarController, DoughnutController, ArcElement, BarElement, CategoryScale, LinearScale, Tooltip, Legend);
 
 const MODULE_ICONS: Record<string, string> = {
   users: 'people',
@@ -237,8 +237,8 @@ export class Home implements OnInit {
 
     forkJoin({
       orders: this.ordersService
-        .getMyOrders({ limit: 50, offset: 0 })
-        .pipe(catchError(() => of({ data: [], total: 0, limit: 50, offset: 0 }))),
+        .getMyOrders({ limit: 5, offset: 0 })
+        .pipe(catchError(() => of({ data: [], total: 0, limit: 5, offset: 0 }))),
       products: this.productService
         .getAll({ limit: 4, offset: 0 })
         .pipe(catchError(() => of({ data: [], total: 0, limit: 4, offset: 0 }))),
