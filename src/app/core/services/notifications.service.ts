@@ -141,10 +141,12 @@ export class NotificationsService {
     this.notifications.update((prev) =>
       prev.map((n) => (n.id === id ? { ...n, isRead: true } : n)),
     );
+    this.saveToStorage();
   }
 
   markAllAsRead(): void {
     this.notifications.update((prev) => prev.map((n) => ({ ...n, isRead: true })));
+    this.saveToStorage();
   }
 
   clearAll(): void {
