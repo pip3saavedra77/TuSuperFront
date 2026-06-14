@@ -108,7 +108,7 @@ export class AdminLayoutComponent {
   }
 
   private readonly validModules = new Set([
-    'users', 'roles', 'product', 'category', 'provider', 'orders', 'modules',
+    'users', 'product', 'category', 'provider', 'orders',
   ]);
 
   filterValidModules(modules: Set<string>): string[] {
