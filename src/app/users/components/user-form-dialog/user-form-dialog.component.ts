@@ -134,7 +134,7 @@ export class UserFormDialogComponent implements OnInit {
 
       .subscribe({
 
-        next: (roles) => this.roles = roles,
+         next: (roles) => this.roles = roles.filter(r => ['ADMIN', 'TENDERO', 'USER'].includes(r.name)),
 
         error: () => this.snackBar.open('Error al cargar roles', 'Cerrar', { duration: 3000 })
 
