@@ -96,23 +96,40 @@ export class PushPromptComponent implements OnInit {
   visible = signal(false);
   isIOS = signal(false);
 
-  private readonly DISMISSED_KEY = 'push_prompt_dismissed';
+  private readonly DISMISSED_KEY = 'push_prompt_dismissed_at';
+
+  private wasRecentlyDismissed(): boolean {
+    const raw = localStorage.getItem(this.DISMISSED_KEY);
+    if (!raw) return false;
+    const dismissedAt = parseInt(raw, 10);
+    // Reaparece después de 24 horas
+    return (Date.now() - dismissedAt) < 24 * 60 * 60 * 1000;
+  }
+
+  private shouldShow(): boolean {
+    if (this.wasRecentlyDismissed()) return false;
+    // En iOS siempre mostrar (para instrucciones PWA)
+    if (this.isIOS()) return true;
+    // En desktop/Android: mostrar si el push es soportado y el permiso no está granted
+    return this.pushService.isSupported && Notification.permission !== 'granted';
+  }
 
   ngOnInit(): void {
+    // Limpiar key viejo que bloqueaba permanentemente
+    localStorage.removeItem('push_prompt_dismissed');
+
     this.isIOS.set(/iPhone|iPad|iPod/.test(navigator.userAgent || ''));
 
-    if (!localStorage.getItem(this.DISMISSED_KEY)) {
-      setTimeout(() => {
-        if (this.pushService.isSupported || this.isIOS()) {
-          this.visible.set(true);
-        }
-      }, 3000);
-    }
+    setTimeout(() => {
+      if (this.shouldShow()) {
+        this.visible.set(true);
+      }
+    }, 3000);
   }
 
   dismiss(): void {
     this.visible.set(false);
-    localStorage.setItem(this.DISMISSED_KEY, '1');
+    localStorage.setItem(this.DISMISSED_KEY, Date.now().toString());
   }
 
   async accept(): Promise<void> {
@@ -121,6 +138,6 @@ export class PushPromptComponent implements OnInit {
     if (Notification.permission === 'granted') {
       this.pushService.subscribe().catch(() => {});
     }
-    localStorage.setItem(this.DISMISSED_KEY, '1');
+    localStorage.setItem(this.DISMISSED_KEY, Date.now().toString());
   }
 }
