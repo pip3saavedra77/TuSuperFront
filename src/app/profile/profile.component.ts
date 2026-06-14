@@ -104,6 +104,11 @@ export class ProfileComponent implements OnInit {
 
   public isUploadingAvatar = signal(false);
 
+  public showDeleteConfirm = signal(false);
+  public deleting = signal(false);
+  public deleteError = signal('');
+
+
 
 
   ngOnInit(): void {
@@ -428,5 +433,20 @@ export class ProfileComponent implements OnInit {
 
   }
 
-}
 
+  deleteAccount(): void {
+    this.deleting.set(true);
+    this.deleteError.set('');
+    this.usersService.deleteMyAccount().subscribe({
+      next: () => {
+        this.deleting.set(false);
+        this.authService.logout();
+      },
+      error: (err) => {
+        this.deleting.set(false);
+        this.deleteError.set(err?.error?.message || 'Error al eliminar la cuenta');
+      }
+    });
+  }
+
+}
