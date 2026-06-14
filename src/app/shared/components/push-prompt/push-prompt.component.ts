@@ -44,13 +44,19 @@ import { PushService } from '../../../core/services/push.service';
             <p>Te avisaremos cuando tu pedido esté listo para despachar</p>
           }
           <div class="push-actions">
-            <button class="btn-secondary" (click)="dismiss()">Ahora no</button>
-            @if (isIOSStandalone()) {
-              <button class="btn-primary" (click)="accept()">Activar</button>
-            } @else if (isIOS()) {
-              <button class="btn-primary" (click)="dismiss()">Entendido</button>
+            @if (resultMsg()) {
+              <div class="result-banner" [class.result-ok]="resultOk()" [class.result-err]="!resultOk()">
+                {{ resultMsg() }}
+              </div>
             } @else {
-              <button class="btn-primary" (click)="accept()">Activar</button>
+              <button class="btn-secondary" (click)="dismiss()">Ahora no</button>
+              @if (isIOSStandalone()) {
+                <button class="btn-primary" (click)="accept()">Activar</button>
+              } @else if (isIOS()) {
+                <button class="btn-primary" (click)="dismiss()">Entendido</button>
+              } @else {
+                <button class="btn-primary" (click)="accept()">Activar</button>
+              }
             }
           </div>
         </div>
@@ -92,6 +98,10 @@ import { PushService } from '../../../core/services/push.service';
     .btn-primary { background: #22c55e; color: #fff; }
     .btn-primary:hover { background: #16a34a; }
 
+    .result-banner { width: 100%; padding: 14px 16px; border-radius: 12px; font-size: 14px; font-weight: 600; text-align: center; animation: fadeIn 0.3s ease; }
+    .result-ok { background: #dcfce7; color: #166534; }
+    .result-err { background: #fef2f2; color: #991b1b; }
+
     @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
     @keyframes cardUp { from { transform: translateY(40px); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
 
@@ -103,6 +113,8 @@ import { PushService } from '../../../core/services/push.service';
 export class PushPromptComponent implements OnInit {
   private pushService = inject(PushService);
   visible = signal(false);
+  resultMsg = signal('');
+  resultOk = signal(false);
   isIOS = signal(false);
   isIOSStandalone = signal(false);
 
@@ -142,11 +154,11 @@ export class PushPromptComponent implements OnInit {
 
   dismiss(): void {
     this.visible.set(false);
+    this.resultMsg.set('');
     localStorage.setItem(this.DISMISSED_KEY, Date.now().toString());
   }
 
   async accept(): Promise<void> {
-    this.visible.set(false);
     let result: NotificationPermission | '' = '';
     if ('Notification' in window) {
       result = await Notification.requestPermission();
@@ -154,12 +166,15 @@ export class PushPromptComponent implements OnInit {
     if (result === 'granted' || Notification.permission === 'granted') {
       const res = await this.pushService.subscribe();
       if (res.ok) {
-        alert('¡Notificaciones activadas! Recibirás avisos cuando tu pedido cambie de estado.');
+        this.resultMsg.set('Notificaciones activadas');
+        this.resultOk.set(true);
       } else {
-        alert('No se pudo activar: ' + (res.error || 'error desconocido'));
+        this.resultMsg.set(res.error || 'Error desconocido');
+        this.resultOk.set(false);
       }
     } else if (result === 'denied') {
-      alert('Permiso denegado. Puedes activarlo en Ajustes > Notificaciones > TuSuper.');
+      this.resultMsg.set('Permiso denegado. Actívalo en Ajustes > Notificaciones.');
+      this.resultOk.set(false);
     }
     localStorage.setItem(this.DISMISSED_KEY, Date.now().toString());
   }
