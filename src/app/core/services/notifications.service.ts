@@ -86,6 +86,19 @@ export class NotificationsService {
       this._orderStatusChanged.next(data);
     });
 
+    this.socket.on('order-cancelled', (data: any) => {
+      this.sound.playNewOrder();
+      this.addNotification({
+        id: Math.random().toString(36).substring(2, 11),
+        title: 'Pedido Cancelado',
+        message: `El cliente ${data.customerName} canceló el pedido #${data.orderId} por $${data.total}`,
+        type: 'order-cancelled' as any,
+        timestamp: new Date().toISOString(),
+        isRead: false,
+        data,
+      });
+    });
+
     this.socket.on('disconnect', () => {
       console.log('Disconnected from notifications gateway');
     });
