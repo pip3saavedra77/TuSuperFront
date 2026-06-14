@@ -1,13 +1,12 @@
-self.addEventListener('push', (event: PushEvent) => {
+self.addEventListener('push', (event) => {
   let data = { title: 'TuSuper', body: '', icon: '/branding/tusuper-logo-new.png' };
-  
+
   try {
     const payload = event.data?.json();
     if (payload) {
       data = { ...data, ...payload };
     }
   } catch {
-    // Si no es JSON, usar texto plano
     const text = event.data?.text();
     if (text) data.body = text;
   }
@@ -19,11 +18,11 @@ self.addEventListener('push', (event: PushEvent) => {
       badge: '/branding/tusuper-logo-new.png',
       vibrate: [200, 100, 200],
       tag: 'tusuper-notif',
-    })
+    }),
   );
 });
 
-self.addEventListener('notificationclick', (event: NotificationEvent) => {
+self.addEventListener('notificationclick', (event) => {
   event.notification.close();
   event.waitUntil(
     self.clients.matchAll({ type: 'window' }).then((clients) => {
@@ -32,6 +31,6 @@ self.addEventListener('notificationclick', (event: NotificationEvent) => {
       } else {
         self.clients.openWindow('/home');
       }
-    })
+    }),
   );
 });
