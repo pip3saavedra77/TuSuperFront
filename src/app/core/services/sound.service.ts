@@ -1,116 +1,63 @@
-import { Injectable, Inject, PLATFORM_ID } from '@angular/core';
-import { isPlatformBrowser } from '@angular/common';
+import { Injectable } from '@angular/core';
 
 @Injectable({ providedIn: 'root' })
 export class SoundService {
-  private audioCtx: AudioContext | null = null;
-  private unlocked = false;
+  private ctx: AudioContext | null = null;
 
-  constructor(@Inject(PLATFORM_ID) private platformId: object) {
-    if (isPlatformBrowser(this.platformId)) {
-      this.listenForUnlock();
-    }
+  constructor() {
+    try {
+      this.unlock();
+    } catch { /* SSR o navegador sin Web Audio */ }
   }
 
-  private listenForUnlock(): void {
-    const events = ['click', 'touchstart', 'keydown'] as const;
-    const handler = () => {
-      if (this.unlocked) return;
-      try {
-        const ctx = this.getContext();
-        if (ctx.state === 'suspended') {
-          ctx.resume();
-        }
-        const buffer = ctx.createBuffer(1, 1, 22050);
-        const source = ctx.createBufferSource();
-        source.buffer = buffer;
-        source.connect(ctx.destination);
-        source.start(0);
-        source.stop(0);
-        this.unlocked = true;
-      } catch {
-        // Ignorar
-      }
-      if (this.unlocked) {
-        for (const ev of events) {
-          document.removeEventListener(ev, handler);
-        }
-      }
+  private unlock(): void {
+    const resume = () => {
+      if (!this.ctx) this.ctx = new AudioContext();
+      if (this.ctx.state === 'suspended') this.ctx.resume();
+      // Tocar buffer mudo para desbloquear iOS
+      const buf = this.ctx.createBuffer(1, 1, 22050);
+      const src = this.ctx.createBufferSource();
+      src.buffer = buf; src.connect(this.ctx.destination);
+      src.start(0); src.stop(0);
+      document.removeEventListener('click', resume);
+      document.removeEventListener('touchstart', resume);
     };
-    for (const ev of events) {
-      document.addEventListener(ev, handler);
-    }
+    document.addEventListener('click', resume);
+    document.addEventListener('touchstart', resume);
   }
 
-  private getContext(): AudioContext {
-    if (!this.audioCtx) {
-      this.audioCtx = new AudioContext();
-    }
-    if (this.audioCtx.state === 'suspended') {
-      this.audioCtx.resume();
-    }
-    return this.audioCtx;
+  private play(frequencies: number[], type: OscillatorType = 'sine', vol = 0.22): void {
+    try {
+      if (!this.ctx) this.ctx = new AudioContext();
+      if (this.ctx.state === 'suspended') {
+        this.ctx.resume();
+        if (this.ctx.state === 'suspended') return;
+      }
+      const now = this.ctx.currentTime;
+      const step = 0.12;
+
+      frequencies.forEach((freq, i) => {
+        const osc = this.ctx!.createOscillator();
+        const gain = this.ctx!.createGain();
+        osc.type = type;
+        osc.frequency.value = freq;
+        const t = now + i * step;
+        gain.gain.setValueAtTime(0, t);
+        gain.gain.linearRampToValueAtTime(vol, t + 0.02);
+        gain.gain.exponentialRampToValueAtTime(0.001, t + 0.18);
+        osc.connect(gain);
+        gain.connect(this.ctx!.destination);
+        osc.start(t);
+        osc.stop(t + 0.2);
+      });
+    } catch { /* ignorar */ }
   }
 
-  /** Sonido nuevo pedido (tendero/admin) — chime ascendente alegre */
   playNewOrder(): void {
-    try {
-      const ctx = this.getContext();
-      if (ctx.state === 'suspended') return;
-      const now = ctx.currentTime;
-
-      const notes = [
-        { freq: 523.25, start: 0,    dur: 0.15 }, // C5
-        { freq: 659.25, start: 0.12, dur: 0.15 }, // E5
-        { freq: 783.99, start: 0.24, dur: 0.35 }, // G5 (sostenido)
-      ];
-
-      for (const note of notes) {
-        const osc = ctx.createOscillator();
-        const gain = ctx.createGain();
-        osc.type = 'sine';
-        osc.frequency.setValueAtTime(note.freq, now + note.start);
-        gain.gain.setValueAtTime(0, now + note.start);
-        gain.gain.linearRampToValueAtTime(0.25, now + note.start + 0.02);
-        gain.gain.exponentialRampToValueAtTime(0.01, now + note.start + note.dur);
-        osc.connect(gain);
-        gain.connect(ctx.destination);
-        osc.start(now + note.start);
-        osc.stop(now + note.start + note.dur + 0.05);
-      }
-    } catch {
-      // Silently ignore
-    }
+    this.play([523.25, 659.25, 783.99]); // C5 E5 G5
   }
 
-  /** Sonido cambio de estado (cliente) — dos tonos descendentes audibles */
   playStatusChange(): void {
-    try {
-      const ctx = this.getContext();
-      if (ctx.state === 'suspended') return;
-      const now = ctx.currentTime;
-
-      // Dos tonos en rango medio, bien audibles
-      const notes = [
-        { freq: 659.25, start: 0,    dur: 0.18 }, // E5
-        { freq: 523.25, start: 0.15, dur: 0.25 }, // C5
-      ];
-
-      for (const note of notes) {
-        const osc = ctx.createOscillator();
-        const gain = ctx.createGain();
-        osc.type = 'sine';
-        osc.frequency.setValueAtTime(note.freq, now + note.start);
-        gain.gain.setValueAtTime(0, now + note.start);
-        gain.gain.linearRampToValueAtTime(0.3, now + note.start + 0.02);
-        gain.gain.exponentialRampToValueAtTime(0.01, now + note.start + note.dur);
-        osc.connect(gain);
-        gain.connect(ctx.destination);
-        osc.start(now + note.start);
-        osc.stop(now + note.start + note.dur + 0.05);
-      }
-    } catch {
-      // Silently ignore
-    }
+    this.play([659.25, 523.25]); // E5 C5
   }
 }
