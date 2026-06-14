@@ -21,37 +21,43 @@ export class PushService {
     return result === 'granted';
   }
 
-  async subscribe(): Promise<boolean> {
-    if (!this.isSupported) { console.log('[Push] API no soportada'); return false; }
-    if (Notification.permission !== 'granted') { console.log('[Push] Permiso no concedido:', Notification.permission); return false; }
+  async subscribe(): Promise<{ ok: boolean; error?: string }> {
+    if (!this.isSupported) return { ok: false, error: 'Navegador no soporta notificaciones' };
+    if (Notification.permission !== 'granted') return { ok: false, error: 'Permiso no concedido: ' + Notification.permission };
 
     try {
-      const registration = await navigator.serviceWorker.ready;
-      console.log('[Push] SW ready, scope:', registration.scope);
+      let registration: ServiceWorkerRegistration;
+      try {
+        registration = await navigator.serviceWorker.ready;
+      } catch {
+        return { ok: false, error: 'Service Worker no registrado. Recarga la app.' };
+      }
 
       let sub = await registration.pushManager.getSubscription();
-      if (sub) {
-        console.log('[Push] Ya suscrito:', sub.endpoint);
-      } else {
-        console.log('[Push] Creando nueva suscripcion...');
-        sub = await registration.pushManager.subscribe({
-          userVisibleOnly: true,
-          applicationServerKey: this.urlBase64ToUint8Array(this.vapidPublicKey) as unknown as BufferSource,
-        });
-        console.log('[Push] Suscripcion creada:', sub.endpoint);
+
+      if (!sub) {
+        try {
+          sub = await registration.pushManager.subscribe({
+            userVisibleOnly: true,
+            applicationServerKey: this.urlBase64ToUint8Array(this.vapidPublicKey) as unknown as BufferSource,
+          });
+        } catch (e: any) {
+          return { ok: false, error: 'Error al suscribir: ' + (e.message || 'desconocido') };
+        }
       }
 
       const json = sub.toJSON();
       const payload = { endpoint: json.endpoint!, keys: json.keys as { p256dh: string; auth: string } };
 
-      this.http.post(`${environment.apiUrl}/push/subscribe`, payload).subscribe({
-        next: () => console.log('[Push] Registrado en backend OK'),
-        error: (e) => console.error('[Push] Error al registrar en backend:', e.message),
-      });
-      return true;
+      try {
+        await this.http.post(`${environment.apiUrl}/push/subscribe`, payload).toPromise();
+      } catch (e: any) {
+        return { ok: false, error: 'Error al registrar en servidor: ' + (e.message || 'sin conexion') };
+      }
+
+      return { ok: true };
     } catch (e: any) {
-      console.error('[Push] Error en subscribe:', e.message, e);
-      return false;
+      return { ok: false, error: e.message || 'Error desconocido' };
     }
   }
 

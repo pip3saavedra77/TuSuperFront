@@ -147,16 +147,16 @@ export class PushPromptComponent implements OnInit {
 
   async accept(): Promise<void> {
     this.visible.set(false);
-    let result = 'blocked';
+    let result: NotificationPermission | '' = '';
     if ('Notification' in window) {
       result = await Notification.requestPermission();
     }
-    if (result === 'granted') {
-      const ok = await this.pushService.subscribe();
-      if (ok) {
+    if (result === 'granted' || Notification.permission === 'granted') {
+      const res = await this.pushService.subscribe();
+      if (res.ok) {
         alert('¡Notificaciones activadas! Recibirás avisos cuando tu pedido cambie de estado.');
       } else {
-        alert('No se pudo completar la suscripción. Intenta de nuevo más tarde.');
+        alert('No se pudo activar: ' + (res.error || 'error desconocido'));
       }
     } else if (result === 'denied') {
       alert('Permiso denegado. Puedes activarlo en Ajustes > Notificaciones > TuSuper.');
