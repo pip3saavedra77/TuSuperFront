@@ -8,49 +8,49 @@ export class PushService {
 
   constructor(private http: HttpClient) {}
 
-  /** Retorna true si el navegador soporta notificaciones push */
   get isSupported(): boolean {
-    return (
-      'serviceWorker' in navigator &&
-      'PushManager' in window &&
-      'Notification' in window
-    );
+    return 'serviceWorker' in navigator && 'PushManager' in window && 'Notification' in window;
   }
 
-  /** Pide permiso — debe llamarse dentro de un user gesture (click) */
   async requestPermission(): Promise<boolean> {
-    if (!this.isSupported) return false;
-
+    if (!this.isSupported) { console.log('[Push] No soportado'); return false; }
     if (Notification.permission === 'granted') return true;
-    if (Notification.permission === 'denied') return false;
-
+    if (Notification.permission === 'denied') { console.log('[Push] Permiso denegado'); return false; }
     const result = await Notification.requestPermission();
+    console.log('[Push] requestPermission:', result);
     return result === 'granted';
   }
 
-  /** Suscribe al Push Manager y registra en el backend */
   async subscribe(): Promise<boolean> {
-    if (!this.isSupported) return false;
-    if (Notification.permission !== 'granted') return false;
+    if (!this.isSupported) { console.log('[Push] API no soportada'); return false; }
+    if (Notification.permission !== 'granted') { console.log('[Push] Permiso no concedido:', Notification.permission); return false; }
 
     try {
       const registration = await navigator.serviceWorker.ready;
-      let subscription = await registration.pushManager.getSubscription();
+      console.log('[Push] SW ready, scope:', registration.scope);
 
-      if (!subscription) {
-        subscription = await registration.pushManager.subscribe({
+      let sub = await registration.pushManager.getSubscription();
+      if (sub) {
+        console.log('[Push] Ya suscrito:', sub.endpoint);
+      } else {
+        console.log('[Push] Creando nueva suscripcion...');
+        sub = await registration.pushManager.subscribe({
           userVisibleOnly: true,
           applicationServerKey: this.urlBase64ToUint8Array(this.vapidPublicKey) as unknown as BufferSource,
         });
+        console.log('[Push] Suscripcion creada:', sub.endpoint);
       }
 
-      const sub = subscription.toJSON();
-      const endpoint = sub.endpoint!;
-      const keys = sub.keys as { p256dh: string; auth: string };
+      const json = sub.toJSON();
+      const payload = { endpoint: json.endpoint!, keys: json.keys as { p256dh: string; auth: string } };
 
-      this.http.post(`${environment.apiUrl}/push/subscribe`, { endpoint, keys }).subscribe();
+      this.http.post(`${environment.apiUrl}/push/subscribe`, payload).subscribe({
+        next: () => console.log('[Push] Registrado en backend OK'),
+        error: (e) => console.error('[Push] Error al registrar en backend:', e.message),
+      });
       return true;
-    } catch {
+    } catch (e: any) {
+      console.error('[Push] Error en subscribe:', e.message, e);
       return false;
     }
   }
