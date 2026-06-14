@@ -1,4 +1,4 @@
-import { Component, inject, computed, viewChild, afterNextRender } from '@angular/core';
+import { Component, inject, computed } from '@angular/core';
 import { BreakpointObserver, Breakpoints } from '@angular/cdk/layout';
 import { AsyncPipe } from '@angular/common';
 import { MatToolbarModule } from '@angular/material/toolbar';
@@ -46,7 +46,6 @@ export class AdminLayoutComponent {
   private readonly idleService = inject(IdleService);
   private readonly pushService = inject(PushService);
   readonly cartStore = inject(CartStore);
-  private readonly pushPrompt = viewChild(PushPromptComponent);
 
   public isAuthenticated = this.authService.isAuthenticated;
   public menuItems = this.authService.userModules;
@@ -56,9 +55,6 @@ export class AdminLayoutComponent {
     this.notificationsService.connect();
     this.idleService.startWatching();
     this.pushService.subscribe().catch(() => {});
-    afterNextRender(() => {
-      setTimeout(() => this.pushPrompt()?.show(), 2000);
-    });
   }
 
   public profileClass = computed(() => {
