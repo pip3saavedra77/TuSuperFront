@@ -40,7 +40,9 @@ import { PushService } from '../../../core/services/push.service';
           }
           <div class="push-actions">
             <button class="btn-secondary" (click)="dismiss()">Ahora no</button>
-            @if (!isIOS()) {
+            @if (isIOS()) {
+              <button class="btn-primary" (click)="dismiss()">Entendido</button>
+            } @else {
               <button class="btn-primary" (click)="accept()">Activar</button>
             }
           </div>
