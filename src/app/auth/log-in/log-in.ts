@@ -38,7 +38,7 @@ export class LogIn implements OnInit {
   hidePassword = true;
   activeStep = 1;
   loading = signal(false);
-  rememberMe = signal(false);
+  rememberMe = signal(true);
   shakeForm = signal(false);
   errorMessage = signal('');
   isTyping = signal(false);
