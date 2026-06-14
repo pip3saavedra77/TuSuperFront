@@ -1003,8 +1003,10 @@ $error-bg: rgba(239, 68, 68, 0.06);
         gap: 12px;
 
         .brand-logo-img--mobile {
-          width: 56px;
-          height: 56px;
+          width: 120px;
+          height: auto;
+          max-height: 56px;
+          object-fit: contain;
         }
 
         .brand-name {
