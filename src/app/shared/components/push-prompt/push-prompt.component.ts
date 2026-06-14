@@ -140,7 +140,10 @@ export class PushPromptComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    localStorage.removeItem('push_prompt_dismissed');
+    // Limpiar key vieja solo la primera vez (formato antiguo permanente)
+    if (localStorage.getItem('push_prompt_dismissed') !== null) {
+      localStorage.removeItem('push_prompt_dismissed');
+    }
 
     const ua = navigator.userAgent || '';
     const isIOSDevice = /iPhone|iPad|iPod/.test(ua);
