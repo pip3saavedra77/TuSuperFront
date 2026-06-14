@@ -54,12 +54,12 @@ export class ProductService {
   }
 
   getCategories(): Observable<PaginatedResult<Category>> {
-    const params = new HttpParams().set('limit', '999').set('offset', '0');
+    const params = new HttpParams().set('limit', '100').set('offset', '0');
     return this.http.get<PaginatedResult<Category>>(this.CATEGORIES_URL, { params });
   }
 
   getProviders(): Observable<PaginatedResult<ProductProvider>> {
-    const params = new HttpParams().set('limit', '999').set('offset', '0');
+    const params = new HttpParams().set('limit', '100').set('offset', '0');
     return this.http.get<PaginatedResult<ProductProvider>>(this.PROVIDERS_URL, { params });
   }
 

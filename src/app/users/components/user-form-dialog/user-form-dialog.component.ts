@@ -118,7 +118,7 @@ export class UserFormDialogComponent implements OnInit {
 
       password: ['', this.isEditMode ? [Validators.minLength(6)] : [Validators.required, Validators.minLength(6)]],
 
-      roleIds: [this.data?.user?.roles.map(r => r.id) || [], [Validators.required]]
+      roleIds: [this.data?.user?.roles[0]?.id || null, [Validators.required]]
 
     });
 
@@ -163,6 +163,8 @@ export class UserFormDialogComponent implements OnInit {
       delete payload.password;
 
     }
+
+    payload.roleIds = [payload.roleIds];
 
 
 
