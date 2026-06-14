@@ -37,6 +37,7 @@ import {
   isTerminalStatus,
 } from '../../../core/models/order.model';
 import { AuthService } from '../../../core/services/auth';
+import { NotificationsService } from '../../../core/services/notifications.service';
 
 export interface TabOption {
   label: string;
@@ -75,6 +76,7 @@ export class OrdersListComponent implements OnInit {
   public readonly auth = inject(AuthService);
   private readonly snackBar = inject(MatSnackBar);
   private readonly destroyRef = inject(DestroyRef);
+  private readonly notificationsService = inject(NotificationsService);
 
   readonly orders = signal<Order[]>([]);
   readonly totalOrders = signal<number>(0);
@@ -132,6 +134,13 @@ export class OrdersListComponent implements OnInit {
 
   ngOnInit(): void {
     this.loadOrders();
+    this.setupWebSocketRefresh();
+  }
+
+  private setupWebSocketRefresh(): void {
+    this.notificationsService.newOrderReceived$
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe(() => this.loadOrders());
   }
 
   loadOrders(): void {
