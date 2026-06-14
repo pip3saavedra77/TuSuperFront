@@ -10,7 +10,13 @@ export const authInterceptor: HttpInterceptorFn = (req, next) => {
   const isCheckStatus = req.url.includes('/auth/check-status');
   const isLogout = req.url.includes('/auth/logout');
 
-  const authReq = req.clone({ withCredentials: true });
+  const token = localStorage.getItem('token');
+  const headers: Record<string, string> = {};
+  if (token) {
+    headers['Authorization'] = `Bearer ${token}`;
+  }
+
+  const authReq = req.clone({ withCredentials: true, setHeaders: headers });
 
   return next(authReq).pipe(
     catchError((error: HttpErrorResponse) => {
