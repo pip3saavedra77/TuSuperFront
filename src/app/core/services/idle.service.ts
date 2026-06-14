@@ -3,7 +3,7 @@ import { fromEvent, merge, Subscription } from 'rxjs';
 import { throttleTime } from 'rxjs/operators';
 import { AuthService } from './auth';
 
-const IDLE_TIMEOUT = 30 * 60 * 1000; // 30 minutos
+const IDLE_TIMEOUT = 120 * 60 * 1000; // 2 horas
 
 @Injectable({ providedIn: 'root' })
 export class IdleService {
