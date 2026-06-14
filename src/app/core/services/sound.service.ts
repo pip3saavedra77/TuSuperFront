@@ -12,7 +12,6 @@ export class SoundService {
     }
   }
 
-  /** Espera la primera interacción del usuario para desbloquear audio */
   private listenForUnlock(): void {
     const events = ['click', 'touchstart', 'keydown'] as const;
     const handler = () => {
@@ -22,7 +21,6 @@ export class SoundService {
         if (ctx.state === 'suspended') {
           ctx.resume();
         }
-        // Crear un buffer silencioso para "calentar" el contexto
         const buffer = ctx.createBuffer(1, 1, 22050);
         const source = ctx.createBufferSource();
         source.buffer = buffer;
@@ -54,7 +52,7 @@ export class SoundService {
     return this.audioCtx;
   }
 
-  /** Sonido para nuevo pedido (tendero) — chime ascendente alegre */
+  /** Sonido nuevo pedido (tendero/admin) — chime ascendente alegre */
   playNewOrder(): void {
     try {
       const ctx = this.getContext();
@@ -62,9 +60,9 @@ export class SoundService {
       const now = ctx.currentTime;
 
       const notes = [
-        { freq: 523.25, start: 0,    dur: 0.15 },
-        { freq: 659.25, start: 0.12, dur: 0.15 },
-        { freq: 783.99, start: 0.24, dur: 0.3  },
+        { freq: 523.25, start: 0,    dur: 0.15 }, // C5
+        { freq: 659.25, start: 0.12, dur: 0.15 }, // E5
+        { freq: 783.99, start: 0.24, dur: 0.35 }, // G5 (sostenido)
       ];
 
       for (const note of notes) {
@@ -78,37 +76,38 @@ export class SoundService {
         osc.connect(gain);
         gain.connect(ctx.destination);
         osc.start(now + note.start);
-        osc.stop(now + note.start + note.dur);
+        osc.stop(now + note.start + note.dur + 0.05);
       }
     } catch {
       // Silently ignore
     }
   }
 
-  /** Sonido para cambio de estado (usuario) — notificación suave de dos tonos */
+  /** Sonido cambio de estado (cliente) — dos tonos descendentes audibles */
   playStatusChange(): void {
     try {
       const ctx = this.getContext();
       if (ctx.state === 'suspended') return;
       const now = ctx.currentTime;
 
+      // Dos tonos en rango medio, bien audibles
       const notes = [
-        { freq: 783.99, start: 0,    dur: 0.12 },
-        { freq: 987.77, start: 0.1,  dur: 0.25 },
+        { freq: 659.25, start: 0,    dur: 0.18 }, // E5
+        { freq: 523.25, start: 0.15, dur: 0.25 }, // C5
       ];
 
       for (const note of notes) {
         const osc = ctx.createOscillator();
         const gain = ctx.createGain();
-        osc.type = 'triangle';
+        osc.type = 'sine';
         osc.frequency.setValueAtTime(note.freq, now + note.start);
         gain.gain.setValueAtTime(0, now + note.start);
-        gain.gain.linearRampToValueAtTime(0.2, now + note.start + 0.02);
+        gain.gain.linearRampToValueAtTime(0.3, now + note.start + 0.02);
         gain.gain.exponentialRampToValueAtTime(0.01, now + note.start + note.dur);
         osc.connect(gain);
         gain.connect(ctx.destination);
         osc.start(now + note.start);
-        osc.stop(now + note.start + note.dur);
+        osc.stop(now + note.start + note.dur + 0.05);
       }
     } catch {
       // Silently ignore
