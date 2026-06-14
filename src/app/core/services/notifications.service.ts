@@ -1,8 +1,9 @@
-import { Injectable, signal, computed, effect } from '@angular/core';
+import { Injectable, inject, signal, computed } from '@angular/core';
 import { Subject } from 'rxjs';
 import { io, Socket } from 'socket.io-client';
 import { Notification, NotificationType } from '../models/notification.model';
 import { environment } from '../../../environments/environment';
+import { SoundService } from './sound.service';
 
 @Injectable({
   providedIn: 'root',
@@ -10,6 +11,7 @@ import { environment } from '../../../environments/environment';
 export class NotificationsService {
   private socket: Socket | null = null;
   private readonly apiUrl = environment.apiUrl;
+  private readonly sound = inject(SoundService);
 
   // State
   private readonly notifications = signal<Notification[]>([]);
@@ -45,6 +47,7 @@ export class NotificationsService {
     });
 
     this.socket.on('new-order', (data: string) => {
+      this.sound.playNewOrder();
       this.addNotification({
         id: Math.random().toString(36).substring(2, 11),
         title: '¡Nuevo Pedido!',
@@ -57,6 +60,7 @@ export class NotificationsService {
     });
 
     this.socket.on('new_order', (data: string) => {
+      this.sound.playNewOrder();
       this.addNotification({
         id: Math.random().toString(36).substring(2, 11),
         title: '¡Nuevo Pedido!',
@@ -69,6 +73,7 @@ export class NotificationsService {
     });
 
     this.socket.on('order-status-changed', (data: any) => {
+      this.sound.playStatusChange();
       this.addNotification({
         id: Math.random().toString(36).substr(2, 9),
         title: 'Actualización de Pedido',
