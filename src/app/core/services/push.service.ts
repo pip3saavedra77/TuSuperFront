@@ -1,4 +1,5 @@
 import { Injectable } from '@angular/core';
+import { firstValueFrom } from 'rxjs';
 import { HttpClient } from '@angular/common/http';
 import { environment } from '../../../environments/environment';
 
@@ -50,7 +51,7 @@ export class PushService {
       const payload = { endpoint: json.endpoint!, keys: json.keys as { p256dh: string; auth: string } };
 
       try {
-        await this.http.post(`${environment.apiUrl}/push/subscribe`, payload).toPromise();
+        await firstValueFrom(this.http.post(`${environment.apiUrl}/push/subscribe`, payload));
       } catch (e: any) {
         return { ok: false, error: 'Error al registrar en servidor: ' + (e.message || 'sin conexion') };
       }
