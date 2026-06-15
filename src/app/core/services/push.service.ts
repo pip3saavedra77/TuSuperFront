@@ -19,7 +19,7 @@ export class PushService {
   private readonly vapidPublicKey = 'BL055Pmv0P7ncLoKzQxhBqBRkcZwnNBSeT2-K_tbomnTU0RYSmb9bhpncI9oY8fiPlOAm7HdS4j4UyU_cRSbRkE';
 
   get isSupported(): boolean {
-    return this.swPush.isEnabled;
+    return 'Notification' in globalThis && 'PushManager' in globalThis;
   }
 
   get subscription$() {
@@ -55,12 +55,29 @@ export class PushService {
     if (Notification.permission !== 'granted') return { ok: false, error: 'Permiso no concedido: ' + Notification.permission };
 
     try {
-      let sub = await firstValueFrom(this.swPush.subscription);
+      // Wait for the service worker to be ready
+      const reg = await navigator.serviceWorker?.ready;
+      if (!reg) return { ok: false, error: 'Service Worker no disponible' };
 
+      let sub: PushSubscription | null = null;
+
+      // Try to get existing subscription first
+      try {
+        sub = await reg.pushManager.getSubscription();
+      } catch {
+        // ignore
+      }
+
+      // If no subscription, create one using native Push API (more reliable on iOS)
       if (!sub) {
         try {
-          sub = await this.swPush.requestSubscription({ serverPublicKey: this.vapidPublicKey });
+          const appServerKey = this.urlBase64ToUint8Array(this.vapidPublicKey);
+          sub = await reg.pushManager.subscribe({
+            userVisibleOnly: true,
+            applicationServerKey: appServerKey as unknown as BufferSource,
+          });
         } catch (e: any) {
+          console.error('[Push] subscribe error:', e);
           return { ok: false, error: 'Error al suscribir Push: ' + (e.message || 'desconocido') };
         }
       }
@@ -78,5 +95,19 @@ export class PushService {
     } catch (e: any) {
       return { ok: false, error: e.message || 'Error desconocido' };
     }
+  }
+
+  /**
+   * Convert VAPID key from base64url to Uint8Array for the Push API.
+   */
+  private urlBase64ToUint8Array(base64String: string): Uint8Array {
+    const padding = '='.repeat((4 - (base64String.length % 4)) % 4);
+    const base64 = (base64String + padding).replace(/-/g, '+').replace(/_/g, '/');
+    const rawData = atob(base64);
+    const outputArray = new Uint8Array(rawData.length);
+    for (let i = 0; i < rawData.length; ++i) {
+      outputArray[i] = rawData.charCodeAt(i);
+    }
+    return outputArray;
   }
 }

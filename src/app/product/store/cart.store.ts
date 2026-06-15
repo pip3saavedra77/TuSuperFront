@@ -23,8 +23,39 @@ const initialState: CartState = {
   isOpen: false,
 };
 
+const CART_STORAGE_KEY = 'tusuper_cart';
+
+function loadCartFromStorage(): CartItem[] {
+  try {
+    const raw = localStorage.getItem(CART_STORAGE_KEY);
+    if (!raw) return [];
+    const parsed = JSON.parse(raw);
+    if (!Array.isArray(parsed)) return [];
+    return parsed.filter(
+      (item: any) =>
+        item?.product?.id != null &&
+        typeof item.quantity === 'number' &&
+        item.quantity > 0,
+    );
+  } catch {
+    return [];
+  }
+}
+
+function saveCartToStorage(items: CartItem[]): void {
+  try {
+    if (items.length === 0) {
+      localStorage.removeItem(CART_STORAGE_KEY);
+    } else {
+      localStorage.setItem(CART_STORAGE_KEY, JSON.stringify(items));
+    }
+  } catch {
+    // quota exceeded or private browsing — silently ignore
+  }
+}
+
 /**
- * Root-level SignalStore — persists across navigation.
+ * Root-level SignalStore — persists across navigation and localStorage.
  *
  * Complexity per operation:
  *   addItem      O(N)  findIndex + map
@@ -36,7 +67,10 @@ const initialState: CartState = {
  */
 export const CartStore = signalStore(
   { providedIn: 'root' },
-  withState(initialState),
+  withState<CartState>({
+    ...initialState,
+    items: loadCartFromStorage(),
+  }),
 
   withComputed(store => ({
     totalItems: computed(() =>
@@ -55,44 +89,47 @@ export const CartStore = signalStore(
     addItem(product: Product): void {
       const items = store.items();
       const idx = items.findIndex(i => i.product.id === product.id);
+      let next: CartItem[];
 
       if (idx >= 0) {
         if (items[idx].quantity >= product.stock) return;
-        const updated = items.map((item, j) =>
+        next = items.map((item, j) =>
           j === idx ? { ...item, quantity: item.quantity + 1 } : item,
         );
-        patchState(store, { items: updated });
       } else if (product.stock > 0) {
-        patchState(store, {
-          items: [...items, { product, quantity: 1 }],
-        });
+        next = [...items, { product, quantity: 1 }];
+      } else {
+        return;
       }
+
+      patchState(store, { items: next });
+      saveCartToStorage(next);
     },
 
     removeItem(productId: number): void {
-      patchState(store, {
-        items: store.items().filter(i => i.product.id !== productId),
-      });
+      const next = store.items().filter(i => i.product.id !== productId);
+      patchState(store, { items: next });
+      saveCartToStorage(next);
     },
 
     updateQuantity(productId: number, quantity: number): void {
+      let next: CartItem[];
       if (quantity <= 0) {
-        patchState(store, {
-          items: store.items().filter(i => i.product.id !== productId),
-        });
-        return;
-      }
-      patchState(store, {
-        items: store.items().map(i =>
+        next = store.items().filter(i => i.product.id !== productId);
+      } else {
+        next = store.items().map(i =>
           i.product.id === productId
             ? { ...i, quantity: Math.min(quantity, i.product.stock) }
             : i,
-        ),
-      });
+        );
+      }
+      patchState(store, { items: next });
+      saveCartToStorage(next);
     },
 
     clearCart(): void {
       patchState(store, { items: [], error: null, isOpen: false });
+      saveCartToStorage([]);
     },
 
     toggleCart(): void {

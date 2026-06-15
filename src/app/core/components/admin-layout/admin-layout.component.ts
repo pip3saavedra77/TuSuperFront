@@ -13,8 +13,10 @@ import { AuthService } from '../../services/auth';
 import { IdleService } from '../../services/idle.service';
 import { NotificationsService } from '../../services/notifications.service';
 import { PushService } from '../../services/push.service';
+import { CartStore } from '../../../product/store/cart.store';
 import { NotificationBellComponent } from '../../../shared/components/notification-bell/notification-bell.component';
 import { PushPromptComponent } from '../../../shared/components/push-prompt/push-prompt.component';
+import { CartPanelComponent } from '../../../product/components/cart-panel/cart-panel.component';
 
 @Component({
   selector: 'app-admin-layout',
@@ -33,6 +35,7 @@ import { PushPromptComponent } from '../../../shared/components/push-prompt/push
     AsyncPipe,
     NotificationBellComponent,
     PushPromptComponent,
+    CartPanelComponent,
   ],
 })
 export class AdminLayoutComponent implements OnInit {
@@ -42,6 +45,7 @@ export class AdminLayoutComponent implements OnInit {
   private readonly notificationsService = inject(NotificationsService);
   private readonly idleService = inject(IdleService);
   private readonly pushService = inject(PushService);
+  readonly cartStore = inject(CartStore);
 
   readonly showExpirationWarning = this.authService.showExpirationWarning;
   readonly idleWarning = this.idleService.idleWarning;
@@ -54,7 +58,21 @@ export class AdminLayoutComponent implements OnInit {
 
   ngOnInit(): void {
     this.notificationsService.connect();
-    this.pushService.subscribe().then(r => { if (!r.ok) console.warn('Push subscribe:', r.error); }).catch(() => {});
+    this.registerPush();
+  }
+
+  private async registerPush(): Promise<void> {
+    // Wait for service worker to be ready before subscribing
+    try {
+      if ('serviceWorker' in navigator) {
+        await navigator.serviceWorker.ready;
+      }
+    } catch {
+      // SW not available
+    }
+    this.pushService.subscribe().then(r => {
+      if (!r.ok) console.warn('[Push] subscribe:', r.error);
+    }).catch(() => {});
   }
 
   public profileClass = computed(() => {

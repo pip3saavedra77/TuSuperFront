@@ -13,6 +13,17 @@
         <button type="button" (click)="dismissIdle()">Seguir aquí</button>
       </div>
     }
+
+    <!-- Global cart drawer -->
+    <mat-sidenav #globalCartDrawer
+                 [opened]="cartStore.isOpen()"
+                 (openedChange)="cartStore.closeCart()"
+                 mode="over"
+                 position="end"
+                 class="cart-drawer-global">
+      <app-cart-panel></app-cart-panel>
+    </mat-sidenav>
+
     <router-outlet />
     <nav class="user-bottom-nav" aria-label="Navegacion principal">
       <a class="user-bottom-nav__item" routerLink="/home" routerLinkActive="user-bottom-nav__item--active" [routerLinkActiveOptions]="{exact: true}" aria-current="page">
@@ -23,8 +34,11 @@
         <span class="material-symbols-outlined">grid_view</span>
         <span class="user-bottom-nav__label">Productos</span>
       </a>
-      <a class="user-bottom-nav__item" routerLink="/product/cart" routerLinkActive="user-bottom-nav__item--active">
+      <a class="user-bottom-nav__item user-bottom-nav__item--cart" routerLink="/product/cart" routerLinkActive="user-bottom-nav__item--active">
         <span class="material-symbols-outlined">shopping_cart</span>
+        @if (cartStore.totalItems() > 0) {
+          <span class="user-bottom-nav__badge">{{ cartStore.totalItems() }}</span>
+        }
         <span class="user-bottom-nav__label">Carrito</span>
       </a>
       <a class="user-bottom-nav__item" routerLink="/orders/my-orders" routerLinkActive="user-bottom-nav__item--active">

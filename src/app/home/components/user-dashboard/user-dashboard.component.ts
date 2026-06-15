@@ -89,12 +89,11 @@ export class UserDashboardComponent implements OnInit {
 
   onAddToCart(product: Product): void {
     this.cartStore.addItem(product);
+    this.cartStore.openCart();
     this.snackBar.open(`${product.name} agregado al carrito`, 'Cerrar', {
       duration: 2000,
       panelClass: ['success-snackbar'],
     });
-    // Abrir el carrito nuevo en el catálogo
-    this.router.navigate(['/product'], { queryParams: { cart: 'open' } });
 
     // Feedback visual temporal en la tarjeta
     this.justAddedIds.update(set => {
@@ -116,7 +115,7 @@ export class UserDashboardComponent implements OnInit {
   }
 
   navigatePromo(): void {
-    const frutasCategory = this.categories().find(c => c.name.toLowerCase() === 'frutas');
+    const frutasCategory = this.categories().find(c => c.name.toLowerCase().includes('frutas'));
     if (frutasCategory) {
       this.router.navigate(['/product'], { queryParams: { category: frutasCategory.id } });
     }
