@@ -1,0 +1,169 @@
+<main class="user-dashboard">
+  <app-user-header [user]="currentUser()" [unreadCount]="unreadCount()" (search)="onSearch($event)" (cart)="onCartClick()" />
+
+  <div class="user-dashboard__content">
+    @if (loading()) {
+      <div class="skeleton-section">
+        <app-skeleton variant="text" style="width:60%"></app-skeleton>
+        <app-skeleton variant="text" style="width:40%"></app-skeleton>
+        <app-skeleton variant="stat"></app-skeleton>
+        <app-skeleton-grid layout="row" [count]="5" variant="circle"></app-skeleton-grid>
+        <app-skeleton-grid layout="products" [count]="2" variant="card"></app-skeleton-grid>
+      </div>
+    } @else {
+      <section aria-label="Bienvenida" class="user-dashboard__welcome">
+        <p class="user-dashboard__greeting">Hola, {{ currentUser()?.firstName }} 👋</p>
+        <h2 class="user-dashboard__question">¿Qué necesitas hoy?</h2>
+      </section>
+
+      <app-promo-banner (action)="navigatePromo()" />
+
+      <app-category-strip [categories]="categories()" (select)="navigateToCategory($event)" />
+
+      @defer (on viewport) {
+        @let products = featuredProducts();
+        <section aria-label="Productos populares" class="user-dashboard__products">
+          <div class="user-dashboard__section-header">
+            <h3 class="user-dashboard__section-title">Populares</h3>
+          </div>
+          <div class="product-grid">
+            @for (product of products; track product.id) {
+              <article class="product-card" (click)="onAddToCart(product)">
+                <div class="product-card__image">
+                  @if (product.imageUrl) {
+                    <img [src]="product.imageUrl" [alt]="product.name" loading="lazy" />
+                  } @else {
+                    <div class="product-card__placeholder">
+                      <span class="material-symbols-outlined">inventory_2</span>
+                    </div>
+                  }
+                  <button class="product-card__fav" (click)="$event.stopPropagation()" aria-label="Agregar a favoritos">
+                    <span class="material-symbols-outlined">favorite</span>
+                  </button>
+                </div>
+                <div class="product-card__info">
+                  <h4 class="product-card__name">{{ product.name }}</h4>
+                  <p class="product-card__unit">{{ product.category.name }}</p>
+                  <div class="product-card__footer">
+                    <span class="product-card__price">{{ product.price | currency:'COP':'symbol-narrow':'1.0-0' }}</span>
+                    <button class="product-card__add" aria-label="Agregar al carrito" (click)="$event.stopPropagation(); onAddToCart(product)">
+                      <span class="material-symbols-outlined">add</span>
+                    </button>
+                  </div>
+                </div>
+              </article>
+            } @empty {
+              <p class="product-grid__empty">No hay productos disponibles.</p>
+            }
+          </div>
+        </section>
+      } @placeholder (minimum 400ms) {
+        <app-skeleton-grid layout="products" [count]="2" variant="card" />
+      }
+
+      @defer (on viewport) {
+        <section aria-label="Actividad" class="user-dashboard__activity">
+          <div class="stats-grid">
+            <div class="stats-card stats-card--main">
+              <div class="stats-card__icon">
+                <span class="material-symbols-outlined">shopping_bag</span>
+              </div>
+              <h4 class="stats-card__value">{{ monthlyOrdersCount() }}</h4>
+              <p class="stats-card__label">Pedidos este mes</p>
+              <div class="stats-card__progress">
+                <div class="stats-card__bar" [style.width.%]="monthlyGoalPercent()"></div>
+              </div>
+              <p class="stats-card__goal">{{ monthlyGoalPercent() }}% del objetivo mensual</p>
+            </div>
+
+            <div class="stats-card stats-card--wide">
+              <div class="stats-card__header">
+                <h3 class="stats-card__title">Ultimas Compras</h3>
+                <button class="stats-card__more" aria-label="Ver todos los pedidos" (click)="onNavChange('pedidos')">
+                  <span class="material-symbols-outlined">more_horiz</span>
+                </button>
+              </div>
+              <div class="orders-list">
+                @for (order of recentOrders(); track order.id) {
+                  <div class="order-row">
+                    <div class="order-row__icon">
+                      <span class="material-symbols-outlined">{{ order.status === 'DELIVERED' ? 'receipt' : 'local_shipping' }}</span>
+                    </div>
+                    <div class="order-row__info">
+                      <p class="order-row__name">Pedido #{{ order.id }}</p>
+                      <p class="order-row__date">{{ order.createdAt | date:'dd/MM/yy' }}</p>
+                    </div>
+                    <div class="order-row__right">
+                      <p class="order-row__amount">{{ order.totalAmount | currency:'COP':'symbol-narrow':'1.0-0' }}</p>
+                      <span class="order-row__badge" [class.order-row__badge--done]="order.status === 'DELIVERED'">Completado</span>
+                    </div>
+                  </div>
+                } @empty {
+                  <p class="orders-list__empty">No tienes pedidos aun.</p>
+                }
+              </div>
+            </div>
+          </div>
+        </section>
+      } @placeholder (minimum 400ms) {
+        <div class="stats-grid">
+          <app-skeleton variant="stat" />
+          <app-skeleton variant="stat" />
+        </div>
+      }
+
+      @defer (on viewport) {
+        @let pct = orderStatusPct();
+        <section aria-label="Resumen" class="user-dashboard__summary">
+          <h3 class="user-dashboard__section-title">Resumen</h3>
+          <div class="summary-grid">
+            <div class="summary-card">
+              <p class="summary-card__label">Pedidos Pendientes</p>
+              <h4 class="summary-card__value">{{ pendingOrdersUserCount() }}</h4>
+              <div class="summary-card__icon">
+                <span class="material-symbols-outlined">pending_actions</span>
+              </div>
+            </div>
+            <div class="summary-card">
+              <p class="summary-card__label">Total Gastado</p>
+              <h4 class="summary-card__value summary-card__value--primary">{{ totalSpent() | currency:'COP':'symbol-narrow':'1.0-0' }}</h4>
+              <div class="summary-card__icon summary-card__icon--primary">
+                <span class="material-symbols-outlined">payments</span>
+              </div>
+            </div>
+            <div class="summary-card summary-card--chart">
+              <p class="summary-card__label">Estado de los pedidos</p>
+              <div class="pie-chart">
+                <div class="pie-chart__donut" [style.background]="'conic-gradient(var(--tusuper-primary) 0% ' + pct.delivered + '%, var(--tusuper-secondary-container) ' + pct.delivered + '% ' + (pct.delivered + pct.transit) + '%, var(--tusuper-error) ' + (pct.delivered + pct.transit) + '% 100%)'">
+                  <div class="pie-chart__hole"></div>
+                </div>
+                <div class="pie-chart__legend">
+                  <div class="pie-legend__item"><span class="pie-legend__dot pie-legend__dot--delivered"></span>Entregados <span class="pie-legend__pct">{{ pct.delivered }}%</span></div>
+                  <div class="pie-legend__item"><span class="pie-legend__dot pie-legend__dot--transit"></span>En camino <span class="pie-legend__pct">{{ pct.transit }}%</span></div>
+                  <div class="pie-legend__item"><span class="pie-legend__dot pie-legend__dot--cancelled"></span>Cancelados <span class="pie-legend__pct">{{ pct.cancelled }}%</span></div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </section>
+      } @placeholder (minimum 400ms) {
+        <app-skeleton-grid layout="summary" [count]="3" variant="card" />
+      }
+    }
+  </div>
+
+  <nav class="bottom-nav" aria-label="Navegacion principal">
+    <a class="bottom-nav__item bottom-nav__item--active" (click)="onNavChange('inicio')" aria-current="page">
+      <span class="material-symbols-outlined" style="font-variation-settings:'FILL'1">home</span>
+      <span class="bottom-nav__label">Inicio</span>
+    </a>
+    <a class="bottom-nav__item" (click)="onNavChange('productos')">
+      <span class="material-symbols-outlined">grid_view</span>
+      <span class="bottom-nav__label">Productos</span>
+    </a>
+    <a class="bottom-nav__item" (click)="onNavChange('pedidos')">
+      <span class="material-symbols-outlined">receipt_long</span>
+      <span class="bottom-nav__label">Pedidos</span>
+    </a>
+  </nav>
+</main>
