@@ -437,7 +437,7 @@
 
   .confirm-delete {
     padding: 8px 16px; border-radius: 999px; border: none;
-    background: #ef4444; color: #fff; font-size: 13px; font-weight: 700;
+    background: #b91c1c; color: #fff; font-size: 13px; font-weight: 700;
     cursor: pointer; transition: all 0.2s;
     &:hover:not(:disabled) { background: #dc2626; }
     &:disabled { opacity: 0.5; cursor: not-allowed; }

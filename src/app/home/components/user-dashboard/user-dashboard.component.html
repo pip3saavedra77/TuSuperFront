@@ -34,7 +34,7 @@
       </section>
 
       <!-- Promo banner -->
-      <section class="ts-promo" (click)="navigatePromo()" tabindex="0" (keydown.enter)="navigatePromo()" aria-label="Promoción de frutas frescas">
+      <section class="ts-promo" role="button" (click)="navigatePromo()" tabindex="0" (keydown.enter)="navigatePromo()" aria-label="Promoción de frutas frescas">
         <div class="ts-promo__content">
           <span class="ts-promo__tag">Oferta especial</span>
           <h2 class="ts-promo__title">Frutas frescas</h2>
@@ -70,9 +70,9 @@
           <h2 class="ts-section__title">Populares</h2>
           <button class="ts-section__link" routerLink="/product">Ver todo</button>
         </div>
-        <div class="ts-products-carousel" tabindex="0" aria-roledescription="carrusel">
+        <div class="ts-products-carousel" aria-roledescription="carrusel">
           @for (product of featuredProducts(); track product.id) {
-            <article class="ts-product-card" [class.ts-product-card--added]="isJustAdded(product)" (click)="onAddToCart(product)" tabindex="-1" [attr.aria-label]="'Agregar ' + product.name + ' al carrito'">
+            <article class="ts-product-card" role="button" [class.ts-product-card--added]="isJustAdded(product)" (click)="onAddToCart(product)" (keydown.enter)="onAddToCart(product)" tabindex="0" [attr.aria-label]="'Agregar ' + product.name + ' al carrito'">
               <div class="ts-product-card__image">
                 @if (product.imageUrl) {
                   <img [src]="product.imageUrl" [alt]="product.name" loading="lazy" />

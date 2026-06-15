@@ -362,7 +362,7 @@
   font-weight: 800;
   font-family: var(--ts-font-headline, 'Plus Jakarta Sans', sans-serif);
   color: #fff;
-  background: linear-gradient(135deg, var(--ts-primary, #006e2a) 0%, var(--ts-primary-fixed, #00c853) 100%);
+  background: var(--ts-primary, #006e2a);
   box-shadow: 0 8px 24px rgba(0, 200, 83, 0.3);
   display: flex;
   align-items: center;
