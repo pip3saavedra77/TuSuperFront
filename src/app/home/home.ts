@@ -25,7 +25,6 @@ Chart.register(BarController, DoughnutController, ArcElement, BarElement, Catego
 
 const MODULE_ICONS: Record<string, string> = {
   users: 'people',
-  roles: 'admin_panel_settings',
   modules: 'widgets',
   product: 'inventory_2',
   category: 'category',

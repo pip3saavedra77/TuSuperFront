@@ -28,12 +28,6 @@ export const routes: Routes = [
         data: { module: 'users' },
       },
       {
-        path: 'roles',
-        loadComponent: () => import('./roles/roles').then(m => m.Roles),
-        canActivate: [roleGuard],
-        data: { module: 'roles' },
-      },
-      {
         path: 'modules',
         loadComponent: () => import('./modules/modules').then(m => m.Modules),
         canActivate: [roleGuard],

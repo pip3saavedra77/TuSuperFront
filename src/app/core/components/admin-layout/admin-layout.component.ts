@@ -97,7 +97,6 @@ export class AdminLayoutComponent {
   getModuleLabel(moduleName: string): string {
     const labels: Record<string, string> = {
       users: 'Usuarios',
-      roles: 'Roles',
       product: 'Productos',
       category: 'Categorías',
       provider: 'Proveedores',
