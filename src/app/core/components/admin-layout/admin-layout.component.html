@@ -1,4 +1,4 @@
-@if (isUser() && (isHandset$ | async)) {
+@if (isUser()) {
   <router-outlet />
 } @else {
   <mat-sidenav-container class="sidenav-container" [class]="profileClass()">
