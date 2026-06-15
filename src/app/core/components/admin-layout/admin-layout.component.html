@@ -113,16 +113,6 @@
 
       <!-- ACCIONES DERECHA -->
       <div class="toolbar-actions">
-        @if (isUser()) {
-          <button matIconButton class="toolbar-icon-btn"
-                  (click)="onCartClick()"
-                  [matBadge]="cartStore.totalItems()"
-                  [matBadgeHidden]="cartStore.isEmpty()"
-                  matBadgeColor="accent"
-                  matBadgeSize="small">
-            <mat-icon>shopping_cart</mat-icon>
-          </button>
-        }
         <app-notification-bell />
         <div class="toolbar-user" routerLink="/profile">
           @if (currentUser()?.avatarUrl) {
