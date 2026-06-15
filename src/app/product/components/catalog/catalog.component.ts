@@ -1,7 +1,10 @@
 import {
   Component,
   DestroyRef,
+  ElementRef,
   OnInit,
+  AfterViewInit,
+  ViewChild,
   inject,
   signal,
 } from '@angular/core';
@@ -52,7 +55,8 @@ import { PageHeader } from '../../../shared/components/page-header/page-header';
   templateUrl: './catalog.component.html',
   styleUrl: './catalog.component.scss',
 })
-export class CatalogComponent implements OnInit {
+export class CatalogComponent implements OnInit, AfterViewInit {
+  @ViewChild('searchInput', { read: ElementRef }) searchInputRef?: ElementRef<HTMLInputElement>;
   private readonly productService = inject(ProductService);
   readonly cartStore = inject(CartStore);
   private readonly snackBar = inject(MatSnackBar);
@@ -94,8 +98,22 @@ export class CatalogComponent implements OnInit {
     this.route.queryParamMap.pipe(takeUntilDestroyed(this.destroyRef)).subscribe(params => {
       if (params.get('cart') === 'open') {
         this.cartStore.openCart();
+      } else {
+        this.cartStore.closeCart();
+      }
+      const categoryParam = params.get('category');
+      if (categoryParam) {
+        this.selectedCategoryId.set(Number(categoryParam));
+        this.currentOffset.set(0);
       }
     });
+  }
+
+  ngAfterViewInit(): void {
+    const focusParam = this.route.snapshot.queryParamMap.get('focus');
+    if (focusParam === 'search' && this.searchInputRef) {
+      this.searchInputRef.nativeElement.focus();
+    }
   }
 
   loadProducts(): void {

@@ -38,6 +38,15 @@
       <mat-spinner diameter="48"></mat-spinner>
       <span>Cargando usuarios…</span>
     </div>
+  } @else if (store.error()) {
+    <div class="error-state">
+      <mat-icon>error_outline</mat-icon>
+      <span>{{ store.error() }}</span>
+      <button mat-stroked-button (click)="retry()">
+        <mat-icon>refresh</mat-icon>
+        Reintentar
+      </button>
+    </div>
   } @else if (!store.loading() && store.users().length === 0) {
     <div class="empty-state">
       <mat-icon>group_off</mat-icon>

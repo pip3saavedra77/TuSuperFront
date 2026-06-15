@@ -434,6 +434,11 @@ export class ProfileComponent implements OnInit {
   }
 
 
+  public logout(): void {
+    this.authService.logout();
+  }
+
+
   deleteAccount(): void {
     this.deleting.set(true);
     this.deleteError.set('');

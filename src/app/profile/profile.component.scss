@@ -23,12 +23,51 @@
 
 // ── Header: avatar centrado + nombre ──────────────────────────────────────────
 .profile-header {
+  position: relative;
   display: flex;
   flex-direction: column;
   align-items: center;
   text-align: center;
   gap: 14px;
   padding-bottom: 8px;
+}
+
+.profile-header__logout {
+  position: absolute;
+  top: 0;
+  right: 0;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 8px 14px;
+  border: 1px solid var(--ts-outline, rgba(27, 28, 28, 0.12));
+  border-radius: 999px;
+  background: #ffffff;
+  color: var(--ts-on-surface, #1b1c1c);
+  font-family: var(--ts-font-body, 'Inter', sans-serif);
+  font-size: 0.875rem;
+  font-weight: 600;
+  cursor: pointer;
+  box-shadow: 0 2px 8px rgba(27, 28, 28, 0.06);
+  transition: background 0.2s ease, box-shadow 0.2s ease, color 0.2s ease;
+
+  mat-icon {
+    font-size: 18px;
+    width: 18px;
+    height: 18px;
+    color: var(--ts-error, #ba1a1a);
+  }
+
+  &:hover {
+    background: var(--ts-error-container, #ffdad6);
+    color: var(--ts-on-error-container, #410002);
+    box-shadow: 0 4px 12px rgba(186, 26, 26, 0.12);
+  }
+
+  @media (max-width: 600px) {
+    padding: 8px 10px;
+    span { display: none; }
+  }
 }
 
 .profile-avatar-wrapper {

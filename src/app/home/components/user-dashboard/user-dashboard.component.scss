@@ -58,8 +58,26 @@
       display: grid;
       grid-template-columns: 1fr 380px;
       gap: 32px;
+      align-items: start;
       max-width: 1180px;
       padding-top: calc(var(--tusuper-header-height) + 28px);
+    }
+  }
+
+  &__main {
+    display: flex;
+    flex-direction: column;
+    gap: var(--ts-spacing-lg);
+  }
+
+  &__side {
+    display: flex;
+    flex-direction: column;
+    gap: var(--ts-spacing-lg);
+
+    @media (min-width: 1024px) {
+      position: sticky;
+      top: calc(var(--tusuper-header-height) + 28px);
     }
   }
 }
@@ -170,7 +188,7 @@
   margin-bottom: var(--ts-spacing-md);
 
   @media (min-width: 1024px) {
-    margin-bottom: var(--ts-spacing-lg);
+    margin-bottom: 0;
   }
 
   &__greeting {
@@ -201,6 +219,10 @@
   padding: 28px;
   margin-bottom: var(--ts-spacing-lg);
   min-height: 190px;
+
+  @media (min-width: 1024px) {
+    margin-bottom: 0;
+  }
   background: linear-gradient(135deg, var(--ts-primary-dark) 0%, var(--ts-primary) 50%, #00c853 100%);
   color: var(--ts-on-primary);
   overflow: hidden;
@@ -301,9 +323,6 @@
 
   @media (min-width: 1024px) {
     margin-bottom: 0;
-
-    &--main { grid-column: 1; }
-    &--side { grid-column: 2; }
   }
 
   &__header {
@@ -580,17 +599,78 @@
   }
 }
 
-// ── Activity / stats ────────────────────────────────────────────────────────
-.ts-activity {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 14px;
+// ── Orders this month banner ────────────────────────────────────────────────
+.ts-orders-banner {
+  width: 100%;
+  background: linear-gradient(135deg, var(--ts-primary-dark, #006e2a) 0%, var(--ts-primary, #006e2a) 100%);
+  border-radius: 28px;
+  padding: 24px;
+  color: #ffffff;
+  box-shadow: 0 14px 34px rgba(0, 200, 83, 0.22);
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
 
-  @media (min-width: 1024px) {
-    grid-template-columns: 1fr;
+  &__header {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+  }
+
+  &__icon {
+    width: 56px;
+    height: 56px;
+    border-radius: 18px;
+    background: rgba(255, 255, 255, 0.18);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    .material-symbols-outlined { font-size: 28px; }
+  }
+
+  &__info {
+    display: flex;
+    flex-direction: column;
+  }
+
+  &__value {
+    font-family: var(--ts-font-headline, 'Plus Jakarta Sans', sans-serif);
+    font-size: 2.4rem;
+    font-weight: 800;
+    margin: 0;
+    line-height: 1;
+  }
+
+  &__label {
+    font-size: 0.95rem;
+    font-weight: 600;
+    margin: 4px 0 0;
+    opacity: 0.92;
+  }
+
+  &__meta {
+    font-size: 0.8rem;
+    font-weight: 600;
+    margin: 0;
+    opacity: 0.85;
+  }
+
+  .ts-progress {
+    height: 8px;
+    background: rgba(255, 255, 255, 0.2);
+    border-radius: 999px;
+    overflow: hidden;
+
+    &__bar {
+      height: 100%;
+      background: #ffffff;
+      border-radius: 999px;
+    }
   }
 }
 
+// ── Activity / stats ────────────────────────────────────────────────────────
 .ts-stat-card {
   background: #ffffff;
   border-radius: 28px;
@@ -598,12 +678,6 @@
   box-shadow: 0 4px 18px rgba(0, 0, 0, 0.04);
   display: flex;
   flex-direction: column;
-
-  &--wide { grid-column: 1 / -1; }
-
-  @media (min-width: 1024px) {
-    &--wide { grid-column: auto; }
-  }
 
   &__header {
     display: flex;

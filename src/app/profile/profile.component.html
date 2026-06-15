@@ -8,6 +8,11 @@
 
     <header class="profile-header">
 
+      <button class="profile-header__logout" type="button" (click)="logout()" aria-label="Cerrar sesión">
+        <mat-icon>logout</mat-icon>
+        <span>Cerrar sesión</span>
+      </button>
+
       <div class="profile-avatar-wrapper">
 
         @if (avatarPreviewUrl()) {

@@ -27,24 +27,25 @@
         </div>
       </div>
     } @else {
-      <!-- Welcome -->
-      <section class="ts-welcome" aria-label="Bienvenida">
-        <p class="ts-welcome__greeting">Hola, {{ currentUser()?.firstName }} 👋</p>
-        <h1 class="ts-welcome__question">¿Qué necesitas hoy?</h1>
-      </section>
+      <div class="ts-dashboard__main">
+        <!-- Welcome -->
+        <section class="ts-welcome" aria-label="Bienvenida">
+          <p class="ts-welcome__greeting">Hola, {{ currentUser()?.firstName }} 👋</p>
+          <h1 class="ts-welcome__question">¿Qué necesitas hoy?</h1>
+        </section>
 
-      <!-- Promo banner -->
-      <section class="ts-promo" role="button" (click)="navigatePromo()" tabindex="0" (keydown.enter)="navigatePromo()" aria-label="Promoción de frutas frescas">
-        <div class="ts-promo__content">
-          <span class="ts-promo__tag">Oferta especial</span>
-          <h2 class="ts-promo__title">Frutas frescas</h2>
-          <p class="ts-promo__text">20% de descuento en tu primera compra</p>
-          <button class="ts-promo__cta">Ver ofertas</button>
-        </div>
-        <div class="ts-promo__glow" aria-hidden="true"></div>
-      </section>
+        <!-- Promo banner -->
+        <section class="ts-promo" role="button" (click)="navigatePromo()" tabindex="0" (keydown.enter)="navigatePromo()" aria-label="Promoción de frutas frescas">
+          <div class="ts-promo__content">
+            <span class="ts-promo__tag">Oferta especial</span>
+            <h2 class="ts-promo__title">Frutas frescas</h2>
+            <p class="ts-promo__text">20% de descuento en tu primera compra</p>
+            <button class="ts-promo__cta">Ver ofertas</button>
+          </div>
+          <div class="ts-promo__glow" aria-hidden="true"></div>
+        </section>
 
-      <!-- Categories -->
+        <!-- Categories -->
       <section class="ts-section ts-section--main" aria-label="Categorías">
         <div class="ts-section__header">
           <h2 class="ts-section__title">Categorías</h2>
@@ -102,47 +103,52 @@
           }
         </div>
       </section>
+      </div>
 
-      <!-- Activity grid -->
-      <section class="ts-section ts-section--side" aria-label="Actividad">
-        <div class="ts-activity">
-          <!-- Orders this month -->
-          <div class="ts-stat-card">
-            <div class="ts-stat-card__icon ts-stat-card__icon--primary">
+      <div class="ts-dashboard__side">
+      <!-- Orders this month banner -->
+      <section class="ts-section ts-section--side" aria-label="Pedidos este mes">
+        <div class="ts-orders-banner">
+          <div class="ts-orders-banner__header">
+            <div class="ts-orders-banner__icon">
               <span class="material-symbols-outlined">shopping_bag</span>
             </div>
-            <p class="ts-stat-card__value">{{ monthlyOrdersCount() }}</p>
-            <p class="ts-stat-card__label">Pedidos este mes</p>
-            <div class="ts-progress">
-              <div class="ts-progress__bar" [style.width.%]="monthlyGoalPercent()"></div>
+            <div class="ts-orders-banner__info">
+              <p class="ts-orders-banner__value">{{ monthlyOrdersCount() }}</p>
+              <p class="ts-orders-banner__label">Pedidos este mes</p>
             </div>
-            <p class="ts-stat-card__meta">{{ monthlyGoalPercent() }}% del objetivo</p>
           </div>
+          <div class="ts-progress">
+            <div class="ts-progress__bar" [style.width.%]="monthlyGoalPercent()"></div>
+          </div>
+          <p class="ts-orders-banner__meta">{{ monthlyGoalPercent() }}% del objetivo</p>
+        </div>
+      </section>
 
-          <!-- Latest purchases -->
-          <div class="ts-stat-card ts-stat-card--wide">
-            <div class="ts-stat-card__header">
-              <p class="ts-stat-card__label ts-stat-card__label--title">Últimas compras</p>
-              <button class="ts-stat-card__more" routerLink="/orders/my-orders" aria-label="Ver todos los pedidos">
-                <span class="material-symbols-outlined">more_horiz</span>
-              </button>
-            </div>
-            <div class="ts-orders-mini">
-              @for (order of recentOrders(); track order.id) {
-                <div class="ts-order-mini">
-                  <div class="ts-order-mini__icon">
-                    <span class="material-symbols-outlined">{{ order.status === 'DELIVERED' ? 'receipt' : 'local_shipping' }}</span>
-                  </div>
-                  <div class="ts-order-mini__info">
-                    <p class="ts-order-mini__name">Pedido #{{ order.id }}</p>
-                    <p class="ts-order-mini__date">{{ order.createdAt | date:'dd/MM/yy' }}</p>
-                  </div>
-                  <span class="ts-order-mini__amount">{{ order.totalAmount | currency:'COP':'symbol-narrow':'1.0-0' }}</span>
+      <!-- Latest purchases -->
+      <section class="ts-section ts-section--side" aria-label="Actividad">
+        <div class="ts-stat-card ts-stat-card--wide">
+          <div class="ts-stat-card__header">
+            <p class="ts-stat-card__label ts-stat-card__label--title">Últimas compras</p>
+            <button class="ts-stat-card__more" routerLink="/orders/my-orders" aria-label="Ver todos los pedidos">
+              <span class="material-symbols-outlined">more_horiz</span>
+            </button>
+          </div>
+          <div class="ts-orders-mini">
+            @for (order of recentOrders(); track order.id) {
+              <div class="ts-order-mini">
+                <div class="ts-order-mini__icon">
+                  <span class="material-symbols-outlined">{{ order.status === 'DELIVERED' ? 'receipt' : 'local_shipping' }}</span>
                 </div>
-              } @empty {
-                <p class="ts-empty">No tienes pedidos aún.</p>
-              }
-            </div>
+                <div class="ts-order-mini__info">
+                  <p class="ts-order-mini__name">Pedido #{{ order.id }}</p>
+                  <p class="ts-order-mini__date">{{ order.createdAt | date:'dd/MM/yy' }}</p>
+                </div>
+                <span class="ts-order-mini__amount">{{ order.totalAmount | currency:'COP':'symbol-narrow':'1.0-0' }}</span>
+              </div>
+            } @empty {
+              <p class="ts-empty">No tienes pedidos aún.</p>
+            }
           </div>
         </div>
       </section>
@@ -187,6 +193,7 @@
           </div>
         </div>
       </section>
+      </div>
     }
   </div>
 </main>

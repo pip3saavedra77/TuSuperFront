@@ -23,6 +23,7 @@
       <div class="filters-panel">
         <mat-form-field appearance="outline" class="search-field" subscriptSizing="dynamic">
           <input
+            #searchInput
             matInput
             [value]="searchQuery()"
             (input)="onSearchInput($event)"

@@ -12,6 +12,6 @@ export class PageHeader {
   private readonly router = inject(Router);
 
   onSearchClick(): void {
-    this.router.navigateByUrl('/product');
+    this.router.navigate(['/product'], { queryParams: { focus: 'search' } });
   }
 }

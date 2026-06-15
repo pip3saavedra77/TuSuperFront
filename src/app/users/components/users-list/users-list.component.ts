@@ -1,4 +1,4 @@
-import { Component, OnInit, inject, DestroyRef, signal } from '@angular/core';
+import { Component, inject, DestroyRef, signal } from '@angular/core';
 import { takeUntilDestroyed, toObservable } from '@angular/core/rxjs-interop';
 import { MatButtonModule } from '@angular/material/button';
 import { MatDialog, MatDialogModule } from '@angular/material/dialog';
@@ -9,6 +9,7 @@ import { MatPaginatorModule, PageEvent } from '@angular/material/paginator';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
 import { debounceTime, distinctUntilChanged } from 'rxjs/operators';
+import { skip } from 'rxjs';
 import { User } from '../../../core/models/user.model';
 import { UsersStore } from '../../store/users.store';
 import { UserFormDialogComponent } from '../user-form-dialog/user-form-dialog.component';
@@ -29,7 +30,7 @@ import { UserFormDialogComponent } from '../user-form-dialog/user-form-dialog.co
   templateUrl: './users-list.component.html',
   styleUrls: ['./users-list.component.scss'],
 })
-export class UsersListComponent implements OnInit {
+export class UsersListComponent {
   readonly store = inject(UsersStore);
   private readonly dialog = inject(MatDialog);
   private readonly snackBar = inject(MatSnackBar);
@@ -44,16 +45,13 @@ export class UsersListComponent implements OnInit {
       .pipe(
         debounceTime(300),
         distinctUntilChanged(),
+        skip(1),
         takeUntilDestroyed(this.destroyRef),
       )
       .subscribe((query) => {
         this.store.setSearch(query);
         this.store.loadAll();
       });
-  }
-
-  ngOnInit(): void {
-    this.store.loadAll();
   }
 
   onSearchInput(event: Event): void {
@@ -97,6 +95,11 @@ export class UsersListComponent implements OnInit {
       'Cerrar',
       { duration: 2000 },
     );
+  }
+
+  retry(): void {
+    this.store.clearError();
+    this.store.loadAll();
   }
 
   getInitials(user: User): string {
