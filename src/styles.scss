@@ -792,3 +792,68 @@ body { --mat-menu-container-color: #FFFFFF; }
 
 
 
+// ════════════════════════════════════════════════════════
+//  TuSuper Design Tokens — Stitch "Vibrant Minimalist"
+// ════════════════════════════════════════════════════════
+
+:root {
+  // ── Surface ──
+  --tusuper-bg: #fbf9f8;
+  --tusuper-surface: rgba(255, 255, 255, 0.4);
+  --tusuper-on-surface: #1b1c1c;
+  --tusuper-on-surface-variant: #3c4a3c;
+
+  // ── Primary ──
+  --tusuper-primary: #006e2a;
+  --tusuper-primary-container: #00c853;
+  --tusuper-primary-fixed: #69ff87;
+  --tusuper-on-primary: #ffffff;
+
+  // ── Secondary ──
+  --tusuper-secondary: #5f5e5e;
+  --tusuper-secondary-container: #e5e2e1;
+
+  // ── Error ──
+  --tusuper-error: #ba1a1a;
+
+  // ── Glass ──
+  --tusuper-glass-bg: rgba(255, 255, 255, 0.4);
+  --tusuper-glass-border: rgba(255, 255, 255, 0.7);
+  --tusuper-glass-blur: blur(24px);
+  --tusuper-glass-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.05);
+
+  // ── Elevation ──
+  --tusuper-shadow-nav: 0 15px 40px rgba(0, 0, 0, 0.1);
+  --tusuper-shadow-promo: 0 8px 32px rgba(0, 200, 83, 0.15);
+  --tusuper-shadow-card: 0 4px 12px rgba(0, 0, 0, 0.04);
+
+  // ── Shape ──
+  --tusuper-radius-card: 28px;
+  --tusuper-radius-button: 9999px;
+  --tusuper-radius-icon: 24px;
+  --tusuper-radius-badge: 9999px;
+  --tusuper-radius-order-card: 20px;
+
+  // ── Layout ──
+  --tusuper-header-height: 64px;
+  --tusuper-nav-offset: 32px;
+  --tusuper-section-gap: 48px;
+  --tusuper-content-max: 1440px;
+  --tusuper-content-padding: 16px;
+
+  // ── Typography ──
+  --tusuper-font-headline: 'Plus Jakarta Sans', sans-serif;
+  --tusuper-font-body: 'Inter', sans-serif;
+  --tusuper-font-label: 'JetBrains Mono', monospace;
+}
+
+// ── Glass Base Mixin ──
+@mixin glass-card {
+  background: var(--tusuper-glass-bg);
+  backdrop-filter: var(--tusuper-glass-blur);
+  -webkit-backdrop-filter: var(--tusuper-glass-blur);
+  border: 1px solid var(--tusuper-glass-border);
+  box-shadow: var(--tusuper-glass-shadow);
+}
+
+

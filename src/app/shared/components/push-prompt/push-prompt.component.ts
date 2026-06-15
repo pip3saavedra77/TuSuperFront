@@ -129,7 +129,7 @@ export class PushPromptComponent implements OnInit {
   private wasRecentlyDismissed(): boolean {
     const raw = localStorage.getItem(this.DISMISSED_KEY);
     if (!raw) return false;
-    const dismissedAt = parseInt(raw, 10);
+    const dismissedAt = Number.parseInt(raw, 10);
     return (Date.now() - dismissedAt) < 24 * 60 * 60 * 1000;
   }
 
@@ -148,7 +148,7 @@ export class PushPromptComponent implements OnInit {
     const ua = navigator.userAgent || '';
     const isIOSDevice = /iPhone|iPad|iPod/.test(ua);
     const isStandalone = 'standalone' in navigator && (navigator as any).standalone === true;
-    const displayMode = window.matchMedia('(display-mode: standalone)').matches;
+    const displayMode = globalThis.matchMedia('(display-mode: standalone)').matches;
     const isPWA = isStandalone || displayMode;
 
     this.isIOS.set(isIOSDevice);
@@ -170,7 +170,7 @@ export class PushPromptComponent implements OnInit {
   async accept(): Promise<void> {
     this.loading.set(true);
     let result: NotificationPermission | '' = '';
-    if ('Notification' in window) {
+    if ('Notification' in globalThis) {
       result = await Notification.requestPermission();
     }
 
