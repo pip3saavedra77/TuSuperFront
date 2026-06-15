@@ -1,16 +1,40 @@
-import { Injectable } from '@angular/core';
+import { Injectable, inject, NgZone } from '@angular/core';
+import { SwPush } from '@angular/service-worker';
 import { firstValueFrom } from 'rxjs';
 import { HttpClient } from '@angular/common/http';
 import { environment } from '../../../environments/environment';
+import { Router } from '@angular/router';
 
 @Injectable({ providedIn: 'root' })
 export class PushService {
+  private readonly swPush = inject(SwPush);
+  private readonly http = inject(HttpClient);
+  private readonly router = inject(Router);
+  private readonly zone = inject(NgZone);
+
   private readonly vapidPublicKey = 'BL055Pmv0P7ncLoKzQxhBqBRkcZwnNBSeT2-K_tbomnTU0RYSmb9bhpncI9oY8fiPlOAm7HdS4j4UyU_cRSbRkE';
 
-  constructor(private readonly http: HttpClient) {}
-
   get isSupported(): boolean {
-    return 'serviceWorker' in navigator && 'PushManager' in globalThis && 'Notification' in globalThis;
+    return this.swPush.isEnabled;
+  }
+
+  get subscription$() {
+    return this.swPush.subscription;
+  }
+
+  get notificationClicks$() {
+    return this.swPush.notificationClicks;
+  }
+
+  constructor() {
+    this.swPush.notificationClicks.subscribe(({ action, notification }) => {
+      this.zone.run(() => {
+        const url = notification.data?.url;
+        if (url) {
+          this.router.navigateByUrl(url);
+        }
+      });
+    });
   }
 
   async requestPermission(): Promise<boolean> {
@@ -27,36 +51,11 @@ export class PushService {
     if (Notification.permission !== 'granted') return { ok: false, error: 'Permiso no concedido: ' + Notification.permission };
 
     try {
-      // Registrar el SW si no está activo
-      if (!navigator.serviceWorker.controller) {
-        try {
-          const reg = await navigator.serviceWorker.register('/sw.js');
-          await new Promise<void>((resolve) => {
-            if (reg.active) return resolve();
-            const onUpdate = () => { reg.removeEventListener('updatefound', onUpdate); resolve(); };
-            reg.addEventListener('updatefound', onUpdate);
-            setTimeout(resolve, 5000); // timeout de respaldo
-          });
-        } catch (e: any) {
-          return { ok: false, error: 'SW no se pudo registrar: ' + (e.message || 'desconocido') };
-        }
-      }
-
-      let registration: ServiceWorkerRegistration;
-      try {
-        registration = await navigator.serviceWorker.ready;
-      } catch {
-        return { ok: false, error: 'Service Worker no disponible' };
-      }
-
-      let sub = await registration.pushManager.getSubscription();
+      let sub = await firstValueFrom(this.swPush.subscription);
 
       if (!sub) {
         try {
-          sub = await registration.pushManager.subscribe({
-            userVisibleOnly: true,
-            applicationServerKey: this.urlBase64ToUint8Array(this.vapidPublicKey) as unknown as BufferSource,
-          });
+          sub = await this.swPush.requestSubscription({ serverPublicKey: this.vapidPublicKey });
         } catch (e: any) {
           return { ok: false, error: 'Error al suscribir Push: ' + (e.message || 'desconocido') };
         }
@@ -75,14 +74,5 @@ export class PushService {
     } catch (e: any) {
       return { ok: false, error: e.message || 'Error desconocido' };
     }
-  }
-
-  private urlBase64ToUint8Array(base64: string): Uint8Array {
-    const pad = '='.repeat((4 - (base64.length % 4)) % 4);
-    const b64 = (base64 + pad).replaceAll('-', '+').replaceAll('_', '/');
-    const raw = atob(b64);
-    const arr = new Uint8Array(raw.length);
-    for (let i = 0; i < raw.length; i++) arr[i] = raw.charCodeAt(i);
-    return arr;
   }
 }

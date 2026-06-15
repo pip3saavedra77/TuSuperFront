@@ -110,7 +110,12 @@ export class UserDashboardComponent implements OnInit {
     return this.justAddedIds().has(product.id);
   }
 
-  navigatePromo(): void { this.router.navigate(['/product'], { queryParams: { category: 'frutas' } }); }
+  navigatePromo(): void {
+    const frutasCategory = this.categories().find(c => c.name.toLowerCase() === 'frutas');
+    if (frutasCategory) {
+      this.router.navigate(['/product'], { queryParams: { category: frutasCategory.id } });
+    }
+  }
   onCartClick(): void { this.router.navigateByUrl('/product').then(() => this.cartStore.openCart()); }
   onSearchClick(): void { this.router.navigateByUrl('/product'); }
 

@@ -1,6 +1,6 @@
-import { Injectable, inject, signal, computed, DestroyRef } from '@angular/core';
+import { Injectable, inject, Injector, signal, computed, DestroyRef } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpErrorResponse } from '@angular/common/http';
 import { catchError, map, Observable, of, shareReplay, tap } from 'rxjs';
 import { AuthResponse, LoginCredentials, RegisterPayload } from '../models/auth.models';
 import { Router } from '@angular/router';
@@ -21,17 +21,17 @@ export class AuthService {
   private readonly http = inject(HttpClient);
   private readonly router = inject(Router);
   private readonly tokenService = inject(TokenService);
-  private readonly idleService = inject(IdleService);
+  private readonly injector = inject(Injector);
   private readonly destroyRef = inject(DestroyRef);
   private readonly API_URL = `${environment.apiUrl}/auth`;
 
   private readonly _authStatus = signal<AuthResponse | null>(null);
   private _lastCheckTime = 0;
   private _cachedCheck$: Observable<boolean> | null = null;
-  private _tokenRefreshTimer: ReturnType<typeof setInterval> | null = null;
-  private _slidingCheckTimer: ReturnType<typeof setInterval> | null = null;
+  private _tokenRefreshTimerId: ReturnType<typeof setTimeout> | null = null;
+  private _slidingCheckTimerId: ReturnType<typeof setTimeout> | null = null;
   private _expiryWarningId: ReturnType<typeof setTimeout> | null = null;
-  private _lastRefreshTime = 0;
+  private _ticking = false;
 
   public readonly currentUser = computed(() => this._authStatus()?.user);
   public readonly isAuthenticated = computed(() => !!this._authStatus());
@@ -67,23 +67,9 @@ export class AuthService {
     this.currentUser()?.roles.some(r => r.name.toUpperCase() === 'TENDERO') ?? false
   );
 
-  /** Exposed for the interceptor — reads from dual storage */
-  getToken(): string | null {
-    return this.tokenService.get();
-  }
-
-  /** Exposed for the interceptor — clears both storages */
-  clearToken(): void {
-    this.tokenService.clear();
-  }
-
-  /**
-   * Whether the token lives in localStorage (true) vs sessionStorage (false).
-   * Used by the idle service to pick the right timeout.
-   */
-  isSessionPersistent(): boolean {
-    return this.tokenService.isPersistent();
-  }
+  getToken(): string | null { return this.tokenService.get(); }
+  clearToken(): void { this.tokenService.clear(); }
+  isSessionPersistent(): boolean { return this.tokenService.isPersistent(); }
 
   /* ── Login / Register ─────────────────────────────────── */
 
@@ -141,7 +127,7 @@ export class AuthService {
         this._startTimers();
       }),
       map(() => true),
-      catchError((err) => {
+      catchError((err: HttpErrorResponse) => {
         if (err.status === 401) {
           this.clearSession();
         }
@@ -151,6 +137,13 @@ export class AuthService {
     );
 
     return this._cachedCheck$;
+  }
+
+  /* ── Lazy IdleService ─────────────────────────────────── */
+
+  /** Resuelve IdleService perezosamente para evitar NG0200 circular */
+  private _getIdleService() {
+    return this.injector.get(IdleService);
   }
 
   /* ── Proactive token refresh ──────────────────────────── */
@@ -167,8 +160,10 @@ export class AuthService {
         }
       }),
       map(() => true),
-      catchError(() => {
-        this.clearSession();
+      catchError((err: HttpErrorResponse) => {
+        if (err.status === 401) {
+          this.clearSession();
+        }
         return of(false);
       }),
     );
@@ -189,7 +184,7 @@ export class AuthService {
 
   private clearSession(): void {
     this._stopTimers();
-    this.idleService.stopWatching();
+    this._getIdleService().stopWatching();
     this.tokenService.clear();
     localStorage.removeItem('remember_email');
     this._authStatus.set(null);
@@ -201,27 +196,26 @@ export class AuthService {
     this.router.navigateByUrl('/auth');
   }
 
-  /** Inicia refresco proactivo + sliding check */
+  /* ── Timer management (background-safe) ────────────────── */
+
   private _startTimers(): void {
     this._stopTimers();
-
-    this._tokenRefreshTimer = setInterval(() => {
-      this.refreshToken().pipe(takeUntilDestroyed(this.destroyRef)).subscribe();
-    }, TOKEN_REFRESH_MS);
-
-    this._slidingCheckTimer = setInterval(() => {
-      this.checkAuthStatus().pipe(takeUntilDestroyed(this.destroyRef)).subscribe();
-    }, SLIDING_CHECK_MS);
+    this._ticking = true;
+    document.addEventListener('visibilitychange', this._onVisibility);
+    this._scheduleRefresh();
+    this._scheduleSliding();
   }
 
   private _stopTimers(): void {
-    if (this._tokenRefreshTimer !== null) {
-      clearInterval(this._tokenRefreshTimer);
-      this._tokenRefreshTimer = null;
+    this._ticking = false;
+    document.removeEventListener('visibilitychange', this._onVisibility);
+    if (this._tokenRefreshTimerId !== null) {
+      clearTimeout(this._tokenRefreshTimerId);
+      this._tokenRefreshTimerId = null;
     }
-    if (this._slidingCheckTimer !== null) {
-      clearInterval(this._slidingCheckTimer);
-      this._slidingCheckTimer = null;
+    if (this._slidingCheckTimerId !== null) {
+      clearTimeout(this._slidingCheckTimerId);
+      this._slidingCheckTimerId = null;
     }
     if (this._expiryWarningId !== null) {
       clearTimeout(this._expiryWarningId);
@@ -229,7 +223,49 @@ export class AuthService {
     }
   }
 
-  /** Decodifica el payload del JWT y programa la advertencia de expiración */
+  private readonly _onVisibility = () => {
+    if (document.hidden) {
+      // Pausa implícita — los setTimeout simplemente no se ejecutan hasta volver
+    } else {
+      // Al volver al frente, reprogramar y hacer un refresh si toca
+      if (this._ticking) {
+        this._scheduleRefresh();
+        this._scheduleSliding();
+        this.refreshToken().pipe(takeUntilDestroyed(this.destroyRef)).subscribe();
+      }
+    }
+  };
+
+  private _scheduleRefresh(): void {
+    if (!this._ticking) return;
+    if (this._tokenRefreshTimerId !== null) clearTimeout(this._tokenRefreshTimerId);
+    this._tokenRefreshTimerId = setTimeout(() => {
+      if (!this._ticking) return;
+      if (document.hidden) {
+        this._scheduleRefresh();
+        return;
+      }
+      this.refreshToken().pipe(takeUntilDestroyed(this.destroyRef)).subscribe();
+      this._scheduleRefresh();
+    }, TOKEN_REFRESH_MS);
+  }
+
+  private _scheduleSliding(): void {
+    if (!this._ticking) return;
+    if (this._slidingCheckTimerId !== null) clearTimeout(this._slidingCheckTimerId);
+    this._slidingCheckTimerId = setTimeout(() => {
+      if (!this._ticking) return;
+      if (document.hidden) {
+        this._scheduleSliding();
+        return;
+      }
+      this.checkAuthStatus().pipe(takeUntilDestroyed(this.destroyRef)).subscribe();
+      this._scheduleSliding();
+    }, SLIDING_CHECK_MS);
+  }
+
+  /* ── Expiry warning ──────────────────────────────────── */
+
   private _scheduleExpiryWarning(token: string): void {
     try {
       const payload = JSON.parse(atob(token.split('.')[1]));
@@ -246,7 +282,7 @@ export class AuthService {
         }, delay);
       }
     } catch {
-      /* JWT malformed — skip warning */
+      /* skip */
     }
   }
 

@@ -30,16 +30,12 @@
                 "input": "public"
               },
               {
-                "glob": "sw.js",
-                "input": "src",
-                "output": "/"
-              },
-              {
                 "glob": "manifest.json",
                 "input": "src",
                 "output": "/"
               }
             ],
+            "serviceWorker": "ngsw-config.json",
             "styles": [
               "src/styles.scss"
             ]

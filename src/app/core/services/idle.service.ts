@@ -1,78 +1,86 @@
-import { Injectable, inject, NgZone, signal } from '@angular/core';
-import { fromEvent, merge, Subscription } from 'rxjs';
-import { throttleTime } from 'rxjs/operators';
-import { AuthService } from './auth';
-
-const SHORT_TIMEOUT = 30 * 60 * 1000;
-const LONG_TIMEOUT = 120 * 60 * 1000;
-const WARNING_MS = 60_000;
+import { Injectable, OnDestroy, signal } from '@angular/core';
 
 @Injectable({ providedIn: 'root' })
-export class IdleService {
-  private readonly authService = inject(AuthService);
-  private readonly zone = inject(NgZone);
-  private timeoutId: ReturnType<typeof setTimeout> | null = null;
-  private warningId: ReturnType<typeof setTimeout> | null = null;
-  private subscriptions: Subscription | null = null;
+export class IdleService implements OnDestroy {
+  private _idleTimeout = 15 * 60 * 1000;
+  private _isWatching = false;
+  private _timerId: ReturnType<typeof setTimeout> | null = null;
+  private _eventCleanups: Array<() => void> = [];
 
+  readonly isIdle = signal(false);
   readonly idleWarning = signal(false);
+  readonly lastActivity = signal<number>(Date.now());
 
-  startWatching(): void {
-    if (this.subscriptions) return;
+  startWatching(timeoutMinutes = 15): void {
+    this.stopWatching();
+    this._idleTimeout = timeoutMinutes * 60 * 1000;
+    this._isWatching = true;
+    this.lastActivity.set(Date.now());
+    this._scheduleCheck();
 
-    this.zone.runOutsideAngular(() => {
-      this.subscriptions = merge(
-        fromEvent(document, 'mousemove'),
-        fromEvent(document, 'keydown'),
-        fromEvent(document, 'click'),
-        fromEvent(document, 'scroll'),
-        fromEvent(document, 'touchstart'),
-        fromEvent(document, 'wheel'),
-      )
-        .pipe(throttleTime(5000))
-        .subscribe(() => this.resetTimer());
-
-      this.resetTimer();
+    const events = ['mousemove', 'keydown', 'click', 'scroll', 'touchstart'];
+    const handler = () => this._resetTimer();
+    events.forEach(event => {
+      window.addEventListener(event, handler);
+      this._eventCleanups.push(() => window.removeEventListener(event, handler));
     });
-  }
 
-  stopWatching(): void {
-    this._clearTimers();
-    this.subscriptions?.unsubscribe();
-    this.subscriptions = null;
+    const onVisibility = () => {
+      if (!document.hidden) {
+        this._resetTimer();
+      }
+    };
+    document.addEventListener('visibilitychange', onVisibility);
+    this._eventCleanups.push(() => document.removeEventListener('visibilitychange', onVisibility));
   }
 
   dismissWarning(): void {
     this.idleWarning.set(false);
-    this.resetTimer();
+    this._resetTimer();
   }
 
-  private resetTimer(): void {
-    this._clearTimers();
+  stopWatching(): void {
+    this._isWatching = false;
+    this.isIdle.set(false);
     this.idleWarning.set(false);
-
-    const timeout = this.authService.isSessionPersistent() ? LONG_TIMEOUT : SHORT_TIMEOUT;
-
-    this.warningId = setTimeout(() => {
-      this.zone.run(() => this.idleWarning.set(true));
-    }, timeout - WARNING_MS);
-
-    this.timeoutId = setTimeout(() => {
-      this.zone.run(() => {
-        this.idleWarning.set(false);
-        this.authService.logout();
-      });
-    }, timeout);
+    this._eventCleanups.forEach(fn => fn());
+    this._eventCleanups = [];
+    if (this._timerId !== null) {
+      clearTimeout(this._timerId);
+      this._timerId = null;
+    }
   }
 
-  private _clearTimers(): void {
-    if (this.timeoutId !== null) {
-      clearTimeout(this.timeoutId);
-      this.timeoutId = null;
-    }
-    if (this.warningId !== null) {
-      clearTimeout(this.warningId);
-      this.warningId = null;
-    }
+  ngOnDestroy(): void {
+    this.stopWatching();
+  }
+
+  private _scheduleCheck(): void {
+    if (!this._isWatching) return;
+    if (this._timerId !== null) clearTimeout(this._timerId);
+    this._timerId = setTimeout(() => {
+      if (!this._isWatching) return;
+      if (document.hidden) {
+        this._scheduleCheck();
+        return;
+      }
+      const elapsed = Date.now() - this.lastActivity();
+      if (elapsed >= this._idleTimeout) {
+        this.isIdle.set(true);
+      } else if (elapsed >= this._idleTimeout * 0.5) {
+        this.idleWarning.set(true);
+        this._scheduleCheck();
+      } else {
+        this._scheduleCheck();
+      }
+    }, Math.min(this._idleTimeout * 0.5, 30_000));
+  }
+
+  private _resetTimer(): void {
+    if (!this._isWatching) return;
+    this.lastActivity.set(Date.now());
+    this.isIdle.set(false);
+    this.idleWarning.set(false);
+    this._scheduleCheck();
   }
 }

@@ -3,11 +3,4 @@ import { appConfig } from './app/app.config';
 import { App } from './app/app';
 
 bootstrapApplication(App, appConfig)
-  .then(() => {
-    if ('serviceWorker' in navigator) {
-      navigator.serviceWorker.register('/sw.js').catch(() => {
-        // Service Worker no soportado en desarrollo
-      });
-    }
-  })
   .catch((err) => console.error(err));

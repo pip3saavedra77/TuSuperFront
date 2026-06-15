@@ -78,6 +78,8 @@
     @media (min-width: 1024px) {
       position: sticky;
       top: calc(var(--tusuper-header-height) + 28px);
+      max-height: calc(100vh - var(--tusuper-header-height) - 56px);
+      overflow-y: auto;
     }
   }
 }
