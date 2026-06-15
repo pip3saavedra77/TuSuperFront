@@ -1,5 +1,4 @@
-import { DestroyRef, inject } from '@angular/core';
-import { signal } from '@angular/core';
+import { DestroyRef, inject, signal } from '@angular/core';
 import { debounceTime, distinctUntilChanged } from 'rxjs';
 import { takeUntilDestroyed, toObservable } from '@angular/core/rxjs-interop';
 import { PageEvent } from '@angular/material/paginator';

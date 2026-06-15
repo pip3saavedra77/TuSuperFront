@@ -1,12 +1,12 @@
-self.addEventListener('install', () => {
-  self.skipWaiting();
+globalThis.addEventListener('install', () => {
+  globalThis.skipWaiting();
 });
 
-self.addEventListener('activate', (event) => {
-  event.waitUntil(self.clients.claim());
+globalThis.addEventListener('activate', (event) => {
+  event.waitUntil(globalThis.clients.claim());
 });
 
-self.addEventListener('push', (event) => {
+globalThis.addEventListener('push', (event) => {
   let data = { title: 'TuSuper', body: '', icon: '/branding/tusuper-logo-new.png' };
 
   try {
@@ -20,7 +20,7 @@ self.addEventListener('push', (event) => {
   }
 
   event.waitUntil(
-    self.registration.showNotification(data.title, {
+    globalThis.registration.showNotification(data.title, {
       body: data.body,
       icon: data.icon,
       badge: '/branding/tusuper-logo-new.png',
@@ -30,7 +30,7 @@ self.addEventListener('push', (event) => {
   );
 });
 
-self.addEventListener('notificationclick', (event) => {
+globalThis.addEventListener('notificationclick', (event) => {
   event.notification.close();
 
   let targetUrl = '/orders/my-orders';
@@ -40,14 +40,14 @@ self.addEventListener('notificationclick', (event) => {
   }
 
   event.waitUntil(
-    self.clients.matchAll({ type: 'window' }).then((clients) => {
+    globalThis.clients.matchAll({ type: 'window' }).then((clients) => {
       // Buscar si ya hay una pestaña abierta
       const existing = clients.find((c) => c.url.includes('/home') || c.url.includes('/orders'));
       if (existing) {
         existing.navigate(targetUrl);
         existing.focus();
       } else {
-        self.clients.openWindow(targetUrl);
+        globalThis.clients.openWindow(targetUrl);
       }
     }),
   );
