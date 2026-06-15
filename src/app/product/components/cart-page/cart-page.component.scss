@@ -1,13 +1,14 @@
 @use 'sass:map';
 @use '../../../styles/tokens' as tk;
 
+// Vibrant Minimalist — Cart Page
 .cart-page {
   min-height: 100vh;
-  background-color: var(--ts-background, #fcf9f8);
+  background-color: var(--ts-background, #fbf9f8);
   padding: var(--ts-container-padding, 16px);
   padding-bottom: calc(var(--ts-container-padding, 16px) + 96px);
   font-family: var(--ts-font-body, 'Inter', sans-serif);
-  color: var(--ts-on-surface, #1c1b1b);
+  color: var(--ts-on-surface, #1b1c1c);
 
   &__header {
     display: flex;
@@ -24,36 +25,41 @@
     width: 40px;
     height: 40px;
     border-radius: var(--ts-radius-full, 9999px);
-    background: var(--ts-surface-container-low, #f6f3f2);
-    color: var(--ts-on-surface, #1c1b1b);
+    background: #ffffff;
+    color: var(--ts-on-surface, #1b1c1c);
     text-decoration: none;
-    transition: background 0.2s ease;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
 
-    &:hover { background: var(--ts-surface-container, #f0eded); }
+    &:hover { transform: translateY(-1px); box-shadow: 0 4px 14px rgba(0, 0, 0, 0.08); }
+
+    .material-symbols-outlined { font-size: 20px; }
   }
 
   &__title {
-    font-family: var(--ts-font-headline, 'Hanken Grotesk', sans-serif);
-    font-size: 24px;
-    font-weight: 600;
-    line-height: 32px;
+    font-family: var(--ts-font-headline, 'Plus Jakarta Sans', sans-serif);
+    font-size: 1.5rem;
+    font-weight: 800;
+    line-height: 1.2;
     margin: 0;
     flex: 1;
+    letter-spacing: -0.01em;
   }
 
   &__count {
-    font-family: var(--ts-font-label, 'Geist', sans-serif);
-    font-size: 12px;
-    font-weight: 500;
-    color: var(--ts-on-surface-variant, #3d4a3e);
-    background: var(--ts-surface-container-low, #f6f3f2);
-    padding: 6px 10px;
+    font-family: var(--ts-font-label, 'JetBrains Mono', monospace);
+    font-size: 0.7rem;
+    font-weight: 600;
+    color: var(--ts-on-surface-variant, #3c4a3c);
+    background: #ffffff;
+    padding: 6px 12px;
     border-radius: var(--ts-radius-full, 9999px);
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
   }
 
   &__content {
     display: grid;
-    gap: 24px;
+    gap: 20px;
   }
 }
 
@@ -67,31 +73,31 @@
   padding: 24px;
 
   &__icon {
-    width: 80px;
-    height: 80px;
+    width: 96px;
+    height: 96px;
     border-radius: var(--ts-radius-full, 9999px);
-    background: var(--ts-surface-tint, #f0fdf4);
+    background: rgba(0, 200, 83, 0.08);
     display: flex;
     align-items: center;
     justify-content: center;
-    margin-bottom: 20px;
+    margin-bottom: 24px;
 
     .material-symbols-outlined {
-      font-size: 36px;
-      color: var(--ts-primary, #006b32);
+      font-size: 44px;
+      color: var(--ts-primary, #006e2a);
     }
   }
 
   &__title {
-    font-family: var(--ts-font-headline, 'Hanken Grotesk', sans-serif);
-    font-size: 20px;
-    font-weight: 600;
+    font-family: var(--ts-font-headline, 'Plus Jakarta Sans', sans-serif);
+    font-size: 1.25rem;
+    font-weight: 800;
     margin: 0 0 8px;
   }
 
   &__hint {
-    font-size: 14px;
-    color: var(--ts-on-surface-variant, #3d4a3e);
+    font-size: 0.875rem;
+    color: var(--ts-on-surface-variant, #3c4a3c);
     margin: 0 0 24px;
     max-width: 280px;
   }
@@ -101,44 +107,51 @@
     align-items: center;
     justify-content: center;
     padding: 12px 24px;
-    border-radius: var(--ts-radius-base, 8px);
-    background: var(--ts-primary, #006b32);
+    border-radius: var(--ts-radius-full, 9999px);
+    background: var(--ts-primary, #006e2a);
     color: var(--ts-on-primary, #fff);
-    font-family: var(--ts-font-label, 'Geist', sans-serif);
-    font-size: 14px;
-    font-weight: 600;
+    font-family: var(--ts-font-headline, 'Plus Jakarta Sans', sans-serif);
+    font-size: 0.85rem;
+    font-weight: 800;
     text-decoration: none;
-    transition: background 0.2s ease;
+    box-shadow: 0 4px 16px rgba(0, 200, 83, 0.2);
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
 
-    &:hover { background: var(--ts-primary-container, #008740); }
+    &:hover { transform: translateY(-1px); box-shadow: 0 8px 24px rgba(0, 200, 83, 0.28); }
   }
 }
 
 .cart-items {
   display: flex;
   flex-direction: column;
-  gap: 16px;
+  gap: 14px;
 }
 
 .cart-item {
   display: grid;
-  grid-template-columns: 64px 1fr auto;
+  grid-template-columns: 72px 1fr auto;
   grid-template-areas:
     'image details total'
     'image controls remove';
-  gap: 12px;
+  gap: 14px;
   align-items: center;
-  background: var(--ts-surface-container-lowest, #fff);
-  border-radius: var(--ts-radius-lg, 16px);
+  background: #ffffff;
+  border-radius: 20px;
   padding: 16px;
-  box-shadow: var(--ts-shadow-level-1, 0 4px 12px rgba(0, 0, 0, 0.05));
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.04);
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+
+  &:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 28px rgba(0, 0, 0, 0.06);
+  }
 
   &__image {
     grid-area: image;
-    width: 64px;
-    height: 64px;
-    border-radius: var(--ts-radius-base, 8px);
-    background: var(--ts-surface-container-low, #f6f3f2);
+    width: 72px;
+    height: 72px;
+    border-radius: 14px;
+    background: var(--ts-background, #fbf9f8);
     display: flex;
     align-items: center;
     justify-content: center;
@@ -151,7 +164,7 @@
     }
 
     .material-symbols-outlined {
-      color: var(--ts-outline, #6d7b6d);
+      color: var(--ts-outline, #6c7b6a);
       font-size: 28px;
     }
   }
@@ -162,9 +175,9 @@
   }
 
   &__name {
-    font-family: var(--ts-font-headline, 'Hanken Grotesk', sans-serif);
-    font-size: 16px;
-    font-weight: 600;
+    font-family: var(--ts-font-headline, 'Plus Jakarta Sans', sans-serif);
+    font-size: 0.95rem;
+    font-weight: 800;
     margin: 0 0 4px;
     white-space: nowrap;
     overflow: hidden;
@@ -172,16 +185,16 @@
   }
 
   &__meta {
-    font-size: 12px;
-    color: var(--ts-on-surface-variant, #3d4a3e);
+    font-size: 0.75rem;
+    color: var(--ts-on-surface-variant, #3c4a3c);
     margin: 0 0 6px;
   }
 
   &__price {
-    font-family: var(--ts-font-label, 'Geist', sans-serif);
-    font-size: 14px;
-    font-weight: 600;
-    color: var(--ts-primary, #006b32);
+    font-family: var(--ts-font-label, 'JetBrains Mono', monospace);
+    font-size: 0.8rem;
+    font-weight: 700;
+    color: var(--ts-primary, #006e2a);
     margin: 0;
   }
 
@@ -197,44 +210,46 @@
     height: 32px;
     border: none;
     border-radius: var(--ts-radius-full, 9999px);
-    background: var(--ts-surface-container, #f0eded);
-    color: var(--ts-on-surface, #1c1b1b);
+    background: var(--ts-surface-container-low, #f5f3f3);
+    color: var(--ts-on-surface, #1b1c1c);
     display: flex;
     align-items: center;
     justify-content: center;
     cursor: pointer;
     transition: background 0.2s ease;
 
-    &:hover:not(:disabled) { background: var(--ts-surface-container-high, #eae7e7); }
+    &:hover:not(:disabled) { background: var(--ts-surface-container, #efeded); }
 
     &:disabled {
       opacity: 0.4;
       cursor: not-allowed;
     }
+
+    .material-symbols-outlined { font-size: 16px; }
   }
 
   &__quantity {
-    font-family: var(--ts-font-label, 'Geist', sans-serif);
-    font-size: 14px;
-    font-weight: 600;
+    font-family: var(--ts-font-label, 'JetBrains Mono', monospace);
+    font-size: 0.85rem;
+    font-weight: 700;
     min-width: 24px;
     text-align: center;
   }
 
   &__total {
     grid-area: total;
-    font-family: var(--ts-font-label, 'Geist', sans-serif);
-    font-size: 14px;
-    font-weight: 700;
-    color: var(--ts-on-surface, #1c1b1b);
+    font-family: var(--ts-font-headline, 'Plus Jakarta Sans', sans-serif);
+    font-size: 0.95rem;
+    font-weight: 800;
+    color: var(--ts-on-surface, #1b1c1c);
     text-align: right;
   }
 
   &__remove {
     grid-area: remove;
     justify-self: end;
-    width: 32px;
-    height: 32px;
+    width: 34px;
+    height: 34px;
     border: none;
     border-radius: var(--ts-radius-full, 9999px);
     background: transparent;
@@ -243,21 +258,25 @@
     align-items: center;
     justify-content: center;
     cursor: pointer;
+    transition: background 0.2s ease;
 
     &:hover { background: var(--ts-error-container, #ffdad6); }
+
+    .material-symbols-outlined { font-size: 18px; }
   }
 }
 
 .cart-summary {
-  background: var(--ts-surface-container-lowest, #fff);
-  border-radius: var(--ts-radius-lg, 16px);
-  padding: 20px;
-  box-shadow: var(--ts-shadow-level-1, 0 4px 12px rgba(0, 0, 0, 0.05));
+  background: #ffffff;
+  border-radius: 20px;
+  padding: 22px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.04);
+  height: fit-content;
 
   &__title {
-    font-family: var(--ts-font-headline, 'Hanken Grotesk', sans-serif);
-    font-size: 18px;
-    font-weight: 600;
+    font-family: var(--ts-font-headline, 'Plus Jakarta Sans', sans-serif);
+    font-size: 1.1rem;
+    font-weight: 800;
     margin: 0 0 16px;
   }
 
@@ -265,24 +284,26 @@
     display: flex;
     justify-content: space-between;
     align-items: center;
-    padding: 10px 0;
-    font-size: 14px;
-    color: var(--ts-on-surface-variant, #3d4a3e);
-    border-bottom: 1px solid var(--ts-surface-container-low, #f6f3f2);
+    padding: 12px 0;
+    font-size: 0.875rem;
+    color: var(--ts-on-surface-variant, #3c4a3c);
+    border-bottom: 1px solid var(--ts-surface-container-low, #f5f3f3);
 
     &--total {
       border-bottom: none;
-      font-family: var(--ts-font-label, 'Geist', sans-serif);
-      font-size: 18px;
-      font-weight: 700;
-      color: var(--ts-on-surface, #1c1b1b);
+      font-family: var(--ts-font-headline, 'Plus Jakarta Sans', sans-serif);
+      font-size: 1.1rem;
+      font-weight: 800;
+      color: var(--ts-on-surface, #1b1c1c);
       padding-top: 14px;
     }
   }
 
   &__free {
-    color: var(--ts-success-bright, #22c55e);
-    font-weight: 600;
+    color: var(--ts-primary, #006e2a);
+    font-weight: 700;
+    font-family: var(--ts-font-label, 'JetBrains Mono', monospace);
+    font-size: 0.75rem;
   }
 
   &__error {
@@ -291,10 +312,12 @@
     gap: 8px;
     margin-top: 14px;
     padding: 12px;
-    border-radius: var(--ts-radius-base, 8px);
+    border-radius: 12px;
     background: var(--ts-error-container, #ffdad6);
     color: var(--ts-on-error-container, #93000a);
-    font-size: 13px;
+    font-size: 0.8rem;
+
+    .material-symbols-outlined { font-size: 18px; }
   }
 
   &__actions {
@@ -312,37 +335,43 @@
     width: 100%;
     padding: 14px 20px;
     border: none;
-    border-radius: var(--ts-radius-base, 8px);
-    background: var(--ts-primary, #006b32);
+    border-radius: var(--ts-radius-full, 9999px);
+    background: var(--ts-primary, #006e2a);
     color: var(--ts-on-primary, #fff);
-    font-family: var(--ts-font-label, 'Geist', sans-serif);
-    font-size: 15px;
-    font-weight: 600;
+    font-family: var(--ts-font-headline, 'Plus Jakarta Sans', sans-serif);
+    font-size: 0.9rem;
+    font-weight: 800;
     cursor: pointer;
-    transition: background 0.2s ease;
+    box-shadow: 0 4px 16px rgba(0, 200, 83, 0.2);
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
 
-    &:hover:not(:disabled) { background: var(--ts-primary-container, #008740); }
+    &:hover:not(:disabled) {
+      transform: translateY(-1px);
+      box-shadow: 0 8px 24px rgba(0, 200, 83, 0.28);
+    }
 
     &:disabled {
       opacity: 0.6;
       cursor: not-allowed;
     }
+
+    .material-symbols-outlined { font-size: 18px; }
   }
 
   &__clear {
     width: 100%;
     padding: 12px 20px;
-    border: 1px solid var(--ts-outline-variant, #bccabb);
-    border-radius: var(--ts-radius-base, 8px);
+    border: 1px solid var(--ts-outline-variant, #e4e2e2);
+    border-radius: var(--ts-radius-full, 9999px);
     background: transparent;
-    color: var(--ts-on-surface-variant, #3d4a3e);
-    font-family: var(--ts-font-label, 'Geist', sans-serif);
-    font-size: 14px;
-    font-weight: 600;
+    color: var(--ts-on-surface-variant, #3c4a3c);
+    font-family: var(--ts-font-headline, 'Plus Jakarta Sans', sans-serif);
+    font-size: 0.8rem;
+    font-weight: 700;
     cursor: pointer;
     transition: background 0.2s ease;
 
-    &:hover:not(:disabled) { background: var(--ts-surface-container-low, #f6f3f2); }
+    &:hover:not(:disabled) { background: var(--ts-surface-container-low, #f5f3f3); }
 
     &:disabled {
       opacity: 0.6;
@@ -353,13 +382,15 @@
 
 @media (min-width: 768px) {
   .cart-page {
-    max-width: 960px;
+    max-width: 1100px;
     margin: 0 auto;
     padding: 32px;
     padding-bottom: 32px;
 
+    &__title { font-size: 1.75rem; }
+
     &__content {
-      grid-template-columns: 1fr 340px;
+      grid-template-columns: 1fr 360px;
       align-items: start;
     }
   }

@@ -1,21 +1,19 @@
 @use 'sass:map';
 @use '../styles/tokens' as *;
-@use '../styles/pos_tokens' as pos;
 
-// =============================================================================
-// PERFIL — Premium mobile-first
-// =============================================================================
-
+// Vibrant Minimalist — Profile
 .profile-container {
   padding: 32px 24px;
-  min-height: calc(100vh - 80px);
-  background: transparent;
+  min-height: 100vh;
+  background: var(--ts-background, #fbf9f8);
+  font-family: var(--ts-font-body, 'Inter', sans-serif);
+  color: var(--ts-on-surface, #1b1c1c);
 
   @media (max-width: 600px) { padding: 16px 12px; }
 }
 
 .profile-page {
-  max-width: 600px;
+  max-width: 640px;
   margin: 0 auto;
   display: flex;
   flex-direction: column;
@@ -35,23 +33,24 @@
 
 .profile-avatar-wrapper {
   position: relative;
-  width: 96px;
-  height: 96px;
+  width: 104px;
+  height: 104px;
 }
 
 .profile-avatar {
-  width: 96px;
-  height: 96px;
+  width: 104px;
+  height: 104px;
   border-radius: 50%;
-  background: linear-gradient(135deg, var(--profile-primary, #{pos.$pos-primary}) 0%, color-mix(in srgb, var(--profile-primary, #{pos.$pos-primary}) 70%, #000) 100%);
+  background: linear-gradient(135deg, var(--ts-primary, #006e2a) 0%, var(--ts-primary-container, #00c853) 100%);
   color: #ffffff;
+  font-family: var(--ts-font-headline, 'Plus Jakarta Sans', sans-serif);
   font-size: 2.5rem;
   font-weight: 800;
   display: flex;
   align-items: center;
   justify-content: center;
-  box-shadow: 0 8px 28px color-mix(in srgb, var(--profile-primary, #{pos.$pos-primary}) 35%, transparent);
-  border: 3px solid #ffffff;
+  box-shadow: 0 8px 28px rgba(0, 200, 83, 0.25);
+  border: 4px solid #ffffff;
   object-fit: cover;
   transition: transform 0.3s ease;
 }
@@ -63,7 +62,7 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  background: rgba(15, 23, 42, 0.5);
+  background: rgba(27, 28, 28, 0.45);
   opacity: 0;
   transition: opacity 0.25s ease;
   cursor: pointer;
@@ -77,10 +76,10 @@
   }
 
   .avatar-btn {
-    width: 34px;
-    height: 34px;
+    width: 36px;
+    height: 36px;
     background: rgba(255, 255, 255, 0.92) !important;
-    color: #0f172a !important;
+    color: var(--ts-on-surface, #1b1c1c) !important;
     border-radius: 50% !important;
     display: flex;
     align-items: center;
@@ -92,21 +91,18 @@
     &:hover:not(:disabled) { transform: scale(1.1); background: #fff !important; }
 
     &--delete {
-      background: rgba(239, 68, 68, 0.9) !important;
-      color: #fff !important;
-      &:hover:not(:disabled) { background: #ef4444 !important; }
+      background: var(--ts-error-container, #ffdad6) !important;
+      color: var(--ts-error, #ba1a1a) !important;
     }
 
     &--confirm {
-      background: rgba(34, 197, 94, 0.9) !important;
+      background: var(--ts-primary, #006e2a) !important;
       color: #fff !important;
-      &:hover:not(:disabled) { background: #22c55e !important; }
     }
 
     &--cancel {
-      background: rgba(148, 163, 184, 0.9) !important;
-      color: #fff !important;
-      &:hover:not(:disabled) { background: #94a3b8 !important; }
+      background: var(--ts-surface-container-high, #e9e8e7) !important;
+      color: var(--ts-on-surface, #1b1c1c) !important;
     }
   }
 }
@@ -114,18 +110,23 @@
 .profile-avatar-wrapper:hover .avatar-overlay { opacity: 1; }
 .profile-avatar-wrapper:has(.avatar-overlay .preview-actions) .avatar-overlay { opacity: 1; }
 
+@media (hover: none) and (pointer: coarse) {
+  .profile-avatar-wrapper .avatar-overlay { opacity: 1; }
+}
+
 .profile-title-block {
   h1 {
-    font-size: 1.6rem;
+    font-family: var(--ts-font-headline, 'Plus Jakarta Sans', sans-serif);
+    font-size: 1.5rem;
     font-weight: 800;
-    color: #0f172a;
+    color: var(--ts-on-surface, #1b1c1c);
     margin: 0;
-    letter-spacing: -0.025em;
+    letter-spacing: -0.01em;
   }
 
   .profile-subtitle {
-    font-size: 0.82rem;
-    color: #94a3b8;
+    font-size: 0.85rem;
+    color: var(--ts-on-surface-variant, #3c4a3c);
     margin: 4px 0 0;
     font-weight: 500;
   }
@@ -135,27 +136,26 @@
 .profile-body {
   display: flex;
   flex-direction: column;
-  gap: 14px;
+  gap: 16px;
 }
 
 .profile-card {
   background: #ffffff;
   border-radius: 20px;
-  border: 1px solid #F1F5F9;
-  box-shadow: 0 2px 10px rgba(0,0,0,0.05), 0 0 0 1px rgba(0,0,0,0.03);
-  padding: 20px 22px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.04);
+  padding: 22px;
   display: flex;
   flex-direction: column;
-  gap: 16px;
+  gap: 18px;
 
-  @media (max-width: 600px) { padding: 16px; }
+  @media (max-width: 600px) { padding: 18px; }
 
   .card-header {
     display: flex;
     justify-content: space-between;
     align-items: center;
     gap: 10px;
-    border-bottom: 1px solid #F1F5F9;
+    border-bottom: 1px solid var(--ts-surface-container-low, #f5f3f3);
     padding-bottom: 14px;
     flex-wrap: wrap;
 
@@ -167,24 +167,22 @@
       flex: 1 1 auto;
 
       .title-icon {
-        color: var(--profile-primary, #{pos.$pos-primary});
+        color: var(--ts-primary, #006e2a);
         flex-shrink: 0;
       }
 
       h2 {
-        font-size: 0.95rem;
-        font-weight: 700;
-        color: #0f172a;
+        font-family: var(--ts-font-headline, 'Plus Jakarta Sans', sans-serif);
+        font-size: 1rem;
+        font-weight: 800;
+        color: var(--ts-on-surface, #1b1c1c);
         margin: 0;
         white-space: normal;
         word-break: break-word;
       }
     }
 
-    // Botón siempre visible sin solaparse
-    button {
-      flex-shrink: 0;
-    }
+    button { flex-shrink: 0; }
   }
 }
 
@@ -198,15 +196,15 @@
     display: flex;
     justify-content: space-between;
     align-items: center;
-    padding: 10px 0;
-    border-bottom: 1px solid #F8FAFC;
+    padding: 12px 0;
+    border-bottom: 1px solid var(--ts-surface-container-low, #f5f3f3);
     gap: 12px;
 
     &:last-child { border: none; padding-bottom: 0; }
 
     .info-label {
-      font-size: 0.82rem;
-      color: #94a3b8;
+      font-size: 0.8rem;
+      color: var(--ts-on-surface-variant, #3c4a3c);
       font-weight: 600;
       white-space: nowrap;
       flex-shrink: 0;
@@ -214,7 +212,7 @@
 
     .info-value {
       font-size: 0.875rem;
-      color: #0f172a;
+      color: var(--ts-on-surface, #1b1c1c);
       font-weight: 700;
       text-align: right;
       word-break: break-all;
@@ -227,11 +225,11 @@
       justify-content: flex-end;
 
       .role-badge {
-        background: color-mix(in srgb, var(--profile-primary, #{pos.$pos-primary}) 12%, transparent);
-        color: color-mix(in srgb, var(--profile-primary, #{pos.$pos-primary}) 85%, #000);
+        background: rgba(0, 200, 83, 0.1);
+        color: var(--ts-primary, #006e2a);
         padding: 3px 10px;
         border-radius: 999px;
-        font-size: 0.72rem;
+        font-size: 0.7rem;
         font-weight: 800;
         text-transform: uppercase;
         letter-spacing: 0.06em;
@@ -271,33 +269,33 @@
 
 // ── Botones ───────────────────────────────────────────────────────────────────
 .btn-edit-toggle, .btn-change-password-toggle, .btn-cancel-password {
-  border-color: var(--profile-primary, #{pos.$pos-primary}) !important;
-  color: var(--profile-primary, #{pos.$pos-primary}) !important;
+  border-color: var(--ts-primary, #006e2a) !important;
+  color: var(--ts-primary, #006e2a) !important;
   border-radius: 999px !important;
   font-weight: 700 !important;
-  font-size: 0.82rem !important;
+  font-size: 0.78rem !important;
   padding: 0 16px !important;
   height: 36px !important;
   transition: all 0.2s ease !important;
   white-space: nowrap;
 
   &:hover {
-    background: color-mix(in srgb, var(--profile-primary, #{pos.$pos-primary}) 8%, transparent) !important;
+    background: rgba(0, 200, 83, 0.08) !important;
   }
 }
 
 .btn-save-profile, .btn-save-password {
   height: 46px;
-  background: var(--profile-primary, #{pos.$pos-primary}) !important;
+  background: var(--ts-primary, #006e2a) !important;
   color: #ffffff !important;
   border-radius: 999px !important;
-  font-weight: 700 !important;
+  font-weight: 800 !important;
   display: flex;
   align-items: center;
   justify-content: center;
   gap: 8px;
   transition: all 0.2s ease !important;
-  box-shadow: 0 4px 14px color-mix(in srgb, var(--profile-primary, #{pos.$pos-primary}) 30%, transparent);
+  box-shadow: 0 4px 16px rgba(0, 200, 83, 0.2);
 
   .mat-icon, mat-icon {
     font-size: 18px;
@@ -316,12 +314,12 @@
 
   &:hover:not(:disabled) {
     transform: translateY(-1px);
-    box-shadow: 0 8px 20px color-mix(in srgb, var(--profile-primary, #{pos.$pos-primary}) 40%, transparent);
+    box-shadow: 0 8px 24px rgba(0, 200, 83, 0.28);
   }
 
   &:disabled {
-    background: #e2e8f0 !important;
-    color: #94a3b8 !important;
+    background: var(--ts-surface-container-high, #e9e8e7) !important;
+    color: var(--ts-on-surface-variant, #3c4a3c) !important;
     box-shadow: none;
   }
 }
@@ -331,13 +329,13 @@
   display: flex;
   align-items: flex-start;
   gap: 14px;
-  background: linear-gradient(135deg, #F0FDF4 0%, #ECFDF5 100%);
+  background: rgba(0, 200, 83, 0.06);
   padding: 16px;
-  border-radius: 14px;
-  border: 1px solid rgba(34, 197, 94, 0.15);
+  border-radius: 16px;
+  border: 1px solid rgba(0, 200, 83, 0.1);
 
   mat-icon {
-    color: #22c55e;
+    color: var(--ts-primary, #006e2a);
     font-size: 26px;
     width: 26px;
     height: 26px;
@@ -352,13 +350,13 @@
 
     .security-status {
       font-size: 0.875rem;
-      font-weight: 700;
-      color: #0f172a;
+      font-weight: 800;
+      color: var(--ts-on-surface, #1b1c1c);
     }
 
     .security-desc {
       font-size: 0.78rem;
-      color: #64748b;
+      color: var(--ts-on-surface-variant, #3c4a3c);
       margin: 0;
       line-height: 1.5;
     }
@@ -390,26 +388,26 @@
   &__icon {
     width: 44px; height: 44px;
     border-radius: 12px;
-    background: #fef2f2;
+    background: #fee2e2;
     display: flex; align-items: center; justify-content: center;
     flex-shrink: 0;
-    mat-icon { color: #ef4444; font-size: 22px; width: 22px; height: 22px; }
+    mat-icon { color: #dc2626; font-size: 22px; width: 22px; height: 22px; }
   }
 
   &__text {
     flex: 1; min-width: 0;
-    h3 { font-size: 15px; font-weight: 700; color: #991b1b; margin: 0 0 2px; }
-    p { font-size: 13px; color: #dc2626; margin: 0; opacity: 0.7; }
+    h3 { font-size: 15px; font-weight: 800; color: #991b1b; margin: 0 0 2px; }
+    p { font-size: 13px; color: #dc2626; margin: 0; opacity: 0.8; }
   }
 
   &__trigger {
     flex-shrink: 0;
     padding: 8px 20px;
-    border-radius: 10px;
+    border-radius: 999px;
     border: 1.5px solid #fca5a5;
     background: transparent;
     color: #dc2626;
-    font-size: 13px; font-weight: 600;
+    font-size: 13px; font-weight: 700;
     cursor: pointer;
     transition: all 0.2s;
     &:hover { background: #fee2e2; border-color: #f87171; }
@@ -430,16 +428,16 @@
   }
 
   .confirm-cancel {
-    padding: 8px 16px; border-radius: 10px; border: 1px solid #e5e7eb;
-    background: #fff; color: #374151; font-size: 13px; font-weight: 600;
+    padding: 8px 16px; border-radius: 999px; border: 1px solid var(--ts-outline-variant, #e4e2e2);
+    background: #fff; color: var(--ts-on-surface-variant, #3c4a3c); font-size: 13px; font-weight: 700;
     cursor: pointer; transition: all 0.2s;
-    &:hover:not(:disabled) { background: #f9fafb; }
+    &:hover:not(:disabled) { background: var(--ts-surface-container-low, #f5f3f3); }
     &:disabled { opacity: 0.5; cursor: not-allowed; }
   }
 
   .confirm-delete {
-    padding: 8px 16px; border-radius: 10px; border: none;
-    background: #ef4444; color: #fff; font-size: 13px; font-weight: 600;
+    padding: 8px 16px; border-radius: 999px; border: none;
+    background: #ef4444; color: #fff; font-size: 13px; font-weight: 700;
     cursor: pointer; transition: all 0.2s;
     &:hover:not(:disabled) { background: #dc2626; }
     &:disabled { opacity: 0.5; cursor: not-allowed; }
@@ -460,9 +458,7 @@
   to { opacity: 1; transform: translateY(0); }
 }
 
-// ── Animacion ─────────────────────────────────────────────────────────────────
 @keyframes fadeIn {
   from { opacity: 0; transform: translateY(8px); }
   to   { opacity: 1; transform: translateY(0); }
 }
-

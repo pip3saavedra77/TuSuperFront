@@ -1,4 +1,4 @@
-import { Component, inject, computed } from '@angular/core';
+import { Component, inject, computed, ViewEncapsulation } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
@@ -21,7 +21,8 @@ import { AuthService } from '../../../core/services/auth';
     OverlayModule,
   ],
   templateUrl: './notification-bell.component.html',
-  styleUrls: ['./notification-bell.component.scss']
+  styleUrls: ['./notification-bell.component.scss'],
+  encapsulation: ViewEncapsulation.None,
 })
 export class NotificationBellComponent {
   public readonly notificationsService = inject(NotificationsService);

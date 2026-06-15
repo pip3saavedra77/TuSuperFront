@@ -6,11 +6,11 @@
         <span class="material-symbols-outlined">home</span>
         <span class="user-bottom-nav__label">Inicio</span>
       </a>
-      <a class="user-bottom-nav__item" routerLink="/product" routerLinkActive="user-bottom-nav__item--active">
+      <a class="user-bottom-nav__item" routerLink="/product" routerLinkActive="user-bottom-nav__item--active" [routerLinkActiveOptions]="{exact: true}">
         <span class="material-symbols-outlined">grid_view</span>
         <span class="user-bottom-nav__label">Productos</span>
       </a>
-      <a class="user-bottom-nav__item" routerLink="/cart" routerLinkActive="user-bottom-nav__item--active">
+      <a class="user-bottom-nav__item" routerLink="/product/cart" routerLinkActive="user-bottom-nav__item--active">
         <span class="material-symbols-outlined">shopping_cart</span>
         <span class="user-bottom-nav__label">Carrito</span>
       </a>

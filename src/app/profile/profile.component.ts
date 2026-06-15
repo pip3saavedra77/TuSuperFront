@@ -1,4 +1,4 @@
-import { Component, inject, computed, signal, OnInit, DestroyRef } from '@angular/core';
+import { Component, inject, signal, OnInit, DestroyRef } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 
 import { CommonModule } from '@angular/common';
@@ -437,7 +437,9 @@ export class ProfileComponent implements OnInit {
   deleteAccount(): void {
     this.deleting.set(true);
     this.deleteError.set('');
-    this.usersService.deleteMyAccount().subscribe({
+    this.usersService.deleteMyAccount().pipe(
+      takeUntilDestroyed(this.destroyRef)
+    ).subscribe({
       next: () => {
         this.deleting.set(false);
         this.authService.logout();

@@ -59,7 +59,8 @@ export class CartPageComponent {
     const container = img.parentElement;
     if (container) {
       img.remove();
-      const icon = document.createElement('mat-icon');
+      const icon = document.createElement('span');
+      icon.className = 'material-symbols-outlined';
       icon.textContent = 'inventory_2';
       container.appendChild(icon);
     }

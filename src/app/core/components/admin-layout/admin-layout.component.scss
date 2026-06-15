@@ -359,10 +359,10 @@
 .user-layout {
   min-height: 100vh;
   padding-bottom: calc(var(--tusuper-nav-offset, 32px) + 80px);
-  background-color: var(--ts-background, #fcf9f8);
+  background-color: var(--ts-background, #fbf9f8);
 }
 
-// ── USER Bottom Nav (Stitch floating pill) ──
+// ── USER Bottom Nav (Stitch Vibrant Minimalist floating pill) ──
 .user-bottom-nav {
   position: fixed;
   bottom: var(--tusuper-nav-offset, 24px);
@@ -394,7 +394,7 @@
     flex: 1;
     min-width: 0;
     text-decoration: none;
-    color: var(--ts-on-surface-variant, #3d4a3e);
+    color: var(--ts-on-surface-variant, #3c4a3c);
     font-family: var(--ts-font-body, 'Inter', sans-serif);
 
     .material-symbols-outlined {
@@ -403,15 +403,23 @@
       transition: font-variation-settings 0.25s ease;
     }
 
-    &:hover { background: rgba(255, 255, 255, 0.6); }
+    &:hover:not(.user-bottom-nav__item--active) {
+      background: rgba(0, 200, 83, 0.08);
+      color: var(--ts-primary, #006e2a);
+    }
 
     &--active {
-      background: var(--ts-primary, #006b32);
+      background: var(--ts-primary, #006e2a);
       color: var(--ts-on-primary, #fff);
-      box-shadow: 0 4px 12px rgba(0, 107, 50, 0.25);
+      box-shadow: 0 4px 12px rgba(0, 200, 83, 0.25);
 
       .material-symbols-outlined {
         font-variation-settings: 'FILL' 1, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+      }
+
+      &:hover {
+        background: var(--ts-primary, #006e2a);
+        color: var(--ts-on-primary, #fff);
       }
     }
   }

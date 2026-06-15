@@ -28,6 +28,7 @@ import {
 } from '../../../core/models/product.model';
 import { CartStore } from '../../store/cart.store';
 import { CartPanelComponent } from '../cart-panel/cart-panel.component';
+import { PageHeader } from '../../../shared/components/page-header/page-header';
 
 @Component({
   selector: 'app-catalog',
@@ -45,6 +46,7 @@ import { CartPanelComponent } from '../cart-panel/cart-panel.component';
     MatProgressSpinnerModule,
     MatSnackBarModule,
     CartPanelComponent,
+    PageHeader,
   ],
   templateUrl: './catalog.component.html',
   styleUrl: './catalog.component.scss',

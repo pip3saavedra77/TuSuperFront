@@ -339,7 +339,7 @@
 
 // ── Responsive ────────────────────────────────────────
 @media (max-width: 768px) {
-  .dashboard-grid,
+  .kpi-grid,
   .charts-grid {
     grid-template-columns: 1fr;
   }

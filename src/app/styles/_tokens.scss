@@ -1,64 +1,66 @@
 // Design Tokens - TuSuper
 // =============================================================================
-// Fuente de verdad: Fresh Harvest Modernist (Stitch design system)
-// customColor: #00a651
-// colorVariant: FIDELITY
-// roundness: ROUND_EIGHT (8px)
+// Fuente de verdad: Stitch "Vibrant Minimalist"
+// customColor: #00c853
+// colorVariant: VIBRANT
+// roundness: ROUND_TWELVE / ROUND_FULL
+// fonts: Plus Jakarta Sans (headlines), Inter (body), JetBrains Mono (labels)
 
 // -----------------------------------------------------------------------------
-// 1. Fresh Harvest Modernist - Color System
+// 1. Vibrant Minimalist - Color System
 // -----------------------------------------------------------------------------
 
 // Primary greens
-$stitch-primary: #006b32;
-$stitch-primary-container: #008740;
-$stitch-primary-fixed: #78fc9c;
-$stitch-primary-fixed-dim: #5adf82;
-$stitch-inverse-primary: #5adf82;
-$stitch-success-bright: #22c55e;
+$stitch-primary: #00c853;
+$stitch-primary-dark: #006e2a;
+$stitch-primary-container: #00c853;
+$stitch-primary-fixed: #69ff87;
+$stitch-primary-fixed-dim: #69ff87;
+$stitch-inverse-primary: #b9f6ca;
+$stitch-success-bright: #00c853;
 
-// Secondary greens
-$stitch-secondary: #2e6a41;
-$stitch-secondary-container: #b1f2be;
-$stitch-secondary-fixed: #b1f2be;
-$stitch-secondary-fixed-dim: #96d5a3;
+// Secondary / neutrals
+$stitch-secondary: #5f5e5e;
+$stitch-secondary-container: #e5e2e1;
+$stitch-secondary-fixed: #e5e2e1;
+$stitch-secondary-fixed-dim: #c9c6c5;
 
 // Tertiary (accent)
-$stitch-tertiary: #a72e4a;
-$stitch-tertiary-container: #c84761;
-$stitch-tertiary-fixed: #ffd9dd;
-$stitch-tertiary-fixed-dim: #ffb2bb;
+$stitch-tertiary: #006e2a;
+$stitch-tertiary-container: #b9f6ca;
+$stitch-tertiary-fixed: #b9f6ca;
+$stitch-tertiary-fixed-dim: #69ff87;
 
 // Surfaces
-$stitch-background: #fcf9f8;
-$stitch-background-alt: #f8f6f3;
-$stitch-surface: #fcf9f8;
-$stitch-surface-dim: #dcd9d9;
-$stitch-surface-bright: #fcf9f8;
+$stitch-background: #fbf9f8;
+$stitch-background-alt: #ffffff;
+$stitch-surface: rgba(255, 255, 255, 0.4);
+$stitch-surface-dim: #e5e2e1;
+$stitch-surface-bright: #ffffff;
 $stitch-surface-container-lowest: #ffffff;
-$stitch-surface-container-low: #f6f3f2;
-$stitch-surface-container: #f0eded;
-$stitch-surface-container-high: #eae7e7;
+$stitch-surface-container-low: #fbf9f8;
+$stitch-surface-container: #f3f0ef;
+$stitch-surface-container-high: #ebe8e7;
 $stitch-surface-container-highest: #e5e2e1;
 $stitch-surface-variant: #e5e2e1;
-$stitch-surface-tint: #f0fdf4;
+$stitch-surface-tint: rgba(0, 200, 83, 0.08);
 
 // Text / on-colors
-$stitch-on-surface: #1c1b1b;
-$stitch-on-surface-variant: #3d4a3e;
-$stitch-on-background: #1c1b1b;
+$stitch-on-surface: #1b1c1c;
+$stitch-on-surface-variant: #3c4a3c;
+$stitch-on-background: #1b1c1c;
 $stitch-on-primary: #ffffff;
-$stitch-on-primary-container: #f7fff3;
+$stitch-on-primary-container: #002203;
 $stitch-on-secondary: #ffffff;
-$stitch-on-secondary-container: #347047;
+$stitch-on-secondary-container: #1b1c1c;
 $stitch-on-tertiary: #ffffff;
-$stitch-on-tertiary-container: #fffbff;
-$stitch-inverse-surface: #313030;
-$stitch-inverse-on-surface: #f3f0ef;
+$stitch-on-tertiary-container: #002203;
+$stitch-inverse-surface: #2f312f;
+$stitch-inverse-on-surface: #fbf9f8;
 
 // Outlines
-$stitch-outline: #6d7b6d;
-$stitch-outline-variant: #bccabb;
+$stitch-outline: #8b938a;
+$stitch-outline-variant: #e5e2e1;
 
 // Error
 $stitch-error: #ba1a1a;
@@ -67,31 +69,31 @@ $stitch-error-container: #ffdad6;
 $stitch-on-error-container: #93000a;
 
 // -----------------------------------------------------------------------------
-// 2. Fresh Harvest Modernist - Typography
+// 2. Vibrant Minimalist - Typography
 // -----------------------------------------------------------------------------
-$stitch-font-headline: 'Hanken Grotesk', sans-serif;
+$stitch-font-headline: 'Plus Jakarta Sans', sans-serif;
 $stitch-font-body: 'Inter', sans-serif;
-$stitch-font-label: 'Geist', sans-serif;
+$stitch-font-label: 'JetBrains Mono', monospace;
 
 $stitch-typography: (
   "display-lg": (
     font-family: $stitch-font-headline,
-    font-size: 32px,
+    font-size: 36px,
     font-weight: 700,
-    line-height: 40px,
+    line-height: 44px,
     letter-spacing: -0.02em,
   ),
   "headline-lg": (
     font-family: $stitch-font-headline,
-    font-size: 24px,
-    font-weight: 600,
-    line-height: 32px,
+    font-size: 28px,
+    font-weight: 700,
+    line-height: 36px,
   ),
   "headline-md": (
     font-family: $stitch-font-headline,
-    font-size: 20px,
-    font-weight: 600,
-    line-height: 28px,
+    font-size: 22px,
+    font-weight: 700,
+    line-height: 30px,
   ),
   "body-lg": (
     font-family: $stitch-font-body,
@@ -121,7 +123,7 @@ $stitch-typography: (
 );
 
 // -----------------------------------------------------------------------------
-// 3. Fresh Harvest Modernist - Spacing
+// 3. Vibrant Minimalist - Spacing
 // -----------------------------------------------------------------------------
 $stitch-spacing-base: 4px;
 $stitch-spacing-sm: 8px;
@@ -131,7 +133,7 @@ $stitch-gutter: 12px;
 $stitch-container-padding: 16px;
 
 // -----------------------------------------------------------------------------
-// 4. Fresh Harvest Modernist - Shapes
+// 4. Vibrant Minimalist - Shapes
 // -----------------------------------------------------------------------------
 $stitch-radius-sm: 0.25rem;   // 4px
 $stitch-radius-base: 0.5rem;  // 8px
@@ -141,11 +143,11 @@ $stitch-radius-xl: 1.5rem;    // 24px
 $stitch-radius-full: 9999px;  // pill
 
 // -----------------------------------------------------------------------------
-// 5. Fresh Harvest Modernist - Elevation
+// 5. Vibrant Minimalist - Elevation
 // -----------------------------------------------------------------------------
 $stitch-shadow-level-1: 0px 4px 12px rgba(0, 0, 0, 0.05);
 $stitch-shadow-level-2: 0px 8px 24px rgba(0, 0, 0, 0.12);
-$stitch-backdrop-blur: blur(12px);
+$stitch-backdrop-blur: blur(24px);
 
 // -----------------------------------------------------------------------------
 // 6. CSS Custom Properties (runtime tokens)
@@ -153,6 +155,7 @@ $stitch-backdrop-blur: blur(12px);
 :root {
   // Primary
   --ts-primary: #{$stitch-primary};
+  --ts-primary-dark: #{$stitch-primary-dark};
   --ts-primary-container: #{$stitch-primary-container};
   --ts-primary-fixed: #{$stitch-primary-fixed};
   --ts-primary-fixed-dim: #{$stitch-primary-fixed-dim};
@@ -232,6 +235,40 @@ $stitch-backdrop-blur: blur(12px);
   // Elevation
   --ts-shadow-level-1: #{$stitch-shadow-level-1};
   --ts-shadow-level-2: #{$stitch-shadow-level-2};
+
+  // TuSuper extras (glass, layout)
+  --tusuper-bg: #fbf9f8;
+  --tusuper-surface: rgba(255, 255, 255, 0.4);
+  --tusuper-on-surface: #1b1c1c;
+  --tusuper-on-surface-variant: #3c4a3c;
+  --tusuper-primary: #00c853;
+  --tusuper-primary-dark: #006e2a;
+  --tusuper-primary-container: #00c853;
+  --tusuper-primary-fixed: #69ff87;
+  --tusuper-on-primary: #ffffff;
+  --tusuper-secondary: #5f5e5e;
+  --tusuper-secondary-container: #e5e2e1;
+  --tusuper-error: #ba1a1a;
+  --tusuper-glass-bg: rgba(255, 255, 255, 0.4);
+  --tusuper-glass-border: rgba(255, 255, 255, 0.7);
+  --tusuper-glass-blur: blur(24px);
+  --tusuper-glass-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.05);
+  --tusuper-shadow-nav: 0 15px 40px rgba(0, 0, 0, 0.1);
+  --tusuper-shadow-promo: 0 8px 32px rgba(0, 200, 83, 0.15);
+  --tusuper-shadow-card: 0 4px 12px rgba(0, 0, 0, 0.04);
+  --tusuper-radius-card: 28px;
+  --tusuper-radius-button: 9999px;
+  --tusuper-radius-icon: 24px;
+  --tusuper-radius-badge: 9999px;
+  --tusuper-radius-order-card: 20px;
+  --tusuper-header-height: 64px;
+  --tusuper-nav-offset: 32px;
+  --tusuper-section-gap: 48px;
+  --tusuper-content-max: 1440px;
+  --tusuper-content-padding: 16px;
+  --tusuper-font-headline: 'Plus Jakarta Sans', sans-serif;
+  --tusuper-font-body: 'Inter', sans-serif;
+  --tusuper-font-label: 'JetBrains Mono', monospace;
 }
 
 // -----------------------------------------------------------------------------
@@ -240,10 +277,10 @@ $stitch-backdrop-blur: blur(12px);
 // -----------------------------------------------------------------------------
 $profiles: (
   "buyer": (
-    "primary": #2ECC71,
-    "accent": #1ABC9C,
-    "shadow": rgba(46, 204, 113, 0.2),
-    "hover": #27AE60,
+    "primary": #00c853,
+    "accent": #69ff87,
+    "shadow": rgba(0, 200, 83, 0.2),
+    "hover": #00b248,
     "text": #FFFFFF
   ),
   "seller": (
