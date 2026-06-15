@@ -10,7 +10,7 @@
   min-height: 100dvh;
   background: var(--tusuper-bg);
   color: var(--tusuper-on-surface);
-  padding-bottom: calc(var(--tusuper-nav-offset) + 80px);
+  padding-bottom: 128px;
   position: relative;
   overflow-x: hidden;
   font-family: var(--tusuper-font-body);
@@ -39,7 +39,7 @@
   &__content {
     max-width: var(--tusuper-content-max);
     margin: 0 auto;
-    padding: calc(var(--tusuper-header-height) + 24px) var(--tusuper-content-padding) 0;
+    padding: 96px var(--tusuper-content-padding) 0;
     display: flex;
     flex-direction: column;
     gap: var(--tusuper-section-gap);
@@ -159,46 +159,6 @@
       &--cancelled { background: var(--tusuper-error); }
     }
     &__pct { font-size: 14px; font-weight: 500; margin-left: auto; padding-left: 8px; }
-  }
-
-  // Bottom nav
-  .bottom-nav {
-    position: fixed;
-    bottom: var(--tusuper-nav-offset);
-    left: 50%;
-    transform: translateX(-50%);
-    z-index: 50;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    padding: 10px;
-    background: rgba(255, 255, 255, 0.4);
-    backdrop-filter: blur(32px);
-    -webkit-backdrop-filter: blur(32px);
-    border-radius: var(--tusuper-radius-button);
-    border: 1px solid rgba(255, 255, 255, 0.7);
-    box-shadow: var(--tusuper-shadow-nav);
-    width: calc(100% - 48px);
-    max-width: 448px;
-
-    &__item {
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-      padding: 10px 24px;
-      border-radius: var(--tusuper-radius-button);
-      cursor: pointer;
-      transition: all 0.3s ease-out;
-      flex: 1;
-      text-decoration: none;
-      color: var(--tusuper-secondary);
-      font-family: var(--tusuper-font-body);
-      .material-symbols-outlined { font-size: 24px; margin-bottom: 4px; }
-      &:hover { background: rgba(255,255,255,0.5); }
-      &--active { background: rgba(0, 200, 83, 0.5); backdrop-filter: blur(12px); color: var(--tusuper-on-primary); transform: scale(1.05); border: 1px solid rgba(255,255,255,0.4); box-shadow: 0 2px 8px rgba(0,0,0,0.05); }
-    }
-    &__label { font-size: 14px; font-weight: 600; letter-spacing: 0.01em; }
   }
 
   // Skeleton

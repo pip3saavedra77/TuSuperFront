@@ -1,5 +1,19 @@
 @if (isUser()) {
   <router-outlet />
+  <nav class="user-bottom-nav" aria-label="Navegacion principal">
+    <a class="user-bottom-nav__item" routerLink="/home" routerLinkActive="user-bottom-nav__item--active" [routerLinkActiveOptions]="{exact: true}" aria-current="page">
+      <span class="material-symbols-outlined">home</span>
+      <span class="user-bottom-nav__label">Inicio</span>
+    </a>
+    <a class="user-bottom-nav__item" routerLink="/product" routerLinkActive="user-bottom-nav__item--active">
+      <span class="material-symbols-outlined">grid_view</span>
+      <span class="user-bottom-nav__label">Productos</span>
+    </a>
+    <a class="user-bottom-nav__item" routerLink="/orders/my-orders" routerLinkActive="user-bottom-nav__item--active">
+      <span class="material-symbols-outlined">receipt_long</span>
+      <span class="user-bottom-nav__label">Pedidos</span>
+    </a>
+  </nav>
 } @else {
   <mat-sidenav-container class="sidenav-container" [class]="profileClass()">
   <mat-sidenav

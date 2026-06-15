@@ -84,7 +84,5 @@ export class UserDashboardComponent implements OnInit {
   navigateToCategory(id: number): void { this.router.navigate(['/product'], { queryParams: { category: id } }); }
   onAddToCart(product: Product): void { this.cartStore.addItem(product); this.cartStore.openCart(); }
   navigatePromo(): void { this.router.navigate(['/product'], { queryParams: { category: 'frutas' } }); }
-  onSearch(q: string): void { this.router.navigate(['/product'], { queryParams: { search: q } }); }
   onCartClick(): void { this.router.navigateByUrl('/product').then(() => this.cartStore.openCart()); }
-  onNavChange(tab: string): void { const routes: Record<string, string> = { inicio: '/home', productos: '/product', pedidos: '/orders/my-orders' }; this.router.navigate([routes[tab] ?? '/home']); }
 }
