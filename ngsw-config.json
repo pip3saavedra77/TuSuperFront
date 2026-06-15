@@ -38,7 +38,7 @@
         "/api/auth/**"
       ],
       "cacheConfig": {
-        "strategy": "freshness",
+        "strategy": "networkOnly",
         "maxSize": 5,
         "maxAge": "5m",
         "timeout": "3s"

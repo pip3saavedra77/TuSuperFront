@@ -128,6 +128,9 @@ export class AuthService {
         if (response.access_token) {
           this.tokenService.set(response.access_token, this.tokenService.isPersistent());
         }
+        if (response.refresh_token) {
+          this.tokenService.setRefreshToken(response.refresh_token);
+        }
         this._startTimers();
       }),
       map(() => true),
@@ -148,19 +151,23 @@ export class AuthService {
   /* ── Proactive token refresh ──────────────────────────── */
 
   refreshToken(): Observable<boolean> {
-    return this.http.post<{ access_token?: string }>(
+    const refreshToken = this.tokenService.getRefreshToken();
+    return this.http.post<{ access_token?: string; refresh_token?: string }>(
       `${this.API_URL}/refresh`,
-      {},
+      { refresh_token: refreshToken },
       { withCredentials: true },
     ).pipe(
       tap((res) => {
         if (res.access_token) {
           this.tokenService.set(res.access_token, this.tokenService.isPersistent());
         }
+        if (res.refresh_token) {
+          this.tokenService.setRefreshToken(res.refresh_token);
+        }
       }),
       map(() => true),
       catchError((err: HttpErrorResponse) => {
-        if (err.status === 401) {
+        if (err.status === 401 && this.tokenService.get()) {
           this.clearSession();
         }
         return of(false);
@@ -173,6 +180,9 @@ export class AuthService {
   private _handleAuthResponse(response: AuthResponse, persistent: boolean): void {
     if (response.access_token) {
       this.tokenService.set(response.access_token, persistent);
+    }
+    if (response.refresh_token) {
+      this.tokenService.setRefreshToken(response.refresh_token);
     }
     this._authStatus.set(response);
     this._lastCheckTime = Date.now();
@@ -226,14 +236,22 @@ export class AuthService {
     if (document.hidden) {
       // Pausa implícita — los setTimeout simplemente no se ejecutan hasta volver
     } else {
-      // Al volver al frente, reprogramar y hacer un refresh si toca
+      // Al volver al frente, reprogramar timers y hacer refresh solo si el token expira pronto
       if (this._ticking) {
         this._scheduleRefresh();
         this._scheduleSliding();
-        this.refreshToken().pipe(takeUntilDestroyed(this.destroyRef)).subscribe();
+        if (this._isTokenExpiringSoon()) {
+          this.refreshToken().pipe(takeUntilDestroyed(this.destroyRef)).subscribe();
+        }
       }
     }
   };
+
+  private _isTokenExpiringSoon(): boolean {
+    const expiresAt = this.sessionExpiresAt();
+    if (!expiresAt) return false;
+    return expiresAt - Date.now() < 5 * 60 * 1000; // < 5 min
+  }
 
   private _scheduleRefresh(): void {
     if (!this._ticking) return;
