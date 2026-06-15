@@ -91,7 +91,7 @@ export class LogIn implements OnInit {
       password: password ?? '',
     };
 
-    this.authService.login(credentials).subscribe({
+    this.authService.login(credentials, this.rememberMe()).subscribe({
       next: () => {
         if (this.rememberMe()) {
           localStorage.setItem('remember_email', email ?? '');

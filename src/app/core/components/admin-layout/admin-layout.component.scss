@@ -456,3 +456,62 @@
   }
 }
 
+// ─── Session / Idle warnings ───────────────────────────────────────────────────
+.session-warning {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  padding: 10px 16px;
+  font-size: 0.875rem;
+  font-weight: 500;
+  border-radius: 0;
+  animation: slideDown 0.3s ease-out;
+
+  button {
+    border: none;
+    border-radius: 999px;
+    padding: 6px 16px;
+    font-weight: 600;
+    font-size: 0.8rem;
+    cursor: pointer;
+    background: #ffffff;
+    transition: background 0.2s;
+
+    &:hover { background: #e0e0e0; }
+  }
+
+  &--expiry {
+    background: #fff3cd;
+    color: #856404;
+
+    button { color: #856404; }
+  }
+
+  &--idle {
+    background: #f8d7da;
+    color: #721c24;
+
+    button { color: #721c24; }
+  }
+
+  &__close {
+    background: transparent !important;
+    border: 1px solid currentColor !important;
+    border-radius: 50%;
+    width: 24px;
+    height: 24px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    line-height: 1;
+    font-size: 0.75rem;
+    padding: 0 !important;
+  }
+}
+
+@keyframes slideDown {
+  from { transform: translateY(-100%); opacity: 0; }
+  to   { transform: translateY(0); opacity: 1; }
+}
+

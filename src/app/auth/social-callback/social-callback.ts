@@ -1,6 +1,7 @@
 import { Component, OnInit, inject } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { AuthService } from '../../core/services/auth';
+import { TokenService } from '../../core/services/token.service';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 
 const JWT_REGEX = /^[A-Za-z0-9\-._~+/]+=*$/;
@@ -36,6 +37,7 @@ export class SocialCallback implements OnInit {
   private readonly route = inject(ActivatedRoute);
   private readonly router = inject(Router);
   private readonly authService = inject(AuthService);
+  private readonly tokenService = inject(TokenService);
 
   ngOnInit(): void {
     let token = this.route.snapshot.queryParamMap.get('token');
@@ -47,11 +49,11 @@ export class SocialCallback implements OnInit {
     }
 
     if (token && isValidJwtFormat(token)) {
-      localStorage.setItem('token', token);
+      this.tokenService.set(token, true);
       this.authService.checkAuthStatus().subscribe({
         next: () => this.router.navigate(['/home']),
         error: () => {
-          localStorage.removeItem('token');
+          this.tokenService.clear();
           this.router.navigate(['/auth/login'], { queryParams: { error: 'social_auth_failed' } });
         },
       });

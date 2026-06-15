@@ -411,6 +411,36 @@
   }
 }
 
+// ── Session Info ────────────────────────────────────────────────────────────────
+.session-card {
+  .session-info {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+  }
+
+  .session-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 8px;
+    padding: 6px 0;
+
+    .info-label {
+      font-size: 0.8rem;
+      color: #6b7280;
+      font-weight: 500;
+    }
+
+    .info-value {
+      font-size: 0.85rem;
+      color: #1b1c1c;
+      font-weight: 600;
+      text-align: right;
+    }
+  }
+}
+
 // ── Danger Zone ─────────────────────────────────────────────────────────────────
 .danger-card {
   background: #fef2f2;

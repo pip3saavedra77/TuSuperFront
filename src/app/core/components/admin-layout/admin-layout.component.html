@@ -1,5 +1,18 @@
 @if (isUser()) {
   <div class="user-layout">
+    @if (showExpirationWarning()) {
+      <div class="session-warning session-warning--expiry">
+        <span>Tu sesión está por expirar</span>
+        <button type="button" (click)="extendSession()">Extender sesión</button>
+        <button type="button" class="session-warning__close" (click)="dismissExpiry()" aria-label="Cerrar">✕</button>
+      </div>
+    }
+    @if (idleWarning()) {
+      <div class="session-warning session-warning--idle">
+        <span>Has estado inactivo. La sesión se cerrará por seguridad.</span>
+        <button type="button" (click)="dismissIdle()">Seguir aquí</button>
+      </div>
+    }
     <router-outlet />
     <nav class="user-bottom-nav" aria-label="Navegacion principal">
       <a class="user-bottom-nav__item" routerLink="/home" routerLinkActive="user-bottom-nav__item--active" [routerLinkActiveOptions]="{exact: true}" aria-current="page">
@@ -137,6 +150,19 @@
       </div>
     </mat-toolbar>
     <main class="main-content">
+      @if (showExpirationWarning()) {
+        <div class="session-warning session-warning--expiry">
+          <span>Tu sesión está por expirar</span>
+          <button type="button" (click)="extendSession()">Extender sesión</button>
+          <button type="button" class="session-warning__close" (click)="dismissExpiry()" aria-label="Cerrar">✕</button>
+        </div>
+      }
+      @if (idleWarning()) {
+        <div class="session-warning session-warning--idle">
+          <span>Has estado inactivo. La sesión se cerrará por seguridad.</span>
+          <button type="button" (click)="dismissIdle()">Seguir aquí</button>
+        </div>
+      }
       <router-outlet></router-outlet>
     </main>
   </mat-sidenav-content>

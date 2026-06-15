@@ -10,8 +10,8 @@ import { Observable } from 'rxjs';
 import { map, shareReplay } from 'rxjs/operators';
 import { Router, RouterLink, RouterLinkActive, RouterOutlet } from '@angular/router';
 import { AuthService } from '../../services/auth';
-import { NotificationsService } from '../../services/notifications.service';
 import { IdleService } from '../../services/idle.service';
+import { NotificationsService } from '../../services/notifications.service';
 import { PushService } from '../../services/push.service';
 import { NotificationBellComponent } from '../../../shared/components/notification-bell/notification-bell.component';
 import { PushPromptComponent } from '../../../shared/components/push-prompt/push-prompt.component';
@@ -43,6 +43,9 @@ export class AdminLayoutComponent implements OnInit {
   private readonly idleService = inject(IdleService);
   private readonly pushService = inject(PushService);
 
+  readonly showExpirationWarning = this.authService.showExpirationWarning;
+  readonly idleWarning = this.idleService.idleWarning;
+
   public isAuthenticated = this.authService.isAuthenticated;
   public menuItems = this.authService.userModules;
   public currentUser = this.authService.currentUser;
@@ -51,7 +54,6 @@ export class AdminLayoutComponent implements OnInit {
 
   ngOnInit(): void {
     this.notificationsService.connect();
-    this.idleService.startWatching();
     this.pushService.subscribe().then(r => { if (!r.ok) console.warn('Push subscribe:', r.error); }).catch(() => {});
   }
 
@@ -69,9 +71,22 @@ export class AdminLayoutComponent implements OnInit {
 
   public readonly isUser = this.authService.isUser;
 
+  extendSession(): void {
+    this.authService.refreshToken().subscribe(() => {
+      this.authService.dismissExpirationWarning();
+    });
+  }
+
+  dismissExpiry(): void {
+    this.authService.dismissExpirationWarning();
+  }
+
+  dismissIdle(): void {
+    this.idleService.dismissWarning();
+  }
+
   logout(): void {
     this.notificationsService.disconnect();
-    this.idleService.stopWatching();
     this.authService.logout();
   }
 

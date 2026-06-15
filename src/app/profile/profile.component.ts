@@ -1,4 +1,4 @@
-import { Component, inject, signal, OnInit, DestroyRef } from '@angular/core';
+import { Component, inject, computed, signal, OnInit, DestroyRef } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 
 import { CommonModule } from '@angular/common';
@@ -69,8 +69,15 @@ export class ProfileComponent implements OnInit {
 
 
   public readonly currentUser = this.authService.currentUser;
-
-  
+  public readonly sessionStart = computed(() => {
+    const ts = this.authService.sessionStartedAt();
+    return ts ? new Date(ts).toLocaleString('es-CO') : '—';
+  });
+  public readonly sessionExpiry = computed(() => {
+    const ts = this.authService.sessionExpiresAt();
+    return ts ? new Date(ts).toLocaleString('es-CO') : '—';
+  });
+  public readonly isPersistent = computed(() => this.authService.isSessionPersistent());
 
   public profileForm!: FormGroup;
 

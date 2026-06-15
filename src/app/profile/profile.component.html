@@ -490,6 +490,30 @@
         }
       </section>
 
+      <!-- Sesión -->
+      <section class="profile-card session-card">
+        <div class="card-header">
+          <div class="card-title-group">
+            <mat-icon class="title-icon">timer</mat-icon>
+            <h2>Sesión Activa</h2>
+          </div>
+        </div>
+        <div class="session-info">
+          <div class="session-row">
+            <span class="info-label">Inicio de sesión</span>
+            <span class="info-value">{{ sessionStart() }}</span>
+          </div>
+          <div class="session-row">
+            <span class="info-label">Expiración estimada</span>
+            <span class="info-value">{{ sessionExpiry() }}</span>
+          </div>
+          <div class="session-row">
+            <span class="info-label">Persistencia</span>
+            <span class="info-value">{{ isPersistent() ? 'Recordado (localStorage)' : 'Temporal (solo esta pestaña)' }}</span>
+          </div>
+        </div>
+      </section>
+
       <!-- Eliminar cuenta -->
       <section class="profile-card danger-card">
         <div class="danger-card__inner">
