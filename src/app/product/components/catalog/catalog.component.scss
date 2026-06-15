@@ -264,9 +264,9 @@
         padding: 4px 10px;
         border-radius: 999px;
 
-        &.stock-ok { background: rgba(0, 200, 83, 0.1); color: #006e2a; }
-        &.stock-low { background: rgba(255, 160, 0, 0.1); color: #b25e00; }
-        &.stock-out { background: rgba(186, 26, 26, 0.08); color: #ba1a1a; }
+        &.stock-ok { background: rgba(0, 200, 83, 0.1); color: #00501e; }
+        &.stock-low { background: rgba(255, 160, 0, 0.12); color: #7a3f00; }
+        &.stock-out { background: rgba(186, 26, 26, 0.1); color: #8a1515; }
       }
     }
 

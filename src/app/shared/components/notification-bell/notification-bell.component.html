@@ -35,7 +35,7 @@
        (keydown)="$event.stopPropagation()">
 
     <!-- HANDLE (mobile only) -->
-    <div class="notif-panel__handle" (click)="closePanel()">
+    <div class="notif-panel__handle" tabindex="0" (click)="closePanel()" (keydown.enter)="closePanel()" aria-label="Cerrar notificaciones">
       <span></span>
     </div>
 
