@@ -16,7 +16,7 @@ export const roleGuard: CanActivateFn = (route, _state) => {
   }
 
   // Módulos exclusivos de gestión — usuarios normales no tienen acceso
-  const managementOnlyModules = ['category', 'users', 'roles', 'modules', 'provider'];
+  const managementOnlyModules = ['category', 'users', 'modules', 'provider'];
   if (managementOnlyModules.includes(requiredModule) && !authService.hasManagementPrivileges()) {
     router.navigateByUrl('/home');
     return false;
