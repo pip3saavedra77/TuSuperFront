@@ -13,9 +13,9 @@ if (!apiUrl) {
 }
 
 const target = path.join(__dirname, '..', 'src', 'environments', 'environment.prod.ts');
-const contents = `export const environment = {
+const contents = String.raw`export const environment = {
   production: true,
-  apiUrl: '${apiUrl.replace(/'/g, "\\'")}',
+  apiUrl: '${apiUrl.replaceAll("'", "\\'")}',
 };
 `;
 

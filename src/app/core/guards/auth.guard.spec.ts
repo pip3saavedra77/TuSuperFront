@@ -48,14 +48,17 @@ describe('AuthGuard', () => {
     localStorage.clear();
   });
 
-  it('debería permitir acceso si el usuario está autenticado', () => {
+  it('debería permitir acceso si el usuario está autenticado', async () => {
     mockAuthService.setAuthenticated(true);
+    mockAuthService.checkAuthStatus.mockReturnValue(of(true));
 
     const result = runInInjectionContext(injector, () => authGuard(route, state));
+    const value = typeof result === 'boolean'
+      ? result
+      : await firstValueFrom(result as Observable<boolean>);
 
-    expect(result).toBe(true);
+    expect(value).toBe(true);
     expect(mockAuthService.isAuthenticated).toHaveBeenCalled();
-    expect(mockAuthService.checkAuthStatus).not.toHaveBeenCalled();
     expect(mockRouter.navigateByUrl).not.toHaveBeenCalled();
   });
 

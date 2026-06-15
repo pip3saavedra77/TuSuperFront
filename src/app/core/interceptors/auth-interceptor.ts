@@ -1,7 +1,7 @@
-import { HttpInterceptorFn, HttpErrorResponse, HttpEvent } from '@angular/common/http';
+import { HttpInterceptorFn, HttpErrorResponse, HttpClient } from '@angular/common/http';
 import { inject } from '@angular/core';
 import { Router } from '@angular/router';
-import { catchError, from, switchMap, throwError, Observable } from 'rxjs';
+import { catchError, from, switchMap, throwError, firstValueFrom } from 'rxjs';
 
 let isRefreshing = false;
 let isRedirecting = false;
@@ -18,23 +18,35 @@ function clearToken(): void {
   localStorage.removeItem('token');
 }
 
-async function tryRefresh(): Promise<boolean> {
+export function resetTokenCache(): void {
+  cachedToken = null;
+}
+
+function getApiUrl(): string {
+  try {
+    const env = (globalThis as any).__env;
+    return env?.apiUrl || 'https://tusuper-backend.onrender.com';
+  } catch {
+    return 'https://tusuper-backend.onrender.com';
+  }
+}
+
+async function tryRefresh(http: HttpClient): Promise<boolean> {
   if (isRefreshing) return false;
   isRefreshing = true;
   try {
-    const res = await fetch(`${getApiUrl()}/auth/refresh`, {
-      method: 'POST',
-      credentials: 'include',
-    });
-    if (res.ok) {
-      const data = await res.json();
-      if (data.access_token) {
-        cachedToken = data.access_token;
-        localStorage.setItem('token', data.access_token);
-      }
-      return true;
+    const data = await firstValueFrom(
+      http.post<{ access_token: string }>(
+        `${getApiUrl()}/auth/refresh`,
+        {},
+        { withCredentials: true },
+      ),
+    );
+    if (data.access_token) {
+      cachedToken = data.access_token;
+      localStorage.setItem('token', data.access_token);
     }
-    return false;
+    return true;
   } catch {
     return false;
   } finally {
@@ -42,18 +54,9 @@ async function tryRefresh(): Promise<boolean> {
   }
 }
 
-function getApiUrl(): string {
-  // Leer de environment o usar fallback
-  try {
-    const env = (window as any).__env;
-    return env?.apiUrl || 'https://tusuper-backend.onrender.com';
-  } catch {
-    return 'https://tusuper-backend.onrender.com';
-  }
-}
-
 export const authInterceptor: HttpInterceptorFn = (req, next) => {
   const router = inject(Router);
+  const http = inject(HttpClient);
   const isCheckStatus = req.url.includes('/auth/check-status');
   const isLogout = req.url.includes('/auth/logout');
   const isRefresh = req.url.includes('/auth/refresh');
@@ -69,7 +72,7 @@ export const authInterceptor: HttpInterceptorFn = (req, next) => {
   return next(authReq).pipe(
     catchError((error: HttpErrorResponse) => {
       if (error.status === 401 && !isCheckStatus && !isLogout && !isRefresh) {
-        return from(tryRefresh()).pipe(
+        return from(tryRefresh(http)).pipe(
           switchMap((ok) => {
             if (ok) {
               const newToken = getToken();

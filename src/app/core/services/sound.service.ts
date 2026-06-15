@@ -12,7 +12,7 @@ export class SoundService {
 
   private unlock(): void {
     const resume = () => {
-      if (!this.ctx) this.ctx = new AudioContext();
+      this.ctx ??= new AudioContext();
       if (this.ctx.state === 'suspended') this.ctx.resume();
       // Tocar buffer mudo para desbloquear iOS
       const buf = this.ctx.createBuffer(1, 1, 22050);
@@ -28,7 +28,7 @@ export class SoundService {
 
   private play(frequencies: number[], type: OscillatorType = 'sine', vol = 0.22): void {
     try {
-      if (!this.ctx) this.ctx = new AudioContext();
+      this.ctx ??= new AudioContext();
       if (this.ctx.state === 'suspended') {
         this.ctx.resume();
         if (this.ctx.state === 'suspended') return;

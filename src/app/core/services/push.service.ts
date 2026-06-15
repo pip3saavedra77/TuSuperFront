@@ -5,12 +5,12 @@ import { environment } from '../../../environments/environment';
 
 @Injectable({ providedIn: 'root' })
 export class PushService {
-  private vapidPublicKey = 'BL055Pmv0P7ncLoKzQxhBqBRkcZwnNBSeT2-K_tbomnTU0RYSmb9bhpncI9oY8fiPlOAm7HdS4j4UyU_cRSbRkE';
+  private readonly vapidPublicKey = 'BL055Pmv0P7ncLoKzQxhBqBRkcZwnNBSeT2-K_tbomnTU0RYSmb9bhpncI9oY8fiPlOAm7HdS4j4UyU_cRSbRkE';
 
-  constructor(private http: HttpClient) {}
+  constructor(private readonly http: HttpClient) {}
 
   get isSupported(): boolean {
-    return 'serviceWorker' in navigator && 'PushManager' in window && 'Notification' in window;
+    return 'serviceWorker' in navigator && 'PushManager' in globalThis && 'Notification' in globalThis;
   }
 
   async requestPermission(): Promise<boolean> {
@@ -79,7 +79,7 @@ export class PushService {
 
   private urlBase64ToUint8Array(base64: string): Uint8Array {
     const pad = '='.repeat((4 - (base64.length % 4)) % 4);
-    const b64 = (base64 + pad).replace(/-/g, '+').replace(/_/g, '/');
+    const b64 = (base64 + pad).replaceAll('-', '+').replaceAll('_', '/');
     const raw = atob(b64);
     const arr = new Uint8Array(raw.length);
     for (let i = 0; i < raw.length; i++) arr[i] = raw.charCodeAt(i);

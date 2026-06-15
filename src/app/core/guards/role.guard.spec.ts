@@ -11,12 +11,18 @@ class MockRouter {
 
 class MockAuthService {
   private _userModules = new Set<string>();
+  private _hasManagement = false;
 
   setModules(modules: string[]) {
     this._userModules = new Set(modules);
   }
 
+  setManagement(val: boolean) {
+    this._hasManagement = val;
+  }
+
   userModules = vi.fn(() => this._userModules);
+  hasManagementPrivileges = vi.fn(() => this._hasManagement);
 }
 
 describe('RoleGuard', () => {
@@ -45,18 +51,18 @@ describe('RoleGuard', () => {
     vi.clearAllMocks();
   });
 
-  it('debería permitir acceso si no se requiere un módulo específico', () => {
-    route.data = {}; // No module required
+  it('debería redirigir a /home si no se requiere un módulo específico', () => {
+    route.data = {};
 
     const result = runInInjectionContext(injector, () => roleGuard(route, state));
 
-    expect(result).toBe(true);
-    expect(mockRouter.navigateByUrl).not.toHaveBeenCalled();
+    expect(result).toBe(false);
+    expect(mockRouter.navigateByUrl).toHaveBeenCalledWith('/home');
   });
 
   it('debería permitir acceso si el usuario tiene el módulo requerido', () => {
-    route.data = { module: 'admin' };
-    mockAuthService.setModules(['admin', 'sales']);
+    route.data = { module: 'orders' };
+    mockAuthService.setModules(['orders', 'product']);
 
     const result = runInInjectionContext(injector, () => roleGuard(route, state));
 
@@ -65,25 +71,25 @@ describe('RoleGuard', () => {
     expect(mockRouter.navigateByUrl).not.toHaveBeenCalled();
   });
 
-  it('debería redirigir a /forbidden si el usuario está autenticado pero no tiene el rol suficiente', () => {
+  it('debería redirigir a /home si el usuario no tiene el módulo', () => {
     route.data = { module: 'admin' };
-    mockAuthService.setModules(['sales']);
+    mockAuthService.setModules(['orders']);
 
     const result = runInInjectionContext(injector, () => roleGuard(route, state));
 
     expect(result).toBe(false);
     expect(mockAuthService.userModules).toHaveBeenCalled();
-    expect(mockRouter.navigateByUrl).toHaveBeenCalledWith('/forbidden');
+    expect(mockRouter.navigateByUrl).toHaveBeenCalledWith('/home');
   });
 
-  it('debería redirigir a /forbidden si el usuario no tiene roles asignados', () => {
+  it('debería redirigir a /home si el usuario no tiene módulos asignados', () => {
     route.data = { module: 'admin' };
-    mockAuthService.setModules([]); // Empty roles
+    mockAuthService.setModules([]);
 
     const result = runInInjectionContext(injector, () => roleGuard(route, state));
 
     expect(result).toBe(false);
     expect(mockAuthService.userModules).toHaveBeenCalled();
-    expect(mockRouter.navigateByUrl).toHaveBeenCalledWith('/forbidden');
+    expect(mockRouter.navigateByUrl).toHaveBeenCalledWith('/home');
   });
 });

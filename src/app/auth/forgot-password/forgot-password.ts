@@ -42,7 +42,7 @@ export class ForgotPassword {
     if (this.typingTimeout) {
       clearTimeout(this.typingTimeout);
     }
-    this.typingTimeout = window.setTimeout(() => {
+    this.typingTimeout = globalThis.setTimeout(() => {
       this.isTyping.set(false);
     }, 300);
   }

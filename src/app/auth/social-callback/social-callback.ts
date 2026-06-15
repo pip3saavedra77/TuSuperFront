@@ -40,8 +40,8 @@ export class SocialCallback implements OnInit {
   ngOnInit(): void {
     let token = this.route.snapshot.queryParamMap.get('token');
 
-    if (!token && window.location.hash) {
-      const hash = window.location.hash.slice(1);
+    if (!token && globalThis.location.hash) {
+      const hash = globalThis.location.hash.slice(1);
       const params = new URLSearchParams(hash);
       token = params.get('token');
     }
