@@ -22,10 +22,10 @@
       <mat-icon matPrefix>search</mat-icon>
       <input
         matInput
-        [value]="searchQuery()"
-        (input)="onSearchInput($event)"
-        placeholder="Nombre o email..." />
-      @if (searchQuery()) {
+      [value]="searchQuery()"
+      (input)="onSearchInput($event)"
+      placeholder="Nombre o email..." />
+    @if (searchQuery()) {
         <button mat-icon-button matSuffix (click)="clearSearch()" aria-label="Limpiar búsqueda">
           <mat-icon>close</mat-icon>
         </button>
@@ -33,19 +33,19 @@
     </mat-form-field>
   </div>
 
-  @if (isLoading() && users().length === 0) {
+  @if (store.loading() && store.users().length === 0) {
     <div class="loading-state">
       <mat-spinner diameter="48"></mat-spinner>
       <span>Cargando usuarios…</span>
     </div>
-  } @else if (!isLoading() && users().length === 0) {
+  } @else if (!store.loading() && store.users().length === 0) {
     <div class="empty-state">
       <mat-icon>group_off</mat-icon>
       <span>No se encontraron usuarios</span>
     </div>
   } @else {
     <div class="users-grid">
-      @for (user of users(); track user.id) {
+      @for (user of store.users(); track user.id) {
         <div class="user-card" [class.user-card--inactive]="!user.isActive">
           <div class="user-card__header">
             <div class="user-card__avatar">{{ getInitials(user) }}</div>
@@ -68,7 +68,7 @@
           </div>
 
           <div class="user-card__actions">
-            @if (togglingUserId() === user.id) {
+            @if (store.loading()) {
               <mat-spinner diameter="24"></mat-spinner>
             } @else {
               <button
@@ -85,7 +85,6 @@
                 [class.deactivate]="user.isActive"
                 [class.activate]="!user.isActive"
                 (click)="toggleStatus(user)"
-                [disabled]="togglingUserId() !== null"
                 [attr.aria-label]="user.isActive ? 'Desactivar usuario' : 'Activar usuario'">
                 <mat-icon>{{ user.isActive ? 'block' : 'check_circle' }}</mat-icon>
                 {{ user.isActive ? 'Desactivar' : 'Activar' }}
@@ -98,9 +97,9 @@
   }
 
   <mat-paginator
-    [length]="totalUsers()"
+    [length]="store.totalUsers()"
     [pageSize]="pageSize"
-    [pageIndex]="currentPage()"
+    [pageIndex]="currentPage"
     [pageSizeOptions]="[5, 10, 25, 50]"
     (page)="onPageChange($event)"
     aria-label="Seleccionar página">

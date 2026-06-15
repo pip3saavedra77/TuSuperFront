@@ -37,14 +37,14 @@
     </div>
   
     <!-- LOADING -->
-    @if (loading()) {
+    @if (store.loading()) {
       <div class="loading-container">
         <mat-spinner diameter="48"></mat-spinner>
       </div>
     } @else {
       <!-- TABLA -->
       <div class="table-container">
-        <table mat-table [dataSource]="categories()" class="categories-table">
+        <table mat-table [dataSource]="store.categories()" class="categories-table">
   
           <!-- ID -->
           <ng-container matColumnDef="id">
@@ -122,10 +122,10 @@
         </table>
   
         <mat-paginator
-          [length]="totalCategories()"
-          [pageSize]="currentLimit()"
+          [length]="store.totalCategories()"
+          [pageSize]="store.limit()"
           [pageSizeOptions]="[5, 10, 20]"
-          [pageIndex]="currentOffset() / currentLimit()"
+          [pageIndex]="store.offset() / store.limit()"
           (page)="onPageChange($event)"
           showFirstLastButtons>
         </mat-paginator>

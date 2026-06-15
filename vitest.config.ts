@@ -4,11 +4,11 @@ export default defineConfig({
   test: {
     environment: 'jsdom',
     globals: true,
-    include: ['src/app/core/guards/**/*.spec.ts'],
+    include: ['src/app/**/*.spec.ts'],
     coverage: {
       provider: 'v8',
       reporter: ['text', 'lcov'],
-      include: ['src/app/core/**/*.ts'],
+      include: ['src/app/core/**/*.ts', 'src/app/**/store/**/*.ts'],
       exclude: ['src/app/core/**/*.spec.ts', 'src/app/core/**/*.mock.ts'],
       thresholds: {
         'src/app/core/guards/**/*.ts': {

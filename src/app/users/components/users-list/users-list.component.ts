@@ -8,9 +8,9 @@ import { MatInputModule } from '@angular/material/input';
 import { MatPaginatorModule, PageEvent } from '@angular/material/paginator';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
-import { debounceTime, distinctUntilChanged, finalize } from 'rxjs/operators';
+import { debounceTime, distinctUntilChanged } from 'rxjs/operators';
 import { User } from '../../../core/models/user.model';
-import { UsersService } from '../../services/users.service';
+import { UsersStore } from '../../store/users.store';
 import { UserFormDialogComponent } from '../user-form-dialog/user-form-dialog.component';
 
 @Component({
@@ -24,63 +24,36 @@ import { UserFormDialogComponent } from '../user-form-dialog/user-form-dialog.co
     MatInputModule,
     MatDialogModule,
     MatSnackBarModule,
-    MatProgressSpinnerModule
+    MatProgressSpinnerModule,
   ],
   templateUrl: './users-list.component.html',
-  styleUrls: ['./users-list.component.scss']
+  styleUrls: ['./users-list.component.scss'],
 })
 export class UsersListComponent implements OnInit {
-  private readonly usersService = inject(UsersService);
+  readonly store = inject(UsersStore);
   private readonly dialog = inject(MatDialog);
   private readonly snackBar = inject(MatSnackBar);
   private readonly destroyRef = inject(DestroyRef);
 
-  readonly users = signal<User[]>([]);
-  readonly totalUsers = signal<number>(0);
-  readonly isLoading = signal<boolean>(false);
-  readonly searchQuery = signal<string>('');
-  readonly currentPage = signal<number>(0);
-  readonly togglingUserId = signal<number | null>(null);
-
+  readonly searchQuery = signal('');
   pageSize = 10;
+  currentPage = 0;
 
   constructor() {
     toObservable(this.searchQuery)
       .pipe(
         debounceTime(300),
         distinctUntilChanged(),
-        takeUntilDestroyed(this.destroyRef)
+        takeUntilDestroyed(this.destroyRef),
       )
-      .subscribe(() => {
-        this.currentPage.set(0);
-        this.loadUsers();
+      .subscribe((query) => {
+        this.store.setSearch(query);
+        this.store.loadAll();
       });
   }
 
   ngOnInit(): void {
-    this.loadUsers();
-  }
-
-  loadUsers(): void {
-    this.isLoading.set(true);
-    const params = {
-      limit: this.pageSize,
-      offset: this.currentPage() * this.pageSize,
-      search: this.searchQuery().trim() || undefined
-    };
-
-    this.usersService.getUsers(params)
-      .pipe(
-        takeUntilDestroyed(this.destroyRef),
-        finalize(() => this.isLoading.set(false))
-      )
-      .subscribe({
-        next: (result) => {
-          this.users.set(result.data);
-          this.totalUsers.set(result.total);
-        },
-        error: () => this.snackBar.open('Error al cargar usuarios', 'Cerrar', { duration: 3000 })
-      });
+    this.store.loadAll();
   }
 
   onSearchInput(event: Event): void {
@@ -94,8 +67,9 @@ export class UsersListComponent implements OnInit {
 
   onPageChange(event: PageEvent): void {
     this.pageSize = event.pageSize;
-    this.currentPage.set(event.pageIndex);
-    this.loadUsers();
+    this.currentPage = event.pageIndex;
+    this.store.setPage(event.pageSize, event.pageIndex * event.pageSize);
+    this.store.loadAll();
   }
 
   openUserForm(user?: User): void {
@@ -105,37 +79,24 @@ export class UsersListComponent implements OnInit {
       position: { right: '0', top: '0' },
       panelClass: 'side-drawer-dialog',
       data: { user },
-      disableClose: true
+      disableClose: true,
     });
 
-    dialogRef.afterClosed().pipe(
-      takeUntilDestroyed(this.destroyRef)
-    ).subscribe(result => {
-      if (result) this.loadUsers();
-    });
+    dialogRef
+      .afterClosed()
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe((result) => {
+        if (result) this.store.loadAll();
+      });
   }
 
   toggleStatus(user: User): void {
-    this.togglingUserId.set(user.id);
-    this.usersService.toggleStatus(user.id)
-      .pipe(
-        takeUntilDestroyed(this.destroyRef),
-        finalize(() => this.togglingUserId.set(null))
-      )
-      .subscribe({
-        next: () => {
-          this.users.update(list =>
-            list.map(u => u.id === user.id ? { ...u, isActive: !u.isActive } : u)
-          );
-          const updated = this.users().find(u => u.id === user.id);
-          this.snackBar.open(
-            `Usuario ${updated?.isActive ? 'activado' : 'desactivado'}`,
-            'Cerrar',
-            { duration: 2000 }
-          );
-        },
-        error: () => this.snackBar.open('Error al cambiar estado', 'Cerrar', { duration: 3000 })
-      });
+    this.store.toggleStatus(user.id);
+    this.snackBar.open(
+      `Usuario ${user.isActive ? 'desactivado' : 'activado'}`,
+      'Cerrar',
+      { duration: 2000 },
+    );
   }
 
   getInitials(user: User): string {
