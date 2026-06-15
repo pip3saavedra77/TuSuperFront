@@ -25,11 +25,11 @@
         <mat-icon matPrefix>search</mat-icon>
         <input
           matInput
-          [value]="searchQuery()"
-          (input)="onSearchInput($event)"
+          [value]="list.searchQuery()"
+          (input)="list.onSearchInput($event)"
           placeholder="Escribe para buscar..." />
-        @if (searchQuery()) {
-          <button mat-icon-button matSuffix (click)="clearSearch()" aria-label="Limpiar búsqueda">
+        @if (list.searchQuery()) {
+          <button mat-icon-button matSuffix (click)="list.clearSearch()" aria-label="Limpiar búsqueda">
             <mat-icon>close</mat-icon>
           </button>
         }
@@ -126,7 +126,7 @@
           [pageSize]="store.limit()"
           [pageSizeOptions]="[5, 10, 20]"
           [pageIndex]="store.offset() / store.limit()"
-          (page)="onPageChange($event)"
+          (page)="list.onPageChange($event)"
           showFirstLastButtons>
         </mat-paginator>
       </div>

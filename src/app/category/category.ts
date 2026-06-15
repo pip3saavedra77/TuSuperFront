@@ -1,10 +1,9 @@
-import { Component, OnInit, inject, signal, DestroyRef } from '@angular/core';
+import { Component, OnInit, inject, DestroyRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { debounceTime, distinctUntilChanged } from 'rxjs';
-import { takeUntilDestroyed, toObservable } from '@angular/core/rxjs-interop';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 
 import { MatTableModule } from '@angular/material/table';
-import { MatPaginatorModule, PageEvent } from '@angular/material/paginator';
+import { MatPaginatorModule } from '@angular/material/paginator';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
 import { MatButtonModule } from '@angular/material/button';
@@ -27,6 +26,7 @@ import {
   ConfirmDeleteDialogComponent,
   ConfirmDeleteDialogData,
 } from '../product/components/confirm-delete-dialog.component';
+import { useListSearch } from '../shared/helpers/list-search.helper';
 
 import { AuthService } from '../core/services/auth';
 
@@ -58,46 +58,10 @@ export class CategoryComponent implements OnInit {
   private readonly destroyRef = inject(DestroyRef);
 
   readonly displayedColumns: string[] = ['id', 'name', 'description', 'products', 'actions'];
-
-  readonly searchQuery = signal('');
-
-  constructor() {
-    toObservable(this.searchQuery)
-      .pipe(
-        debounceTime(300),
-        distinctUntilChanged(),
-        takeUntilDestroyed(this.destroyRef),
-      )
-      .subscribe((query) => {
-        this.store.setSearch(query);
-        this.store.loadAll({
-          limit: this.store.limit(),
-          offset: 0,
-          search: query || undefined,
-        });
-      });
-  }
+  readonly list = useListSearch(this.store);
 
   ngOnInit(): void {
     this.store.loadAll({ limit: this.store.limit(), offset: this.store.offset() });
-  }
-
-  onSearchInput(event: Event): void {
-    const input = event.target as HTMLInputElement;
-    this.searchQuery.set(input.value);
-  }
-
-  clearSearch(): void {
-    this.searchQuery.set('');
-  }
-
-  onPageChange(event: PageEvent): void {
-    this.store.setPage(event.pageSize, event.pageIndex * event.pageSize);
-    this.store.loadAll({
-      limit: event.pageSize,
-      offset: event.pageIndex * event.pageSize,
-      search: this.searchQuery().trim() || undefined,
-    });
   }
 
   onAdd(): void {
