@@ -37,6 +37,18 @@ export class AuthService {
     return new Set(user.roles.flatMap(r => r.modules.map(m => m.name)));
   });
 
+  public readonly isUser = computed(() =>
+    this.currentUser()?.roles.some(r => r.name.toUpperCase() === 'USER') ?? false
+  );
+
+  public readonly isAdmin = computed(() =>
+    this.currentUser()?.roles.some(r => r.name.toUpperCase() === 'ADMIN') ?? false
+  );
+
+  public readonly isTendero = computed(() =>
+    this.currentUser()?.roles.some(r => r.name.toUpperCase() === 'TENDERO') ?? false
+  );
+
   public login(credentials: LoginCredentials): Observable<AuthResponse> {
     return this.http.post<AuthResponse>(`${this.API_URL}/login`, credentials).pipe(
       tap((response) => {

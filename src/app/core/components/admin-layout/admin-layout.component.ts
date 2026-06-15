@@ -1,4 +1,4 @@
-import { Component, inject, computed } from '@angular/core';
+import { Component, inject, computed, OnInit } from '@angular/core';
 import { BreakpointObserver, Breakpoints } from '@angular/cdk/layout';
 import { AsyncPipe } from '@angular/common';
 import { MatToolbarModule } from '@angular/material/toolbar';
@@ -38,7 +38,7 @@ import { CartStore } from '../../../product/store/cart.store';
     PushPromptComponent,
   ],
 })
-export class AdminLayoutComponent {
+export class AdminLayoutComponent implements OnInit {
   private readonly breakpointObserver = inject(BreakpointObserver);
   private readonly authService = inject(AuthService);
   private readonly router = inject(Router);
@@ -51,22 +51,18 @@ export class AdminLayoutComponent {
   public menuItems = this.authService.userModules;
   public currentUser = this.authService.currentUser;
 
-  constructor() {
+  constructor() {}
+
+  ngOnInit(): void {
     this.notificationsService.connect();
     this.idleService.startWatching();
     this.pushService.subscribe().then(r => { if (!r.ok) console.warn('Push subscribe:', r.error); }).catch(() => {});
   }
 
   public profileClass = computed(() => {
-    const roles = this.currentUser()?.roles;
-    if (!roles || roles.length === 0) return 'profile-admin';
-    
-    const roleNames = roles.map(r => r.name.toUpperCase());
-    
-    if (roleNames.some(name => name.includes('ADMIN'))) return 'profile-admin';
-    if (roleNames.some(name => name.includes('TENDERO'))) return 'profile-tendero';
-    if (roleNames.some(name => name.includes('USER') || name.includes('COMPRADOR'))) return 'profile-usuario';
-    
+    if (this.authService.isAdmin()) return 'profile-admin';
+    if (this.authService.isTendero()) return 'profile-tendero';
+    if (this.authService.isUser()) return 'profile-usuario';
     return 'profile-admin';
   });
 
@@ -75,9 +71,7 @@ export class AdminLayoutComponent {
     shareReplay({ bufferSize: 1, refCount: true }),
   );
 
-  public isUserRole = computed(() =>
-    this.profileClass() === 'profile-usuario',
-  );
+  public readonly isUser = this.authService.isUser;
 
   logout(): void {
     this.notificationsService.disconnect();

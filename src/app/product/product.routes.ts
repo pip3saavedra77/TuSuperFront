@@ -1,31 +1,12 @@
-import { inject, Injector } from '@angular/core';
+import { inject } from '@angular/core';
 import { Routes, CanMatchFn } from '@angular/router';
 import { AuthService } from '../core/services/auth';
 
-import { toObservable } from '@angular/core/rxjs-interop';
-import { filter, first, map, of, switchMap, tap } from 'rxjs';
+import { of } from 'rxjs';
 
 const isTenderoOrAdmin: CanMatchFn = () => {
   const authService = inject(AuthService);
-  const injector = inject(Injector);
-  const user$ = toObservable(authService.currentUser, { injector });
-
-  return authService.checkAuthStatus().pipe(
-    switchMap(isLoggedIn => {
-      if (!isLoggedIn) return of(false);
-      return user$.pipe(
-        filter(user => !!user),
-        first(),
-        map(user =>
-          !!user?.roles.some(r => {
-            const roleName = r.name.toUpperCase();
-            return roleName.includes('ADMIN') || 
-                   roleName.includes('TENDERO');
-          }),
-        ),
-      );
-    }),
-  );
+  return of(authService.isAdmin() || authService.isTendero());
 };
 
 export const PRODUCT_ROUTES: Routes = [

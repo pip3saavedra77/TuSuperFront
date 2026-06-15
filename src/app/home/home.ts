@@ -61,18 +61,9 @@ export class Home implements OnInit {
   readonly currentUser = this.authService.currentUser;
   readonly userModules = this.authService.userModules;
 
-  /** Computed reactivos de rol */
-  readonly isUserRole = computed(() =>
-    this.currentUser()?.roles.some(r => r.name.toUpperCase() === 'USER') ?? false
-  );
-
-  readonly isAdminRole = computed(() =>
-    this.currentUser()?.roles.some(r => r.name.toUpperCase() === 'ADMIN') ?? false
-  );
-
-  readonly isTenderoRole = computed(() =>
-    this.currentUser()?.roles.some(r => ['TENDERO'].includes(r.name.toUpperCase())) ?? false
-  );
+  readonly isUserRole = this.authService.isUser;
+  readonly isAdminRole = this.authService.isAdmin;
+  readonly isTenderoRole = this.authService.isTendero;
 
   // Removed: latestOrder was not used in template
 
@@ -220,7 +211,7 @@ export class Home implements OnInit {
   };
 
   ngOnInit(): void {
-    if (this.isUserRole()) {
+    if (this.authService.isUser()) {
       this.loadDashboardData();
     } else {
       this.loadInternalDashboardData();
@@ -284,7 +275,7 @@ export class Home implements OnInit {
           categoryDistribution: []
         }))
       ),
-      users: this.isAdminRole()
+      users: this.authService.isAdmin()
         ? this.usersService.getUsers({ limit: 1, offset: 0 }).pipe(
             catchError(() => of({ data: [], total: 0, limit: 1, offset: 0 }))
           )

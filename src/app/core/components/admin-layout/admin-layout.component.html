@@ -33,7 +33,7 @@
                 <span matListItemTitle>Inicio</span>
               </a>
               @for (moduleName of filterValidModules(menuItems()); track moduleName) {
-                @if (!(isUserRole() && moduleName === 'category')) {
+                @if (!(isUser() && moduleName === 'category')) {
                   <a mat-list-item
                     [routerLink]="'/' + moduleName.toLowerCase()"
                     routerLinkActive="active-link">
@@ -85,7 +85,7 @@
 
       <!-- ACCIONES DERECHA -->
       <div class="toolbar-actions">
-        @if (isUserRole()) {
+        @if (isUser()) {
           <button matIconButton class="toolbar-icon-btn"
                   (click)="onCartClick()"
                   [matBadge]="cartStore.totalItems()"
