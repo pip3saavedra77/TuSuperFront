@@ -1,5 +1,5 @@
 <main class="user-dashboard">
-  <app-user-header [user]="currentUser()" [unreadCount]="unreadCount()" (searchSubmitted)="onSearch($event)" (cartClicked)="onCartClick()" />
+  <app-user-header [user]="currentUser()" [unreadCount]="unreadCount()" (searchClicked)="onCartClick()" (cartClicked)="onCartClick()" />
 
   <div class="user-dashboard__content">
     @if (loading()) {
