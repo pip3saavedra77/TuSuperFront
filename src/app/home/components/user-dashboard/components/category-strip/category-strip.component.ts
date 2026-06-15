@@ -7,8 +7,8 @@ import { Category } from '../../../../../core/models/product.model';
   template: `
     <div class="category-strip">
       @for (cat of categories(); track cat.id) {
-        <button class="category-chip" (click)="select.emit(cat.id)">
-          <span class="material-symbols-outlined category-chip__icon">category</span>
+        <button class="category-chip" (click)="categorySelect.emit(cat.id)">
+
           <span class="category-chip__label">{{ cat.name }}</span>
         </button>
       }
@@ -25,5 +25,5 @@ import { Category } from '../../../../../core/models/product.model';
 })
 export class CategoryStripComponent {
   readonly categories = input.required<Category[]>();
-  readonly select = output<number>();
+  readonly categorySelect = output<number>();
 }

@@ -29,7 +29,7 @@ import { User } from '../../../../../core/models/auth.models';
               <span class="user-header__badge">{{ unreadCount() }}</span>
             }
           </button>
-          <button class="user-header__icon-btn" aria-label="Carrito" (click)="cart.emit()">
+          <button class="user-header__icon-btn" aria-label="Carrito" (click)="cartClicked.emit()">
             <span class="material-symbols-outlined">shopping_cart</span>
           </button>
         </div>
@@ -41,7 +41,7 @@ import { User } from '../../../../../core/models/auth.models';
           class="user-header__search-input"
           type="text"
           placeholder="Buscar productos..."
-          (keydown.enter)="search.emit(searchInput.value); searchInput.value = ''"
+          (keydown.enter)="searchSubmitted.emit(searchInput.value); searchInput.value = ''"
         />
       </div>
     </header>
@@ -70,6 +70,6 @@ import { User } from '../../../../../core/models/auth.models';
 export class UserHeaderComponent {
   readonly user = input<User | null>();
   readonly unreadCount = input<number>(0);
-  readonly search = output<string>();
-  readonly cart = output<void>();
+  readonly searchSubmitted = output<string>();
+  readonly cartClicked = output<void>();
 }

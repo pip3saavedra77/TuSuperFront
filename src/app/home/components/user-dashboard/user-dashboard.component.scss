@@ -96,7 +96,6 @@
     border-radius: 32px; padding: 24px;
     display: flex; flex-direction: column;
     &--main { justify-content: center; align-items: center; text-align: center; }
-    &--wide { }
     &__icon { width: 64px; height: 64px; border-radius: 50%; background: rgba(255,255,255,0.5); backdrop-filter: blur(12px); display: flex; align-items: center; justify-content: center; margin-bottom: 16px; border: 1px solid rgba(255,255,255,0.6); box-shadow: 0 2px 8px rgba(0,0,0,0.03);
       .material-symbols-outlined { font-size: 32px; color: var(--tusuper-primary); }
     }

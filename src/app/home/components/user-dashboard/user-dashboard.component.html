@@ -1,5 +1,5 @@
 <main class="user-dashboard">
-  <app-user-header [user]="currentUser()" [unreadCount]="unreadCount()" (search)="onSearch($event)" (cart)="onCartClick()" />
+  <app-user-header [user]="currentUser()" [unreadCount]="unreadCount()" (searchSubmitted)="onSearch($event)" (cartClicked)="onCartClick()" />
 
   <div class="user-dashboard__content">
     @if (loading()) {
@@ -18,7 +18,7 @@
 
       <app-promo-banner (action)="navigatePromo()" />
 
-      <app-category-strip [categories]="categories()" (select)="navigateToCategory($event)" />
+      <app-category-strip [categories]="categories()" (categorySelect)="navigateToCategory($event)" />
 
       @defer (on viewport) {
         @let products = featuredProducts();
@@ -28,7 +28,7 @@
           </div>
           <div class="product-grid">
             @for (product of products; track product.id) {
-              <article class="product-card" (click)="onAddToCart(product)">
+              <article class="product-card" (click)="onAddToCart(product)" (keydown.enter)="onAddToCart(product)" tabindex="0" [attr.aria-label]="'Agregar ' + product.name + ' al carrito'">
                 <div class="product-card__image">
                   @if (product.imageUrl) {
                     <img [src]="product.imageUrl" [alt]="product.name" loading="lazy" />
