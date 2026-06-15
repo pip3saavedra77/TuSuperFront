@@ -131,12 +131,7 @@ export class AuthService {
         this._startTimers();
       }),
       map(() => true),
-      catchError((err: HttpErrorResponse) => {
-        if (err.status === 401) {
-          this.clearSession();
-        }
-        return of(false);
-      }),
+      catchError(() => of(false)),
       shareReplay({ bufferSize: 1, refCount: false }),
     );
 
@@ -263,7 +258,11 @@ export class AuthService {
         this._scheduleSliding();
         return;
       }
-      this.checkAuthStatus().pipe(takeUntilDestroyed(this.destroyRef)).subscribe();
+      this.checkAuthStatus().pipe(takeUntilDestroyed(this.destroyRef)).subscribe((ok) => {
+        if (!ok) {
+          this.refreshToken().pipe(takeUntilDestroyed(this.destroyRef)).subscribe();
+        }
+      });
       this._scheduleSliding();
     }, SLIDING_CHECK_MS);
   }

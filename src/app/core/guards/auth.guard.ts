@@ -1,8 +1,7 @@
 import { inject } from '@angular/core';
 import { Router, CanActivateFn } from '@angular/router';
 import { AuthService } from '../services/auth';
-import { HttpErrorResponse } from '@angular/common/http';
-import { catchError, map, of } from 'rxjs';
+import { catchError, map, of, switchMap } from 'rxjs';
 
 let lastAuthCheck = 0;
 const AUTH_CACHE_TTL = 300_000;
@@ -16,22 +15,46 @@ export const authGuard: CanActivateFn = (_route, _state) => {
   }
 
   return authService.checkAuthStatus().pipe(
-    map(isLoggedIn => {
-      lastAuthCheck = Date.now();
-      if (!isLoggedIn) {
-        router.navigateByUrl('/auth/login');
-        return false;
+    switchMap(isLoggedIn => {
+      if (isLoggedIn) {
+        lastAuthCheck = Date.now();
+        return of(true);
       }
-      return true;
+      return authService.refreshToken().pipe(
+        switchMap(refreshed => {
+          if (refreshed) {
+            return authService.checkAuthStatus().pipe(
+              map(retryOk => {
+                lastAuthCheck = Date.now();
+                return retryOk;
+              }),
+            );
+          }
+          router.navigateByUrl('/auth/login');
+          return of(false);
+        }),
+        catchError(() => {
+          router.navigateByUrl('/auth/login');
+          return of(false);
+        }),
+      );
     }),
-    catchError((err: HttpErrorResponse) => {
-      if (err.status === 401) {
-        localStorage.removeItem('token');
-        router.navigateByUrl('/auth/login');
-        return of(false);
-      }
-      // Error de red / timeout — permitir paso, la sesión puede ser válida aún
-      return of(true);
+    catchError(() => {
+      return authService.refreshToken().pipe(
+        switchMap(ok => {
+          if (ok) {
+            return authService.checkAuthStatus().pipe(
+              map(r => { lastAuthCheck = Date.now(); return r; }),
+            );
+          }
+          router.navigateByUrl('/auth/login');
+          return of(false);
+        }),
+        catchError(() => {
+          router.navigateByUrl('/auth/login');
+          return of(false);
+        }),
+      );
     }),
   );
 };

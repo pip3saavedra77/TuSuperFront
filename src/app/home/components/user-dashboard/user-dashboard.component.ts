@@ -1,7 +1,7 @@
 import { Component, OnInit, inject, computed, signal, DestroyRef, ChangeDetectionStrategy } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { CurrencyPipe, DatePipe } from '@angular/common';
-import { catchError, forkJoin, of } from 'rxjs';
+import { catchError, of } from 'rxjs';
 import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
 import { AuthService } from '../../../core/services/auth';
 import { OrdersService } from '../../../orders/services/orders.service';
@@ -67,17 +67,22 @@ export class UserDashboardComponent implements OnInit {
   ngOnInit(): void { this.loadDashboard(); }
 
   private loadDashboard(): void {
-    this.loading.set(true);
-    forkJoin({
-      orders: this.ordersService.getMyOrders({ limit: 5, offset: 0 }).pipe(catchError(() => of({ data: [], total: 0, limit: 5, offset: 0 }))),
-      products: this.productService.getAll({ limit: 4, offset: 0 }).pipe(catchError(() => of({ data: [], total: 0, limit: 4, offset: 0 }))),
-      categories: this.productService.getCategories().pipe(catchError(() => of({ data: [], total: 0, limit: 4, offset: 0 }))),
-    }).pipe(takeUntilDestroyed(this.destroyRef)).subscribe(({ orders, products, categories }) => {
-      this.myOrders.set(orders.data);
-      this.featuredProducts.set(products.data);
-      this.categories.set(categories.data);
-      this.loading.set(false);
-    });
+    this.loading.set(false);
+
+    this.ordersService.getMyOrders({ limit: 5, offset: 0 }).pipe(
+      catchError(() => of({ data: [], total: 0, limit: 5, offset: 0 })),
+      takeUntilDestroyed(this.destroyRef),
+    ).subscribe(res => this.myOrders.set(res.data));
+
+    this.productService.getAll({ limit: 4, offset: 0 }).pipe(
+      catchError(() => of({ data: [], total: 0, limit: 4, offset: 0 })),
+      takeUntilDestroyed(this.destroyRef),
+    ).subscribe(res => this.featuredProducts.set(res.data));
+
+    this.productService.getCategories().pipe(
+      catchError(() => of({ data: [], total: 0, limit: 4, offset: 0 })),
+      takeUntilDestroyed(this.destroyRef),
+    ).subscribe(res => this.categories.set(res.data));
   }
 
   navigateToCategory(id: number): void { this.router.navigate(['/product'], { queryParams: { category: id } }); }
