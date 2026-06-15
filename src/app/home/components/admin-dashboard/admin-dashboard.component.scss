@@ -1,0 +1,384 @@
+// ════════════════════════════════════════════════════════
+//  ESTILOS — Admin / Tendero Dashboard
+// ════════════════════════════════════════════════════════
+
+.home-container {
+  padding: 0;
+  max-width: 1300px;
+  margin: 0 auto;
+  background-color: #FAFAFA;
+
+  @media (max-width: 768px) {
+    padding: 0;
+  }
+
+  h1 {
+    font-size: 2.25rem;
+    font-weight: 800;
+    color: #111827;
+    margin-bottom: 8px;
+    letter-spacing: -0.025em;
+  }
+
+  .subtitle {
+    color: #6B7280;
+    margin-bottom: 48px;
+    font-size: 1.125rem;
+  }
+
+  .modules-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: 32px;
+  }
+
+  .module-card {
+    background: #FFFFFF;
+    border-radius: 20px;
+    border: 1px solid #F3F4F6;
+    cursor: pointer;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
+
+    &:hover {
+      transform: translateY(-8px);
+      box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+      border-color: var(--profile-primary);
+
+      mat-icon {
+        color: var(--profile-primary);
+      }
+    }
+
+    mat-card-header {
+      padding: 32px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      text-align: center;
+      gap: 24px;
+    }
+
+    mat-icon {
+      font-size: 3.5rem;
+      width: 80px;
+      height: 80px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: #374151;
+      background: #F9FAFB;
+      border-radius: 20px;
+      transition: all 0.3s ease;
+    }
+
+    mat-card-title {
+      font-size: 1.25rem;
+      font-weight: 700;
+      color: #111827;
+      margin: 0 !important;
+    }
+  }
+
+  .no-modules {
+    grid-column: 1 / -1;
+    text-align: center;
+    color: #9CA3AF;
+    font-size: 1.125rem;
+    padding: 64px 0;
+  }
+}
+
+// ── Shared base styles ──────────────────────────────────
+.dashboard-welcome {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+  margin-bottom: 40px;
+
+  .welcome-avatar {
+    width: 64px;
+    height: 64px;
+    border-radius: 50%;
+    background: var(--profile-primary, #2ECC71);
+    color: #fff;
+    font-size: 1.75rem;
+    font-weight: 700;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    box-shadow: 0 4px 16px rgba(46, 204, 113, 0.3);
+  }
+
+  .welcome-text {
+    h1 {
+      font-size: 1.75rem;
+      font-weight: 800;
+      color: #111827;
+      margin: 0 0 4px;
+      letter-spacing: -0.025em;
+    }
+
+    .subtitle {
+      margin-bottom: 0;
+      font-size: 1rem;
+    }
+  }
+}
+
+.dashboard-loading {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 300px;
+}
+
+// ── Dashboard Interno (KPIs, Gráficas y Acciones) ──────
+
+.welcome-avatar--internal {
+  background: var(--profile-primary, #4f46e5) !important;
+  box-shadow: 0 4px 16px rgba(79, 70, 229, 0.25) !important;
+}
+
+.kpi-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 24px;
+  margin-bottom: 32px;
+}
+
+.kpi-card {
+  background: #ffffff;
+  border-radius: 16px;
+  border: 1px solid rgba(0, 0, 0, 0.05);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.03);
+  padding: 24px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+
+  &:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 12px 24px rgba(0, 0, 0, 0.08);
+    border-color: var(--profile-primary, #4f46e5);
+  }
+
+  &__header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+
+  &__title {
+    font-size: 0.875rem;
+    font-weight: 600;
+    color: #64748b;
+  }
+
+  &__icon-wrapper {
+    width: 42px;
+    height: 42px;
+    border-radius: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    mat-icon {
+      font-size: 22px;
+      width: 22px;
+      height: 22px;
+    }
+
+    &.pending {
+      background: rgba(245, 158, 11, 0.1);
+      color: #d97706;
+    }
+
+    &.users {
+      background: rgba(59, 130, 246, 0.1);
+      color: #2563eb;
+    }
+
+    &.products {
+      background: rgba(16, 185, 129, 0.1);
+      color: #059669;
+    }
+
+    &.danger {
+      background: rgba(239, 68, 68, 0.1);
+      color: #dc2626;
+    }
+  }
+
+  &__value {
+    font-size: 2rem;
+    font-weight: 800;
+    color: #0f172a;
+    letter-spacing: -0.02em;
+  }
+
+  &__footer {
+    display: flex;
+    align-items: center;
+  }
+
+  &__status-text {
+    font-size: 0.75rem;
+    font-weight: 600;
+    padding: 4px 8px;
+    border-radius: 6px;
+
+    &.warning {
+      background: rgba(245, 158, 11, 0.08);
+      color: #b45309;
+    }
+
+    &.success {
+      background: rgba(16, 185, 129, 0.08);
+      color: #047857;
+    }
+
+    &.info {
+      background: rgba(59, 130, 246, 0.08);
+      color: #1d4ed8;
+    }
+
+    &.alert {
+      background: rgba(239, 68, 68, 0.08);
+      color: #b91c1c;
+    }
+  }
+}
+
+// ── Charts Grid ───────────────────────────────────────
+.charts-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
+  gap: 24px;
+  margin-bottom: 36px;
+}
+
+.chart-card {
+  background: #ffffff;
+  border-radius: 16px;
+  border: 1px solid rgba(0, 0, 0, 0.05);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.03);
+  padding: 24px;
+
+  &__title {
+    font-size: 1rem;
+    font-weight: 700;
+    color: #0f172a;
+    margin: 0 0 20px 0;
+  }
+
+  &__canvas-container {
+    position: relative;
+    height: 250px;
+    width: 100%;
+  }
+}
+
+// ── Quick Actions (Barra compacta al pie) ──────────────
+.quick-actions-bar {
+  background: #ffffff;
+  border-radius: 16px;
+  border: 1px solid rgba(0, 0, 0, 0.05);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.03);
+  padding: 20px 24px;
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 16px;
+
+  &__label {
+    font-size: 0.875rem;
+    font-weight: 700;
+    color: #64748b;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+  }
+
+  &__buttons {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 12px;
+  }
+
+  .btn-quick-action {
+    border-radius: 12px;
+    border-color: #e2e8f0;
+    color: #334155;
+    font-weight: 600;
+    font-size: 0.85rem;
+    height: 40px;
+    padding: 0 16px;
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    transition: all 0.2s ease;
+
+    mat-icon {
+      font-size: 18px;
+      width: 18px;
+      height: 18px;
+      margin: 0;
+    }
+
+    &:hover {
+      background: var(--profile-primary, #4f46e5);
+      border-color: var(--profile-primary, #4f46e5);
+      color: #ffffff;
+      transform: translateY(-1px);
+      box-shadow: 0 4px 12px rgba(79, 70, 229, 0.15);
+    }
+  }
+}
+
+// ── Responsive ────────────────────────────────────────
+@media (max-width: 768px) {
+  .dashboard-grid,
+  .charts-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .quick-actions-bar {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 12px;
+
+    &__buttons {
+      width: 100%;
+      flex-direction: column;
+    }
+
+    .btn-quick-action {
+      width: 100%;
+      justify-content: center;
+    }
+  }
+
+  .dashboard-welcome {
+    .welcome-avatar {
+      width: 52px;
+      height: 52px;
+      font-size: 1.4rem;
+    }
+
+    .welcome-text h1 {
+      font-size: 1.4rem;
+    }
+  }
+}
+
+@media (max-width: 640px) {
+  .home-container {
+    padding: 20px 16px;
+  }
+
+  .charts-grid {
+    grid-template-columns: 1fr;
+  }
+}
