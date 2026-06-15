@@ -1,8 +1,7 @@
 import { HttpInterceptorFn, HttpErrorResponse, HttpClient } from '@angular/common/http';
 import { inject } from '@angular/core';
 import { Router } from '@angular/router';
-import { catchError, from, switchMap, throwError } from 'rxjs';
-import { firstValueFrom } from 'rxjs';
+import { catchError, from, switchMap, throwError, firstValueFrom } from 'rxjs';
 
 let isRefreshing = false;
 let isRedirecting = false;

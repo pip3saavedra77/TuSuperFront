@@ -8,13 +8,21 @@ import {
   patchState,
 } from '@ngrx/signals';
 import { rxMethod } from '@ngrx/signals/rxjs-interop';
-import { pipe, switchMap, tap, catchError, EMPTY } from 'rxjs';
 import { CategoryService } from '../services/category.service';
 import {
   CategoryWithProducts,
   CreateCategoryPayload,
   UpdateCategoryPayload,
 } from '../../core/models/category.model';
+import {
+  setSearch,
+  setPage,
+  clearError,
+  buildLoadAll,
+  buildCreate,
+  buildUpdate,
+  buildRemove,
+} from '../../core/store/crud-helpers';
 
 interface CategoryState {
   categories: CategoryWithProducts[];
@@ -47,106 +55,51 @@ export const CategoryStore = signalStore(
   })),
 
   withMethods((store) => {
-    const service = inject(CategoryService);
+    const svc = inject(CategoryService);
 
     return {
       loadAll: rxMethod<{ limit: number; offset: number; search?: string }>(
-        pipe(
-          tap(() => patchState(store, { loading: true, error: null })),
-          switchMap((params) =>
-            service.getAll(params).pipe(
-              tap((result) =>
-                patchState(store, {
-                  categories: result.data,
-                  total: result.total,
-                  loading: false,
-                }),
-              ),
-              catchError((err: { status: number }) => {
-                patchState(store, {
-                  loading: false,
-                  error: `Error al cargar categorias: ${String(err.status)}`,
-                });
-                return EMPTY;
-              }),
-            ),
-          ),
+        buildLoadAll(store,
+          (p) => svc.getAll(p),
+          (data, total) => patchState(store, { categories: data, total }),
+          'Error al cargar categorias',
         ),
       ),
 
       create: rxMethod<CreateCategoryPayload>(
-        pipe(
-          switchMap((payload) =>
-            service.create(payload).pipe(
-              tap((created) =>
-                patchState(store, ({ categories }) => ({
-                  categories: [...categories, { ...created, _count: { products: 0 } }],
-                })),
-              ),
-              catchError((err: { status: number }) => {
-                patchState(store, {
-                  error: `Error al crear categoria: ${String(err.status)}`,
-                });
-                return EMPTY;
-              }),
-            ),
-          ),
+        buildCreate(store,
+          (p) => svc.create(p),
+          (created) => patchState(store, ({ categories }) => ({
+            categories: [...categories, { ...created, _count: { products: 0 } }],
+          })),
+          'Error al crear categoria',
         ),
       ),
 
       update: rxMethod<{ id: number; changes: UpdateCategoryPayload }>(
-        pipe(
-          switchMap(({ id, changes }) =>
-            service.update(id, changes).pipe(
-              tap((updated) =>
-                patchState(store, ({ categories }) => ({
-                  categories: categories.map((c) =>
-                    c.id === id ? { ...c, ...updated } : c,
-                  ),
-                })),
-              ),
-              catchError((err: { status: number }) => {
-                patchState(store, {
-                  error: `Error al actualizar categoria: ${String(err.status)}`,
-                });
-                return EMPTY;
-              }),
-            ),
-          ),
+        buildUpdate(store,
+          (id, changes) => svc.update(id, changes as UpdateCategoryPayload),
+          (updated: any) => patchState(store, ({ categories }) => ({
+            categories: categories.map((c: any) =>
+              c.id === updated.id ? { ...c, ...updated } : c),
+          })),
+          'Error al actualizar categoria',
         ),
       ),
 
       remove: rxMethod<number>(
-        pipe(
-          switchMap((id) =>
-            service.delete(id).pipe(
-              tap(() =>
-                patchState(store, ({ categories }) => ({
-                  categories: categories.filter((c) => c.id !== id),
-                })),
-              ),
-              catchError((err: { status: number }) => {
-                patchState(store, {
-                  error: `Error al eliminar categoria: ${String(err.status)}`,
-                });
-                return EMPTY;
-              }),
-            ),
-          ),
+        buildRemove(store,
+          (id) => svc.delete(id),
+          (id) => patchState(store, ({ categories }) => ({
+            categories: categories.filter((c: any) => c.id !== id),
+          })),
+          'Error al eliminar categoria',
         ),
       ),
 
-      setSearch(search: string): void {
-        patchState(store, { search, offset: 0 });
-      },
-
-      setPage(limit: number, offset: number): void {
-        patchState(store, { limit, offset });
-      },
-
-      clearError(): void {
-        patchState(store, { error: null });
-      },
+      setSearch: (s: string) => setSearch(store, s),
+      setPage: (l: number, o: number) => setPage(store, l, o),
+      clearError: () => clearError(store),
     };
   }),
 

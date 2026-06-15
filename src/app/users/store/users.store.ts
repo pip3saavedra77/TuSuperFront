@@ -7,14 +7,24 @@ import {
   withHooks,
   patchState,
 } from '@ngrx/signals';
+import { EMPTY, catchError, switchMap, tap, pipe as rxPipe } from 'rxjs';
 import { rxMethod } from '@ngrx/signals/rxjs-interop';
-import { pipe, switchMap, tap, catchError, EMPTY } from 'rxjs';
 import { UsersService } from '../services/users.service';
 import {
   User,
   CreateUserPayload,
   UpdateUserPayload,
 } from '../../core/models/user.model';
+import {
+  setSearch,
+  setPage,
+  clearError,
+  startLoading,
+  stopLoading,
+  buildCreate,
+  buildUpdate,
+  buildRemove,
+} from '../../core/store/crud-helpers';
 
 interface UsersState {
   users: User[];
@@ -47,134 +57,77 @@ export const UsersStore = signalStore(
   })),
 
   withMethods((store) => {
-    const service = inject(UsersService);
+    const svc = inject(UsersService);
+
+    const loadOp = switchMap(() =>
+      svc.getUsers({
+        limit: store.limit(),
+        offset: store.offset(),
+        search: store.search() || undefined,
+      }).pipe(
+        tap((result) => {
+          patchState(store, { users: result.data, total: result.total });
+          stopLoading(store);
+        }),
+        catchError((err: { status: number }) => {
+          stopLoading(store);
+          patchState(store, { error: `Error al cargar usuarios: ${String(err.status)}` });
+          return EMPTY;
+        }),
+      ));
+
+    const toggleOp = switchMap((id: number) =>
+      svc.toggleStatus(id).pipe(
+        tap((updated) => patchState(store, ({ users }) => ({
+          users: users.map((u) => (u.id === id ? { ...u, ...updated } : u)),
+        }))),
+        catchError((err: { status: number }) => {
+          patchState(store, { error: `Error al cambiar estado: ${String(err.status)}` });
+          return EMPTY;
+        }),
+      ));
 
     return {
       loadAll: rxMethod<void>(
-        pipe(
-          tap(() => patchState(store, { loading: true, error: null })),
-          switchMap(() =>
-            service
-              .getUsers({
-                limit: store.limit(),
-                offset: store.offset(),
-                search: store.search() || undefined,
-              })
-              .pipe(
-                tap((result) =>
-                  patchState(store, {
-                    users: result.data,
-                    total: result.total,
-                    loading: false,
-                  }),
-                ),
-                catchError((err: { status: number }) => {
-                  patchState(store, {
-                    loading: false,
-                    error: `Error al cargar usuarios: ${String(err.status)}`,
-                  });
-                  return EMPTY;
-                }),
-              ),
-          ),
-        ),
+        rxPipe(tap(() => startLoading(store)), loadOp),
       ),
 
       create: rxMethod<CreateUserPayload>(
-        pipe(
-          switchMap((payload) =>
-            service.createUser(payload).pipe(
-              tap((created) =>
-                patchState(store, ({ users }) => ({
-                  users: [...users, created],
-                })),
-              ),
-              catchError((err: { status: number }) => {
-                patchState(store, {
-                  error: `Error al crear usuario: ${String(err.status)}`,
-                });
-                return EMPTY;
-              }),
-            ),
-          ),
+        buildCreate(store,
+          (p) => svc.createUser(p),
+          (created) => patchState(store, ({ users }) => ({
+            users: [...users, created],
+          })),
+          'Error al crear usuario',
         ),
       ),
 
       update: rxMethod<{ id: number; changes: UpdateUserPayload }>(
-        pipe(
-          switchMap(({ id, changes }) =>
-            service.updateUser(id, changes).pipe(
-              tap((updated) =>
-                patchState(store, ({ users }) => ({
-                  users: users.map((u) =>
-                    u.id === id ? { ...u, ...updated } : u,
-                  ),
-                })),
-              ),
-              catchError((err: { status: number }) => {
-                patchState(store, {
-                  error: `Error al actualizar usuario: ${String(err.status)}`,
-                });
-                return EMPTY;
-              }),
-            ),
-          ),
+        buildUpdate(store,
+          (id, changes) => svc.updateUser(id, changes as UpdateUserPayload),
+          (updated: any) => patchState(store, ({ users }) => ({
+            users: users.map((u: any) =>
+              u.id === updated.id ? { ...u, ...updated } : u),
+          })),
+          'Error al actualizar usuario',
         ),
       ),
 
-      toggleStatus: rxMethod<number>(
-        pipe(
-          switchMap((id) =>
-            service.toggleStatus(id).pipe(
-              tap((updated) =>
-                patchState(store, ({ users }) => ({
-                  users: users.map((u) =>
-                    u.id === id ? { ...u, ...updated } : u,
-                  ),
-                })),
-              ),
-              catchError((err: { status: number }) => {
-                patchState(store, {
-                  error: `Error al cambiar estado: ${String(err.status)}`,
-                });
-                return EMPTY;
-              }),
-            ),
-          ),
-        ),
-      ),
+      toggleStatus: rxMethod<number>(toggleOp),
 
       remove: rxMethod<number>(
-        pipe(
-          switchMap((id) =>
-            service.deleteUser(id).pipe(
-              tap(() =>
-                patchState(store, ({ users }) => ({
-                  users: users.filter((u) => u.id !== id),
-                })),
-              ),
-              catchError((err: { status: number }) => {
-                patchState(store, {
-                  error: `Error al eliminar usuario: ${String(err.status)}`,
-                });
-                return EMPTY;
-              }),
-            ),
-          ),
+        buildRemove(store,
+          (id) => svc.deleteUser(id),
+          (id) => patchState(store, ({ users }) => ({
+            users: users.filter((u: any) => u.id !== id),
+          })),
+          'Error al eliminar usuario',
         ),
       ),
 
-      setSearch(search: string): void {
-        patchState(store, { search, offset: 0 });
-      },
-
-      setPage(limit: number, offset: number): void {
-        patchState(store, { limit, offset });
-      },
-
-      clearError(): void {
-        patchState(store, { error: null });
-      },
+      setSearch: (s: string) => setSearch(store, s),
+      setPage: (l: number, o: number) => setPage(store, l, o),
+      clearError: () => clearError(store),
     };
   }),
 
