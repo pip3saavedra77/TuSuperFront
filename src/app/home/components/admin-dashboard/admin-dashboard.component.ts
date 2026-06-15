@@ -88,4 +88,15 @@ export class AdminDashboardComponent implements OnInit {
 
   getIcon(moduleName: string): string { return MODULE_ICONS[moduleName.toLowerCase()] ?? 'extension'; }
   filterValidModules(modules: Set<string>): string[] { const valid = new Set(['users','product','category','provider','orders']); return [...modules].filter((m) => valid.has(m)); }
+
+  /**
+   * Ruta de gestión para cada módulo. Separa el catálogo de compra (/product)
+   * del panel de gestión (/admin/products).
+   */
+  getModuleRoute(moduleName: string): string {
+    if (moduleName.toLowerCase() === 'product') {
+      return '/admin/products';
+    }
+    return '/' + moduleName.toLowerCase();
+  }
 }

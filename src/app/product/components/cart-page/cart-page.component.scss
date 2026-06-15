@@ -1,0 +1,366 @@
+@use 'sass:map';
+@use '../../../styles/tokens' as tk;
+
+.cart-page {
+  min-height: 100vh;
+  background-color: var(--ts-background, #fcf9f8);
+  padding: var(--ts-container-padding, 16px);
+  padding-bottom: calc(var(--ts-container-padding, 16px) + 96px);
+  font-family: var(--ts-font-body, 'Inter', sans-serif);
+  color: var(--ts-on-surface, #1c1b1b);
+
+  &__header {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 24px;
+    padding-top: 8px;
+  }
+
+  &__back {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 40px;
+    height: 40px;
+    border-radius: var(--ts-radius-full, 9999px);
+    background: var(--ts-surface-container-low, #f6f3f2);
+    color: var(--ts-on-surface, #1c1b1b);
+    text-decoration: none;
+    transition: background 0.2s ease;
+
+    &:hover { background: var(--ts-surface-container, #f0eded); }
+  }
+
+  &__title {
+    font-family: var(--ts-font-headline, 'Hanken Grotesk', sans-serif);
+    font-size: 24px;
+    font-weight: 600;
+    line-height: 32px;
+    margin: 0;
+    flex: 1;
+  }
+
+  &__count {
+    font-family: var(--ts-font-label, 'Geist', sans-serif);
+    font-size: 12px;
+    font-weight: 500;
+    color: var(--ts-on-surface-variant, #3d4a3e);
+    background: var(--ts-surface-container-low, #f6f3f2);
+    padding: 6px 10px;
+    border-radius: var(--ts-radius-full, 9999px);
+  }
+
+  &__content {
+    display: grid;
+    gap: 24px;
+  }
+}
+
+.cart-empty {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  min-height: 60vh;
+  padding: 24px;
+
+  &__icon {
+    width: 80px;
+    height: 80px;
+    border-radius: var(--ts-radius-full, 9999px);
+    background: var(--ts-surface-tint, #f0fdf4);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 20px;
+
+    .material-symbols-outlined {
+      font-size: 36px;
+      color: var(--ts-primary, #006b32);
+    }
+  }
+
+  &__title {
+    font-family: var(--ts-font-headline, 'Hanken Grotesk', sans-serif);
+    font-size: 20px;
+    font-weight: 600;
+    margin: 0 0 8px;
+  }
+
+  &__hint {
+    font-size: 14px;
+    color: var(--ts-on-surface-variant, #3d4a3e);
+    margin: 0 0 24px;
+    max-width: 280px;
+  }
+
+  &__cta {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 12px 24px;
+    border-radius: var(--ts-radius-base, 8px);
+    background: var(--ts-primary, #006b32);
+    color: var(--ts-on-primary, #fff);
+    font-family: var(--ts-font-label, 'Geist', sans-serif);
+    font-size: 14px;
+    font-weight: 600;
+    text-decoration: none;
+    transition: background 0.2s ease;
+
+    &:hover { background: var(--ts-primary-container, #008740); }
+  }
+}
+
+.cart-items {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.cart-item {
+  display: grid;
+  grid-template-columns: 64px 1fr auto;
+  grid-template-areas:
+    'image details total'
+    'image controls remove';
+  gap: 12px;
+  align-items: center;
+  background: var(--ts-surface-container-lowest, #fff);
+  border-radius: var(--ts-radius-lg, 16px);
+  padding: 16px;
+  box-shadow: var(--ts-shadow-level-1, 0 4px 12px rgba(0, 0, 0, 0.05));
+
+  &__image {
+    grid-area: image;
+    width: 64px;
+    height: 64px;
+    border-radius: var(--ts-radius-base, 8px);
+    background: var(--ts-surface-container-low, #f6f3f2);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+
+    img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+
+    .material-symbols-outlined {
+      color: var(--ts-outline, #6d7b6d);
+      font-size: 28px;
+    }
+  }
+
+  &__details {
+    grid-area: details;
+    min-width: 0;
+  }
+
+  &__name {
+    font-family: var(--ts-font-headline, 'Hanken Grotesk', sans-serif);
+    font-size: 16px;
+    font-weight: 600;
+    margin: 0 0 4px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  &__meta {
+    font-size: 12px;
+    color: var(--ts-on-surface-variant, #3d4a3e);
+    margin: 0 0 6px;
+  }
+
+  &__price {
+    font-family: var(--ts-font-label, 'Geist', sans-serif);
+    font-size: 14px;
+    font-weight: 600;
+    color: var(--ts-primary, #006b32);
+    margin: 0;
+  }
+
+  &__controls {
+    grid-area: controls;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+
+  &__control-btn {
+    width: 32px;
+    height: 32px;
+    border: none;
+    border-radius: var(--ts-radius-full, 9999px);
+    background: var(--ts-surface-container, #f0eded);
+    color: var(--ts-on-surface, #1c1b1b);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: background 0.2s ease;
+
+    &:hover:not(:disabled) { background: var(--ts-surface-container-high, #eae7e7); }
+
+    &:disabled {
+      opacity: 0.4;
+      cursor: not-allowed;
+    }
+  }
+
+  &__quantity {
+    font-family: var(--ts-font-label, 'Geist', sans-serif);
+    font-size: 14px;
+    font-weight: 600;
+    min-width: 24px;
+    text-align: center;
+  }
+
+  &__total {
+    grid-area: total;
+    font-family: var(--ts-font-label, 'Geist', sans-serif);
+    font-size: 14px;
+    font-weight: 700;
+    color: var(--ts-on-surface, #1c1b1b);
+    text-align: right;
+  }
+
+  &__remove {
+    grid-area: remove;
+    justify-self: end;
+    width: 32px;
+    height: 32px;
+    border: none;
+    border-radius: var(--ts-radius-full, 9999px);
+    background: transparent;
+    color: var(--ts-error, #ba1a1a);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+
+    &:hover { background: var(--ts-error-container, #ffdad6); }
+  }
+}
+
+.cart-summary {
+  background: var(--ts-surface-container-lowest, #fff);
+  border-radius: var(--ts-radius-lg, 16px);
+  padding: 20px;
+  box-shadow: var(--ts-shadow-level-1, 0 4px 12px rgba(0, 0, 0, 0.05));
+
+  &__title {
+    font-family: var(--ts-font-headline, 'Hanken Grotesk', sans-serif);
+    font-size: 18px;
+    font-weight: 600;
+    margin: 0 0 16px;
+  }
+
+  &__row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 10px 0;
+    font-size: 14px;
+    color: var(--ts-on-surface-variant, #3d4a3e);
+    border-bottom: 1px solid var(--ts-surface-container-low, #f6f3f2);
+
+    &--total {
+      border-bottom: none;
+      font-family: var(--ts-font-label, 'Geist', sans-serif);
+      font-size: 18px;
+      font-weight: 700;
+      color: var(--ts-on-surface, #1c1b1b);
+      padding-top: 14px;
+    }
+  }
+
+  &__free {
+    color: var(--ts-success-bright, #22c55e);
+    font-weight: 600;
+  }
+
+  &__error {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-top: 14px;
+    padding: 12px;
+    border-radius: var(--ts-radius-base, 8px);
+    background: var(--ts-error-container, #ffdad6);
+    color: var(--ts-on-error-container, #93000a);
+    font-size: 13px;
+  }
+
+  &__actions {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    margin-top: 20px;
+  }
+
+  &__checkout {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    width: 100%;
+    padding: 14px 20px;
+    border: none;
+    border-radius: var(--ts-radius-base, 8px);
+    background: var(--ts-primary, #006b32);
+    color: var(--ts-on-primary, #fff);
+    font-family: var(--ts-font-label, 'Geist', sans-serif);
+    font-size: 15px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background 0.2s ease;
+
+    &:hover:not(:disabled) { background: var(--ts-primary-container, #008740); }
+
+    &:disabled {
+      opacity: 0.6;
+      cursor: not-allowed;
+    }
+  }
+
+  &__clear {
+    width: 100%;
+    padding: 12px 20px;
+    border: 1px solid var(--ts-outline-variant, #bccabb);
+    border-radius: var(--ts-radius-base, 8px);
+    background: transparent;
+    color: var(--ts-on-surface-variant, #3d4a3e);
+    font-family: var(--ts-font-label, 'Geist', sans-serif);
+    font-size: 14px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background 0.2s ease;
+
+    &:hover:not(:disabled) { background: var(--ts-surface-container-low, #f6f3f2); }
+
+    &:disabled {
+      opacity: 0.6;
+      cursor: not-allowed;
+    }
+  }
+}
+
+@media (min-width: 768px) {
+  .cart-page {
+    max-width: 960px;
+    margin: 0 auto;
+    padding: 32px;
+    padding-bottom: 32px;
+
+    &__content {
+      grid-template-columns: 1fr 340px;
+      align-items: start;
+    }
+  }
+}
