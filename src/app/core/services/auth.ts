@@ -18,12 +18,16 @@ const WARNING_BEFORE_EXPIRY_MS = 5 * 60 * 1000;
 })
 export class AuthService {
 
-  private readonly http = inject(HttpClient);
   private readonly router = inject(Router);
   private readonly tokenService = inject(TokenService);
   private readonly injector = inject(Injector);
   private readonly destroyRef = inject(DestroyRef);
   private readonly API_URL = `${environment.apiUrl}/auth`;
+
+  /** Lazy HttpClient para evitar NG0200 con authInterceptor */
+  private get http(): HttpClient {
+    return this.injector.get(HttpClient);
+  }
 
   private readonly _authStatus = signal<AuthResponse | null>(null);
   private _lastCheckTime = 0;

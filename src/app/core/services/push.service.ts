@@ -1,4 +1,4 @@
-import { Injectable, inject, NgZone } from '@angular/core';
+import { Injectable, inject, Injector, NgZone } from '@angular/core';
 import { SwPush } from '@angular/service-worker';
 import { firstValueFrom } from 'rxjs';
 import { HttpClient } from '@angular/common/http';
@@ -7,10 +7,14 @@ import { Router } from '@angular/router';
 
 @Injectable({ providedIn: 'root' })
 export class PushService {
+  private readonly injector = inject(Injector);
   private readonly swPush = inject(SwPush);
-  private readonly http = inject(HttpClient);
   private readonly router = inject(Router);
   private readonly zone = inject(NgZone);
+
+  private get http(): HttpClient {
+    return this.injector.get(HttpClient);
+  }
 
   private readonly vapidPublicKey = 'BL055Pmv0P7ncLoKzQxhBqBRkcZwnNBSeT2-K_tbomnTU0RYSmb9bhpncI9oY8fiPlOAm7HdS4j4UyU_cRSbRkE';
 
