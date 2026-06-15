@@ -20,6 +20,7 @@ import { MatPaginatorModule, PageEvent } from '@angular/material/paginator';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
 
+import { ActivatedRoute } from '@angular/router';
 import { ProductService } from '../../services/product.service';
 import {
   Product,
@@ -56,6 +57,7 @@ export class CatalogComponent implements OnInit {
   readonly cartStore = inject(CartStore);
   private readonly snackBar = inject(MatSnackBar);
   private readonly destroyRef = inject(DestroyRef);
+  private readonly route = inject(ActivatedRoute);
 
   readonly products = signal<Product[]>([]);
   readonly totalProducts = signal<number>(0);
@@ -89,6 +91,11 @@ export class CatalogComponent implements OnInit {
 
   ngOnInit(): void {
     this.loadCategories();
+    this.route.queryParamMap.pipe(takeUntilDestroyed(this.destroyRef)).subscribe(params => {
+      if (params.get('cart') === 'open') {
+        this.cartStore.openCart();
+      }
+    });
   }
 
   loadProducts(): void {

@@ -6,7 +6,6 @@ import { MatButtonModule } from '@angular/material/button';
 import { MatSidenavModule } from '@angular/material/sidenav';
 import { MatListModule } from '@angular/material/list';
 import { MatIconModule } from '@angular/material/icon';
-import { MatBadgeModule } from '@angular/material/badge';
 import { Observable } from 'rxjs';
 import { map, shareReplay } from 'rxjs/operators';
 import { Router, RouterLink, RouterLinkActive, RouterOutlet } from '@angular/router';
@@ -16,7 +15,6 @@ import { IdleService } from '../../services/idle.service';
 import { PushService } from '../../services/push.service';
 import { NotificationBellComponent } from '../../../shared/components/notification-bell/notification-bell.component';
 import { PushPromptComponent } from '../../../shared/components/push-prompt/push-prompt.component';
-import { CartStore } from '../../../product/store/cart.store';
 
 @Component({
   selector: 'app-admin-layout',
@@ -32,7 +30,6 @@ import { CartStore } from '../../../product/store/cart.store';
     MatSidenavModule,
     MatListModule,
     MatIconModule,
-    MatBadgeModule,
     AsyncPipe,
     NotificationBellComponent,
     PushPromptComponent,
@@ -45,7 +42,6 @@ export class AdminLayoutComponent implements OnInit {
   private readonly notificationsService = inject(NotificationsService);
   private readonly idleService = inject(IdleService);
   private readonly pushService = inject(PushService);
-  readonly cartStore = inject(CartStore);
 
   public isAuthenticated = this.authService.isAuthenticated;
   public menuItems = this.authService.userModules;
@@ -77,12 +73,6 @@ export class AdminLayoutComponent implements OnInit {
     this.notificationsService.disconnect();
     this.idleService.stopWatching();
     this.authService.logout();
-  }
-
-  onCartClick(): void {
-    this.router.navigateByUrl('/product').then(() => {
-      this.cartStore.openCart();
-    });
   }
 
   /**
