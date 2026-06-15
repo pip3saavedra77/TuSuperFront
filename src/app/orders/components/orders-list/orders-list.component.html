@@ -120,10 +120,6 @@
                       <span>Ver Detalles</span>
                     </button>
                     @if (auth.hasManagementPrivileges() && !isTerminal(order.status)) {
-                      <button mat-menu-item (click)="viewDetails(order)">
-                        <mat-icon>swap_horiz</mat-icon>
-                        <span>Cambiar Estado</span>
-                      </button>
                       <button mat-menu-item class="text-danger" (click)="cancelOrder(order)">
                         <mat-icon class="text-danger">cancel</mat-icon>
                         <span>Cancelar Pedido</span>

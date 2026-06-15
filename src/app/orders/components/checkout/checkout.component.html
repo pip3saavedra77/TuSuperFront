@@ -1,102 +1,115 @@
-<div class="checkout-container">
+<div class="checkout-wrapper">
+  <div class="checkout-glow checkout-glow--one"></div>
+  <div class="checkout-glow checkout-glow--two"></div>
+
   <div class="checkout-page">
 
     <!-- Header -->
     <header class="checkout-header">
-      <button mat-icon-button routerLink="/product" aria-label="Volver a la tienda">
+      <button class="checkout-back" routerLink="/product/cart" aria-label="Volver al carrito">
         <mat-icon>arrow_back</mat-icon>
       </button>
-      <div>
-        <h1>Confirmar Pedido</h1>
-        <p class="checkout-subtitle">{{ cartStore.totalItems() }} productos en tu carrito</p>
+      <div class="checkout-header__text">
+        <h1>Finalizar compra</h1>
+        <p>{{ cartStore.totalItems() }} productos · Entrega a domicilio</p>
       </div>
     </header>
 
     <div class="checkout-body">
 
-      <!-- ── Columna izquierda: items + formulario ─────────────── -->
-      <div class="checkout-left">
+      <!-- Productos -->
+      <section class="checkout-card checkout-items" aria-labelledby="order-title">
+        <div class="checkout-card__header">
+          <h2 id="order-title" class="checkout-card__title">
+            <mat-icon>shopping_bag</mat-icon>
+            Tu pedido
+          </h2>
+          <button class="checkout-card__edit" routerLink="/product/cart">Editar</button>
+        </div>
 
-        <!-- Mini-tarjetas de productos (READ-ONLY en checkout) -->
-        <section class="checkout-items-section">
+        <div class="checkout-items__list">
           @for (item of cartStore.items(); track item.product.id) {
-            <div class="checkout-item-card">
-              <div class="item-image">
+            <div class="order-line">
+              <div class="order-line__thumb">
                 @if (item.product.imageUrl) {
                   <img [src]="item.product.imageUrl" [alt]="item.product.name" />
                 } @else {
                   <mat-icon>inventory_2</mat-icon>
                 }
               </div>
-              <div class="item-info">
-                <span class="item-name">{{ item.product.name }}</span>
-                <span class="item-unit-price">
-                  {{ item.product.price | currency:'COP':'symbol-narrow':'1.0-0' }} / ud.
+              <div class="order-line__info">
+                <span class="order-line__name">{{ item.product.name }}</span>
+                <span class="order-line__unit">
+                  {{ item.product.price | currency:'COP':'symbol-narrow':'1.0-0' }} / unidad
                 </span>
               </div>
-              <div class="item-quantity-badge">
-                <span>×{{ item.quantity }}</span>
-              </div>
-              <div class="item-subtotal">
+              <span class="order-line__qty">×{{ item.quantity }}</span>
+              <span class="order-line__price">
                 {{ item.product.price * item.quantity | currency:'COP':'symbol-narrow':'1.0-0' }}
-              </div>
+              </span>
             </div>
           }
-        </section>
+        </div>
+      </section>
 
-        <!-- Formulario de datos de entrega -->
-        <section class="checkout-form-section" [formGroup]="checkoutForm">
-          <h2 class="form-title">Datos de Entrega</h2>
-          <div class="form-grid">
-            <mat-form-field appearance="fill" class="full-width">
-              <mat-label>Dirección de Entrega</mat-label>
-              <input matInput formControlName="deliveryAddress" placeholder="Ej: Calle 123 No. 45-67" autocomplete="street-address">
-              <mat-icon matSuffix aria-hidden="true">place</mat-icon>
-              <mat-error>La dirección es obligatoria</mat-error>
+      <!-- Formulario -->
+      <section class="checkout-card checkout-form" [formGroup]="checkoutForm" aria-labelledby="delivery-title">
+        <h2 id="delivery-title" class="checkout-card__title">
+          <mat-icon>local_shipping</mat-icon>
+          Datos de entrega
+        </h2>
+
+        <div class="form-fields">
+          <mat-form-field appearance="fill" class="form-field form-field--wide">
+            <mat-label>Dirección de entrega</mat-label>
+            <input matInput formControlName="deliveryAddress" placeholder="Calle 123 # 45-67, Apto 501" autocomplete="street-address">
+            <mat-icon matSuffix>place</mat-icon>
+            <mat-error>La dirección es obligatoria</mat-error>
+          </mat-form-field>
+
+          <mat-form-field appearance="fill" class="form-field">
+            <mat-label>Teléfono de contacto</mat-label>
+            <input matInput formControlName="contactPhone" placeholder="3001234567" type="tel" inputmode="numeric" autocomplete="tel" maxlength="10">
+            <mat-icon matSuffix>smartphone</mat-icon>
+            <mat-error>El teléfono es obligatorio</mat-error>
+          </mat-form-field>
+
+          <mat-form-field appearance="fill" class="form-field">
+            <mat-label>Método de pago</mat-label>
+            <mat-select formControlName="paymentMethod">
+              <mat-option value="" disabled>Selecciona</mat-option>
+              <mat-option value="EFECTIVO">Efectivo</mat-option>
+              <mat-option value="TARJETA">Tarjeta</mat-option>
+              <mat-option value="TRANSFERENCIA">Transferencia</mat-option>
+            </mat-select>
+            <mat-icon matSuffix>credit_card</mat-icon>
+            <mat-error>Selecciona un método</mat-error>
+          </mat-form-field>
+
+          @if (checkoutForm.get('paymentMethod')?.value === 'EFECTIVO') {
+            <mat-form-field appearance="fill" class="form-field">
+              <mat-label>Cambio para (opcional)</mat-label>
+              <input matInput formControlName="cashChangeRequested" type="number" min="0" placeholder="Ej: 50.000">
+              <mat-icon matSuffix>monetization_on</mat-icon>
+              <mat-hint>Indica con cuánto pagas</mat-hint>
             </mat-form-field>
+          }
 
-            <mat-form-field appearance="fill">
-              <mat-label>Teléfono de Contacto</mat-label>
-              <input matInput formControlName="contactPhone" placeholder="Ej: 3001234567" type="tel" inputmode="numeric" autocomplete="tel" maxlength="10">
-              <mat-icon matSuffix aria-hidden="true">smartphone</mat-icon>
-              <mat-error>El teléfono es obligatorio</mat-error>
-            </mat-form-field>
+          <mat-form-field appearance="fill" class="form-field form-field--wide">
+            <mat-label>Notas de entrega (opcional)</mat-label>
+            <textarea matInput formControlName="deliveryNotes" placeholder="Dejar en portería, timbrar apartamento..." rows="2"></textarea>
+            <mat-icon matSuffix>note_alt</mat-icon>
+          </mat-form-field>
+        </div>
+      </section>
 
-            <mat-form-field appearance="fill">
-              <mat-label>Método de Pago</mat-label>
-              <mat-select formControlName="paymentMethod">
-                <mat-option value="" disabled>Selecciona un método</mat-option>
-                <mat-option value="EFECTIVO">Efectivo</mat-option>
-                <mat-option value="TARJETA">Tarjeta (Débito/Crédito)</mat-option>
-                <mat-option value="TRANSFERENCIA">Transferencia</mat-option>
-              </mat-select>
-              <mat-icon matSuffix aria-hidden="true">credit_card</mat-icon>
-              <mat-error>Selecciona un método de pago</mat-error>
-            </mat-form-field>
-
-            @if (checkoutForm.get('paymentMethod')?.value === 'EFECTIVO') {
-              <mat-form-field appearance="fill">
-                <mat-label>¿Necesitas cambio? (opcional)</mat-label>
-                <input matInput formControlName="cashChangeRequested" type="number" min="0" placeholder="Ej: 50000">
-                <mat-icon matSuffix aria-hidden="true">monetization_on</mat-icon>
-                <mat-hint>Indica el monto para el cual necesitas cambio</mat-hint>
-              </mat-form-field>
-            }
-
-            <mat-form-field appearance="fill" class="full-width">
-              <mat-label>Notas de entrega (opcional)</mat-label>
-              <textarea matInput formControlName="deliveryNotes" placeholder="Ej: Apartamento 501, dejar en portería" rows="2"></textarea>
-              <mat-icon matSuffix aria-hidden="true">note_alt</mat-icon>
-            </mat-form-field>
-          </div>
-        </section>
-
-      </div>
-
-      <!-- ── Columna derecha: resumen de compra ─────────────── -->
-      <aside class="checkout-right">
-        <div class="checkout-summary-card">
-          <h2 class="summary-title">Resumen de Compra</h2>
+      <!-- Resumen -->
+      <aside class="checkout-summary">
+        <div class="checkout-card checkout-summary__card">
+          <h2 class="checkout-card__title">
+            <mat-icon>receipt_long</mat-icon>
+            Resumen
+          </h2>
 
           <div class="summary-rows">
             <div class="summary-row">
@@ -105,29 +118,36 @@
             </div>
             <div class="summary-row">
               <span>Envío</span>
-              <span class="free-badge">Gratis</span>
+              <span class="summary-row__free">Gratis</span>
+            </div>
+            <div class="summary-row summary-row--discount" *ngIf="false">
+              <span>Descuento</span>
+              <span>-$0</span>
             </div>
           </div>
 
-          <div class="summary-total-row">
+          <div class="summary-total">
             <span>Total</span>
-            <span class="total-amount">
-              {{ cartStore.totalAmount() | currency:'COP':'symbol-narrow':'1.0-0' }}
-            </span>
+            <span class="summary-total__amount">{{ cartStore.totalAmount() | currency:'COP':'symbol-narrow':'1.0-0' }}</span>
           </div>
 
-          <button mat-flat-button
-                  class="btn-confirm-order"
-                  [disabled]="isProcessing || cartStore.isEmpty() || checkoutForm.invalid"
-                  (click)="confirmOrder()">
+          <button
+            class="btn-confirm"
+            [disabled]="isProcessing || cartStore.isEmpty() || checkoutForm.invalid"
+            (click)="confirmOrder()">
             @if (isProcessing) {
-              <mat-spinner diameter="22"></mat-spinner>
+              <mat-spinner diameter="20"></mat-spinner>
             }
             @if (!isProcessing) {
               <mat-icon>check_circle</mat-icon>
             }
-            <span>{{ isProcessing ? 'Procesando...' : 'Confirmar Pedido' }}</span>
+            <span>{{ isProcessing ? 'Procesando...' : 'Confirmar pedido' }}</span>
           </button>
+
+          <p class="summary-note">
+            <mat-icon>lock</mat-icon>
+            Tu pedido se enviará de forma segura.
+          </p>
         </div>
       </aside>
 

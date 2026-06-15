@@ -1,0 +1,14 @@
+<header class="ts-header">
+  <a class="ts-header__brand" routerLink="/home" aria-label="Ir al inicio">
+    <div class="ts-header__logo">
+      <img src="/branding/tusuper-logo.png" alt="TuSuper" class="ts-header__logo-img" />
+    </div>
+    <span class="ts-header__title">TuSuper</span>
+  </a>
+  <div class="ts-header__actions">
+    <button class="ts-header__btn" (click)="onSearchClick()" aria-label="Buscar">
+      <span class="material-symbols-outlined">search</span>
+    </button>
+    <app-notification-bell class="ts-header__notif" />
+  </div>
+</header>

@@ -107,4 +107,15 @@ export class AdminLayoutComponent implements OnInit {
   filterValidModules(modules: Set<string>): string[] {
     return [...modules].filter((m) => this.validModules.has(m));
   }
+
+  /**
+   * Ruta de gestión para cada módulo. El catálogo de compra (/product)
+   * queda separado de la gestión (/admin/products).
+   */
+  getModuleRoute(moduleName: string): string {
+    if (moduleName.toLowerCase() === 'product') {
+      return '/admin/products';
+    }
+    return '/' + moduleName.toLowerCase();
+  }
 }

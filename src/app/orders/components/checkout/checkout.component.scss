@@ -1,454 +1,402 @@
+// Vibrant Minimalist — Checkout v2
 @use 'sass:map';
 @use '../../../styles/tokens' as *;
-@use '../../../styles/pos_tokens' as pos;
 
-.checkout-container {
-  padding: map.get($spacing, "48");
-  min-height: calc(100vh - 80px);
-  background: transparent;
+.checkout-wrapper {
+  position: relative;
+  min-height: 100vh;
+  background: var(--ts-background, #fbf9f8);
+  padding: 24px;
+  overflow-x: hidden;
+
+  @media (max-width: 768px) { padding: 16px 16px 100px; }
+}
+
+.checkout-glow {
+  position: fixed;
+  border-radius: 50%;
+  filter: blur(100px);
+  pointer-events: none;
+  z-index: 0;
+
+  &--one {
+    width: 360px; height: 360px;
+    background: rgba(0, 200, 83, 0.12);
+    top: -120px; right: -120px;
+  }
+
+  &--two {
+    width: 280px; height: 280px;
+    background: rgba(105, 255, 135, 0.15);
+    bottom: 80px; left: -80px;
+  }
 }
 
 .checkout-page {
-  max-width: 1100px;
+  position: relative;
+  z-index: 1;
+  max-width: 1000px;
   margin: 0 auto;
 }
 
-// ── Header ────────────────────────────────────────────
+// ── Header ──────────────────────────────────────────────────────────────────
 .checkout-header {
   display: flex;
   align-items: center;
   gap: 16px;
-  margin-bottom: 40px;
+  margin-bottom: 28px;
 
-  h1 {
-    font-size: map.get($font-sizes, "2xl");
-    font-weight: 800;
-    color: pos.$pos-text;
-    margin: 0;
-    letter-spacing: -0.025em;
+  &__text {
+    h1 {
+      font-family: var(--ts-font-headline, 'Plus Jakarta Sans', sans-serif);
+      font-size: 1.6rem;
+      font-weight: 800;
+      color: var(--ts-on-surface, #1b1c1c);
+      margin: 0;
+      letter-spacing: -0.02em;
+    }
+
+    p {
+      margin: 2px 0 0;
+      font-size: 0.9rem;
+      color: var(--ts-on-surface-variant, #3c4a3c);
+      font-weight: 500;
+    }
   }
-
-  .checkout-subtitle {
-    font-size: map.get($font-sizes, "sm");
-    color: pos.$pos-text-muted;
-    margin: 4px 0 0;
-  }
 }
 
-// ── Body Grid: 2 cols desktop, 1 col mobile ───────────
-.checkout-body {
-  display: grid;
-  grid-template-columns: 1fr 380px;
-  gap: map.get($spacing, "32");
-  align-items: start;
-}
-
-// ── Left Column ───────────────────────────────────────
-.checkout-left {
-  display: flex;
-  flex-direction: column;
-  gap: map.get($spacing, "32");
-}
-
-// ── Items Section ─────────────────────────────────────
-.checkout-items-section {
-  display: flex;
-  flex-direction: column;
-  gap: map.get($spacing, "12");
-}
-
-.checkout-item-card {
-  background: #ffffff;
-  border-radius: 16px;
-  border: 1px solid rgba(0, 0, 0, 0.06);
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
-  padding: map.get($spacing, "16");
+.checkout-back {
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  border: none;
+  background: #fff;
+  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.06);
+  color: var(--ts-on-surface, #1b1c1c);
   display: flex;
   align-items: center;
-  gap: map.get($spacing, "16");
-  transition: box-shadow 0.2s ease;
+  justify-content: center;
+  cursor: pointer;
+  transition: transform 0.2s ease, box-shadow 0.2s ease, background 0.2s ease;
+
+  mat-icon { font-size: 22px; width: 22px; height: 22px; }
 
   &:hover {
-    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.08);
+    transform: translateY(-1px);
+    box-shadow: 0 6px 18px rgba(0, 0, 0, 0.08);
+    background: rgba(0, 200, 83, 0.06);
+    color: var(--ts-primary, #006e2a);
+  }
+}
+
+// ── Layout ──────────────────────────────────────────────────────────────────
+.checkout-body {
+  display: grid;
+  grid-template-columns: 1fr 360px;
+  gap: 24px;
+  align-items: start;
+
+  @media (max-width: 900px) {
+    grid-template-columns: 1fr;
+  }
+}
+
+.checkout-summary {
+  @media (min-width: 901px) {
+    position: sticky;
+    top: 24px;
+  }
+}
+
+// ── Card ────────────────────────────────────────────────────────────────────
+.checkout-card {
+  background: rgba(255, 255, 255, 0.95);
+  border-radius: 24px;
+  border: 1px solid rgba(255, 255, 255, 0.8);
+  box-shadow:
+    0 4px 20px rgba(0, 0, 0, 0.03),
+    0 16px 40px rgba(0, 0, 0, 0.05);
+  padding: 24px;
+  margin-bottom: 24px;
+
+  @media (max-width: 768px) {
+    padding: 20px;
+    border-radius: 20px;
+    margin-bottom: 16px;
   }
 
-  .item-image {
+  &__header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 18px;
+  }
+
+  &__title {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin: 0;
+    font-family: var(--ts-font-headline, 'Plus Jakarta Sans', sans-serif);
+    font-size: 1.05rem;
+    font-weight: 800;
+    color: var(--ts-on-surface, #1b1c1c);
+
+    mat-icon {
+      font-size: 22px;
+      width: 22px;
+      height: 22px;
+      color: var(--ts-primary, #006e2a);
+    }
+  }
+
+  &__edit {
+    border: none;
+    background: transparent;
+    color: var(--ts-primary, #006e2a);
+    font-size: 0.8rem;
+    font-weight: 700;
+    padding: 6px 12px;
+    border-radius: 999px;
+    cursor: pointer;
+    transition: background 0.2s ease;
+
+    &:hover { background: rgba(0, 200, 83, 0.08); }
+  }
+}
+
+// ── Items ───────────────────────────────────────────────────────────────────
+.checkout-items__list {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.order-line {
+  display: grid;
+  grid-template-columns: 56px 1fr auto auto;
+  align-items: center;
+  gap: 16px;
+  padding: 12px;
+  background: rgba(251, 249, 248, 0.6);
+  border-radius: 16px;
+  border: 1px solid rgba(0, 0, 0, 0.03);
+
+  @media (max-width: 520px) {
+    grid-template-columns: 48px 1fr auto;
+    gap: 12px;
+  }
+
+  &__thumb {
     width: 56px;
     height: 56px;
-    background: #f8f9fa;
-    border-radius: 12px;
+    border-radius: 14px;
+    background: #fff;
     overflow: hidden;
     display: flex;
     align-items: center;
     justify-content: center;
-    flex-shrink: 0;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
 
-    img { width: 100%; height: 100%; object-fit: contain; mix-blend-mode: multiply; }
-    mat-icon { font-size: 24px; width: 24px; height: 24px; color: #c8cdd5; }
+    @media (max-width: 520px) {
+      width: 48px;
+      height: 48px;
+    }
+
+    img { width: 100%; height: 100%; object-fit: cover; }
+
+    mat-icon {
+      font-size: 22px;
+      width: 22px; height: 22px;
+      color: var(--ts-on-surface-variant, #3c4a3c);
+    }
   }
 
-  .item-info {
-    flex: 1;
+  &__info {
     display: flex;
     flex-direction: column;
     gap: 2px;
     min-width: 0;
-
-    .item-name {
-      font-size: map.get($font-sizes, "sm");
-      font-weight: 700;
-      color: pos.$pos-text;
-      white-space: nowrap;
-      overflow: hidden;
-      text-overflow: ellipsis;
-    }
-
-    .item-unit-price {
-      font-size: map.get($font-sizes, "xs");
-      color: pos.$pos-text-muted;
-    }
   }
 
-  .item-quantity-badge {
-    background: #f1f3f9;
-    border-radius: map.get($radius, "full");
-    padding: 4px 12px;
-    font-size: map.get($font-sizes, "sm");
+  &__name {
     font-weight: 700;
-    color: pos.$pos-text;
-    flex-shrink: 0;
+    font-size: 0.92rem;
+    color: var(--ts-on-surface, #1b1c1c);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
   }
 
-  .item-subtotal {
-    font-size: map.get($font-sizes, "md");
+  &__unit {
+    font-size: 0.78rem;
+    color: var(--ts-on-surface-variant, #3c4a3c);
+    font-weight: 500;
+  }
+
+  &__qty {
+    font-size: 0.85rem;
+    font-weight: 700;
+    color: var(--ts-primary, #006e2a);
+    background: rgba(0, 200, 83, 0.08);
+    padding: 4px 10px;
+    border-radius: 999px;
+
+    @media (max-width: 520px) { justify-self: end; }
+  }
+
+  &__price {
     font-weight: 800;
-    color: var(--profile-primary, #{pos.$pos-primary});
-    min-width: 80px;
+    font-size: 0.95rem;
+    color: var(--ts-on-surface, #1b1c1c);
     text-align: right;
-    flex-shrink: 0;
+
+    @media (max-width: 520px) {
+      grid-column: 2 / -1;
+      text-align: left;
+      font-size: 0.9rem;
+    }
   }
 }
 
-// ── Form Section ──────────────────────────────────────
-.checkout-form-section {
-  background: #ffffff;
-  border-radius: 16px;
-  border: 1px solid rgba(0, 0, 0, 0.06);
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
-  padding: map.get($spacing, "24");
+// ── Form ────────────────────────────────────────────────────────────────────
+.checkout-form .form-fields {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 16px;
 
-  .form-title {
-    font-size: map.get($font-sizes, "lg");
-    font-weight: 700;
-    color: pos.$pos-text;
-    margin: 0 0 map.get($spacing, "24");
-  }
-
-  .form-grid {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 16px;
-
-    .full-width { grid-column: span 2; }
+  @media (max-width: 600px) {
+    grid-template-columns: 1fr;
+    gap: 0;
   }
 }
 
-// ── Right Column: Summary Card ────────────────────────
-.checkout-right {
-  position: sticky;
-  top: 24px;
+.form-field {
+  width: 100%;
+
+  &--wide { grid-column: 1 / -1; }
+
+  ::ng-deep {
+    .mat-mdc-text-field-wrapper {
+      background: rgba(251, 249, 248, 0.8);
+      border-radius: 16px;
+      padding: 0 14px;
+    }
+
+    .mat-mdc-form-field-flex {
+      align-items: center;
+    }
+
+    .mat-mdc-floating-label {
+      color: var(--ts-on-surface-variant, #3c4a3c);
+    }
+
+    .mdc-text-field--filled:not(.mdc-text-field--disabled) .mdc-line-ripple::before,
+    .mdc-text-field--filled:not(.mdc-text-field--disabled) .mdc-line-ripple::after {
+      border-bottom-color: var(--ts-primary, #006e2a);
+    }
+
+    .mat-mdc-form-field-icon-suffix {
+      color: var(--ts-on-surface-variant, #3c4a3c);
+    }
+  }
 }
 
-.checkout-summary-card {
-  background: #f8f9fa;
-  border-radius: 16px;
-  border: 1px solid rgba(0, 0, 0, 0.06);
-  padding: map.get($spacing, "24");
+// ── Summary ─────────────────────────────────────────────────────────────────
+.checkout-summary__card {
+  margin-bottom: 0;
+}
+
+.summary-rows {
   display: flex;
   flex-direction: column;
-  gap: map.get($spacing, "16");
+  gap: 12px;
+  margin-bottom: 18px;
+}
 
-  .summary-title {
-    font-size: map.get($font-sizes, "lg");
+.summary-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 0.92rem;
+  color: var(--ts-on-surface-variant, #3c4a3c);
+
+  &__free {
+    color: var(--ts-primary, #006e2a);
     font-weight: 700;
-    color: pos.$pos-text;
-    margin: 0;
-  }
-
-  .summary-rows {
-    display: flex;
-    flex-direction: column;
-    gap: 12px;
-  }
-
-  .summary-row {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    font-size: map.get($font-sizes, "sm");
-    color: pos.$pos-text-muted;
-    font-weight: 600;
-
-    .free-badge {
-      background: rgba(0, 166, 81, 0.12);
-      color: #006D3C;
-      padding: 3px 10px;
-      border-radius: map.get($radius, "full");
-      font-size: 0.7rem;
-      font-weight: 700;
-      text-transform: uppercase;
-      letter-spacing: 0.5px;
-    }
-  }
-
-  .summary-total-row {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    padding-top: map.get($spacing, "16");
-    border-top: 2px dashed rgba(0, 0, 0, 0.08);
-
-    span:first-child {
-      font-size: map.get($font-sizes, "lg");
-      font-weight: 700;
-      color: pos.$pos-text;
-    }
-
-    .total-amount {
-      font-size: map.get($font-sizes, "2xl");
-      font-weight: 800;
-      color: var(--profile-primary, #{pos.$pos-primary});
-    }
+    background: rgba(0, 200, 83, 0.08);
+    padding: 2px 10px;
+    border-radius: 999px;
+    font-size: 0.78rem;
   }
 }
 
-// ── CTA Button ────────────────────────────────────────
-.btn-confirm-order {
+.summary-total {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 18px 0;
+  border-top: 2px dashed rgba(0, 0, 0, 0.08);
+  margin-bottom: 18px;
+
+  span:first-child {
+    font-size: 1rem;
+    font-weight: 800;
+    color: var(--ts-on-surface, #1b1c1c);
+  }
+
+  &__amount {
+    font-family: var(--ts-font-headline, 'Plus Jakarta Sans', sans-serif);
+    font-size: 1.35rem;
+    font-weight: 800;
+    color: var(--ts-primary, #006e2a);
+  }
+}
+
+.btn-confirm {
   width: 100%;
-  height: 52px;
-  background: var(--profile-primary, #{pos.$pos-primary}) !important;
-  color: #ffffff !important;
-  border-radius: 16px !important;
-  font-size: map.get($font-sizes, "md");
-  font-weight: 700;
+  border: none;
+  border-radius: 999px;
+  padding: 16px 24px;
+  font-size: 1rem;
+  font-weight: 800;
+  font-family: var(--ts-font-headline, 'Plus Jakarta Sans', sans-serif);
+  color: #fff;
+  background: linear-gradient(135deg, var(--ts-primary, #006e2a) 0%, var(--ts-primary-fixed, #00c853) 100%);
+  box-shadow: 0 8px 24px rgba(0, 200, 83, 0.3);
   display: flex;
   align-items: center;
   justify-content: center;
   gap: 8px;
-  box-shadow: 0 8px 20px rgba(0, 166, 81, 0.25);
-  transition: all 0.2s ease;
+  cursor: pointer;
+  transition: transform 0.2s ease, box-shadow 0.2s ease, filter 0.2s ease;
 
-  ::ng-deep .mdc-button__label {
-    display: flex;
-    align-items: center;
-    gap: 8px;
-  }
-
-  mat-icon, .mat-icon {
-    font-size: 20px;
-    width: 20px;
-    height: 20px;
-    line-height: 20px;
-    flex-shrink: 0;
-  }
+  mat-icon { font-size: 22px; width: 22px; height: 22px; }
 
   &:hover:not(:disabled) {
-    transform: translateY(-1px);
-    box-shadow: 0 12px 28px rgba(0, 166, 81, 0.35);
-    filter: brightness(0.95);
+    transform: translateY(-2px);
+    box-shadow: 0 12px 32px rgba(0, 200, 83, 0.35);
+    filter: brightness(1.04);
   }
 
   &:disabled {
-    background: #e9ecef !important;
-    color: pos.$pos-text-muted !important;
-    box-shadow: none;
+    opacity: 0.5;
     cursor: not-allowed;
+    box-shadow: none;
   }
 }
 
-// ── Responsive ────────────────────────────────────────
-@media (max-width: 1024px) {
-  .checkout-body {
-    grid-template-columns: 1fr;
-    gap: map.get($spacing, "24");
-  }
+.summary-note {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  margin: 16px 0 0;
+  font-size: 0.75rem;
+  color: var(--ts-on-surface-variant, #3c4a3c);
 
-  .checkout-right {
-    position: static;
-  }
-}
-
-@media (max-width: 768px) {
-  .checkout-container {
-    padding: map.get($spacing, "16");
-    min-height: auto;
-  }
-
-  .checkout-body {
-    grid-template-columns: 1fr;
-    gap: map.get($spacing, "20");
-  }
-
-  .checkout-right {
-    position: static;
-    order: 2;
-  }
-
-  .checkout-left {
-    order: 1;
-    gap: map.get($spacing, "20");
-  }
-
-  .checkout-form-section {
-    padding: map.get($spacing, "20");
-    border-radius: 14px;
-
-    .form-title {
-      font-size: 1rem;
-      margin-bottom: map.get($spacing, "16");
-    }
-
-    .form-grid {
-      grid-template-columns: 1fr;
-      gap: 16px;
-
-      .full-width { grid-column: span 1; }
-
-      mat-form-field {
-        margin-bottom: 4px;
-      }
-    }
-  }
-
-  .checkout-header {
-    margin-bottom: 20px;
-    gap: 10px;
-
-    h1 { font-size: map.get($font-sizes, "xl"); }
-    .checkout-subtitle { font-size: 0.8rem; }
-  }
-
-  .checkout-item-card {
-    padding: map.get($spacing, "12");
-    gap: map.get($spacing, "10");
-    border-radius: 12px;
-
-    .item-image {
-      width: 40px;
-      height: 40px;
-      border-radius: 10px;
-
-      mat-icon { font-size: 18px; width: 18px; height: 18px; }
-    }
-
-    .item-info .item-name { font-size: 0.82rem; }
-    .item-unit-price { font-size: 0.7rem; }
-    .item-quantity-badge { font-size: 0.75rem; padding: 2px 8px; }
-    .item-subtotal { font-size: 0.85rem; min-width: 55px; }
-  }
-
-  .checkout-summary-card {
-    padding: map.get($spacing, "20");
-    border-radius: 14px;
-    gap: 12px;
-
-    .summary-title { font-size: 1rem; }
-    .total-amount { font-size: map.get($font-sizes, "xl") !important; }
-  }
-}
-
-@media (max-width: 480px) {
-  .checkout-container {
-    padding: 8px;
-  }
-
-  .checkout-page {
-    max-width: 100%;
-  }
-
-  .checkout-header {
-    margin-bottom: 14px;
-    gap: 8px;
-
-    h1 { font-size: 1.05rem; }
-    .checkout-subtitle { font-size: 0.7rem; display: none; }
-  }
-
-  .checkout-body {
-    gap: 14px;
-  }
-
-  .checkout-left {
-    gap: 14px;
-  }
-
-  .checkout-items-section {
-    gap: 8px;
-  }
-
-  .checkout-item-card {
-    padding: 8px 10px;
-    gap: 8px;
-    border-radius: 10px;
-
-    .item-image {
-      width: 32px;
-      height: 32px;
-      border-radius: 8px;
-
-      mat-icon { font-size: 16px; width: 16px; height: 16px; }
-    }
-
-    .item-info {
-      gap: 1px;
-      .item-name { font-size: 0.75rem; max-width: 140px; }
-      .item-unit-price { font-size: 0.65rem; }
-    }
-
-    .item-quantity-badge {
-      font-size: 0.7rem;
-      padding: 1px 6px;
-    }
-
-    .item-subtotal {
-      font-size: 0.78rem;
-      min-width: 45px;
-    }
-  }
-
-  .checkout-form-section {
-    padding: 14px;
-    border-radius: 10px;
-
-    .form-title {
-      font-size: 0.95rem;
-      margin-bottom: 12px;
-    }
-
-    .form-grid {
-      gap: 14px;
-
-      mat-form-field {
-        margin-bottom: 2px;
-      }
-    }
-  }
-
-  .checkout-summary-card {
-    padding: 14px;
-    border-radius: 10px;
-    gap: 10px;
-
-    .summary-title { font-size: 0.95rem; }
-    .summary-row { font-size: 0.8rem; }
-    .summary-total-row span:first-child { font-size: 0.9rem; }
-    .total-amount { font-size: 1.1rem !important; }
-  }
-
-  .btn-confirm-order {
-    height: 44px;
-    font-size: 0.85rem;
-    border-radius: 10px !important;
-    gap: 6px;
+  mat-icon {
+    font-size: 14px;
+    width: 14px; height: 14px;
   }
 }

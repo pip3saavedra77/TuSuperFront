@@ -1,9 +1,6 @@
-import {
-  Component,
-  inject,
-} from '@angular/core';
-import { Router } from '@angular/router';
-import { CommonModule } from '@angular/common';
+import { Component, inject } from '@angular/core';
+import { Router, RouterLink } from '@angular/router';
+import { CommonModule, CurrencyPipe } from '@angular/common';
 
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
@@ -13,18 +10,20 @@ import { CartStore } from '../../store/cart.store';
 import { CartItem } from '../../models/cart.model';
 
 @Component({
-  selector: 'app-cart-panel',
+  selector: 'app-cart-page',
   standalone: true,
   imports: [
     CommonModule,
+    CurrencyPipe,
+    RouterLink,
     MatButtonModule,
     MatIconModule,
     MatProgressSpinnerModule,
   ],
-  templateUrl: './cart-panel.component.html',
-  styleUrl: './cart-panel.component.scss',
+  templateUrl: './cart-page.component.html',
+  styleUrl: './cart-page.component.scss',
 })
-export class CartPanelComponent {
+export class CartPageComponent {
   readonly cartStore = inject(CartStore);
   private readonly router = inject(Router);
 
@@ -35,7 +34,10 @@ export class CartPanelComponent {
   }
 
   onDecrease(item: CartItem): void {
-    if (item.quantity <= 1) return;
+    if (item.quantity <= 1) {
+      this.cartStore.removeItem(item.product.id);
+      return;
+    }
     this.cartStore.updateQuantity(item.product.id, item.quantity - 1);
   }
 
@@ -48,10 +50,7 @@ export class CartPanelComponent {
   }
 
   onPlaceOrder(): void {
-    const items = this.cartStore.items();
-    if (items.length === 0) return;
-
-    this.cartStore.closeCart();
+    if (this.cartStore.isEmpty()) return;
     this.router.navigate(['/orders/checkout']);
   }
 

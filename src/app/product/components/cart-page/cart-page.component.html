@@ -1,0 +1,125 @@
+<div class="cart-page">
+  <!-- Header móvil estilo Stitch -->
+  <header class="cart-page__header">
+    <a routerLink="/product" class="cart-page__back" aria-label="Volver al catálogo">
+      <span class="material-symbols-outlined">arrow_back</span>
+    </a>
+    <h1 class="cart-page__title">Mi Carrito</h1>
+    <span class="cart-page__count">{{ cartStore.totalItems() }} {{ cartStore.totalItems() === 1 ? 'ítem' : 'ítems' }}</span>
+  </header>
+
+  @if (cartStore.isEmpty()) {
+    <div class="cart-empty">
+      <div class="cart-empty__icon">
+        <span class="material-symbols-outlined">shopping_basket</span>
+      </div>
+      <h2 class="cart-empty__title">Tu carrito está vacío</h2>
+      <p class="cart-empty__hint">Agrega productos del catálogo para comenzar tu pedido</p>
+      <a routerLink="/product" class="cart-empty__cta">Explorar catálogo</a>
+    </div>
+  } @else {
+    <div class="cart-page__content">
+      <!-- Items -->
+      <section class="cart-items" aria-label="Productos en el carrito">
+        @for (item of cartStore.items(); track item.product.id) {
+          <article class="cart-item">
+            <div class="cart-item__image">
+              @if (item.product.imageUrl) {
+                <img [src]="item.product.imageUrl" [alt]="item.product.name" loading="lazy" (error)="onImageError($event)" />
+              } @else {
+                <span class="material-symbols-outlined">inventory_2</span>
+              }
+            </div>
+
+            <div class="cart-item__details">
+              <h3 class="cart-item__name">{{ item.product.name }}</h3>
+              <p class="cart-item__meta">{{ item.product.category.name }}</p>
+              <p class="cart-item__price">
+                {{ item.product.price | currency:'COP':'symbol-narrow':'1.0-0' }}
+              </p>
+            </div>
+
+            <div class="cart-item__controls">
+              <button
+                type="button"
+                class="cart-item__control-btn"
+                (click)="onDecrease(item)"
+                [attr.aria-label]="'Disminuir cantidad de ' + item.product.name">
+                <span class="material-symbols-outlined">remove</span>
+              </button>
+              <span class="cart-item__quantity" [attr.aria-label]="item.quantity + ' unidades'">{{ item.quantity }}</span>
+              <button
+                type="button"
+                class="cart-item__control-btn"
+                (click)="onIncrease(item)"
+                [disabled]="item.quantity >= item.product.stock"
+                [attr.aria-label]="'Aumentar cantidad de ' + item.product.name">
+                <span class="material-symbols-outlined">add</span>
+              </button>
+            </div>
+
+            <div class="cart-item__total">
+              {{ item.product.price * item.quantity | currency:'COP':'symbol-narrow':'1.0-0' }}
+            </div>
+
+            <button
+              type="button"
+              class="cart-item__remove"
+              (click)="onRemove(item.product.id)"
+              [attr.aria-label]="'Eliminar ' + item.product.name + ' del carrito'">
+              <span class="material-symbols-outlined">delete_outline</span>
+            </button>
+          </article>
+        }
+      </section>
+
+      <!-- Summary -->
+      <aside class="cart-summary" aria-label="Resumen de compra">
+        <h2 class="cart-summary__title">Resumen</h2>
+
+        <div class="cart-summary__row">
+          <span>Subtotal</span>
+          <span>{{ cartStore.totalAmount() | currency:'COP':'symbol-narrow':'1.0-0' }}</span>
+        </div>
+        <div class="cart-summary__row">
+          <span>Envío</span>
+          <span class="cart-summary__free">GRATIS</span>
+        </div>
+        <div class="cart-summary__row cart-summary__row--total">
+          <span>Total</span>
+          <span>{{ cartStore.totalAmount() | currency:'COP':'symbol-narrow':'1.0-0' }}</span>
+        </div>
+
+        @if (cartStore.error()) {
+          <div class="cart-summary__error" role="alert">
+            <span class="material-symbols-outlined">error_outline</span>
+            <span>{{ cartStore.error() }}</span>
+          </div>
+        }
+
+        <div class="cart-summary__actions">
+          <button
+            type="button"
+            class="cart-summary__checkout"
+            (click)="onPlaceOrder()"
+            [disabled]="cartStore.loading()">
+            @if (cartStore.loading()) {
+              <mat-spinner diameter="20"></mat-spinner>
+            } @else {
+              <span>Confirmar pedido</span>
+              <span class="material-symbols-outlined">arrow_forward</span>
+            }
+          </button>
+
+          <button
+            type="button"
+            class="cart-summary__clear"
+            (click)="onClearCart()"
+            [disabled]="cartStore.loading()">
+            Vaciar carrito
+          </button>
+        </div>
+      </aside>
+    </div>
+  }
+</div>

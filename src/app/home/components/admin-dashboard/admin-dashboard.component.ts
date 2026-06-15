@@ -10,12 +10,8 @@ import { MatButtonModule } from '@angular/material/button';
 import { Chart, ChartData, ChartType, ChartOptions, BarController, DoughnutController, ArcElement, BarElement, CategoryScale, LinearScale, Tooltip, Legend } from 'chart.js';
 import { BaseChartDirective } from 'ng2-charts';
 import { AuthService } from '../../../core/services/auth';
-import { OrdersService } from '../../../orders/services/orders.service';
-import { ProductService } from '../../../product/services/product.service';
 import { UsersService } from '../../../users/services/users.service';
 import { DashboardService } from '../../../core/services/dashboard.service';
-import { Order, ORDER_STATUS_LABELS, OrderStatus } from '../../../core/models/order.model';
-import { Product } from '../../../core/models/product.model';
 
 const MODULE_ICONS: Record<string, string> = {
   users: 'people', modules: 'widgets', product: 'inventory_2',
@@ -33,8 +29,6 @@ const MODULE_ICONS: Record<string, string> = {
 })
 export class AdminDashboardComponent implements OnInit {
   private readonly authService = inject(AuthService);
-  private readonly ordersService = inject(OrdersService);
-  private readonly productService = inject(ProductService);
   private readonly usersService = inject(UsersService);
   private readonly dashboardService = inject(DashboardService);
   private readonly destroyRef = inject(DestroyRef);
@@ -88,4 +82,15 @@ export class AdminDashboardComponent implements OnInit {
 
   getIcon(moduleName: string): string { return MODULE_ICONS[moduleName.toLowerCase()] ?? 'extension'; }
   filterValidModules(modules: Set<string>): string[] { const valid = new Set(['users','product','category','provider','orders']); return [...modules].filter((m) => valid.has(m)); }
+
+  /**
+   * Ruta de gestión para cada módulo. Separa el catálogo de compra (/product)
+   * del panel de gestión (/admin/products).
+   */
+  getModuleRoute(moduleName: string): string {
+    if (moduleName.toLowerCase() === 'product') {
+      return '/admin/products';
+    }
+    return '/' + moduleName.toLowerCase();
+  }
 }

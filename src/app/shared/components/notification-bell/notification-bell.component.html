@@ -15,29 +15,29 @@
   <mat-icon>{{ unreadCount() > 0 ? 'notifications_active' : 'notifications_none' }}</mat-icon>
 </button>
 
-<!-- BACKDROP para cerrar al click fuera -->
-<div *ngIf="isOpen"
-     class="notif-backdrop"
-     role="presentation"
-     (click)="closePanel()"
-     (keydown.escape)="closePanel()"></div>
-
-<!-- PANEL CUSTOM con cdkConnectedOverlay -->
+<!-- PANEL -->
 <ng-template
   cdkConnectedOverlay
   [cdkConnectedOverlayOrigin]="triggerBtn"
   [cdkConnectedOverlayOpen]="isOpen"
   [cdkConnectedOverlayPositions]="overlayPositions"
-  [cdkConnectedOverlayHasBackdrop]="false"
+  [cdkConnectedOverlayHasBackdrop]="true"
+  [cdkConnectedOverlayBackdropClass]="'notif-backdrop'"
   [cdkConnectedOverlayPanelClass]="'notif-overlay-pane'"
-  (overlayOutsideClick)="closePanel()">
+  (overlayOutsideClick)="closePanel()"
+  (backdropClick)="closePanel()">
 
-  <div class="notif-panel"
+  <div class="notif-panel notif-panel--v2"
        role="dialog"
        aria-label="Notificaciones"
        aria-modal="true"
        (click)="$event.stopPropagation()"
        (keydown)="$event.stopPropagation()">
+
+    <!-- HANDLE (mobile only) -->
+    <div class="notif-panel__handle" (click)="closePanel()">
+      <span></span>
+    </div>
 
     <!-- HEADER -->
     <div class="notification-header">
@@ -56,6 +56,9 @@
         </button>
         <button mat-icon-button class="clear-all-btn" (click)="clearAll()" matTooltip="Limpiar todas" *ngIf="notifications().length > 0">
           <mat-icon>delete_sweep</mat-icon>
+        </button>
+        <button mat-icon-button class="close-btn" (click)="closePanel()" aria-label="Cerrar notificaciones">
+          <mat-icon>close</mat-icon>
         </button>
       </div>
     </div>
@@ -101,6 +104,5 @@
     <div class="notification-footer" *ngIf="notifications().length > 0">
       <span class="footer-text">{{ notifications().length }} notificacion(es) en total</span>
     </div>
-
   </div>
 </ng-template>

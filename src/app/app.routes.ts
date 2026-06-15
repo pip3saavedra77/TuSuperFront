@@ -37,6 +37,11 @@ export const routes: Routes = [
         path: 'product',
         loadChildren: () =>
           import('./product/product.routes').then(m => m.PRODUCT_ROUTES),
+      },
+      {
+        path: 'admin/products',
+        loadChildren: () =>
+          import('./product/product-admin.routes').then(m => m.PRODUCT_ADMIN_ROUTES),
         canActivate: [roleGuard],
         data: { module: 'product' },
       },
@@ -55,8 +60,6 @@ export const routes: Routes = [
       {
         path: 'orders',
         loadChildren: () => import('./orders/orders.routes').then(m => m.ORDERS_ROUTES),
-        canActivate: [roleGuard],
-        data: { module: 'orders' },
       },
       { path: '', redirectTo: 'home', pathMatch: 'full' },
     ],

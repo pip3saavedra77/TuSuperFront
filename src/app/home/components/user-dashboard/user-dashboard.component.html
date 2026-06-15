@@ -1,154 +1,192 @@
-<main class="user-dashboard">
-  <app-user-header [user]="currentUser()" [unreadCount]="unreadCount()" (searchClicked)="onCartClick()" (cartClicked)="onCartClick()" />
+<main class="ts-dashboard">
+  <!-- Ambient background blobs -->
+  <div class="ts-dashboard__bg" aria-hidden="true">
+    <div class="ts-dashboard__blob ts-dashboard__blob--top"></div>
+    <div class="ts-dashboard__blob ts-dashboard__blob--mid"></div>
+  </div>
 
-  <div class="user-dashboard__content">
+  <!-- Glass header -->
+  <app-page-header />
+
+  <!-- Main scrollable content -->
+  <div class="ts-dashboard__content">
     @if (loading()) {
-      <div class="skeleton-section">
-        <app-skeleton variant="text" style="width:60%"></app-skeleton>
-        <app-skeleton variant="text" style="width:40%"></app-skeleton>
-        <app-skeleton variant="stat"></app-skeleton>
-        <app-skeleton-grid layout="row" [count]="5" variant="circle"></app-skeleton-grid>
-        <app-skeleton-grid layout="products" [count]="2" variant="card"></app-skeleton-grid>
+      <div class="ts-skeleton">
+        <div class="ts-skeleton__title"></div>
+        <div class="ts-skeleton__subtitle"></div>
+        <div class="ts-skeleton__banner"></div>
+        <div class="ts-skeleton__categories">
+          <div class="ts-skeleton__circle"></div>
+          <div class="ts-skeleton__circle"></div>
+          <div class="ts-skeleton__circle"></div>
+          <div class="ts-skeleton__circle"></div>
+        </div>
+        <div class="ts-skeleton__products">
+          <div class="ts-skeleton__card"></div>
+          <div class="ts-skeleton__card"></div>
+        </div>
       </div>
     } @else {
-      <section aria-label="Bienvenida" class="user-dashboard__welcome">
-        <p class="user-dashboard__greeting">Hola, {{ currentUser()?.firstName }} 👋</p>
-        <h2 class="user-dashboard__question">¿Qué necesitas hoy?</h2>
+      <!-- Welcome -->
+      <section class="ts-welcome" aria-label="Bienvenida">
+        <p class="ts-welcome__greeting">Hola, {{ currentUser()?.firstName }} 👋</p>
+        <h1 class="ts-welcome__question">¿Qué necesitas hoy?</h1>
       </section>
 
-      <app-promo-banner (action)="navigatePromo()" />
+      <!-- Promo banner -->
+      <section class="ts-promo" (click)="navigatePromo()" tabindex="0" (keydown.enter)="navigatePromo()" aria-label="Promoción de frutas frescas">
+        <div class="ts-promo__content">
+          <span class="ts-promo__tag">Oferta especial</span>
+          <h2 class="ts-promo__title">Frutas frescas</h2>
+          <p class="ts-promo__text">20% de descuento en tu primera compra</p>
+          <button class="ts-promo__cta">Ver ofertas</button>
+        </div>
+        <div class="ts-promo__glow" aria-hidden="true"></div>
+      </section>
 
-      <app-category-strip [categories]="categories()" (categorySelect)="navigateToCategory($event)" />
-
-      @defer (on viewport) {
-        @let products = featuredProducts();
-        <section aria-label="Productos populares" class="user-dashboard__products">
-          <div class="user-dashboard__section-header">
-            <h3 class="user-dashboard__section-title">Populares</h3>
-          </div>
-          <div class="product-grid">
-            @for (product of products; track product.id) {
-              <article class="product-card" (click)="onAddToCart(product)" (keydown.enter)="onAddToCart(product)" tabindex="0" [attr.aria-label]="'Agregar ' + product.name + ' al carrito'">
-                <div class="product-card__image">
-                  @if (product.imageUrl) {
-                    <img [src]="product.imageUrl" [alt]="product.name" loading="lazy" />
-                  } @else {
-                    <div class="product-card__placeholder">
-                      <span class="material-symbols-outlined">inventory_2</span>
-                    </div>
-                  }
-                  <button class="product-card__fav" (click)="$event.stopPropagation()" aria-label="Agregar a favoritos">
-                    <span class="material-symbols-outlined">favorite</span>
-                  </button>
-                </div>
-                <div class="product-card__info">
-                  <h4 class="product-card__name">{{ product.name }}</h4>
-                  <p class="product-card__unit">{{ product.category.name }}</p>
-                  <div class="product-card__footer">
-                    <span class="product-card__price">{{ product.price | currency:'COP':'symbol-narrow':'1.0-0' }}</span>
-                    <button class="product-card__add" aria-label="Agregar al carrito" (click)="$event.stopPropagation(); onAddToCart(product)">
-                      <span class="material-symbols-outlined">add</span>
-                    </button>
-                  </div>
-                </div>
-              </article>
-            } @empty {
-              <p class="product-grid__empty">No hay productos disponibles.</p>
-            }
-          </div>
-        </section>
-      } @placeholder (minimum 400ms) {
-        <app-skeleton-grid layout="products" [count]="2" variant="card" />
-      }
-
-      @defer (on viewport) {
-        <section aria-label="Actividad" class="user-dashboard__activity">
-          <div class="stats-grid">
-            <div class="stats-card stats-card--main">
-              <div class="stats-card__icon">
-                <span class="material-symbols-outlined">shopping_bag</span>
+      <!-- Categories -->
+      <section class="ts-section ts-section--main" aria-label="Categorías">
+        <div class="ts-section__header">
+          <h2 class="ts-section__title">Categorías</h2>
+          <button class="ts-section__link" routerLink="/product">Ver todas</button>
+        </div>
+        <div class="ts-categories">
+          @for (category of categories(); track category.id) {
+            <button class="ts-category" (click)="navigateToCategory(category.id)" [attr.aria-label]="'Ver ' + category.name">
+              <div class="ts-category__icon">
+                <span class="material-symbols-outlined">{{ categoryIcon(category.name) }}</span>
               </div>
-              <h4 class="stats-card__value">{{ monthlyOrdersCount() }}</h4>
-              <p class="stats-card__label">Pedidos este mes</p>
-              <div class="stats-card__progress">
-                <div class="stats-card__bar" [style.width.%]="monthlyGoalPercent()"></div>
-              </div>
-              <p class="stats-card__goal">{{ monthlyGoalPercent() }}% del objetivo mensual</p>
-            </div>
+              <span class="ts-category__name">{{ category.name }}</span>
+            </button>
+          } @empty {
+            <p class="ts-empty">No hay categorías disponibles.</p>
+          }
+        </div>
+      </section>
 
-            <div class="stats-card stats-card--wide">
-              <div class="stats-card__header">
-                <h3 class="stats-card__title">Ultimas Compras</h3>
-                <button class="stats-card__more" aria-label="Ver todos los pedidos" routerLink="/orders/my-orders">
-                  <span class="material-symbols-outlined">more_horiz</span>
-                </button>
-              </div>
-              <div class="orders-list">
-                @for (order of recentOrders(); track order.id) {
-                  <div class="order-row">
-                    <div class="order-row__icon">
-                      <span class="material-symbols-outlined">{{ order.status === 'DELIVERED' ? 'receipt' : 'local_shipping' }}</span>
-                    </div>
-                    <div class="order-row__info">
-                      <p class="order-row__name">Pedido #{{ order.id }}</p>
-                      <p class="order-row__date">{{ order.createdAt | date:'dd/MM/yy' }}</p>
-                    </div>
-                    <div class="order-row__right">
-                      <p class="order-row__amount">{{ order.totalAmount | currency:'COP':'symbol-narrow':'1.0-0' }}</p>
-                      <span class="order-row__badge" [class.order-row__badge--done]="order.status === 'DELIVERED'">Completado</span>
-                    </div>
-                  </div>
-                } @empty {
-                  <p class="orders-list__empty">No tienes pedidos aun.</p>
+      <!-- Popular products carousel -->
+      <section class="ts-section ts-section--main" aria-label="Productos populares">
+        <div class="ts-section__header">
+          <h2 class="ts-section__title">Populares</h2>
+          <button class="ts-section__link" routerLink="/product">Ver todo</button>
+        </div>
+        <div class="ts-products-carousel" tabindex="0" aria-roledescription="carrusel">
+          @for (product of featuredProducts(); track product.id) {
+            <article class="ts-product-card" [class.ts-product-card--added]="isJustAdded(product)" (click)="onAddToCart(product)" tabindex="-1" [attr.aria-label]="'Agregar ' + product.name + ' al carrito'">
+              <div class="ts-product-card__image">
+                @if (product.imageUrl) {
+                  <img [src]="product.imageUrl" [alt]="product.name" loading="lazy" />
+                } @else {
+                  <span class="material-symbols-outlined ts-product-card__placeholder">inventory_2</span>
+                }
+                @if (isJustAdded(product)) {
+                  <span class="ts-product-card__added-badge">
+                    <span class="material-symbols-outlined">check</span>
+                    Agregado
+                  </span>
                 }
               </div>
-            </div>
-          </div>
-        </section>
-      } @placeholder (minimum 400ms) {
-        <div class="stats-grid">
-          <app-skeleton variant="stat" />
-          <app-skeleton variant="stat" />
+              <div class="ts-product-card__info">
+                <h3 class="ts-product-card__name">{{ product.name }}</h3>
+                <p class="ts-product-card__unit">{{ product.category.name }}</p>
+                <div class="ts-product-card__footer">
+                  <span class="ts-product-card__price">{{ product.price | currency:'COP':'symbol-narrow':'1.0-0' }}</span>
+                  <button class="ts-product-card__add" [class.ts-product-card__add--checked]="isJustAdded(product)" (click)="$event.stopPropagation(); onAddToCart(product)" aria-label="Agregar al carrito">
+                    <span class="material-symbols-outlined">{{ isJustAdded(product) ? 'check' : 'add' }}</span>
+                  </button>
+                </div>
+              </div>
+            </article>
+          } @empty {
+            <p class="ts-empty ts-empty--wide">No hay productos disponibles.</p>
+          }
         </div>
-      }
+      </section>
 
-      @defer (on viewport) {
-        @let pct = orderStatusPct();
-        <section aria-label="Resumen" class="user-dashboard__summary">
-          <h3 class="user-dashboard__section-title">Resumen</h3>
-          <div class="summary-grid">
-            <div class="summary-card">
-              <p class="summary-card__label">Pedidos Pendientes</p>
-              <h4 class="summary-card__value">{{ pendingOrdersUserCount() }}</h4>
-              <div class="summary-card__icon">
-                <span class="material-symbols-outlined">pending_actions</span>
-              </div>
+      <!-- Activity grid -->
+      <section class="ts-section ts-section--side" aria-label="Actividad">
+        <div class="ts-activity">
+          <!-- Orders this month -->
+          <div class="ts-stat-card">
+            <div class="ts-stat-card__icon ts-stat-card__icon--primary">
+              <span class="material-symbols-outlined">shopping_bag</span>
             </div>
-            <div class="summary-card">
-              <p class="summary-card__label">Total Gastado</p>
-              <h4 class="summary-card__value summary-card__value--primary">{{ totalSpent() | currency:'COP':'symbol-narrow':'1.0-0' }}</h4>
-              <div class="summary-card__icon summary-card__icon--primary">
-                <span class="material-symbols-outlined">payments</span>
-              </div>
+            <p class="ts-stat-card__value">{{ monthlyOrdersCount() }}</p>
+            <p class="ts-stat-card__label">Pedidos este mes</p>
+            <div class="ts-progress">
+              <div class="ts-progress__bar" [style.width.%]="monthlyGoalPercent()"></div>
             </div>
-            <div class="summary-card summary-card--chart">
-              <p class="summary-card__label">Estado de los pedidos</p>
-              <div class="pie-chart">
-                <div class="pie-chart__donut" [style.background]="'conic-gradient(var(--tusuper-primary) 0% ' + pct.delivered + '%, var(--tusuper-secondary-container) ' + pct.delivered + '% ' + (pct.delivered + pct.transit) + '%, var(--tusuper-error) ' + (pct.delivered + pct.transit) + '% 100%)'">
-                  <div class="pie-chart__hole"></div>
+            <p class="ts-stat-card__meta">{{ monthlyGoalPercent() }}% del objetivo</p>
+          </div>
+
+          <!-- Latest purchases -->
+          <div class="ts-stat-card ts-stat-card--wide">
+            <div class="ts-stat-card__header">
+              <p class="ts-stat-card__label ts-stat-card__label--title">Últimas compras</p>
+              <button class="ts-stat-card__more" routerLink="/orders/my-orders" aria-label="Ver todos los pedidos">
+                <span class="material-symbols-outlined">more_horiz</span>
+              </button>
+            </div>
+            <div class="ts-orders-mini">
+              @for (order of recentOrders(); track order.id) {
+                <div class="ts-order-mini">
+                  <div class="ts-order-mini__icon">
+                    <span class="material-symbols-outlined">{{ order.status === 'DELIVERED' ? 'receipt' : 'local_shipping' }}</span>
+                  </div>
+                  <div class="ts-order-mini__info">
+                    <p class="ts-order-mini__name">Pedido #{{ order.id }}</p>
+                    <p class="ts-order-mini__date">{{ order.createdAt | date:'dd/MM/yy' }}</p>
+                  </div>
+                  <span class="ts-order-mini__amount">{{ order.totalAmount | currency:'COP':'symbol-narrow':'1.0-0' }}</span>
                 </div>
-                <div class="pie-chart__legend">
-                  <div class="pie-legend__item"><span class="pie-legend__dot pie-legend__dot--delivered"></span>Entregados <span class="pie-legend__pct">{{ pct.delivered }}%</span></div>
-                  <div class="pie-legend__item"><span class="pie-legend__dot pie-legend__dot--transit"></span>En camino <span class="pie-legend__pct">{{ pct.transit }}%</span></div>
-                  <div class="pie-legend__item"><span class="pie-legend__dot pie-legend__dot--cancelled"></span>Cancelados <span class="pie-legend__pct">{{ pct.cancelled }}%</span></div>
+              } @empty {
+                <p class="ts-empty">No tienes pedidos aún.</p>
+              }
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- Summary -->
+      <section class="ts-section ts-section--side" aria-label="Resumen">
+        <h2 class="ts-section__title">Resumen</h2>
+        <div class="ts-summary">
+          <div class="ts-summary__card">
+            <p class="ts-summary__label">Pendientes</p>
+            <p class="ts-summary__value">{{ pendingOrdersUserCount() }}</p>
+          </div>
+          <div class="ts-summary__card">
+            <p class="ts-summary__label">Total gastado</p>
+            <p class="ts-summary__value ts-summary__value--primary">{{ totalSpent() | currency:'COP':'symbol-narrow':'1.0-0' }}</p>
+          </div>
+          @let pct = orderStatusPct();
+          <div class="ts-summary__card ts-summary__card--chart">
+            <p class="ts-summary__label">Estado de los pedidos</p>
+            <div class="ts-donut">
+              <div class="ts-donut__ring" [style.background]="'conic-gradient(var(--ts-primary) 0% ' + pct.delivered + '%, var(--ts-secondary-container) ' + pct.delivered + '% ' + (pct.delivered + pct.transit) + '%, var(--ts-error) ' + (pct.delivered + pct.transit) + '% 100%)'">
+                <div class="ts-donut__hole"></div>
+              </div>
+              <div class="ts-donut__legend">
+                <div class="ts-legend__item">
+                  <span class="ts-legend__dot ts-legend__dot--delivered"></span>
+                  <span class="ts-legend__label">Entregados</span>
+                  <span class="ts-legend__value">{{ pct.delivered }}%</span>
+                </div>
+                <div class="ts-legend__item">
+                  <span class="ts-legend__dot ts-legend__dot--transit"></span>
+                  <span class="ts-legend__label">En camino</span>
+                  <span class="ts-legend__value">{{ pct.transit }}%</span>
+                </div>
+                <div class="ts-legend__item">
+                  <span class="ts-legend__dot ts-legend__dot--cancelled"></span>
+                  <span class="ts-legend__label">Cancelados</span>
+                  <span class="ts-legend__value">{{ pct.cancelled }}%</span>
                 </div>
               </div>
             </div>
           </div>
-        </section>
-      } @placeholder (minimum 400ms) {
-        <app-skeleton-grid layout="summary" [count]="3" variant="card" />
-      }
+        </div>
+      </section>
     }
   </div>
 </main>

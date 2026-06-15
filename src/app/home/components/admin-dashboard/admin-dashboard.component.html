@@ -111,7 +111,7 @@
       <span class="quick-actions-bar__label">Acciones Rápidas:</span>
       <div class="quick-actions-bar__buttons">
         @for (moduleName of filterValidModules(userModules()); track moduleName) {
-          <a mat-stroked-button [routerLink]="'/' + moduleName.toLowerCase()" class="btn-quick-action">
+          <a mat-stroked-button [routerLink]="getModuleRoute(moduleName)" class="btn-quick-action">
             <mat-icon>{{ getIcon(moduleName) }}</mat-icon>
             {{ moduleName | titlecase }}
           </a>

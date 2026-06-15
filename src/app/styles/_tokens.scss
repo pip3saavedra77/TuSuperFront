@@ -1,13 +1,286 @@
 // Design Tokens - TuSuper
 // =============================================================================
+// Fuente de verdad: Stitch "Vibrant Minimalist"
+// customColor: #00c853
+// colorVariant: VIBRANT
+// roundness: ROUND_TWELVE / ROUND_FULL
+// fonts: Plus Jakarta Sans (headlines), Inter (body), JetBrains Mono (labels)
 
-// 1. Paletas de Perfiles
+// -----------------------------------------------------------------------------
+// 1. Vibrant Minimalist - Color System
+// -----------------------------------------------------------------------------
+
+// Primary greens
+$stitch-primary: #00c853;
+$stitch-primary-dark: #006e2a;
+$stitch-primary-container: #00c853;
+$stitch-primary-fixed: #69ff87;
+$stitch-primary-fixed-dim: #69ff87;
+$stitch-inverse-primary: #b9f6ca;
+$stitch-success-bright: #00c853;
+
+// Secondary / neutrals
+$stitch-secondary: #5f5e5e;
+$stitch-secondary-container: #e5e2e1;
+$stitch-secondary-fixed: #e5e2e1;
+$stitch-secondary-fixed-dim: #c9c6c5;
+
+// Tertiary (accent)
+$stitch-tertiary: #006e2a;
+$stitch-tertiary-container: #b9f6ca;
+$stitch-tertiary-fixed: #b9f6ca;
+$stitch-tertiary-fixed-dim: #69ff87;
+
+// Surfaces
+$stitch-background: #fbf9f8;
+$stitch-background-alt: #ffffff;
+$stitch-surface: rgba(255, 255, 255, 0.4);
+$stitch-surface-dim: #e5e2e1;
+$stitch-surface-bright: #ffffff;
+$stitch-surface-container-lowest: #ffffff;
+$stitch-surface-container-low: #fbf9f8;
+$stitch-surface-container: #f3f0ef;
+$stitch-surface-container-high: #ebe8e7;
+$stitch-surface-container-highest: #e5e2e1;
+$stitch-surface-variant: #e5e2e1;
+$stitch-surface-tint: rgba(0, 200, 83, 0.08);
+
+// Text / on-colors
+$stitch-on-surface: #1b1c1c;
+$stitch-on-surface-variant: #3c4a3c;
+$stitch-on-background: #1b1c1c;
+$stitch-on-primary: #ffffff;
+$stitch-on-primary-container: #002203;
+$stitch-on-secondary: #ffffff;
+$stitch-on-secondary-container: #1b1c1c;
+$stitch-on-tertiary: #ffffff;
+$stitch-on-tertiary-container: #002203;
+$stitch-inverse-surface: #2f312f;
+$stitch-inverse-on-surface: #fbf9f8;
+
+// Outlines
+$stitch-outline: #8b938a;
+$stitch-outline-variant: #e5e2e1;
+
+// Error
+$stitch-error: #ba1a1a;
+$stitch-on-error: #ffffff;
+$stitch-error-container: #ffdad6;
+$stitch-on-error-container: #93000a;
+
+// -----------------------------------------------------------------------------
+// 2. Vibrant Minimalist - Typography
+// -----------------------------------------------------------------------------
+$stitch-font-headline: 'Plus Jakarta Sans', sans-serif;
+$stitch-font-body: 'Inter', sans-serif;
+$stitch-font-label: 'JetBrains Mono', monospace;
+
+$stitch-typography: (
+  "display-lg": (
+    font-family: $stitch-font-headline,
+    font-size: 36px,
+    font-weight: 700,
+    line-height: 44px,
+    letter-spacing: -0.02em,
+  ),
+  "headline-lg": (
+    font-family: $stitch-font-headline,
+    font-size: 28px,
+    font-weight: 700,
+    line-height: 36px,
+  ),
+  "headline-md": (
+    font-family: $stitch-font-headline,
+    font-size: 22px,
+    font-weight: 700,
+    line-height: 30px,
+  ),
+  "body-lg": (
+    font-family: $stitch-font-body,
+    font-size: 16px,
+    font-weight: 400,
+    line-height: 24px,
+  ),
+  "body-md": (
+    font-family: $stitch-font-body,
+    font-size: 14px,
+    font-weight: 400,
+    line-height: 20px,
+  ),
+  "label-md": (
+    font-family: $stitch-font-label,
+    font-size: 12px,
+    font-weight: 500,
+    line-height: 16px,
+    letter-spacing: 0.01em,
+  ),
+  "label-sm": (
+    font-family: $stitch-font-label,
+    font-size: 10px,
+    font-weight: 600,
+    line-height: 14px,
+  ),
+);
+
+// -----------------------------------------------------------------------------
+// 3. Vibrant Minimalist - Spacing
+// -----------------------------------------------------------------------------
+$stitch-spacing-base: 4px;
+$stitch-spacing-sm: 8px;
+$stitch-spacing-md: 16px;
+$stitch-spacing-lg: 24px;
+$stitch-gutter: 12px;
+$stitch-container-padding: 16px;
+
+// -----------------------------------------------------------------------------
+// 4. Vibrant Minimalist - Shapes
+// -----------------------------------------------------------------------------
+$stitch-radius-sm: 0.25rem;   // 4px
+$stitch-radius-base: 0.5rem;  // 8px
+$stitch-radius-md: 0.75rem;   // 12px
+$stitch-radius-lg: 1rem;      // 16px
+$stitch-radius-xl: 1.5rem;    // 24px
+$stitch-radius-full: 9999px;  // pill
+
+// -----------------------------------------------------------------------------
+// 5. Vibrant Minimalist - Elevation
+// -----------------------------------------------------------------------------
+$stitch-shadow-level-1: 0px 4px 12px rgba(0, 0, 0, 0.05);
+$stitch-shadow-level-2: 0px 8px 24px rgba(0, 0, 0, 0.12);
+$stitch-backdrop-blur: blur(24px);
+
+// -----------------------------------------------------------------------------
+// 6. CSS Custom Properties (runtime tokens)
+// -----------------------------------------------------------------------------
+:root {
+  // Primary
+  --ts-primary: #{$stitch-primary};
+  --ts-primary-dark: #{$stitch-primary-dark};
+  --ts-primary-container: #{$stitch-primary-container};
+  --ts-primary-fixed: #{$stitch-primary-fixed};
+  --ts-primary-fixed-dim: #{$stitch-primary-fixed-dim};
+  --ts-inverse-primary: #{$stitch-inverse-primary};
+  --ts-success-bright: #{$stitch-success-bright};
+
+  // Secondary
+  --ts-secondary: #{$stitch-secondary};
+  --ts-secondary-container: #{$stitch-secondary-container};
+  --ts-secondary-fixed: #{$stitch-secondary-fixed};
+  --ts-secondary-fixed-dim: #{$stitch-secondary-fixed-dim};
+
+  // Tertiary
+  --ts-tertiary: #{$stitch-tertiary};
+  --ts-tertiary-container: #{$stitch-tertiary-container};
+  --ts-tertiary-fixed: #{$stitch-tertiary-fixed};
+  --ts-tertiary-fixed-dim: #{$stitch-tertiary-fixed-dim};
+
+  // Surfaces
+  --ts-background: #{$stitch-background};
+  --ts-background-alt: #{$stitch-background-alt};
+  --ts-surface: #{$stitch-surface};
+  --ts-surface-dim: #{$stitch-surface-dim};
+  --ts-surface-bright: #{$stitch-surface-bright};
+  --ts-surface-container-lowest: #{$stitch-surface-container-lowest};
+  --ts-surface-container-low: #{$stitch-surface-container-low};
+  --ts-surface-container: #{$stitch-surface-container};
+  --ts-surface-container-high: #{$stitch-surface-container-high};
+  --ts-surface-container-highest: #{$stitch-surface-container-highest};
+  --ts-surface-variant: #{$stitch-surface-variant};
+  --ts-surface-tint: #{$stitch-surface-tint};
+
+  // Text
+  --ts-on-surface: #{$stitch-on-surface};
+  --ts-on-surface-variant: #{$stitch-on-surface-variant};
+  --ts-on-background: #{$stitch-on-background};
+  --ts-on-primary: #{$stitch-on-primary};
+  --ts-on-primary-container: #{$stitch-on-primary-container};
+  --ts-on-secondary: #{$stitch-on-secondary};
+  --ts-on-secondary-container: #{$stitch-on-secondary-container};
+  --ts-on-tertiary: #{$stitch-on-tertiary};
+  --ts-on-tertiary-container: #{$stitch-on-tertiary-container};
+  --ts-inverse-surface: #{$stitch-inverse-surface};
+  --ts-inverse-on-surface: #{$stitch-inverse-on-surface};
+
+  // Outlines
+  --ts-outline: #{$stitch-outline};
+  --ts-outline-variant: #{$stitch-outline-variant};
+
+  // Error
+  --ts-error: #{$stitch-error};
+  --ts-on-error: #{$stitch-on-error};
+  --ts-error-container: #{$stitch-error-container};
+  --ts-on-error-container: #{$stitch-on-error-container};
+
+  // Typography
+  --ts-font-headline: #{$stitch-font-headline};
+  --ts-font-body: #{$stitch-font-body};
+  --ts-font-label: #{$stitch-font-label};
+
+  // Spacing
+  --ts-spacing-base: #{$stitch-spacing-base};
+  --ts-spacing-sm: #{$stitch-spacing-sm};
+  --ts-spacing-md: #{$stitch-spacing-md};
+  --ts-spacing-lg: #{$stitch-spacing-lg};
+  --ts-gutter: #{$stitch-gutter};
+  --ts-container-padding: #{$stitch-container-padding};
+
+  // Shapes
+  --ts-radius-sm: #{$stitch-radius-sm};
+  --ts-radius-base: #{$stitch-radius-base};
+  --ts-radius-md: #{$stitch-radius-md};
+  --ts-radius-lg: #{$stitch-radius-lg};
+  --ts-radius-xl: #{$stitch-radius-xl};
+  --ts-radius-full: #{$stitch-radius-full};
+
+  // Elevation
+  --ts-shadow-level-1: #{$stitch-shadow-level-1};
+  --ts-shadow-level-2: #{$stitch-shadow-level-2};
+
+  // TuSuper extras (glass, layout)
+  --tusuper-bg: #fbf9f8;
+  --tusuper-surface: rgba(255, 255, 255, 0.4);
+  --tusuper-on-surface: #1b1c1c;
+  --tusuper-on-surface-variant: #3c4a3c;
+  --tusuper-primary: #00c853;
+  --tusuper-primary-dark: #006e2a;
+  --tusuper-primary-container: #00c853;
+  --tusuper-primary-fixed: #69ff87;
+  --tusuper-on-primary: #ffffff;
+  --tusuper-secondary: #5f5e5e;
+  --tusuper-secondary-container: #e5e2e1;
+  --tusuper-error: #ba1a1a;
+  --tusuper-glass-bg: rgba(255, 255, 255, 0.4);
+  --tusuper-glass-border: rgba(255, 255, 255, 0.7);
+  --tusuper-glass-blur: blur(24px);
+  --tusuper-glass-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.05);
+  --tusuper-shadow-nav: 0 15px 40px rgba(0, 0, 0, 0.1);
+  --tusuper-shadow-promo: 0 8px 32px rgba(0, 200, 83, 0.15);
+  --tusuper-shadow-card: 0 4px 12px rgba(0, 0, 0, 0.04);
+  --tusuper-radius-card: 28px;
+  --tusuper-radius-button: 9999px;
+  --tusuper-radius-icon: 24px;
+  --tusuper-radius-badge: 9999px;
+  --tusuper-radius-order-card: 20px;
+  --tusuper-header-height: 64px;
+  --tusuper-nav-offset: 32px;
+  --tusuper-section-gap: 48px;
+  --tusuper-content-max: 1440px;
+  --tusuper-content-padding: 16px;
+  --tusuper-font-headline: 'Plus Jakarta Sans', sans-serif;
+  --tusuper-font-body: 'Inter', sans-serif;
+  --tusuper-font-label: 'JetBrains Mono', monospace;
+}
+
+// -----------------------------------------------------------------------------
+// 7. Legacy tokens (DEPRECATED - kept for backwards compatibility)
+//     Prefer CSS vars / $stitch-* variables above for new code.
+// -----------------------------------------------------------------------------
 $profiles: (
   "buyer": (
-    "primary": #2ECC71,
-    "accent": #1ABC9C,
-    "shadow": rgba(46, 204, 113, 0.2),
-    "hover": #27AE60,
+    "primary": #00c853,
+    "accent": #69ff87,
+    "shadow": rgba(0, 200, 83, 0.2),
+    "hover": #00b248,
     "text": #FFFFFF
   ),
   "seller": (
@@ -26,7 +299,6 @@ $profiles: (
   )
 );
 
-// 2. Colores Neutros
 $neutral: (
   "bg-base": #0F0F1A,
   "surface": rgba(255, 255, 255, 0.05),
@@ -36,15 +308,14 @@ $neutral: (
   "text-low": rgba(255, 255, 255, 0.5)
 );
 
-// 3. Tipografía
-$font-family: 'Inter', sans-serif;
+$font-family: $stitch-font-body;
 $font-sizes: (
-  "xs": 0.75rem,    // 12px
-  "sm": 0.875rem,   // 14px
-  "md": 1rem,       // 16px
-  "lg": 1.125rem,   // 18px
-  "xl": 1.25rem,    // 20px
-  "2xl": 1.5rem     // 24px
+  "xs": 0.75rem,
+  "sm": 0.875rem,
+  "md": 1rem,
+  "lg": 1.125rem,
+  "xl": 1.25rem,
+  "2xl": 1.5rem
 );
 
 $font-weights: (
@@ -54,7 +325,6 @@ $font-weights: (
   "bold": 700
 );
 
-// 4. Espaciados
 $spacing: (
   "4": 4px,
   "8": 8px,
@@ -66,7 +336,6 @@ $spacing: (
   "64": 64px
 );
 
-// 5. Border Radius
 $radius: (
   "sm": 4px,
   "md": 8px,
@@ -75,14 +344,12 @@ $radius: (
   "full": 9999px
 );
 
-// 6. Transiciones
 $transitions: (
   "fast": 150ms ease,
   "normal": 250ms ease,
   "slow": 400ms ease
 );
 
-// 7. Z-Index Scale
 $z-index: (
   "base": 1,
   "dropdown": 1000,

@@ -2,18 +2,15 @@ import { Component, OnInit, inject, computed, signal, DestroyRef, ChangeDetectio
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { CurrencyPipe, DatePipe } from '@angular/common';
 import { catchError, forkJoin, of } from 'rxjs';
+import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
 import { AuthService } from '../../../core/services/auth';
 import { OrdersService } from '../../../orders/services/orders.service';
 import { ProductService } from '../../../product/services/product.service';
 import { CartStore } from '../../../product/store/cart.store';
-import { Router } from '@angular/router';
+import { Router, RouterLink } from '@angular/router';
 import { Order, OrderStatus } from '../../../core/models/order.model';
 import { Product, Category } from '../../../core/models/product.model';
-import { PromoBannerComponent } from './components/promo-banner/promo-banner.component';
-import { CategoryStripComponent } from './components/category-strip/category-strip.component';
-import { UserHeaderComponent } from './components/user-header/user-header.component';
-import { SkeletonComponent } from '../../../shared/components/skeleton/skeleton.component';
-import { SkeletonGridComponent } from '../../../shared/components/skeleton/skeleton-grid.component';
+import { PageHeader } from '../../../shared/components/page-header/page-header';
 
 interface OrderStatusPercentages { delivered: number; transit: number; cancelled: number; }
 
@@ -21,7 +18,7 @@ interface OrderStatusPercentages { delivered: number; transit: number; cancelled
   selector: 'app-user-dashboard',
   standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [CurrencyPipe, DatePipe, PromoBannerComponent, CategoryStripComponent, UserHeaderComponent, SkeletonComponent, SkeletonGridComponent],
+  imports: [CurrencyPipe, DatePipe, RouterLink, MatSnackBarModule, PageHeader],
   templateUrl: './user-dashboard.component.html',
   styleUrl: './user-dashboard.component.scss',
 })
@@ -35,8 +32,10 @@ export class UserDashboardComponent implements OnInit {
 
   readonly currentUser = this.auth.currentUser;
   readonly isUser = this.auth.isUser;
+  private readonly snackBar = inject(MatSnackBar);
 
   readonly featuredProducts = signal<Product[]>([]);
+  readonly justAddedIds = signal<Set<number>>(new Set());
   readonly categories = signal<Category[]>([]);
   readonly myOrders = signal<Order[]>([]);
   readonly loading = signal(true);
@@ -82,7 +81,56 @@ export class UserDashboardComponent implements OnInit {
   }
 
   navigateToCategory(id: number): void { this.router.navigate(['/product'], { queryParams: { category: id } }); }
-  onAddToCart(product: Product): void { this.cartStore.addItem(product); this.cartStore.openCart(); }
+
+  onAddToCart(product: Product): void {
+    this.cartStore.addItem(product);
+    this.cartStore.openCart();
+    this.snackBar.open(`${product.name} agregado al carrito`, 'Cerrar', {
+      duration: 2000,
+      panelClass: ['success-snackbar'],
+    });
+
+    // Feedback visual temporal en la tarjeta
+    this.justAddedIds.update(set => {
+      const next = new Set(set);
+      next.add(product.id);
+      return next;
+    });
+    setTimeout(() => {
+      this.justAddedIds.update(set => {
+        const next = new Set(set);
+        next.delete(product.id);
+        return next;
+      });
+    }, 1200);
+  }
+
+  isJustAdded(product: Product): boolean {
+    return this.justAddedIds().has(product.id);
+  }
+
   navigatePromo(): void { this.router.navigate(['/product'], { queryParams: { category: 'frutas' } }); }
   onCartClick(): void { this.router.navigateByUrl('/product').then(() => this.cartStore.openCart()); }
+  onSearchClick(): void { this.router.navigateByUrl('/product'); }
+
+  /**
+   * Mapea el nombre de una categoría a un icono de Material Symbols.
+   */
+  categoryIcon(name: string): string {
+    const map: Record<string, string> = {
+      frutas: 'nutrition',
+      verduras: 'eco',
+      lácteos: 'egg_alt',
+      lacteos: 'egg_alt',
+      panadería: 'bakery_dining',
+      panaderia: 'bakery_dining',
+      bebidas: 'local_cafe',
+      carnes: 'restaurant',
+      grano: 'grain',
+      limpieza: 'cleaning_services',
+      otros: 'category',
+    };
+    const key = name?.toLowerCase().trim() ?? '';
+    return map[key] ?? 'category';
+  }
 }

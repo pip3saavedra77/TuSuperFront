@@ -4,8 +4,8 @@
   "description": "Tu supermercado favorito a un toque",
   "start_url": "/home",
   "display": "standalone",
-  "background_color": "#f8f6f3",
-  "theme_color": "#22c55e",
+  "background_color": "#fbf9f8",
+  "theme_color": "#00c853",
   "orientation": "portrait-primary",
   "icons": [
     {
