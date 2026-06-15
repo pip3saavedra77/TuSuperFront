@@ -24,7 +24,7 @@ export function resetTokenCache(): void {
 
 function getApiUrl(): string {
   try {
-    const env = (window as any).__env;
+    const env = (globalThis as any).__env;
     return env?.apiUrl || 'https://tusuper-backend.onrender.com';
   } catch {
     return 'https://tusuper-backend.onrender.com';

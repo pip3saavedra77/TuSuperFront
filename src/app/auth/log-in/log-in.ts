@@ -62,7 +62,7 @@ export class LogIn implements OnInit {
     if (this.typingTimeout) {
       clearTimeout(this.typingTimeout);
     }
-    this.typingTimeout = window.setTimeout(() => {
+    this.typingTimeout = globalThis.setTimeout(() => {
       this.isTyping.set(false);
     }, 300);
   }
@@ -122,6 +122,6 @@ export class LogIn implements OnInit {
   }
 
   loginWithGoogle(): void {
-    window.location.href = `${environment.apiUrl}/auth/google`;
+    globalThis.location.href = `${environment.apiUrl}/auth/google`;
   }
 }

@@ -1,7 +1,7 @@
 import { Injectable, inject, signal, computed } from '@angular/core';
 import { Subject } from 'rxjs';
 import { io, Socket } from 'socket.io-client';
-import { Notification, NotificationType } from '../models/notification.model';
+import { Notification } from '../models/notification.model';
 import { environment } from '../../../environments/environment';
 import { SoundService } from './sound.service';
 
@@ -79,7 +79,7 @@ export class NotificationsService {
     this.socket.on('order-status-changed', (data: any) => {
       this.sound.playStatusChange();
       this.addNotification({
-        id: Math.random().toString(36).substr(2, 9),
+        id: Math.random().toString(36).substring(2, 11),
         title: 'Actualización de Pedido',
         message: `El pedido #${data.orderId} cambió a ${data.newStatus}`,
         type: 'order-status-changed',

@@ -1,6 +1,5 @@
 import { Component, inject, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { AbstractControl, ValidationErrors } from '@angular/forms';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { Router, RouterModule } from '@angular/router';
 import { passwordMatchValidator } from '../../shared/validators/password-match.validator';
@@ -50,7 +49,7 @@ export class SignIn {
     if (this.typingTimeout) {
       clearTimeout(this.typingTimeout);
     }
-    this.typingTimeout = window.setTimeout(() => {
+    this.typingTimeout = globalThis.setTimeout(() => {
       this.isTyping.set(false);
     }, 300);
   }

@@ -31,8 +31,8 @@ export class AnimatedCharacters implements OnDestroy {
   isLookingAtEachOther = signal(false);
   isGreenPeeking = signal(false);
 
-  private blinkTimeoutIds: number[] = [];
-  private peekTimeoutId: number | null = null;
+  private readonly blinkTimeoutIds: number[] = [];
+  private readonly peekTimeoutId: number | null = null;
 
   constructor() {
     this.startBlinking('green');
@@ -53,16 +53,16 @@ export class AnimatedCharacters implements OnDestroy {
   private startBlinking(character: 'green' | 'darkGreen'): void {
     const schedule = () => {
       const interval = Math.random() * 4000 + 3000;
-      const timeout = window.setTimeout(() => {
+      const timeout = globalThis.setTimeout(() => {
         if (character === 'green') {
           this.isGreenBlinking.set(true);
-          window.setTimeout(() => {
+          globalThis.setTimeout(() => {
             this.isGreenBlinking.set(false);
             schedule();
           }, 150);
         } else {
           this.isDarkGreenBlinking.set(true);
-          window.setTimeout(() => {
+          globalThis.setTimeout(() => {
             this.isDarkGreenBlinking.set(false);
             schedule();
           }, 150);
@@ -109,7 +109,7 @@ export class AnimatedCharacters implements OnDestroy {
 
     const deltaX = this.mouseX() - centerX;
     const deltaY = this.mouseY() - centerY;
-    const distance = Math.min(Math.sqrt(deltaX ** 2 + deltaY ** 2), maxDistance);
+    const distance = Math.min(Math.hypot(deltaX, deltaY), maxDistance);
 
     const angle = Math.atan2(deltaY, deltaX);
     return {
