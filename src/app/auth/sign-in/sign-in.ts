@@ -24,7 +24,6 @@ import { LoadingScreen } from '../../shared/components/loading-screen/loading-sc
     LoadingScreen
   ],
   templateUrl: './sign-in.html',
-  styleUrl: './sign-in.scss'
 })
 export class SignIn {
   private readonly fb = inject(FormBuilder);
