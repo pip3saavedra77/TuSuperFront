@@ -948,9 +948,11 @@
 
   &__title,
   &__subtitle,
+  &__subtitle-short,
   &__banner,
   &__circle,
-  &__card {
+  &__card,
+  &__order-mini {
     background: linear-gradient(90deg, #f0eded 25%, #f7f5f4 50%, #f0eded 75%);
     background-size: 200% 100%;
     border-radius: 12px;
@@ -958,6 +960,7 @@
 
   &__title { height: 18px; width: 55%; border-radius: 8px; }
   &__subtitle { height: 32px; width: 75%; border-radius: 8px; }
+  &__subtitle-short { height: 14px; width: 40%; border-radius: 8px; }
   &__banner { height: 190px; border-radius: 32px; }
 
   &__categories {
@@ -978,6 +981,36 @@
   }
 
   &__card { height: 230px; border-radius: 28px; }
+
+  &__section {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+  }
+
+  &__side {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+    margin-top: 8px;
+  }
+
+  &__orders-mini {
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+  }
+
+  &__order-mini {
+    height: 64px;
+    border-radius: 16px;
+  }
+
+  &__summary {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 14px;
+  }
 }
 
 @keyframes ts-skeleton-pulse {

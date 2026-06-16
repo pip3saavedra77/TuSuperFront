@@ -12,18 +12,49 @@
   <div class="ts-dashboard__content">
     @if (loading()) {
       <div class="ts-skeleton">
-        <div class="ts-skeleton__title"></div>
-        <div class="ts-skeleton__subtitle"></div>
+        <!-- Welcome section skeleton -->
+        <div class="ts-skeleton__section">
+          <div class="ts-skeleton__title"></div>
+          <div class="ts-skeleton__subtitle"></div>
+        </div>
+        <!-- Promo banner skeleton -->
         <div class="ts-skeleton__banner"></div>
+        <!-- Categories skeleton -->
+        <div class="ts-skeleton__section">
+          <div class="ts-skeleton__title"></div>
+          <div class="ts-skeleton__subtitle-short"></div>
+        </div>
         <div class="ts-skeleton__categories">
           <div class="ts-skeleton__circle"></div>
           <div class="ts-skeleton__circle"></div>
           <div class="ts-skeleton__circle"></div>
           <div class="ts-skeleton__circle"></div>
+          <div class="ts-skeleton__circle"></div>
+          <div class="ts-skeleton__circle"></div>
+        </div>
+        <!-- Products skeleton -->
+        <div class="ts-skeleton__section">
+          <div class="ts-skeleton__title"></div>
+          <div class="ts-skeleton__subtitle-short"></div>
         </div>
         <div class="ts-skeleton__products">
           <div class="ts-skeleton__card"></div>
           <div class="ts-skeleton__card"></div>
+          <div class="ts-skeleton__card"></div>
+          <div class="ts-skeleton__card"></div>
+        </div>
+        <!-- Side panel skeletons -->
+        <div class="ts-skeleton__side">
+          <div class="ts-skeleton__banner"></div>
+          <div class="ts-skeleton__orders-mini">
+            <div class="ts-skeleton__order-mini"></div>
+            <div class="ts-skeleton__order-mini"></div>
+          </div>
+          <div class="ts-skeleton__summary">
+            <div class="ts-skeleton__card"></div>
+            <div class="ts-skeleton__card"></div>
+            <div class="ts-skeleton__card"></div>
+          </div>
         </div>
       </div>
     } @else {

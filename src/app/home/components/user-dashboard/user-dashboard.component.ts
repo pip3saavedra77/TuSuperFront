@@ -67,22 +67,39 @@ export class UserDashboardComponent implements OnInit {
   ngOnInit(): void { this.loadDashboard(); }
 
   private loadDashboard(): void {
-    this.loading.set(false);
+    this.loading.set(true);
+
+    let completed = 0;
+    const checkComplete = () => {
+      completed++;
+      if (completed >= 3) {
+        this.loading.set(false);
+      }
+    };
 
     this.ordersService.getMyOrders({ limit: 5, offset: 0 }).pipe(
       catchError(() => of({ data: [], total: 0, limit: 5, offset: 0 })),
       takeUntilDestroyed(this.destroyRef),
-    ).subscribe(res => this.myOrders.set(res.data));
+    ).subscribe({
+      next: (res) => this.myOrders.set(res.data),
+      complete: checkComplete,
+    });
 
     this.productService.getAll({ limit: 4, offset: 0 }).pipe(
       catchError(() => of({ data: [], total: 0, limit: 4, offset: 0 })),
       takeUntilDestroyed(this.destroyRef),
-    ).subscribe(res => this.featuredProducts.set(res.data));
+    ).subscribe({
+      next: (res) => this.featuredProducts.set(res.data),
+      complete: checkComplete,
+    });
 
     this.productService.getCategories().pipe(
       catchError(() => of({ data: [], total: 0, limit: 4, offset: 0 })),
       takeUntilDestroyed(this.destroyRef),
-    ).subscribe(res => this.categories.set(res.data));
+    ).subscribe({
+      next: (res) => this.categories.set(res.data),
+      complete: checkComplete,
+    });
   }
 
   navigateToCategory(id: number): void { this.router.navigate(['/product'], { queryParams: { category: id } }); }

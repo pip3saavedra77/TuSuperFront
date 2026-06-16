@@ -21,7 +21,8 @@ export const authInterceptor: HttpInterceptorFn = (req, next) => {
     headers['Authorization'] = `Bearer ${token}`;
   }
 
-  const authReq = req.clone({ withCredentials: true, setHeaders: headers });
+  // Use localStorage token only; no cookie dependency
+  const authReq = req.clone({ setHeaders: headers });
 
   return next(authReq).pipe(
     catchError((error: HttpErrorResponse) => {
@@ -32,7 +33,7 @@ export const authInterceptor: HttpInterceptorFn = (req, next) => {
               const newToken = auth.getToken();
               const retryHeaders: Record<string, string> = {};
               if (newToken) retryHeaders['Authorization'] = `Bearer ${newToken}`;
-              return next(req.clone({ withCredentials: true, setHeaders: retryHeaders }));
+              return next(req.clone({ setHeaders: retryHeaders }));
             }
             if (!isRedirecting) {
               isRedirecting = true;

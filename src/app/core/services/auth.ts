@@ -7,6 +7,7 @@ import { Router } from '@angular/router';
 import { environment } from '../../../environments/environment';
 import { TokenService } from './token.service';
 import { IdleService } from './idle.service';
+import { InitService } from './init.service';
 
 const CACHE_TTL_MS = 60_000;
 const TOKEN_REFRESH_MS = 25 * 60 * 1000;
@@ -22,6 +23,7 @@ export class AuthService {
   private readonly tokenService = inject(TokenService);
   private readonly injector = inject(Injector);
   private readonly destroyRef = inject(DestroyRef);
+  private readonly initService = inject(InitService);
   private readonly API_URL = `${environment.apiUrl}/auth`;
 
   /** Lazy HttpClient para evitar NG0200 con authInterceptor */
@@ -155,7 +157,6 @@ export class AuthService {
     return this.http.post<{ access_token?: string; refresh_token?: string }>(
       `${this.API_URL}/refresh`,
       { refresh_token: refreshToken },
-      { withCredentials: true },
     ).pipe(
       tap((res) => {
         if (res.access_token) {
@@ -309,5 +310,35 @@ export class AuthService {
 
   dismissExpirationWarning(): void {
     this.showExpirationWarning.set(false);
+  }
+
+  /** Initialize auth on app bootstrap - used by APP_INITIALIZER */
+  initializeAuth(): Promise<void> {
+    this.initService.start();
+    return new Promise((resolve) => {
+      if (!this.getToken()) {
+        this.initService.complete();
+        resolve();
+        return;
+      }
+      this.checkAuthStatus().pipe(takeUntilDestroyed(this.destroyRef)).subscribe({
+        next: () => {
+          this.initService.complete();
+          resolve();
+        },
+        error: () => {
+          this.refreshToken().pipe(takeUntilDestroyed(this.destroyRef)).subscribe({
+            next: () => {
+              this.initService.complete();
+              resolve();
+            },
+            error: () => {
+              this.initService.complete();
+              resolve();
+            },
+          });
+        },
+      });
+    });
   }
 }
