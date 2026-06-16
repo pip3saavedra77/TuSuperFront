@@ -56,7 +56,7 @@
 
     @media (min-width: 1024px) {
       display: grid;
-      grid-template-columns: 1fr 380px;
+      grid-template-columns: minmax(0, 1fr) 380px;
       gap: 32px;
       align-items: start;
       max-width: 1180px;
