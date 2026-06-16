@@ -24,7 +24,9 @@ export const appConfig: ApplicationConfig = {
     { provide: LOCALE_ID, useValue: 'es-CO' },
     provideServiceWorker('ngsw-worker.js', {
       enabled: !isDevMode(),
-      registrationStrategy: 'registerWhenStable:5000',
+      // registerWhenStable:30000 waits up to 30s for Angular to stabilize.
+      // More reliable on iOS where timers/polling may keep the zone busy.
+      registrationStrategy: 'registerWhenStable:30000',
     }),
   ]
 };

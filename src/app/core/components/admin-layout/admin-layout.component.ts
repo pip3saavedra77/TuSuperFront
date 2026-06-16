@@ -12,7 +12,6 @@ import { Router, RouterLink, RouterLinkActive, RouterOutlet } from '@angular/rou
 import { AuthService } from '../../services/auth';
 import { IdleService } from '../../services/idle.service';
 import { NotificationsService } from '../../services/notifications.service';
-import { PushService } from '../../services/push.service';
 import { CartStore } from '../../../product/store/cart.store';
 import { NotificationBellComponent } from '../../../shared/components/notification-bell/notification-bell.component';
 import { PushPromptComponent } from '../../../shared/components/push-prompt/push-prompt.component';
@@ -44,7 +43,6 @@ export class AdminLayoutComponent implements OnInit {
   private readonly router = inject(Router);
   private readonly notificationsService = inject(NotificationsService);
   private readonly idleService = inject(IdleService);
-  private readonly pushService = inject(PushService);
   readonly cartStore = inject(CartStore);
 
   readonly showExpirationWarning = this.authService.showExpirationWarning;
@@ -58,21 +56,9 @@ export class AdminLayoutComponent implements OnInit {
 
   ngOnInit(): void {
     this.notificationsService.connect();
-    this.registerPush();
-  }
-
-  private async registerPush(): Promise<void> {
-    // Wait for service worker to be ready before subscribing
-    try {
-      if ('serviceWorker' in navigator) {
-        await navigator.serviceWorker.ready;
-      }
-    } catch {
-      // SW not available
-    }
-    this.pushService.subscribe().then(r => {
-      if (!r.ok) console.warn('[Push] subscribe:', r.error);
-    }).catch(() => {});
+    // registerPush() REMOVED: push subscription is now handled
+    // exclusively by PushPromptComponent.accept(), which respects
+    // the iOS Safari User Gesture requirement.
   }
 
   public profileClass = computed(() => {

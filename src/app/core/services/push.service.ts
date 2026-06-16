@@ -16,10 +16,26 @@ export class PushService {
     return this.injector.get(HttpClient);
   }
 
-  private readonly vapidPublicKey = 'BL055Pmv0P7ncLoKzQxhBqBRkcZwnNBSeT2-K_tbomnTU0RYSmb9bhpncI9oY8fiPlOAm7HdS4j4UyU_cRSbRkE';
+  private readonly vapidPublicKey = 'BL4pjur60RSnA1DZvUHE02-AWUSubpmWrkGEgrcSXK3qSByOhdxB2eCQmBGil30bv9cHyZtLMB-6iO_niogKzmA';
 
+  /**
+   * Indicates whether the browser SUPPORTS push notifications.
+   *
+   * On iOS Safari 16.4+, PushManager exists but ONLY works
+   * when the PWA is installed on the Home Screen (standalone mode).
+   * In regular Safari, returns false even though PushManager exists.
+   */
   get isSupported(): boolean {
-    return 'Notification' in globalThis && 'PushManager' in globalThis;
+    if (!('Notification' in globalThis) || !('PushManager' in globalThis)) {
+      return false;
+    }
+    // iOS: requires standalone mode (PWA installed on Home Screen)
+    if (/iPhone|iPad|iPod/.test(navigator.userAgent)) {
+      const standalone = 'standalone' in navigator && (navigator as any).standalone === true;
+      const displayMode = globalThis.matchMedia('(display-mode: standalone)').matches;
+      return standalone || displayMode;
+    }
+    return true;
   }
 
   get subscription$() {

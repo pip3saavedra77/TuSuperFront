@@ -125,18 +125,32 @@ export class PushPromptComponent implements OnInit {
   isIOSStandalone = signal(false);
 
   private readonly DISMISSED_KEY = 'push_prompt_dismissed_at';
+  private readonly DENIED_KEY = 'push_perm_denied';
 
   private wasRecentlyDismissed(): boolean {
+    // If the user explicitly denied, never ask again
+    if (localStorage.getItem(this.DENIED_KEY) === 'true') return true;
+    // Temporary dismiss (24h)
     const raw = localStorage.getItem(this.DISMISSED_KEY);
     if (!raw) return false;
     const dismissedAt = Number.parseInt(raw, 10);
     return (Date.now() - dismissedAt) < 24 * 60 * 60 * 1000;
   }
 
+  /**
+   * Determines whether the notification prompt should be shown.
+   *
+   * Criteria:
+   * - Do not show if the user dismissed it <24h ago
+   * - Do not show if permission was already granted
+   * - Do not show if permission was denied (permanent)
+   * - Only show if the browser supports push
+   */
   private shouldShow(): boolean {
     if (this.wasRecentlyDismissed()) return false;
-    if (this.isIOS()) return true;
-    return this.pushService.isSupported && Notification.permission !== 'granted';
+    if (Notification.permission === 'granted') return false;
+    if (Notification.permission === 'denied') return false;
+    return this.pushService.isSupported;
   }
 
   ngOnInit(): void {
@@ -190,6 +204,8 @@ export class PushPromptComponent implements OnInit {
         this.resultOk.set(false);
       }
     } else if (result === 'denied') {
+      // Persist permanent denial
+      localStorage.setItem(this.DENIED_KEY, 'true');
       this.resultMsg.set('Permiso denegado. Actívalo en Ajustes > Notificaciones.');
       this.resultOk.set(false);
     } else {
