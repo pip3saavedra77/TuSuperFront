@@ -113,6 +113,24 @@ export class PushService {
     }
   }
 
+  async unsubscribe(): Promise<void> {
+    try {
+      const reg = await navigator.serviceWorker?.ready;
+      if (!reg) return;
+      const sub = await reg.pushManager.getSubscription();
+      if (!sub) return;
+      const endpoint = sub.endpoint;
+      await sub.unsubscribe();
+      await firstValueFrom(
+        this.http.delete(`${environment.apiUrl}/push/unsubscribe`, {
+          body: { endpoint },
+        }),
+      );
+    } catch {
+      // best-effort cleanup on logout
+    }
+  }
+
   /**
    * Convert VAPID key from base64url to Uint8Array for the Push API.
    */

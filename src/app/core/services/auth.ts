@@ -8,6 +8,7 @@ import { environment } from '../../../environments/environment';
 import { TokenService } from './token.service';
 import { IdleService } from './idle.service';
 import { InitService } from './init.service';
+import { PushService } from './push.service';
 
 const CACHE_TTL_MS = 60_000;
 const TOKEN_REFRESH_MS = 25 * 60 * 1000;
@@ -24,6 +25,7 @@ export class AuthService {
   private readonly injector = inject(Injector);
   private readonly destroyRef = inject(DestroyRef);
   private readonly initService = inject(InitService);
+  private readonly pushService = inject(PushService);
   private readonly API_URL = `${environment.apiUrl}/auth`;
 
   /** Lazy HttpClient para evitar NG0200 con authInterceptor */
@@ -95,6 +97,7 @@ export class AuthService {
 
   public logout(): void {
     this._stopTimers();
+    this.pushService.unsubscribe();
     this.http.post(`${this.API_URL}/logout`, {}).subscribe({
       complete: () => this.clearSession(),
       error: () => this.clearSession(),
