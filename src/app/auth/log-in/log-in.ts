@@ -28,6 +28,7 @@ import { LoadingScreen } from '../../shared/components/loading-screen/loading-sc
     LoadingScreen,
   ],
   templateUrl: './log-in.html',
+  styleUrl: './log-in.scss',
 })
 export class LogIn implements OnInit {
 

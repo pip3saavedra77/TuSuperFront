@@ -19,6 +19,7 @@ import { LoadingScreen } from '../../shared/components/loading-screen/loading-sc
     LoadingScreen,
   ],
   templateUrl: './forgot-password.html',
+  styleUrl: './forgot-password.scss',
 })
 export class ForgotPassword {
   private readonly fb = inject(FormBuilder);

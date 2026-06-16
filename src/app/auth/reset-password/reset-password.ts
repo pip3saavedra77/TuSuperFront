@@ -19,6 +19,7 @@ import { LoadingScreen } from '../../shared/components/loading-screen/loading-sc
     LoadingScreen,
   ],
   templateUrl: './reset-password.html',
+  styleUrl: './reset-password.scss',
 })
 export class ResetPassword implements OnInit {
   private readonly fb = inject(FormBuilder);

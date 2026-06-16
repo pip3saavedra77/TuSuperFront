@@ -390,7 +390,7 @@
     &__title { font-size: 1.75rem; }
 
     &__content {
-      grid-template-columns: 1fr 360px;
+      grid-template-columns: minmax(0, 1fr) 360px;
       align-items: start;
     }
   }
