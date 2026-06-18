@@ -1,14 +1,4 @@
 <mat-sidenav-container class="catalog-container modern-pos">
-  <mat-sidenav
-    #cartDrawer
-    [opened]="cartStore.isOpen()"
-    (openedChange)="onCartOpenedChange($event)"
-    mode="over"
-    position="end"
-    class="cart-drawer">
-    <app-cart-panel></app-cart-panel>
-  </mat-sidenav>
-
   <mat-sidenav-content>
     <app-page-header />
     <div class="catalog-content">
