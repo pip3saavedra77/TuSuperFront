@@ -31,7 +31,6 @@ import {
   ProductFilterParams,
 } from '../../../core/models/product.model';
 import { CartStore } from '../../store/cart.store';
-import { CartPanelComponent } from '../cart-panel/cart-panel.component';
 import { PageHeader } from '../../../shared/components/page-header/page-header';
 
 @Component({
@@ -49,7 +48,6 @@ import { PageHeader } from '../../../shared/components/page-header/page-header';
     MatPaginatorModule,
     MatProgressSpinnerModule,
     MatSnackBarModule,
-    CartPanelComponent,
     PageHeader,
   ],
   templateUrl: './catalog.component.html',
@@ -181,16 +179,6 @@ export class CatalogComponent implements OnInit, AfterViewInit {
       'Cerrar',
       { duration: 2000, panelClass: ['success-snackbar'] },
     );
-  }
-
-  toggleCart(): void {
-    this.cartStore.toggleCart();
-  }
-
-  onCartOpenedChange(isOpen: boolean): void {
-    if (!isOpen && this.cartStore.isOpen()) {
-      this.cartStore.closeCart();
-    }
   }
 
   private loadCategories(): void {

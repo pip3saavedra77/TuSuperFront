@@ -360,6 +360,7 @@
   min-height: 100vh;
   padding-bottom: calc(var(--tusuper-nav-offset, 32px) + 80px);
   background-color: var(--ts-background, #fbf9f8);
+  touch-action: manipulation;
 
   @media (min-width: 1024px) {
     padding-bottom: calc(var(--tusuper-nav-offset, 32px) + 100px);

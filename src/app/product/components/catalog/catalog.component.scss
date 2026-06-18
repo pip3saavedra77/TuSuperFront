@@ -5,55 +5,12 @@
 :host {
   display: block;
   height: 100%;
+  touch-action: manipulation;
 }
 
 .catalog-container {
   height: 100%;
   background: var(--ts-background, #fbf9f8);
-
-  .cart-drawer {
-    width: 420px;
-    background: transparent;
-    border-left: none;
-    box-shadow: -10px 0 30px rgba(0, 0, 0, 0.05);
-    border-radius: 20px 0 0 20px;
-    overflow: hidden;
-
-    ::ng-deep .mat-drawer-inner-container {
-      height: 100%;
-      display: flex;
-      flex-direction: column;
-      overflow: hidden;
-      border-radius: 20px 0 0 20px;
-    }
-  }
-}
-
-// Mobile: cart drawer fullscreen
-@media (max-width: 640px) {
-  ::ng-deep .catalog-container {
-    .mat-drawer-container {
-      overflow: visible !important;
-    }
-
-    .mat-drawer.cart-drawer {
-      position: fixed !important;
-      inset: 0 !important;
-      width: 100vw !important;
-      height: 100dvh !important;
-      z-index: 1000 !important;
-      transform: translateX(100%) !important;
-      transition: transform 0.3s cubic-bezier(0.22, 1, 0.36, 1) !important;
-    }
-
-    .mat-drawer.cart-drawer.mat-drawer-opened {
-      transform: translateX(0) !important;
-    }
-  }
-
-  .catalog-container .cart-drawer {
-    width: 100vw !important;
-  }
 }
 
 .catalog-content {
