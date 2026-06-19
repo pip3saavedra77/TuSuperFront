@@ -37,9 +37,10 @@ export const appConfig: ApplicationConfig = {
     },
     provideServiceWorker('ngsw-worker.js', {
       enabled: !isDevMode(),
-      // registerWhenStable:30000 waits up to 30s for Angular to stabilize.
-      // More reliable on iOS where timers/polling may keep the zone busy.
-      registrationStrategy: 'registerWhenStable:30000',
+      // registerWhenStable:3000 — 3s is enough for initial render to stabilize.
+      // Zone.js never fully stabilizes due to IdleService timers, Socket.IO, etc.
+      // Using 30s caused the exact 30-second blank screen on Safari/Brave mobile.
+      registrationStrategy: 'registerWhenStable:3000',
     }),
   ]
 };

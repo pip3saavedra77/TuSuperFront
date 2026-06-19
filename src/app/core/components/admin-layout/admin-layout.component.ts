@@ -58,9 +58,7 @@ export class AdminLayoutComponent implements OnInit, AfterViewInit {
 
   constructor() {}
 
-  ngOnInit(): void {
-    this.notificationsService.connect();
-  }
+  ngOnInit(): void {}
 
   ngAfterViewInit(): void {
     // Listen to scroll for nav elevation effect
