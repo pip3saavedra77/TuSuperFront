@@ -322,33 +322,26 @@ export class AuthService {
     this.showExpirationWarning.set(false);
   }
 
-  /** Initialize auth on app bootstrap - used by APP_INITIALIZER */
-  initializeAuth(): Promise<void> {
-    this.initService.start();
-    return new Promise((resolve) => {
-      if (!this.getToken()) {
+  /** Initialize auth on app bootstrap - used by APP_INITIALIZER (non-blocking) */
+  initializeAuth(): void {
+    if (!this.getToken()) {
+      this.initService.complete();
+      return;
+    }
+    this.checkAuthStatus().pipe(takeUntilDestroyed(this.destroyRef)).subscribe({
+      next: () => {
         this.initService.complete();
-        resolve();
-        return;
-      }
-      this.checkAuthStatus().pipe(takeUntilDestroyed(this.destroyRef)).subscribe({
-        next: () => {
-          this.initService.complete();
-          resolve();
-        },
-        error: () => {
-          this.refreshToken().pipe(takeUntilDestroyed(this.destroyRef)).subscribe({
-            next: () => {
-              this.initService.complete();
-              resolve();
-            },
-            error: () => {
-              this.initService.complete();
-              resolve();
-            },
-          });
-        },
-      });
+      },
+      error: () => {
+        this.refreshToken().pipe(takeUntilDestroyed(this.destroyRef)).subscribe({
+          next: () => {
+            this.initService.complete();
+          },
+          error: () => {
+            this.initService.complete();
+          },
+        });
+      },
     });
   }
 }
