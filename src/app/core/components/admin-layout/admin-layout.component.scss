@@ -371,6 +371,14 @@
   min-height: 100vh;
   background: transparent;
   box-shadow: none;
+
+  // Force mat-sidenav-content to full width on mobile.
+  // Angular Material incorrectly calculates width as 100% - sidenav_width
+  // even with mode="over", squeezing content to the left half.
+  ::ng-deep .mat-mdc-sidenav-content {
+    width: 100% !important;
+    min-width: 100% !important;
+  }
 }
 
 // ── USER Bottom Nav (Stitch Vibrant Minimalist floating pill) ──
