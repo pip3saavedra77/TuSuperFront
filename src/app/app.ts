@@ -16,6 +16,7 @@ export class App implements OnInit {
   protected readonly title = 'adso_3063267';
 
   ngOnInit(): void {
+    this.initService.start();
     this.idleService.startWatching();
   }
 }

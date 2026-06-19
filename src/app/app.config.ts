@@ -13,7 +13,12 @@ import { InitService } from './core/services/init.service';
 registerLocaleData(localeEsCO, 'es-CO');
 
 export function initializeAuthFactory(authService: AuthService): () => Promise<void> {
-  return () => authService.initializeAuth();
+  // Resolve immediately to unblock Angular bootstrap.
+  // Auth runs in background; loading screen is shown by App component via InitService.
+  return () => {
+    authService.initializeAuth();
+    return Promise.resolve();
+  };
 }
 
 export const appConfig: ApplicationConfig = {

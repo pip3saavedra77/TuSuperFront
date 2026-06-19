@@ -26,7 +26,16 @@ export class NotificationsService {
   );
 
   constructor() {
-    this.connect();
+    // Defer Socket.IO connection to avoid blocking initial render.
+    // Connects after 2 seconds or on first user interaction, whichever comes first.
+    const connectDeferred = () => {
+      window.removeEventListener('touchstart', connectDeferred);
+      window.removeEventListener('click', connectDeferred);
+      this.connect();
+    };
+    setTimeout(connectDeferred, 2000);
+    window.addEventListener('touchstart', connectDeferred, { once: true });
+    window.addEventListener('click', connectDeferred, { once: true });
   }
 
   connect(): void {
