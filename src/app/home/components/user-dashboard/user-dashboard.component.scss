@@ -446,6 +446,9 @@
   padding-bottom: 12px;
   padding-right: 16px;
   scrollbar-width: none;
+  contain: layout style;
+  content-visibility: auto;
+  contain-intrinsic-size: auto 300px;
 
   &::-webkit-scrollbar { display: none; }
 

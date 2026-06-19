@@ -97,6 +97,9 @@
   grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
   gap: 20px;
   margin-bottom: 32px;
+  contain: layout style;
+  content-visibility: auto;
+  contain-intrinsic-size: auto 500px;
 
   @media (max-width: 640px) {
     grid-template-columns: repeat(2, 1fr);
@@ -452,6 +455,91 @@
   align-items: center;
   justify-content: center;
   min-height: 400px;
+}
+
+// ── Skeleton Cards ──────────────────────────────────────────────────────────
+.skeleton-card {
+  background: #ffffff;
+  border-radius: 20px;
+  overflow: hidden;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.06);
+
+  @media (min-width: 641px) {
+    border-radius: 24px;
+  }
+
+  &__image {
+    width: 100%;
+    aspect-ratio: 1;
+    background: linear-gradient(110deg, #f0f0f0 8%, #e8e8e8 18%, #f0f0f0 33%);
+    background-size: 200% 100%;
+    animation: shimmer 1.5s linear infinite;
+
+    @media (min-width: 641px) {
+      aspect-ratio: 4/3;
+    }
+  }
+
+  &__body {
+    padding: 14px;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+
+    @media (min-width: 641px) {
+      padding: 18px;
+      gap: 12px;
+    }
+  }
+
+  &__price {
+    width: 40%;
+    height: 20px;
+    border-radius: 6px;
+    background: linear-gradient(110deg, #f0f0f0 8%, #e8e8e8 18%, #f0f0f0 33%);
+    background-size: 200% 100%;
+    animation: shimmer 1.5s linear infinite;
+  }
+
+  &__name {
+    width: 80%;
+    height: 16px;
+    border-radius: 6px;
+    background: linear-gradient(110deg, #f0f0f0 8%, #e8e8e8 18%, #f0f0f0 33%);
+    background-size: 200% 100%;
+    animation: shimmer 1.5s linear infinite;
+    animation-delay: 0.1s;
+  }
+
+  &__stock {
+    width: 55%;
+    height: 12px;
+    border-radius: 6px;
+    background: linear-gradient(110deg, #f0f0f0 8%, #e8e8e8 18%, #f0f0f0 33%);
+    background-size: 200% 100%;
+    animation: shimmer 1.5s linear infinite;
+    animation-delay: 0.2s;
+  }
+
+  &__btn {
+    width: 100%;
+    height: 48px;
+    border-radius: 14px;
+    background: linear-gradient(110deg, #f0f0f0 8%, #e8e8e8 18%, #f0f0f0 33%);
+    background-size: 200% 100%;
+    animation: shimmer 1.5s linear infinite;
+    animation-delay: 0.3s;
+    margin-top: 4px;
+
+    @media (min-width: 641px) {
+      height: 46px;
+      border-radius: 999px;
+    }
+  }
+}
+
+@keyframes shimmer {
+  to { background-position-x: -200%; }
 }
 
 // ── Animations ──────────────────────────────────────────────────────────────

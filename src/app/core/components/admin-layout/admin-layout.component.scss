@@ -388,15 +388,6 @@
   overflow-x: hidden;
 }
 
-router-outlet + * {
-  animation: routeFadeIn 0.2s ease-out;
-}
-
-@keyframes routeFadeIn {
-  from { opacity: 0.92; }
-  to   { opacity: 1; }
-}
-
 // ── USER Bottom Nav — Liquid Glass (Apple-inspired) ──
 .user-bottom-nav {
   position: fixed;
