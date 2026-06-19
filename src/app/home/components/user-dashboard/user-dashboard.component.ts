@@ -147,8 +147,10 @@ export class UserDashboardComponent implements OnInit {
       panaderia: 'bakery_dining',
       bebidas: 'local_cafe',
       carnes: 'restaurant',
+      granos: 'grain',
       grano: 'grain',
       limpieza: 'cleaning_services',
+      aseo: 'cleaning_services',
       otros: 'category',
     };
     const key = name?.toLowerCase().trim() ?? '';
