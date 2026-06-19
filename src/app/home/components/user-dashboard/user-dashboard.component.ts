@@ -35,7 +35,7 @@ export class UserDashboardComponent implements OnInit {
   private readonly snackBar = inject(MatSnackBar);
 
   readonly featuredProducts = signal<Product[]>([]);
-  readonly justAddedIds = signal<Set<number>>(new Set());
+  readonly justAdded = signal<Record<number, boolean>>({});
   readonly categories = signal<Category[]>([]);
   readonly myOrders = signal<Order[]>([]);
   readonly loading = signal(true);
@@ -104,31 +104,25 @@ export class UserDashboardComponent implements OnInit {
 
   navigateToCategory(id: number): void { this.router.navigate(['/product'], { queryParams: { category: id } }); }
 
+  getCartQuantity(productId: number): number {
+    const items = this.cartStore.items();
+    const item = items.find(i => i.product.id === productId);
+    return item ? item.quantity : 0;
+  }
+
   onAddToCart(product: Product): void {
     this.cartStore.addItem(product);
-    this.cartStore.openCart();
     this.snackBar.open(`${product.name} agregado al carrito`, 'Cerrar', {
       duration: 2000,
       panelClass: ['success-snackbar'],
     });
 
-    // Feedback visual temporal en la tarjeta
-    this.justAddedIds.update(set => {
-      const next = new Set(set);
-      next.add(product.id);
-      return next;
-    });
-    setTimeout(() => {
-      this.justAddedIds.update(set => {
-        const next = new Set(set);
-        next.delete(product.id);
-        return next;
-      });
-    }, 1200);
+    this.justAdded.update(s => ({ ...s, [product.id]: true }));
+    setTimeout(() => this.justAdded.update(s => ({ ...s, [product.id]: false })), 1200);
   }
 
   isJustAdded(product: Product): boolean {
-    return this.justAddedIds().has(product.id);
+    return !!this.justAdded()[product.id];
   }
 
   navigatePromo(): void {

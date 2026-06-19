@@ -111,6 +111,9 @@
                 } @else {
                   <span class="material-symbols-outlined ts-product-card__placeholder">inventory_2</span>
                 }
+                @if (getCartQuantity(product.id) > 0) {
+                  <span class="ts-product-card__cart-badge">{{ getCartQuantity(product.id) }}</span>
+                }
                 @if (isJustAdded(product)) {
                   <span class="ts-product-card__added-badge">
                     <span class="material-symbols-outlined">check</span>
