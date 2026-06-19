@@ -51,7 +51,7 @@
           <!-- GRID -->
           <div class="products-grid">
             @for (product of products(); track product.id) {
-              <div class="product-card card-premium">
+              <div class="product-card">
                 <div class="card-image-container">
                   @if (product.imageUrl) {
                     <img [src]="product.imageUrl"
@@ -70,20 +70,20 @@
                 </div>
 
                 <div class="card-body">
+                  <p class="product-price">
+                    {{ product.price | currency:'COP':'symbol-narrow':'1.0-0' }}
+                  </p>
+
                   <h3 class="product-name">{{ product.name }}</h3>
-                  <div class="price-stock-row">
-                    <p class="product-price">
-                      {{ product.price | currency:'COP':'symbol-narrow':'1.0-0' }}
-                    </p>
-                    <div class="stock-info">
-                      @if (product.stock > 10) {
-                        <span class="stock-badge stock-ok">{{ product.stock }} en existencias</span>
-                      } @else if (product.stock > 0) {
-                        <span class="stock-badge stock-low">Existencias bajas</span>
-                      } @else {
-                        <span class="stock-badge stock-out">Agotado</span>
-                      }
-                    </div>
+
+                  <div class="stock-info">
+                    @if (product.stock > 10) {
+                      <span class="stock-badge stock-ok">{{ product.stock }} en existencias</span>
+                    } @else if (product.stock > 0) {
+                      <span class="stock-badge stock-low">Existencias bajas</span>
+                    } @else {
+                      <span class="stock-badge stock-out">Agotado</span>
+                    }
                   </div>
 
                   <button
@@ -100,7 +100,7 @@
                     } @else {
                       <ng-container>
                         <mat-icon>add_shopping_cart</mat-icon>
-                        <span>{{ product.stock === 0 ? 'No disponible' : 'Añadir al carrito' }}</span>
+                        <span>{{ product.stock === 0 ? 'No disponible' : 'Añadir' }}</span>
                       </ng-container>
                     }
                   </button>
