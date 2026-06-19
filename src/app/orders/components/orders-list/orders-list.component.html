@@ -49,8 +49,23 @@
 
   <!-- LOADING -->
   @if (loading()) {
-    <div class="loading-container">
-      <mat-spinner diameter="48"></mat-spinner>
+    <div class="skeleton-table">
+      <div class="skeleton-table__header">
+        <div class="skeleton-table__cell skeleton-table__cell--id"></div>
+        <div class="skeleton-table__cell skeleton-table__cell--customer"></div>
+        <div class="skeleton-table__cell skeleton-table__cell--date"></div>
+        <div class="skeleton-table__cell skeleton-table__cell--total"></div>
+        <div class="skeleton-table__cell skeleton-table__cell--status"></div>
+      </div>
+      @for (i of [1,2,3,4,5]; track i) {
+        <div class="skeleton-table__row" [style.animation-delay.ms]="i * 80">
+          <div class="skeleton-table__cell skeleton-table__cell--id"></div>
+          <div class="skeleton-table__cell skeleton-table__cell--customer"></div>
+          <div class="skeleton-table__cell skeleton-table__cell--date"></div>
+          <div class="skeleton-table__cell skeleton-table__cell--total"></div>
+          <div class="skeleton-table__cell skeleton-table__cell--status"></div>
+        </div>
+      }
     </div>
   } @else {
     <!-- PESTAÑAS Y TABLA DE PEDIDOS -->

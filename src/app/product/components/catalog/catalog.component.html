@@ -35,8 +35,18 @@
 
       <!-- LOADING -->
       @if (loading()) {
-        <div class="loading-container">
-          <mat-spinner diameter="48"></mat-spinner>
+        <div class="products-grid">
+          @for (i of [1,2,3,4,5,6]; track i) {
+            <div class="skeleton-card">
+              <div class="skeleton-card__image"></div>
+              <div class="skeleton-card__body">
+                <div class="skeleton-card__price"></div>
+                <div class="skeleton-card__name"></div>
+                <div class="skeleton-card__stock"></div>
+                <div class="skeleton-card__btn"></div>
+              </div>
+            </div>
+          }
         </div>
       } @else {
         <!-- EMPTY STATE -->
