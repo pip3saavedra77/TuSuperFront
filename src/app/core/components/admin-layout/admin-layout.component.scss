@@ -381,7 +381,7 @@
   }
 }
 
-// ── USER Bottom Nav (Stitch Vibrant Minimalist floating pill) ──
+// ── USER Bottom Nav — Liquid Glass (Apple-inspired) ──
 .user-bottom-nav {
   position: fixed;
   bottom: var(--tusuper-nav-offset, 24px);
@@ -392,15 +392,35 @@
   justify-content: space-between;
   align-items: center;
   padding: 8px 6px;
-  background: rgba(255, 255, 255, 0.72);
-  backdrop-filter: blur(32px);
-  -webkit-backdrop-filter: blur(32px);
-  border-radius: 9999px;
-  border: 1px solid rgba(255, 255, 255, 0.8);
-  box-shadow: 0 12px 32px rgba(0, 0, 0, 0.1);
   width: calc(100% - 32px);
   max-width: 420px;
+  border-radius: 9999px;
 
+  // ── Liquid Glass layers ──────────────────────────────────────────────
+  // Layer 1: Base tint
+  background: rgba(255, 255, 255, 0.45);
+
+  // Layer 2: Frosted blur
+  backdrop-filter: blur(24px) saturate(1.8) brightness(1.05);
+  -webkit-backdrop-filter: blur(24px) saturate(1.8) brightness(1.05);
+
+  // Layer 3: Specular edge highlights (inset)
+  box-shadow:
+    inset 0.5px 0.5px 0 rgba(255, 255, 255, 0.6),
+    inset -0.5px -0.5px 0 rgba(255, 255, 255, 0.3),
+    inset 1px 1px 2px rgba(255, 255, 255, 0.4),
+    inset -1px -1px 2px rgba(255, 255, 255, 0.15);
+
+  // Layer 4: Depth shadow
+  border: 0.5px solid rgba(255, 255, 255, 0.5);
+  filter: drop-shadow(0 4px 16px rgba(0, 0, 0, 0.08)) drop-shadow(0 1px 4px rgba(0, 0, 0, 0.04));
+
+  // ── Safe area (iPhone notch) ─────────────────────────────────────────
+  @supports (padding-bottom: env(safe-area-inset-bottom)) {
+    bottom: calc(var(--tusuper-nav-offset, 24px) + env(safe-area-inset-bottom, 0px));
+  }
+
+  // ── Desktop ──────────────────────────────────────────────────────────
   @media (min-width: 1024px) {
     left: 0;
     transform: none;
@@ -408,28 +428,46 @@
     width: 100%;
     max-width: none;
     border-radius: 24px 24px 0 0;
-    border: 1px solid rgba(255, 255, 255, 0.8);
     border-bottom: none;
-    box-shadow: 0 -6px 30px rgba(0, 0, 0, 0.06);
     justify-content: center;
     gap: 24px;
     padding: 10px 24px;
+
+    @supports (padding-bottom: env(safe-area-inset-bottom)) {
+      padding-bottom: calc(10px + env(safe-area-inset-bottom, 0px));
+    }
   }
 
+  // ── Scroll elevation (dynamic class added via JS) ────────────────────
+  &--scrolled {
+    box-shadow:
+      inset 0.5px 0.5px 0 rgba(255, 255, 255, 0.6),
+      inset -0.5px -0.5px 0 rgba(255, 255, 255, 0.3),
+      inset 1px 1px 2px rgba(255, 255, 255, 0.4),
+      inset -1px -1px 2px rgba(255, 255, 255, 0.15),
+      0 -2px 20px rgba(0, 0, 0, 0.12),
+      0 8px 32px rgba(0, 0, 0, 0.1);
+  }
+
+  // ── Nav item ─────────────────────────────────────────────────────────
   &__item {
+    position: relative;
     display: flex;
     flex-direction: column;
     align-items: center;
     justify-content: center;
-    padding: 8px 6px;
-    border-radius: 9999px;
+    min-width: 48px;
+    min-height: 48px;
+    padding: 6px 10px;
+    border-radius: 16px;
     cursor: pointer;
-    transition: all 0.25s ease-out;
+    transition: color 0.2s ease, transform 0.15s ease;
     flex: 1;
-    min-width: 0;
     text-decoration: none;
     color: var(--ts-on-surface-variant, #3c4a3c);
     font-family: var(--ts-font-body, 'Inter', sans-serif);
+    -webkit-tap-highlight-color: transparent;
+    user-select: none;
 
     @media (min-width: 1024px) {
       flex: 0 1 120px;
@@ -438,42 +476,70 @@
 
     .material-symbols-outlined {
       font-size: 22px;
-      margin-bottom: 3px;
-      transition: font-variation-settings 0.25s ease;
+      line-height: 1;
+      margin-bottom: 2px;
+      transition: font-variation-settings 0.3s ease, transform 0.2s ease;
     }
 
-    &:hover:not(.user-bottom-nav__item--active) {
-      background: rgba(0, 200, 83, 0.08);
+    // ── Haptic feedback (tap) ────────────────────────────────────────
+    &:active {
+      transform: scale(0.92);
+    }
+
+    // ── Hover (non-active) ──────────────────────────────────────────
+    &:hover:not(&--active) {
       color: var(--ts-primary, #006e2a);
+      background: rgba(0, 200, 83, 0.08);
     }
 
+    // ── Active state ────────────────────────────────────────────────
     &--active {
-      background: var(--ts-primary, #006e2a);
-      color: var(--ts-on-primary, #fff);
-      box-shadow: 0 4px 12px rgba(0, 200, 83, 0.25);
+      color: var(--ts-primary, #006e2a);
 
       .material-symbols-outlined {
-        font-variation-settings: 'FILL' 1, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        font-variation-settings: 'FILL' 1, 'wght' 500, 'GRAD' 0, 'opsz' 24;
+        transform: scale(1.08);
+      }
+
+      // ── Active pill indicator ─────────────────────────────────────
+      &::after {
+        content: '';
+        position: absolute;
+        bottom: 2px;
+        left: 50%;
+        transform: translateX(-50%);
+        width: 20px;
+        height: 3px;
+        border-radius: 999px;
+        background: var(--ts-primary, #006e2a);
+        animation: pillIn 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
       }
 
       &:hover {
-        background: var(--ts-primary, #006e2a);
-        color: var(--ts-on-primary, #fff);
+        color: var(--ts-primary, #006e2a);
+        background: rgba(0, 200, 83, 0.06);
       }
     }
   }
 
+  // ── Label ────────────────────────────────────────────────────────────
   &__label {
-    font-size: 11px;
+    font-size: 10px;
     font-weight: 600;
     letter-spacing: 0.01em;
     white-space: nowrap;
+    line-height: 1;
+
+    @media (min-width: 1024px) {
+      font-size: 11px;
+    }
   }
 
+  // ── Cart badge ───────────────────────────────────────────────────────
   &__badge {
     position: absolute;
-    top: 2px;
-    right: calc(50% - 22px);
+    top: 4px;
+    right: calc(50% - 24px);
     min-width: 18px;
     height: 18px;
     padding: 0 5px;
@@ -487,11 +553,64 @@
     justify-content: center;
     line-height: 1;
     box-shadow: 0 2px 6px rgba(239, 68, 68, 0.4);
-    animation: badgePop 0.3s ease;
+    animation: badgePop 0.35s cubic-bezier(0.34, 1.56, 0.64, 1);
+    z-index: 2;
   }
 
   &__item--cart {
     position: relative;
+  }
+}
+
+// ── Animations ──────────────────────────────────────────────────────────────
+@keyframes pillIn {
+  0% {
+    width: 0;
+    opacity: 0;
+  }
+  100% {
+    width: 20px;
+    opacity: 1;
+  }
+}
+
+@keyframes badgePop {
+  0% {
+    transform: scale(0);
+    opacity: 0;
+  }
+  60% {
+    transform: scale(1.2);
+  }
+  100% {
+    transform: scale(1);
+    opacity: 1;
+  }
+}
+
+// ── Reduced motion ──────────────────────────────────────────────────────────
+@media (prefers-reduced-motion: reduce) {
+  .user-bottom-nav {
+    &__item {
+      transition: color 0.15s ease;
+
+      &:active {
+        transform: none;
+      }
+
+      &--active::after {
+        animation: none;
+      }
+
+      .material-symbols-outlined {
+        transition: font-variation-settings 0.15s ease;
+        transform: none;
+      }
+    }
+
+    &__badge {
+      animation: none;
+    }
   }
 }
 
