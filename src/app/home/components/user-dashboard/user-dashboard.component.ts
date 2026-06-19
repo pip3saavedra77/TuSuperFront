@@ -145,6 +145,7 @@ export class UserDashboardComponent implements OnInit {
     if (key.includes('despensa') || key.includes('grano')) return 'shopping_basket';
     if (key.includes('bebida')) return 'local_cafe';
     if (key.includes('aseo') || key.includes('limpieza') || key.includes('hogar')) return 'cleaning_services';
+    if (key.includes('licor') || key.includes('aguardiente') || key.includes('ron') || key.includes('whisky') || key.includes('vodka')) return 'local_bar';
     if (key.includes('pan')) return 'bakery_dining';
     return 'category';
   }
