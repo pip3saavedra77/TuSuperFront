@@ -3,31 +3,26 @@ import { Router, CanActivateFn } from '@angular/router';
 import { AuthService } from '../services/auth';
 import { catchError, map, of, switchMap } from 'rxjs';
 
-let lastAuthCheck = 0;
-const AUTH_CACHE_TTL = 300_000;
-
 export const authGuard: CanActivateFn = (_route, _state) => {
   const authService = inject(AuthService);
   const router = inject(Router);
 
-  if (authService.isAuthenticated() && Date.now() - lastAuthCheck < AUTH_CACHE_TTL) {
+  // Trust in-memory state after APP_INITIALIZER populated it.
+  // Only hit the backend if auth was verified more than 5 min ago.
+  if (authService.isAuthenticated() && authService.isAuthFresh()) {
     return true;
   }
 
   return authService.checkAuthStatus().pipe(
     switchMap(isLoggedIn => {
       if (isLoggedIn) {
-        lastAuthCheck = Date.now();
         return of(true);
       }
       return authService.refreshToken().pipe(
         switchMap(refreshed => {
           if (refreshed) {
             return authService.checkAuthStatus().pipe(
-              map(retryOk => {
-                lastAuthCheck = Date.now();
-                return retryOk;
-              }),
+              map(retryOk => retryOk),
             );
           }
           router.navigateByUrl('/auth/login');
@@ -43,9 +38,7 @@ export const authGuard: CanActivateFn = (_route, _state) => {
       return authService.refreshToken().pipe(
         switchMap(ok => {
           if (ok) {
-            return authService.checkAuthStatus().pipe(
-              map(r => { lastAuthCheck = Date.now(); return r; }),
-            );
+            return authService.checkAuthStatus();
           }
           router.navigateByUrl('/auth/login');
           return of(false);

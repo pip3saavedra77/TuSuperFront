@@ -1,7 +1,7 @@
 import { Injectable, inject, Injector, signal, computed, DestroyRef } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { HttpClient, HttpErrorResponse } from '@angular/common/http';
-import { catchError, map, Observable, of, shareReplay, tap } from 'rxjs';
+import { catchError, map, Observable, of, shareReplay, tap, timeout } from 'rxjs';
 import { AuthResponse, LoginCredentials, RegisterPayload } from '../models/auth.models';
 import { Router } from '@angular/router';
 import { environment } from '../../../environments/environment';
@@ -79,6 +79,11 @@ export class AuthService {
   clearToken(): void { this.tokenService.clear(); }
   isSessionPersistent(): boolean { return this.tokenService.isPersistent(); }
 
+  /** Returns true if auth was verified recently (avoids redundant HTTP calls in guards). */
+  isAuthFresh(): boolean {
+    return !!this._authStatus() && (Date.now() - this._lastCheckTime) < CACHE_TTL_MS;
+  }
+
   /* ── Login / Register ─────────────────────────────────── */
 
   public login(credentials: LoginCredentials, rememberMe = true): Observable<AuthResponse> {
@@ -128,6 +133,7 @@ export class AuthService {
 
     this._lastCheckTime = now;
     this._cachedCheck$ = this.http.get<AuthResponse>(`${this.API_URL}/check-status`).pipe(
+      timeout(5000),
       tap((response) => {
         this._authStatus.set(response);
         if (response.access_token) {
@@ -161,6 +167,7 @@ export class AuthService {
       `${this.API_URL}/refresh`,
       { refresh_token: refreshToken },
     ).pipe(
+      timeout(5000),
       tap((res) => {
         if (res.access_token) {
           this.tokenService.set(res.access_token, this.tokenService.isPersistent());
