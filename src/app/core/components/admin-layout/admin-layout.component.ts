@@ -1,4 +1,4 @@
-import { Component, inject, computed, OnInit } from '@angular/core';
+import { Component, inject, computed, OnInit, signal, HostListener, ElementRef, AfterViewInit, DestroyRef } from '@angular/core';
 import { BreakpointObserver, Breakpoints } from '@angular/cdk/layout';
 import { AsyncPipe } from '@angular/common';
 import { MatToolbarModule } from '@angular/material/toolbar';
@@ -37,16 +37,20 @@ import { CartPanelComponent } from '../../../product/components/cart-panel/cart-
     CartPanelComponent,
   ],
 })
-export class AdminLayoutComponent implements OnInit {
+export class AdminLayoutComponent implements OnInit, AfterViewInit {
   private readonly breakpointObserver = inject(BreakpointObserver);
   private readonly authService = inject(AuthService);
   private readonly router = inject(Router);
   private readonly notificationsService = inject(NotificationsService);
   private readonly idleService = inject(IdleService);
+  private readonly destroyRef = inject(DestroyRef);
   readonly cartStore = inject(CartStore);
 
   readonly showExpirationWarning = this.authService.showExpirationWarning;
   readonly idleWarning = this.idleService.idleWarning;
+
+  /** True when page has been scrolled (for nav elevation) */
+  readonly navScrolled = signal(false);
 
   public isAuthenticated = this.authService.isAuthenticated;
   public menuItems = this.authService.userModules;
@@ -56,9 +60,15 @@ export class AdminLayoutComponent implements OnInit {
 
   ngOnInit(): void {
     this.notificationsService.connect();
-    // registerPush() REMOVED: push subscription is now handled
-    // exclusively by PushPromptComponent.accept(), which respects
-    // the iOS Safari User Gesture requirement.
+  }
+
+  ngAfterViewInit(): void {
+    // Listen to scroll for nav elevation effect
+    const onScroll = () => {
+      this.navScrolled.set(window.scrollY > 10);
+    };
+    window.addEventListener('scroll', onScroll, { passive: true });
+    this.destroyRef.onDestroy(() => window.removeEventListener('scroll', onScroll));
   }
 
   public profileClass = computed(() => {
