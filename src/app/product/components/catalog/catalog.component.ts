@@ -70,6 +70,8 @@ export class CatalogComponent implements OnInit, AfterViewInit {
   readonly searchQuery = signal<string>('');
   private readonly reload$ = new BehaviorSubject<void>(undefined);
 
+  readonly justAdded = signal<Record<number, boolean>>({});
+
   constructor() {
     const debouncedSearch$ = toObservable(this.searchQuery).pipe(
       debounceTime(300),
@@ -92,11 +94,6 @@ export class CatalogComponent implements OnInit, AfterViewInit {
   ngOnInit(): void {
     this.loadCategories();
     this.route.queryParamMap.pipe(takeUntilDestroyed(this.destroyRef)).subscribe(params => {
-      if (params.get('cart') === 'open') {
-        this.cartStore.openCart();
-      } else {
-        this.cartStore.closeCart();
-      }
       const categoryParam = params.get('category');
       if (categoryParam) {
         this.selectedCategoryId.set(Number(categoryParam));
@@ -114,6 +111,20 @@ export class CatalogComponent implements OnInit, AfterViewInit {
 
   loadProducts(): void {
     this.reload$.next();
+  }
+
+  getCartQuantity(productId: number): number {
+    const item = this.cartStore.items().find(i => i.product.id === productId);
+    return item?.quantity ?? 0;
+  }
+
+  onAddToCart(product: Product): void {
+    this.cartStore.addItem(product);
+
+    this.justAdded.update(map => ({ ...map, [product.id]: true }));
+    setTimeout(() => {
+      this.justAdded.update(map => ({ ...map, [product.id]: false }));
+    }, 1200);
   }
 
   private fetchProducts(
@@ -167,16 +178,6 @@ export class CatalogComponent implements OnInit, AfterViewInit {
   onPageChange(event: PageEvent): void {
     this.currentLimit.set(event.pageSize);
     this.currentOffset.set(event.pageIndex * event.pageSize);
-  }
-
-  onAddToCart(product: Product): void {
-    this.cartStore.addItem(product);
-    this.cartStore.openCart();
-    this.snackBar.open(
-      `${product.name} agregado al carrito`,
-      'Cerrar',
-      { duration: 2000, panelClass: ['success-snackbar'] },
-    );
   }
 
   private loadCategories(): void {
