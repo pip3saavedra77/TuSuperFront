@@ -318,7 +318,8 @@
       font-size: 0.82rem;
       font-weight: 700;
       letter-spacing: 0.01em;
-      display: flex;
+      display: inline-flex;
+      flex-direction: row;
       align-items: center;
       justify-content: center;
       gap: 8px;
@@ -328,10 +329,23 @@
       width: 100%;
       padding: 0 16px;
       line-height: normal;
+      white-space: nowrap;
+      vertical-align: middle;
 
-      // Override Angular Material internal padding
+      // Override Angular Material internal layout
       &.mat-mdc-stroked-button {
         padding: 0 16px;
+      }
+
+      ::ng-deep .mdc-button__label {
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        line-height: normal;
+      }
+
+      ::ng-deep .mat-mdc-button-touch-target {
+        display: none;
       }
 
       @media (min-width: 641px) {
