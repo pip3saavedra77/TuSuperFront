@@ -367,6 +367,12 @@
   }
 }
 
+.user-cart-container {
+  min-height: 100vh;
+  background: transparent;
+  box-shadow: none;
+}
+
 // ── USER Bottom Nav (Stitch Vibrant Minimalist floating pill) ──
 .user-bottom-nav {
   position: fixed;

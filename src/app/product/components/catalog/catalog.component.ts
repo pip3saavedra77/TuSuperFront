@@ -13,7 +13,6 @@ import { CommonModule, CurrencyPipe } from '@angular/common';
 import { BehaviorSubject, combineLatest, debounceTime, distinctUntilChanged, finalize } from 'rxjs';
 import { HttpErrorResponse } from '@angular/common/http';
 
-import { MatSidenavModule } from '@angular/material/sidenav';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
 import { MatSelectModule } from '@angular/material/select';
@@ -39,7 +38,6 @@ import { PageHeader } from '../../../shared/components/page-header/page-header';
   imports: [
     CommonModule,
     CurrencyPipe,
-    MatSidenavModule,
     MatFormFieldModule,
     MatInputModule,
     MatSelectModule,
