@@ -24,6 +24,12 @@
 
 <body>
   <app-root></app-root>
+  <script>
+    // iOS Safari ignores user-scalable=no. Prevent pinch-to-zoom via JS.
+    document.addEventListener('gesturestart', function (e) { e.preventDefault(); });
+    document.addEventListener('gesturechange', function (e) { e.preventDefault(); });
+    document.addEventListener('gestureend', function (e) { e.preventDefault(); });
+  </script>
 </body>
 
 </html>
