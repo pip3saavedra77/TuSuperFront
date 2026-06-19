@@ -17,6 +17,8 @@
   backdrop-filter: blur(28px);
   -webkit-backdrop-filter: blur(28px);
   border-bottom: 1px solid rgba(255, 255, 255, 0.75);
+  will-change: transform;
+  contain: layout style;
 
   &__brand {
     display: flex;
