@@ -169,6 +169,25 @@
       letter-spacing: 0.04em;
       box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
     }
+
+    .cart-quantity-badge {
+      position: absolute;
+      top: 16px;
+      right: 16px;
+      background: var(--ts-primary, #006e2a);
+      color: #ffffff;
+      min-width: 26px;
+      height: 26px;
+      padding: 0 6px;
+      border-radius: 999px;
+      font-size: 0.75rem;
+      font-weight: 800;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      box-shadow: 0 2px 8px rgba(0, 110, 42, 0.35);
+      animation: badgePop 0.3s ease;
+    }
   }
 
   .card-body {
@@ -239,7 +258,7 @@
       align-items: center;
       justify-content: center;
       gap: 8px;
-      transition: transform 0.2s ease, box-shadow 0.2s ease, filter 0.2s ease;
+      transition: transform 0.2s ease, box-shadow 0.2s ease, filter 0.2s ease, background 0.3s ease;
       box-shadow: 0 4px 14px rgba(0, 200, 83, 0.25);
 
       @media (max-width: 640px) { height: 40px; font-size: 0.78rem; }
@@ -248,6 +267,19 @@
         font-size: 18px;
         width: 18px;
         height: 18px;
+        transition: transform 0.3s ease;
+      }
+
+      .added-check {
+        animation: checkBounce 0.4s ease;
+      }
+
+      &--added {
+        background: #166534 !important;
+        box-shadow: 0 4px 18px rgba(22, 101, 52, 0.35) !important;
+        transform: scale(1.03);
+
+        mat-icon { transform: scale(1.15); }
       }
 
       &:hover:not(:disabled) {
@@ -321,4 +353,18 @@
   align-items: center;
   justify-content: center;
   min-height: 400px;
+}
+
+// ── Animations ──────────────────────────────────────────────────────────────
+@keyframes badgePop {
+  0% { transform: scale(0); opacity: 0; }
+  50% { transform: scale(1.2); }
+  100% { transform: scale(1); opacity: 1; }
+}
+
+@keyframes checkBounce {
+  0% { transform: scale(0.3); opacity: 0; }
+  50% { transform: scale(1.15); }
+  70% { transform: scale(0.9); }
+  100% { transform: scale(1); opacity: 1; }
 }

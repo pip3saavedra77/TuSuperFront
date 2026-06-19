@@ -64,6 +64,9 @@
                     </div>
                   }
                   <span class="category-badge">{{ product.category.name }}</span>
+                  @if (getCartQuantity(product.id) > 0) {
+                    <span class="cart-quantity-badge">{{ getCartQuantity(product.id) }}</span>
+                  }
                 </div>
 
                 <div class="card-body">
@@ -86,10 +89,20 @@
                   <button
                     mat-stroked-button
                     class="add-cart-btn"
+                    [class.add-cart-btn--added]="justAdded()[product.id]"
                     [disabled]="product.stock === 0"
                     (click)="onAddToCart(product)">
-                    <mat-icon>add_shopping_cart</mat-icon>
-                    <span>{{ product.stock === 0 ? 'No disponible' : 'Añadir al carrito' }}</span>
+                    @if (justAdded()[product.id]) {
+                      <ng-container>
+                        <mat-icon class="added-check">check_circle</mat-icon>
+                        <span>Agregado</span>
+                      </ng-container>
+                    } @else {
+                      <ng-container>
+                        <mat-icon>add_shopping_cart</mat-icon>
+                        <span>{{ product.stock === 0 ? 'No disponible' : 'Añadir al carrito' }}</span>
+                      </ng-container>
+                    }
                   </button>
                 </div>
               </div>
