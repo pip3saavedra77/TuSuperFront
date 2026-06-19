@@ -93,11 +93,15 @@
                     [disabled]="product.stock === 0"
                     (click)="onAddToCart(product)">
                     @if (justAdded()[product.id]) {
-                      <mat-icon class="added-check">check</mat-icon>
-                      <span>Agregado</span>
+                      <ng-container>
+                        <mat-icon class="added-check">check</mat-icon>
+                        <span>Agregado</span>
+                      </ng-container>
                     } @else {
-                      <mat-icon>add</mat-icon>
-                      <span>{{ product.stock === 0 ? 'No disponible' : 'Añadir' }}</span>
+                      <ng-container>
+                        <mat-icon>add</mat-icon>
+                        <span>{{ product.stock === 0 ? 'No disponible' : 'Añadir' }}</span>
+                      </ng-container>
                     }
                   </button>
                 </div>
