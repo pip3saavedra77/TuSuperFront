@@ -18,7 +18,7 @@
     <mat-sidenav-container class="user-cart-container">
       <mat-sidenav #globalCartDrawer
                    [opened]="cartStore.isOpen()"
-                   (openedChange)="cartStore.closeCart()"
+                   (openedChange)="!$event && cartStore.closeCart()"
                    mode="over"
                    position="end"
                    class="cart-drawer-global">
