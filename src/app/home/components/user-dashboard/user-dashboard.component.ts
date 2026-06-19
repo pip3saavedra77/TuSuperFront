@@ -138,22 +138,14 @@ export class UserDashboardComponent implements OnInit {
    * Mapea el nombre de una categoría a un icono de Material Symbols.
    */
   categoryIcon(name: string): string {
-    const map: Record<string, string> = {
-      frutas: 'nutrition',
-      verduras: 'eco',
-      lácteos: 'egg_alt',
-      lacteos: 'egg_alt',
-      panadería: 'bakery_dining',
-      panaderia: 'bakery_dining',
-      bebidas: 'local_cafe',
-      carnes: 'restaurant',
-      granos: 'grain',
-      grano: 'grain',
-      limpieza: 'cleaning_services',
-      aseo: 'cleaning_services',
-      otros: 'category',
-    };
     const key = name?.toLowerCase().trim() ?? '';
-    return map[key] ?? 'category';
+    if (key.includes('fruta') || key.includes('verdura')) return 'eco';
+    if (key.includes('lácteo') || key.includes('lacteo')) return 'egg_alt';
+    if (key.includes('carne') || key.includes('embutido')) return 'restaurant';
+    if (key.includes('despensa') || key.includes('grano')) return 'shopping_basket';
+    if (key.includes('bebida')) return 'local_cafe';
+    if (key.includes('aseo') || key.includes('limpieza') || key.includes('hogar')) return 'cleaning_services';
+    if (key.includes('pan')) return 'bakery_dining';
+    return 'category';
   }
 }
