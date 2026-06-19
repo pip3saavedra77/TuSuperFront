@@ -200,29 +200,29 @@
     // ── Cart quantity badge ──────────────────────────────────────────────
     .cart-quantity-badge {
       position: absolute;
-      top: 10px;
-      right: 10px;
+      top: 8px;
+      right: 8px;
       background: var(--ts-primary, #006e2a);
       color: #ffffff;
-      min-width: 28px;
-      height: 28px;
-      padding: 0 8px;
+      min-width: 32px;
+      height: 32px;
+      padding: 0 10px;
       border-radius: 999px;
-      font-size: 0.8rem;
+      font-size: 0.9rem;
       font-weight: 800;
       display: flex;
       align-items: center;
       justify-content: center;
-      box-shadow: 0 2px 8px rgba(0, 110, 42, 0.3);
+      box-shadow: 0 3px 12px rgba(0, 110, 42, 0.35);
       animation: badgePop 0.3s ease;
-      border: 2px solid #ffffff;
+      border: 2.5px solid #ffffff;
 
       @media (min-width: 641px) {
-        top: 14px;
-        right: 14px;
-        min-width: 30px;
-        height: 30px;
-        font-size: 0.85rem;
+        top: 12px;
+        right: 12px;
+        min-width: 34px;
+        height: 34px;
+        font-size: 0.95rem;
       }
     }
   }
