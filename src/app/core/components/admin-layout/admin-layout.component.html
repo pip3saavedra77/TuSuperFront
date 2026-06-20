@@ -27,33 +27,35 @@
 
       <mat-sidenav-content>
         <router-outlet />
-        <nav class="user-bottom-nav" [class.user-bottom-nav--scrolled]="navScrolled()" aria-label="Navegacion principal">
-          <a class="user-bottom-nav__item" routerLink="/home" routerLinkActive="user-bottom-nav__item--active" [routerLinkActiveOptions]="{exact: true}" aria-current="page">
-            <span class="material-symbols-outlined">home</span>
-            <span class="user-bottom-nav__label">Inicio</span>
-          </a>
-          <a class="user-bottom-nav__item" routerLink="/product" routerLinkActive="user-bottom-nav__item--active" [routerLinkActiveOptions]="{exact: true}">
-            <span class="material-symbols-outlined">grid_view</span>
-            <span class="user-bottom-nav__label">Productos</span>
-          </a>
-          <a class="user-bottom-nav__item user-bottom-nav__item--cart" routerLink="/product/cart" routerLinkActive="user-bottom-nav__item--active">
-            <span class="material-symbols-outlined">shopping_cart</span>
-            @if (cartStore.totalItems() > 0) {
-              <span class="user-bottom-nav__badge">{{ cartStore.totalItems() }}</span>
-            }
-            <span class="user-bottom-nav__label">Carrito</span>
-          </a>
-          <a class="user-bottom-nav__item" routerLink="/orders/my-orders" routerLinkActive="user-bottom-nav__item--active">
-            <span class="material-symbols-outlined">receipt_long</span>
-            <span class="user-bottom-nav__label">Pedidos</span>
-          </a>
-          <a class="user-bottom-nav__item" routerLink="/profile" routerLinkActive="user-bottom-nav__item--active">
-            <span class="material-symbols-outlined">person</span>
-            <span class="user-bottom-nav__label">Perfil</span>
-          </a>
-        </nav>
       </mat-sidenav-content>
     </mat-sidenav-container>
+
+    <!-- Bottom nav OUTSIDE sidenav-content so position:fixed works on iOS Safari -->
+    <nav class="user-bottom-nav" [class.user-bottom-nav--scrolled]="navScrolled()" aria-label="Navegacion principal">
+      <a class="user-bottom-nav__item" routerLink="/home" routerLinkActive="user-bottom-nav__item--active" [routerLinkActiveOptions]="{exact: true}" aria-current="page">
+        <span class="material-symbols-outlined">home</span>
+        <span class="user-bottom-nav__label">Inicio</span>
+      </a>
+      <a class="user-bottom-nav__item" routerLink="/product" routerLinkActive="user-bottom-nav__item--active" [routerLinkActiveOptions]="{exact: true}">
+        <span class="material-symbols-outlined">grid_view</span>
+        <span class="user-bottom-nav__label">Productos</span>
+      </a>
+      <a class="user-bottom-nav__item user-bottom-nav__item--cart" routerLink="/product/cart" routerLinkActive="user-bottom-nav__item--active">
+        <span class="material-symbols-outlined">shopping_cart</span>
+        @if (cartStore.totalItems() > 0) {
+          <span class="user-bottom-nav__badge">{{ cartStore.totalItems() }}</span>
+        }
+        <span class="user-bottom-nav__label">Carrito</span>
+      </a>
+      <a class="user-bottom-nav__item" routerLink="/orders/my-orders" routerLinkActive="user-bottom-nav__item--active">
+        <span class="material-symbols-outlined">receipt_long</span>
+        <span class="user-bottom-nav__label">Pedidos</span>
+      </a>
+      <a class="user-bottom-nav__item" routerLink="/profile" routerLinkActive="user-bottom-nav__item--active">
+        <span class="material-symbols-outlined">person</span>
+        <span class="user-bottom-nav__label">Perfil</span>
+      </a>
+    </nav>
   </div>
 } @else {
   <mat-sidenav-container class="sidenav-container" [class]="profileClass()">
