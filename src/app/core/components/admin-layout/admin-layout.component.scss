@@ -444,10 +444,6 @@
   border: 0.5px solid rgba(255, 255, 255, 0.5);
   filter: drop-shadow(0 4px 16px rgba(0, 0, 0, 0.08)) drop-shadow(0 1px 4px rgba(0, 0, 0, 0.04));
 
-  // Prevent layout shifts during route transitions
-  will-change: transform;
-  contain: layout style;
-
   // ── Safe area (iPhone notch) ─────────────────────────────────────────
   @supports (padding-bottom: env(safe-area-inset-bottom)) {
     bottom: calc(var(--tusuper-nav-offset, 24px) + env(safe-area-inset-bottom, 0px));
