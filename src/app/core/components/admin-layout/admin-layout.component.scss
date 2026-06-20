@@ -362,8 +362,30 @@
   background-color: var(--ts-background, #fbf9f8);
   touch-action: manipulation;
 
+  // Extend background to screen edge below the nav bar on iOS/Brave.
+  // Without this, the browser's dynamic bottom toolbar creates a white gap.
+  &::after {
+    content: '';
+    position: fixed;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    height: calc(var(--tusuper-nav-offset, 32px) + 20px);
+    background: var(--ts-background, #fbf9f8);
+    z-index: 99;
+    pointer-events: none;
+
+    @supports (padding-bottom: env(safe-area-inset-bottom)) {
+      height: calc(var(--tusuper-nav-offset, 32px) + env(safe-area-inset-bottom, 0px) + 20px);
+    }
+  }
+
   @media (min-width: 1024px) {
     padding-bottom: calc(var(--tusuper-nav-offset, 32px) + 100px);
+
+    &::after {
+      display: none;
+    }
   }
 }
 
