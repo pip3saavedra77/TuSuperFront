@@ -1,200 +1,115 @@
-<form [formGroup]="userForm" (ngSubmit)="save()" class="form-dialog form-dialog--wide">
+<form [formGroup]="userForm" (ngSubmit)="save()" class="form-dialog form-dialog--wide profile-drawer">
 
-  <header class="form-dialog__header">
-
-    <div class="form-dialog__icon">
-
-      <mat-icon>{{ isEditMode ? 'manage_accounts' : 'person_add' }}</mat-icon>
-
+  <!-- BANNER DE PERFIL Y CABECERA (Estilo Philip Litassy Mockup 2) -->
+  <header class="profile-drawer__header">
+    <div class="profile-drawer__banner">
+      <button mat-icon-button type="button" class="profile-drawer__close" [disabled]="isLoading" (click)="dialogRef.close()" aria-label="Cerrar">
+        <mat-icon>close</mat-icon>
+      </button>
     </div>
 
-    <div class="form-dialog__heading">
-
-      <h2 class="form-dialog__title">{{ isEditMode ? 'Editar Usuario' : 'Nuevo Usuario' }}</h2>
-
-      <p class="form-dialog__subtitle">
-
-        {{ isEditMode ? 'Actualiza los datos y permisos de este usuario.' : 'Registra un nuevo usuario y asígnale roles.' }}
-
-      </p>
-
+    <div class="profile-drawer__summary">
+      <div class="profile-drawer__avatar-container">
+        <div class="profile-drawer__avatar">{{ getInitials() }}</div>
+      </div>
+      <h2 class="profile-drawer__name">
+        {{ userForm.get('firstName')?.value || userForm.get('lastName')?.value ? (userForm.get('firstName')?.value + ' ' + userForm.get('lastName')?.value) : (isEditMode ? 'Sin Nombre' : 'Nuevo Usuario') }}
+      </h2>
+      <p class="profile-drawer__email">{{ userForm.get('email')?.value || 'correo@tusuper.com' }}</p>
+      
+      <div class="profile-drawer__badge-container">
+        <span class="role-chip" [class]="getSelectedRoleName().toLowerCase()">{{ getSelectedRoleName() }}</span>
+      </div>
     </div>
-
-    <button mat-icon-button type="button" class="form-dialog__close" [disabled]="isLoading" (click)="dialogRef.close()" aria-label="Cerrar">
-
-      <mat-icon>close</mat-icon>
-
-    </button>
-
   </header>
 
-
-
-  <mat-dialog-content class="form-dialog__body">
-
+  <mat-dialog-content class="form-dialog__body profile-drawer__body">
+    
     <!-- Sección: Información personal -->
-
-    <section class="form-section">
-
+    <section class="form-section glass-section">
       <div class="form-section__label">
-
         <mat-icon>badge</mat-icon>
-
         <span>Información personal</span>
-
       </div>
-
-
 
       <div class="form-dialog__row">
-
         <mat-form-field appearance="outline" subscriptSizing="dynamic">
-
           <mat-label>Nombre</mat-label>
-
           <input matInput formControlName="firstName" placeholder="Ej. Juan">
-
           <mat-icon matSuffix>person</mat-icon>
-
           <mat-error *ngIf="userForm.get('firstName')?.hasError('required')">El nombre es requerido</mat-error>
-
         </mat-form-field>
-
-
 
         <mat-form-field appearance="outline" subscriptSizing="dynamic">
-
           <mat-label>Apellido</mat-label>
-
           <input matInput formControlName="lastName" placeholder="Ej. Pérez">
-
+          <mat-icon matSuffix>person_outline</mat-icon>
           <mat-error *ngIf="userForm.get('lastName')?.hasError('required')">El apellido es requerido</mat-error>
-
         </mat-form-field>
-
       </div>
 
-
-
       <mat-form-field appearance="outline" class="full-width" subscriptSizing="dynamic">
-
         <mat-label>Correo electrónico</mat-label>
-
         <input matInput formControlName="email" type="email" placeholder="juan.perez@tusuper.com">
-
         <mat-icon matSuffix>mail</mat-icon>
-
         <mat-error *ngIf="userForm.get('email')?.hasError('required')">El correo es requerido</mat-error>
-
         <mat-error *ngIf="userForm.get('email')?.hasError('email')">Correo inválido</mat-error>
-
       </mat-form-field>
-
     </section>
-
-
 
     <!-- Sección: Acceso -->
-
-    <section class="form-section">
-
+    <section class="form-section glass-section">
       <div class="form-section__label">
-
         <mat-icon>lock</mat-icon>
-
-        <span>Acceso</span>
-
+        <span>Acceso y Seguridad</span>
       </div>
 
-
-
       <mat-form-field appearance="outline" class="full-width" subscriptSizing="dynamic">
-
         <mat-label>Contraseña{{ isEditMode ? ' (opcional)' : '' }}</mat-label>
-
         <input matInput
-
                formControlName="password"
-
                [type]="hidePassword ? 'password' : 'text'"
-
                placeholder="Mínimo 6 caracteres">
-
         <button mat-icon-button matSuffix type="button"
-
                 (click)="hidePassword = !hidePassword"
-
                 [attr.aria-label]="hidePassword ? 'Mostrar contraseña' : 'Ocultar contraseña'">
-
           <mat-icon>{{ hidePassword ? 'visibility' : 'visibility_off' }}</mat-icon>
-
         </button>
-
         <mat-error *ngIf="userForm.get('password')?.hasError('required')">La contraseña es requerida</mat-error>
-
         <mat-error *ngIf="userForm.get('password')?.hasError('minlength')">Mínimo 6 caracteres</mat-error>
-
-        <mat-hint *ngIf="isEditMode">Déjala en blanco para mantener la actual</mat-hint>
-
+        <mat-hint *ngIf="isEditMode" class="form-dialog__hint">Déjala en blanco para mantener la actual</mat-hint>
       </mat-form-field>
-
     </section>
 
-
-
     <!-- Sección: Permisos -->
-
-    <section class="form-section">
-
+    <section class="form-section glass-section">
       <div class="form-section__label">
-
         <mat-icon>shield</mat-icon>
-
-        <span>Permisos</span>
-
+        <span>Permisos y Roles</span>
       </div>
 
-
-
       <mat-form-field appearance="outline" class="full-width" subscriptSizing="dynamic">
-
         <mat-label>Roles asignados</mat-label>
-
         <mat-select formControlName="roleIds">
-
           <mat-option *ngFor="let role of roles" [value]="role.id">
-
             {{ role.name }}
-
           </mat-option>
-
         </mat-select>
-
         <mat-icon matSuffix>verified_user</mat-icon>
-
         <mat-error *ngIf="userForm.get('roleIds')?.hasError('required')">Debe asignar al menos un rol</mat-error>
-
       </mat-form-field>
-
     </section>
 
   </mat-dialog-content>
 
-
-
-  <mat-dialog-actions class="form-dialog__actions">
-
-    <button mat-button type="button" class="form-dialog__btn-cancel" [disabled]="isLoading" (click)="dialogRef.close()">Cancelar</button>
-
-    <button mat-flat-button type="submit" class="form-dialog__btn-submit" [disabled]="userForm.invalid || isLoading">
-
-      <mat-icon *ngIf="!isLoading">{{ isEditMode ? 'save' : 'person_add' }}</mat-icon>
-
-      {{ isLoading ? 'Procesando...' : (isEditMode ? 'Actualizar' : 'Crear usuario') }}
-
+  <mat-dialog-actions class="form-dialog__actions profile-drawer__actions">
+    <button mat-button type="button" class="form-dialog__btn-cancel" [disabled]="isLoading" (click)="dialogRef.close()">
+      Cancelar
     </button>
-
+    <button mat-flat-button type="submit" class="form-dialog__btn-submit" [disabled]="userForm.invalid || isLoading">
+      <mat-icon *ngIf="!isLoading">{{ isEditMode ? 'save' : 'person_add' }}</mat-icon>
+      {{ isLoading ? 'Procesando...' : (isEditMode ? 'Actualizar' : 'Crear usuario') }}
+    </button>
   </mat-dialog-actions>
 
 </form>
-

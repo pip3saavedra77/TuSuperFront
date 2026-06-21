@@ -716,3 +716,196 @@
   box-shadow: -8px 0 32px rgba(0, 0, 0, 0.12);
 }
 
+// ═════════════════════════════════════════════════════════════
+// FEATURE: diseñoadmin
+// White Glassmorphic Sidebar Rail + Canvas — Desktop (≥1024px)
+// ═════════════════════════════════════════════════════════════
+@media (min-width: 1024px) {
+  .sidenav-container {
+    --sidebar-width: 80px;
+
+    .sidenav {
+      background: rgba(255, 255, 255, 0.65) !important;
+      backdrop-filter: blur(24px);
+      -webkit-backdrop-filter: blur(24px);
+      border-right: 1px solid rgba(0, 0, 0, 0.05) !important;
+      box-shadow: 2px 0 20px rgba(0, 0, 0, 0.02) !important;
+
+      .sidebar-wrapper {
+        background: transparent;
+      }
+
+      // ── Workspace Profile Selector (Isotype only) ───────
+      .brand-logo {
+        margin: 24px auto 16px;
+        padding: 0;
+        width: 48px;
+        height: 48px;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        background: transparent !important;
+        border: none !important;
+        box-shadow: none !important;
+
+        .brand-logo__name,
+        .brand-logo__tagline,
+        .brand-logo__indicator {
+          display: none !important;
+        }
+
+        .brand-logo__icon {
+          width: 36px;
+          height: 36px;
+          border-radius: 50%;
+          background: transparent !important;
+          box-shadow: none !important;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+        }
+
+        .brand-logo-img {
+          width: 32px;
+          height: 32px;
+          object-fit: contain;
+          filter: none !important; // Dark logo on light background
+        }
+
+        &:hover { opacity: 0.85; }
+      }
+
+      // ── Hide Section labels ─────────────────────────────
+      .nav-section-label {
+        display: none !important;
+      }
+
+      // ── Centered Icons in Navigation Rail ────────────────
+      mat-nav-list mat-list-item {
+        margin: 6px auto !important;
+        width: 48px !important;
+        height: 48px !important;
+        border-radius: 12px !important;
+        padding: 0 !important;
+
+        ::ng-deep {
+          .mdc-list-item__start {
+            margin: 0 !important;
+            display: flex !important;
+            justify-content: center !important;
+            align-items: center !important;
+            width: 100% !important;
+          }
+          .mdc-list-item__content {
+            display: none !important;
+          }
+        }
+
+        .nav-icon {
+          color: #6f767e !important;
+          font-size: 22px !important;
+          margin: 0 !important;
+        }
+
+        &:hover {
+          background: rgba(0, 0, 0, 0.03) !important;
+
+          .nav-icon {
+            color: #d32f2f !important;
+            font-variation-settings: 'FILL' 1, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+          }
+        }
+
+        // ── Active state: Surgical red accent ──
+        &.active-link {
+          background: rgba(211, 47, 47, 0.05) !important;
+          border-left: none !important;
+          box-shadow: none !important;
+
+          .nav-icon {
+            color: #d32f2f !important;
+            font-variation-settings: 'FILL' 1, 'wght' 500, 'GRAD' 0, 'opsz' 24;
+          }
+
+          &::before {
+            content: '';
+            position: absolute;
+            left: 0;
+            top: 12px;
+            width: 3px;
+            height: 24px;
+            background: #d32f2f;
+            border-radius: 0 4px 4px 0;
+            display: block !important;
+          }
+        }
+
+        // ── Logout ─────────────────────────────────────
+        &.logout-link {
+          color: #ef4444 !important;
+          .nav-icon { color: #ef4444 !important; opacity: 0.8; }
+          &:hover {
+            background: rgba(239, 68, 68, 0.08) !important;
+            .nav-icon { opacity: 1; }
+          }
+        }
+      }
+
+      // ── Account section separator ───────────────────────
+      .nav-section.logout-section {
+        border-top: 1px solid rgba(0, 0, 0, 0.05) !important;
+        margin-top: auto !important;
+        padding-top: 12px;
+      }
+    }
+  }
+
+  // ── Top Toolbar (Transparent Floating UI) ───────────
+  .top-toolbar {
+    background: transparent !important;
+    border-bottom: none !important;
+    box-shadow: none !important;
+    height: 64px !important;
+    padding: 0 40px !important;
+
+    .toolbar-actions {
+      gap: 16px;
+    }
+
+    .toolbar-user {
+      border-left: none !important;
+      padding-left: 0 !important;
+      gap: 0 !important;
+    }
+
+    .toolbar-user-info {
+      display: none !important;
+    }
+
+    .toolbar-avatar {
+      border-radius: 50% !important;
+      border: 1px solid rgba(0, 0, 0, 0.08) !important;
+      background: #ffffff !important;
+      width: 36px !important;
+      height: 36px !important;
+      font-size: 0.85rem !important;
+      color: #1a1d1f !important;
+    }
+  }
+
+  // ── Main content canvas (unified white frame) ──────
+  .main-content {
+    background: #f3f5f7;
+    padding: 0 0 40px 0 !important;
+
+    &__canvas {
+      margin: 0 24px !important;
+      border-radius: 24px;
+      background: #ffffff;
+      box-shadow: 0 10px 40px rgba(0, 0, 0, 0.02);
+      border: 1px solid rgba(0, 0, 0, 0.03);
+      overflow: hidden;
+    }
+  }
+}
+

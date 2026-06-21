@@ -9,8 +9,8 @@
       {{ currentUser()?.firstName?.charAt(0)?.toUpperCase() }}
     </div>
     <div class="welcome-text">
-      <h1>Panel de Control, {{ currentUser()?.firstName }} ⚙️</h1>
-      <p class="subtitle">Indicadores de gestión y analíticas en tiempo real.</p>
+      <h1>Panel de Control</h1>
+      <p class="subtitle">{{ currentUser()?.firstName }}, <strong>{{ isAdmin() ? 'administrador' : 'tendero' }}</strong> &middot; Indicadores en tiempo real</p>
     </div>
   </div>
 
@@ -19,105 +19,142 @@
       <mat-progress-spinner mode="indeterminate" diameter="48"></mat-progress-spinner>
     </div>
   } @else {
-    <!-- ── KPI Cards Grid ─────────────────────────── -->
+    <!-- ── KPI Grid Premium ───────────────────────── -->
     <div class="kpi-grid">
-      <!-- KPI 1: Pedidos Pendientes (TENDERO) o Usuarios Registrados (ADMIN) -->
+      <!-- Featured KPI — role-dependent -->
       @if (isTendero()) {
-        <div class="kpi-card">
-          <div class="kpi-card__header">
-            <span class="kpi-card__title">Pedidos Pendientes</span>
-            <div class="kpi-card__icon-wrapper pending">
-              <mat-icon>receipt_long</mat-icon>
-            </div>
-          </div>
-          <div class="kpi-card__value">{{ pendingOrdersCount() }}</div>
-          <div class="kpi-card__footer">
-            <span class="kpi-card__status-text warning">Pendientes por despachar</span>
+        <div class="kpi-card"
+             [class.kpi-card--selected]="selectedCard() === 'kpi-1'"
+             (click)="selectCard('kpi-1')"
+             (focus)="selectCard('kpi-1')"
+             (keydown.enter)="selectCard('kpi-1')"
+             tabindex="0">
+          <span class="kpi-card__label">Pedidos Pendientes</span>
+          <span class="kpi-card__value">{{ pendingOrdersCount() }}</span>
+          <span class="kpi-card__change"><span class="kpi-card__badge positive">+8%</span><span class="kpi-card__trend">vs mes ant.</span></span>
+          <div class="kpi-card__spark">
+            <span class="spark-bar" style="height: 30%"></span>
+            <span class="spark-bar" style="height: 55%"></span>
+            <span class="spark-bar" style="height: 40%"></span>
+            <span class="spark-bar" style="height: 75%"></span>
+            <span class="spark-bar" style="height: 60%"></span>
           </div>
         </div>
-      } @else if (isAdmin()) {
-        <div class="kpi-card">
-          <div class="kpi-card__header">
-            <span class="kpi-card__title">Usuarios Registrados</span>
-            <div class="kpi-card__icon-wrapper users">
-              <mat-icon>people</mat-icon>
-            </div>
-          </div>
-          <div class="kpi-card__value">{{ activeUsersCount() }}</div>
-          <div class="kpi-card__footer">
-            <span class="kpi-card__status-text success">Cuentas activas en BD</span>
+      } @else {
+        <div class="kpi-card"
+             [class.kpi-card--selected]="selectedCard() === 'kpi-1'"
+             (click)="selectCard('kpi-1')"
+             (focus)="selectCard('kpi-1')"
+             (keydown.enter)="selectCard('kpi-1')"
+             tabindex="0">
+          <span class="kpi-card__label">Usuarios Registrados</span>
+          <span class="kpi-card__value">{{ activeUsersCount() }}</span>
+          <span class="kpi-card__change"><span class="kpi-card__badge positive">+3.2%</span><span class="kpi-card__trend">vs mes ant.</span></span>
+          <div class="kpi-card__spark">
+            <span class="spark-bar" style="height: 40%"></span>
+            <span class="spark-bar" style="height: 60%"></span>
+            <span class="spark-bar" style="height: 80%"></span>
+            <span class="spark-bar" style="height: 55%"></span>
+            <span class="spark-bar" style="height: 90%"></span>
           </div>
         </div>
       }
 
-      <!-- KPI 2: Total Productos (Ambos) -->
-      <div class="kpi-card">
-        <div class="kpi-card__header">
-          <span class="kpi-card__title">Total Productos</span>
-          <div class="kpi-card__icon-wrapper products">
-            <mat-icon>inventory_2</mat-icon>
-          </div>
-        </div>
-        <div class="kpi-card__value">{{ totalProductsCount() }}</div>
-        <div class="kpi-card__footer">
-          <span class="kpi-card__status-text info">Ítems activos en catálogo</span>
+      <!-- Secondary KPI — Total Productos -->
+      <div class="kpi-card"
+           [class.kpi-card--selected]="selectedCard() === 'kpi-2'"
+           (click)="selectCard('kpi-2')"
+           (focus)="selectCard('kpi-2')"
+           (keydown.enter)="selectCard('kpi-2')"
+           tabindex="0">
+        <span class="kpi-card__label">Total Productos</span>
+        <span class="kpi-card__value">{{ totalProductsCount() }}</span>
+        <span class="kpi-card__change"><span class="kpi-card__badge neutral">+2</span><span class="kpi-card__trend">este mes</span></span>
+        <div class="kpi-card__spark">
+          <span class="spark-bar" style="height: 50%"></span>
+          <span class="spark-bar" style="height: 70%"></span>
+          <span class="spark-bar" style="height: 45%"></span>
+          <span class="spark-bar" style="height: 85%"></span>
+          <span class="spark-bar" style="height: 65%"></span>
         </div>
       </div>
 
-      <!-- KPI 3: Productos con Bajo Stock (Ambos - Simulado) -->
-      <div class="kpi-card">
-        <div class="kpi-card__header">
-          <span class="kpi-card__title">Bajo Inventario</span>
-          <div class="kpi-card__icon-wrapper danger">
-            <mat-icon>warning</mat-icon>
-          </div>
-        </div>
-        <div class="kpi-card__value">{{ lowStockCount() }}</div>
-        <div class="kpi-card__footer">
-          <span class="kpi-card__status-text alert">Menos de 5 unidades en almacén</span>
+      <!-- Secondary KPI — Bajo Inventario -->
+      <div class="kpi-card"
+           [class.kpi-card--selected]="selectedCard() === 'kpi-3'"
+           (click)="selectCard('kpi-3')"
+           (focus)="selectCard('kpi-3')"
+           (keydown.enter)="selectCard('kpi-3')"
+           tabindex="0">
+        <span class="kpi-card__label">Bajo Inventario</span>
+        <span class="kpi-card__value">{{ lowStockCount() }}</span>
+        <span class="kpi-card__change"><span class="kpi-card__badge negative">-5%</span><span class="kpi-card__trend">vs mes ant.</span></span>
+        <div class="kpi-card__spark">
+          <span class="spark-bar" style="height: 70%"></span>
+          <span class="spark-bar" style="height: 50%"></span>
+          <span class="spark-bar" style="height: 35%"></span>
+          <span class="spark-bar" style="height: 20%"></span>
+          <span class="spark-bar" style="height: 45%"></span>
         </div>
       </div>
     </div>
 
-    <!-- ── Charts Section ─────────────────────────── -->
-    <div class="charts-grid">
-      <!-- Gráfico de Ventas Semanales -->
-      <div class="chart-card">
-        <h3 class="chart-card__title">Flujo de Ventas (Últimos 7 días)</h3>
-        <div class="chart-card__canvas-container">
-          <canvas baseChart
-            [data]="barChartData"
-            [options]="barChartOptions"
-            type="bar">
-          </canvas>
+    <!-- ── Chart Card Wide ─────────────────────────── -->
+    <div class="chart-card-wide">
+      <div class="chart-card-wide__header">
+        <h3>Flujo de Ventas (Últimos 7 días)</h3>
+        <button class="chart-card-wide__filter" type="button">2 meses ▾</button>
+      </div>
+      <div class="chart-card-wide__canvas">
+        <canvas baseChart
+          [data]="barChartData"
+          [options]="barChartOptions"
+          type="bar">
+        </canvas>
+      </div>
+    </div>
+
+    <!-- ── Bottom Grid: Data Table + Analytics ─────── -->
+    <div class="bottom-grid">
+      <!-- Left: Data Table — Módulos de Gestión -->
+      <div class="data-card">
+        <div class="data-card__header">
+          <h3>Módulos de Gestión</h3>
+          <button type="button" class="data-card__header-action" aria-label="Más opciones">
+            <span class="material-symbols-rounded">more_vert</span>
+          </button>
+        </div>
+        <div class="data-card__list">
+          @for (moduleName of filterValidModules(userModules()); track moduleName) {
+            <a class="data-card__row" [routerLink]="getModuleRoute(moduleName)">
+              <div class="data-card__row-avatar">
+                <mat-icon>{{ getIcon(moduleName) }}</mat-icon>
+              </div>
+              <div class="data-card__row-info">
+                <span class="data-card__row-name">{{ moduleName | titlecase }}</span>
+                <span class="data-card__row-meta">Módulo activo</span>
+              </div>
+              <span class="data-card__row-spark">▴</span>
+              <span class="data-card__row-action material-symbols-rounded">chevron_right</span>
+            </a>
+          } @empty {
+            <p class="data-card__empty">No tienes módulos asignados. Contacta al administrador.</p>
+          }
         </div>
       </div>
 
-      <!-- Gráfico de Distribución de Stock por Categoría -->
-      <div class="chart-card">
-        <h3 class="chart-card__title">Distribución por Categorías</h3>
-        <div class="chart-card__canvas-container">
+      <!-- Right: Dark Analytics Widget — Distribución por Categoría -->
+      <div class="analytics-card">
+        <div class="analytics-card__header">
+          <h3>Distribución por Categoría</h3>
+        </div>
+        <div class="analytics-card__body">
           <canvas baseChart
             [data]="doughnutChartData"
             [options]="doughnutChartOptions"
             type="doughnut">
           </canvas>
         </div>
-      </div>
-    </div>
-
-    <!-- ── Quick Actions (Barra Compacta) ─────────── -->
-    <div class="quick-actions-bar">
-      <span class="quick-actions-bar__label">Acciones Rápidas:</span>
-      <div class="quick-actions-bar__buttons">
-        @for (moduleName of filterValidModules(userModules()); track moduleName) {
-          <a mat-stroked-button [routerLink]="getModuleRoute(moduleName)" class="btn-quick-action">
-            <mat-icon>{{ getIcon(moduleName) }}</mat-icon>
-            {{ moduleName | titlecase }}
-          </a>
-        } @empty {
-          <p class="no-modules">No tienes módulos asignados. Contacta al administrador.</p>
-        }
       </div>
     </div>
   }

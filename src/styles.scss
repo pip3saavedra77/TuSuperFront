@@ -324,31 +324,51 @@ textarea {
 
 
 .profile-admin {
-
   --profile-primary: #8B1A2F;
-
   --profile-glass: rgba(139, 26, 47, 0.85);
 
+  // Material Form Field Overrides for Admin (Red)
+  --mat-sys-primary: #8B1A2F;
+  --mat-form-field-outlined-hover-outline-color: #8B1A2F;
+  --mat-form-field-outlined-focus-outline-color: #8B1A2F;
+  --mdc-outlined-text-field-focus-label-text-color: #8B1A2F;
+  --mdc-outlined-text-field-caret-color: #8B1A2F;
+  --mat-option-selected-state-label-text-color: #8B1A2F;
+  --mat-option-focus-state-layer-color: rgba(139, 26, 47, 0.08);
+  --mat-option-selected-state-layer-color: rgba(139, 26, 47, 0.08);
+  --mat-select-focused-arrow-color: #8B1A2F;
 }
-
-
 
 .profile-tendero {
-
   --profile-primary: #2980B9;
-
   --profile-glass: rgba(41, 128, 185, 0.85);
 
+  // Material Form Field Overrides for Tendero (Blue)
+  --mat-sys-primary: #2980B9;
+  --mat-form-field-outlined-hover-outline-color: #2980B9;
+  --mat-form-field-outlined-focus-outline-color: #2980B9;
+  --mdc-outlined-text-field-focus-label-text-color: #2980B9;
+  --mdc-outlined-text-field-caret-color: #2980B9;
+  --mat-option-selected-state-label-text-color: #2980B9;
+  --mat-option-focus-state-layer-color: rgba(41, 128, 185, 0.08);
+  --mat-option-selected-state-layer-color: rgba(41, 128, 185, 0.08);
+  --mat-select-focused-arrow-color: #2980B9;
 }
 
-
-
 .profile-usuario {
-
   --profile-primary: #2ECC71;
-
   --profile-glass: rgba(46, 204, 113, 0.85);
 
+  // Material Form Field Overrides for User (Green)
+  --mat-sys-primary: #2ECC71;
+  --mat-form-field-outlined-hover-outline-color: #2ECC71;
+  --mat-form-field-outlined-focus-outline-color: #2ECC71;
+  --mdc-outlined-text-field-focus-label-text-color: #2ECC71;
+  --mdc-outlined-text-field-caret-color: #2ECC71;
+  --mat-option-selected-state-label-text-color: #2ECC71;
+  --mat-option-focus-state-layer-color: rgba(46, 204, 113, 0.08);
+  --mat-option-selected-state-layer-color: rgba(46, 204, 113, 0.08);
+  --mat-select-focused-arrow-color: #2ECC71;
 }
 
 

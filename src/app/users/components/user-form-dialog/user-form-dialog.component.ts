@@ -99,9 +99,20 @@ export class UserFormDialogComponent implements OnInit {
 
 
   ngOnInit(): void {
-
     this.loadRoles();
+  }
 
+  getInitials(): string {
+    const first = this.userForm?.get('firstName')?.value || '';
+    const last = this.userForm?.get('lastName')?.value || '';
+    const initials = `${first?.[0] ?? ''}${last?.[0] ?? ''}`.toUpperCase();
+    return initials || '?';
+  }
+
+  getSelectedRoleName(): string {
+    const roleId = this.userForm?.get('roleIds')?.value;
+    const selectedRole = this.roles.find(r => r.id === roleId);
+    return selectedRole ? selectedRole.name : (this.isEditMode ? 'Usuario' : 'Nuevo');
   }
 
 
