@@ -78,6 +78,7 @@
           <span class="brand-logo__name">TuSuper</span>
           <span class="brand-logo__tagline">Comercio local</span>
         </div>
+        <span class="brand-logo__indicator"></span>
       </a>
 
       @if (isAuthenticated()) {
@@ -100,14 +101,14 @@
                     [routerLinkActiveOptions]="{exact: true}">
                     <span matListItemIcon class="nav-icon material-symbols-rounded">
                       {{
-                        moduleName === 'users' ? 'group' :
+                        moduleName === 'users' ? 'people' :
                         moduleName === 'roles' ? 'shield' :
                         moduleName === 'product' ? 'inventory_2' :
                         moduleName === 'category' ? 'category' :
                         moduleName === 'provider' ? 'local_shipping' :
                         moduleName === 'orders' ? 'receipt_long' :
                         moduleName === 'modules' ? 'view_module' :
-                        'folder'
+                        'extension'
                       }}
                     </span>
                     <span matListItemTitle>{{ getModuleLabel(moduleName) }}</span>
@@ -117,11 +118,18 @@
             </mat-nav-list>
           </div>
 
+          <!-- FEATURE: diseñoadmin | Desktop search — disabled, no keyboard logic yet
+          <div class="admin-sidebar__search">
+            <span class="material-symbols-rounded admin-sidebar__search-icon">search</span>
+            <span class="admin-sidebar__search-text">Buscar módulos...</span>
+          </div>
+          -->
+
           <div class="nav-section logout-section">
             <div class="nav-section-label">CUENTA</div>
             <mat-nav-list>
               <a mat-list-item routerLink="/profile" routerLinkActive="active-link">
-                <span matListItemIcon class="nav-icon material-symbols-rounded">account_circle</span>
+                <span matListItemIcon class="nav-icon material-symbols-rounded">person</span>
                 <span matListItemTitle>Mi perfil</span>
               </a>
               <a mat-list-item (click)="logout()" class="logout-link">
@@ -183,7 +191,9 @@
           <button type="button" (click)="dismissIdle()">Seguir aquí</button>
         </div>
       }
-      <router-outlet></router-outlet>
+      <div class="main-content__canvas">
+        <router-outlet></router-outlet>
+      </div>
     </main>
   </mat-sidenav-content>
   </mat-sidenav-container>

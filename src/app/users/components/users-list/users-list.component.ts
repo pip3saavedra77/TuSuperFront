@@ -13,6 +13,7 @@ import { skip } from 'rxjs';
 import { User } from '../../../core/models/user.model';
 import { UsersStore } from '../../store/users.store';
 import { UserFormDialogComponent } from '../user-form-dialog/user-form-dialog.component';
+import { AuthService } from '../../../core/services/auth';
 
 @Component({
   selector: 'app-users-list',
@@ -35,6 +36,7 @@ export class UsersListComponent {
   private readonly dialog = inject(MatDialog);
   private readonly snackBar = inject(MatSnackBar);
   private readonly destroyRef = inject(DestroyRef);
+  private readonly authService = inject(AuthService);
 
   readonly searchQuery = signal('');
   pageSize = 10;
@@ -71,11 +73,12 @@ export class UsersListComponent {
   }
 
   openUserForm(user?: User): void {
+    const roleClass = this.authService.isAdmin() ? 'profile-admin' : (this.authService.isTendero() ? 'profile-tendero' : 'profile-usuario');
     const dialogRef = this.dialog.open(UserFormDialogComponent, {
       width: '480px',
       height: '100vh',
       position: { right: '0', top: '0' },
-      panelClass: 'side-drawer-dialog',
+      panelClass: ['side-drawer-dialog', roleClass],
       data: { user },
       disableClose: true,
     });

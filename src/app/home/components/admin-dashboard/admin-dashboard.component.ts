@@ -14,7 +14,7 @@ import { UsersService } from '../../../users/services/users.service';
 import { DashboardService } from '../../../core/services/dashboard.service';
 
 const MODULE_ICONS: Record<string, string> = {
-  users: 'people', modules: 'widgets', product: 'inventory_2',
+  users: 'people', modules: 'view_module', product: 'inventory_2',
   category: 'category', provider: 'local_shipping', orders: 'receipt_long',
 };
 
@@ -43,6 +43,7 @@ export class AdminDashboardComponent implements OnInit {
   readonly activeUsersCount = signal<number>(0);
   readonly lowStockCount = signal<number>(0);
   readonly loadingDashboard = signal<boolean>(false);
+  readonly selectedCard = signal<string>('kpi-1');
 
   // Chart configs — copy EXACTLY from current home.ts lines 151-220
   public readonly barChartType: ChartType = 'bar';
@@ -92,5 +93,9 @@ export class AdminDashboardComponent implements OnInit {
       return '/admin/products';
     }
     return '/' + moduleName.toLowerCase();
+  }
+
+  selectCard(cardId: string): void {
+    this.selectedCard.set(cardId);
   }
 }

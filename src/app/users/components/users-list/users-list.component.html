@@ -5,7 +5,7 @@
       <mat-icon>group</mat-icon>
     </div>
     <div class="page-hero__text">
-      <h1>Gestión de Usuarios</h1>
+      <h1>Usuarios</h1>
       <p class="page-hero__subtitle">Administra cuentas, roles y estado de los usuarios de la plataforma.</p>
     </div>
     <div class="page-hero__actions">
@@ -55,15 +55,22 @@
   } @else {
     <div class="users-grid">
       @for (user of store.users(); track user.id) {
-        <div class="user-card" [class.user-card--inactive]="!user.isActive">
-          <div class="user-card__header">
-            <div class="user-card__avatar">{{ getInitials(user) }}</div>
+        <div class="user-card" 
+             [class.user-card--inactive]="!user.isActive"
+             [class.profile-admin]="user.roles[0]?.name === 'ADMIN'"
+             [class.profile-tendero]="user.roles[0]?.name === 'TENDERO'"
+             [class.profile-usuario]="user.roles[0]?.name === 'USER'">
+          <div class="user-card__banner">
             <span
               class="user-card__status-badge"
               [class.active]="user.isActive"
               [class.inactive]="!user.isActive">
               {{ user.isActive ? 'Activo' : 'Inactivo' }}
             </span>
+          </div>
+
+          <div class="user-card__avatar-container">
+            <div class="user-card__avatar">{{ getInitials(user) }}</div>
           </div>
 
           <div class="user-card__body">
