@@ -11,6 +11,7 @@ export class InitService {
   private readonly _initSubmessage = signal('Estamos organizando los productos para ti');
   private readonly _isColdStart = signal(false);
   private _coldStartTimer: ReturnType<typeof setTimeout> | null = null;
+  private _completed = false;
 
   readonly isInitializing = this._isInitializing.asReadonly();
   readonly initMessage = this._initMessage.asReadonly();
@@ -19,6 +20,7 @@ export class InitService {
 
   /** Mark initialization as started - call from APP_INITIALIZER factory */
   start(): void {
+    if (this._completed) return;
     this._isInitializing.set(true);
     this._isColdStart.set(false);
     // Detect cold start: if init takes > 5s, show "Waking up..." message
@@ -31,6 +33,7 @@ export class InitService {
 
   /** Mark initialization as complete - call when APP_INITIALIZER promise resolves */
   complete(): void {
+    this._completed = true;
     if (this._coldStartTimer) {
       clearTimeout(this._coldStartTimer);
       this._coldStartTimer = null;
