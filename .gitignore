@@ -48,6 +48,8 @@ Thumbs.db
 
 # SonarQube
 .scannerwork/
-.playwright-mcp/  
-*.png  
-server.log 
+.playwright-mcp/
+*.png
+# Keep PWA branding icons tracked (manifest.json references them)
+!public/branding/*.png
+server.log
