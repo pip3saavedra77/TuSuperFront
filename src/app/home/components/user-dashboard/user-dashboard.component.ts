@@ -1,7 +1,7 @@
 import { Component, OnInit, inject, computed, signal, DestroyRef, ChangeDetectionStrategy } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { CurrencyPipe, DatePipe } from '@angular/common';
-import { catchError, of } from 'rxjs';
+import { catchError, of, timeout } from 'rxjs';
 import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
 import { AuthService } from '../../../core/services/auth';
 import { OrdersService } from '../../../orders/services/orders.service';
@@ -77,7 +77,10 @@ export class UserDashboardComponent implements OnInit {
       }
     };
 
+    const REQUEST_TIMEOUT = 10_000;
+
     this.ordersService.getMyOrders({ limit: 5, offset: 0 }).pipe(
+      timeout(REQUEST_TIMEOUT),
       catchError(() => of({ data: [], total: 0, limit: 5, offset: 0 })),
       takeUntilDestroyed(this.destroyRef),
     ).subscribe({
@@ -86,6 +89,7 @@ export class UserDashboardComponent implements OnInit {
     });
 
     this.productService.getAll({ limit: 4, offset: 0 }).pipe(
+      timeout(REQUEST_TIMEOUT),
       catchError(() => of({ data: [], total: 0, limit: 4, offset: 0 })),
       takeUntilDestroyed(this.destroyRef),
     ).subscribe({
@@ -94,6 +98,7 @@ export class UserDashboardComponent implements OnInit {
     });
 
     this.productService.getCategories().pipe(
+      timeout(REQUEST_TIMEOUT),
       catchError(() => of({ data: [], total: 0, limit: 4, offset: 0 })),
       takeUntilDestroyed(this.destroyRef),
     ).subscribe({
