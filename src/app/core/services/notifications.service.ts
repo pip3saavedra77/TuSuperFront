@@ -111,7 +111,7 @@ export class NotificationsService {
       this.sound.playStatusChange();
       if (this.isStaff()) {
         this.addNotification({
-          id: Math.random().toString(36).substring(2, 11),
+          id: crypto.randomUUID(),
           title: 'Pedido Recibido y Calificado',
           message: `🧑 ${data.customerName || 'El cliente'} recibió el pedido #${data.orderId} y lo calificó con ${data.rating}/5${
             data.feedback ? `: "${data.feedback}"` : ''
