@@ -512,6 +512,106 @@
   100% { transform: scale(1); opacity: 1; }
 }
 
+// ─── CUSTOM MAT-DATE-RANGE-PICKER ─────────────────────
+::ng-deep .mat-datepicker-popup {
+  border-radius: 20px !important;
+  box-shadow: 0 12px 48px rgba(0,0,0,0.12), 0 4px 16px rgba(0,0,0,0.06) !important;
+  overflow: hidden;
+}
+
+::ng-deep .mat-calendar {
+  font-family: inherit;
+  border-radius: 20px;
+  padding: 8px;
+  background: #ffffff;
+}
+
+::ng-deep .mat-calendar-header {
+  padding: 8px 16px 4px;
+}
+
+::ng-deep .mat-calendar-controls {
+  .mat-calendar-period-button {
+    font-weight: 700 !important;
+    font-size: 0.95rem !important;
+    color: #0f172a !important;
+  }
+  .mat-calendar-arrow { fill: var(--profile-primary, #1976d2); }
+}
+
+::ng-deep .mat-calendar-table-header {
+  color: #94a3b8;
+  font-weight: 600;
+  font-size: 0.75rem;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+
+  th { border: none; }
+}
+
+::ng-deep .mat-calendar-body-cell {
+  font-size: 0.85rem;
+  font-weight: 500;
+
+  &.mat-calendar-body-active {
+    .mat-calendar-body-cell-content {
+      border-color: var(--profile-primary, #1976d2) !important;
+    }
+  }
+}
+
+::ng-deep .mat-calendar-body-selected {
+  background-color: var(--profile-primary, #1976d2) !important;
+  color: #fff !important;
+  border-radius: 999px !important;
+}
+
+::ng-deep .mat-calendar-body-in-range {
+  background: color-mix(in srgb, var(--profile-primary, #1976d2) 10%, transparent) !important;
+}
+
+::ng-deep .mat-calendar-body-in-preview {
+  background: color-mix(in srgb, var(--profile-primary, #1976d2) 6%, transparent) !important;
+}
+
+::ng-deep .mat-calendar-body-today {
+  &:not(.mat-calendar-body-selected) {
+    .mat-calendar-body-cell-content {
+      border-color: var(--profile-primary, #1976d2) !important;
+    }
+  }
+}
+
+::ng-deep .mat-calendar-body-cell-content {
+  border-radius: 999px !important;
+  transition: background 0.15s, transform 0.15s;
+  width: 38px;
+  height: 38px;
+  line-height: 38px;
+  font-weight: 500;
+
+  &:hover {
+    background: #f1f5f9 !important;
+    transform: scale(1.05);
+  }
+}
+
+::ng-deep .mat-date-range-input-container {
+  gap: 4px;
+}
+
+::ng-deep .mat-date-range-input-separator {
+  color: #94a3b8;
+  font-weight: 500;
+  margin: 0 2px;
+}
+
+::ng-deep .mat-datepicker-toggle {
+  color: #94a3b8;
+
+  &:hover { color: var(--profile-primary, #1976d2); }
+}
+
 // ─── REDUCED MOTION ───────────────────────────────────
 @media (prefers-reduced-motion: reduce) {
   .order-card--new {
