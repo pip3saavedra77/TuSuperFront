@@ -4,6 +4,7 @@ import { io, Socket } from 'socket.io-client';
 import { Notification } from '../models/notification.model';
 import { environment } from '../../../environments/environment';
 import { SoundService } from './sound.service';
+import { AuthService } from './auth';
 
 @Injectable({
   providedIn: 'root',
@@ -12,6 +13,7 @@ export class NotificationsService {
   private socket: Socket | null = null;
   private readonly apiUrl = environment.apiUrl;
   private readonly sound = inject(SoundService);
+  private readonly authService = inject(AuthService);
 
   // State
   private readonly notifications = signal<Notification[]>(this.loadFromStorage());
@@ -76,15 +78,18 @@ export class NotificationsService {
 
     this.socket.on('order-status-changed', (data: any) => {
       this.sound.playStatusChange();
-      this.addNotification({
-        id: Math.random().toString(36).substring(2, 11),
-        title: 'Actualización de Pedido',
-        message: `El pedido #${data.orderId} cambió a ${data.newStatus}`,
-        type: 'order-status-changed',
-        timestamp: new Date().toISOString(),
-        isRead: false,
-        data,
-      });
+      // Staff solo refresca el listado, sin notificación en campana
+      if (!this.isStaff()) {
+        this.addNotification({
+          id: Math.random().toString(36).substring(2, 11),
+          title: 'Actualización de Pedido',
+          message: `El pedido #${data.orderId} cambió a ${data.newStatus}`,
+          type: 'order-status-changed',
+          timestamp: new Date().toISOString(),
+          isRead: false,
+          data,
+        });
+      }
       this._orderStatusChanged.next(data);
     });
 
@@ -104,6 +109,15 @@ export class NotificationsService {
 
     this.socket.on('disconnect', () => {
       console.log('Disconnected from notifications gateway');
+    });
+  }
+
+  private isStaff(): boolean {
+    const user = this.authService.currentUser();
+    if (!user) return false;
+    return user.roles.some(r => {
+      const name = r.name.toUpperCase();
+      return name.includes('ADMIN') || name.includes('TENDERO');
     });
   }
 
