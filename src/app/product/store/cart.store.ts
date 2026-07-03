@@ -83,6 +83,10 @@ export const CartStore = signalStore(
       ),
     ),
     isEmpty: computed(() => store.items().length === 0),
+    deliveryFee: computed(() => {
+      const qty = store.items().reduce((sum, i) => sum + i.quantity, 0);
+      return 6500 + qty * 100;
+    }),
   })),
 
   withMethods(store => ({
