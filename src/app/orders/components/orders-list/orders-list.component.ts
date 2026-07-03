@@ -38,6 +38,7 @@ import {
 } from '../../../core/models/order.model';
 import { AuthService } from '../../../core/services/auth';
 import { NotificationsService } from '../../../core/services/notifications.service';
+import { OrderDetailComponent } from '../order-detail/order-detail.component';
 
 export interface TabOption {
   label: string;
@@ -66,6 +67,7 @@ export interface TabOption {
     MatTabsModule,
     MatMenuModule,
     MatChipsModule,
+    OrderDetailComponent,
   ],
   providers: [provideNativeDateAdapter()],
   templateUrl: './orders-list.component.html',
@@ -84,12 +86,9 @@ export class OrdersListComponent implements OnInit {
   readonly currentLimit = signal<number>(10);
   readonly currentOffset = signal<number>(0);
 
-  // ── Search & Side Drawer State ──────────────────────
+  // ── Search & Modal State ──────────────────────────
   readonly searchQuery = signal<string>('');
-  readonly selectedOrder = signal<Order | null>(null);
-  readonly drawerOpen = signal<boolean>(false);
-  readonly updatingStatus = signal<boolean>(false);
-  drawerSelectedStatus: OrderStatus | null = null;
+  readonly detailModalOrder = signal<Order | null>(null);
 
   filterStatus: OrderStatus | '' = '';
   filterStartDate: string = '';
@@ -107,17 +106,12 @@ export class OrdersListComponent implements OnInit {
 
   selectedTabIndex = 0;
 
-  readonly displayedColumns: string[] = [
-    'id',
-    'customer',
-    'createdAt',
-    'totalAmount',
-    'status',
-    'actions',
-  ];
-
-  readonly statusOptions = Object.values(OrderStatus);
   readonly statusLabels = ORDER_STATUS_LABELS;
+  readonly OrderStatus = OrderStatus;
+
+  // ── New-order tracking ─────────────────────────────
+  private wsNotificationTimes: number[] = [];
+  private newOrderTimestamps = new Map<number, number>();
 
   constructor() {
     toObservable(this.searchQuery)
@@ -140,7 +134,11 @@ export class OrdersListComponent implements OnInit {
   private setupWebSocketRefresh(): void {
     this.notificationsService.newOrderReceived$
       .pipe(takeUntilDestroyed(this.destroyRef))
-      .subscribe(() => this.loadOrders());
+      .subscribe(() => {
+        this.wsNotificationTimes.push(Date.now());
+        this.wsNotificationTimes = this.wsNotificationTimes.filter(t => Date.now() - t < 120000);
+        this.loadOrders();
+      });
 
     this.notificationsService.orderStatusChanged$
       .pipe(takeUntilDestroyed(this.destroyRef))
@@ -180,6 +178,7 @@ export class OrdersListComponent implements OnInit {
         next: (result) => {
           this.orders.set(result.data);
           this.totalOrders.set(result.total);
+          this.markNewOrders(result.data);
         },
         error: (err: HttpErrorResponse) => {
           this.showError(err);
@@ -187,6 +186,39 @@ export class OrdersListComponent implements OnInit {
       });
   }
 
+  private markNewOrders(orders: Order[]): void {
+    const now = Date.now();
+    for (const order of orders) {
+      if (order.status !== OrderStatus.PENDING) continue;
+      const orderTime = new Date(order.createdAt).getTime();
+      const isRecentlyReceived = this.wsNotificationTimes.some(
+        t => Math.abs(orderTime - t) < 60000,
+      );
+      if (isRecentlyReceived && !this.newOrderTimestamps.has(order.id)) {
+        this.newOrderTimestamps.set(order.id, now);
+      }
+    }
+    this.cleanExpiredNewOrders();
+  }
+
+  private cleanExpiredNewOrders(): void {
+    const now = Date.now();
+    for (const [id, ts] of this.newOrderTimestamps) {
+      if (now - ts > 30000) {
+        this.newOrderTimestamps.delete(id);
+      }
+    }
+  }
+
+  isOrderNew(order: Order): boolean {
+    return this.newOrderTimestamps.has(order.id) && order.status === OrderStatus.PENDING;
+  }
+
+  dismissNewOrder(orderId: number): void {
+    this.newOrderTimestamps.delete(orderId);
+  }
+
+  // ── Search ────────────────────────────────────────
   onSearchInput(event: Event): void {
     const input = event.target as HTMLInputElement;
     this.searchQuery.set(input.value);
@@ -217,6 +249,7 @@ export class OrdersListComponent implements OnInit {
     this.loadOrders();
   }
 
+  // ── Status helpers ─────────────────────────────────
   isTerminal(status: OrderStatus): boolean {
     return isTerminalStatus(status);
   }
@@ -233,55 +266,83 @@ export class OrdersListComponent implements OnInit {
     return this.getTransitions(current).includes(target);
   }
 
-  viewDetails(order: Order): void {
-    this.selectedOrder.set(order);
-    this.drawerSelectedStatus = order.status;
-    this.drawerOpen.set(true);
+  // ── Modal control ──────────────────────────────────
+  openDetailModal(order: Order): void {
+    this.dismissNewOrder(order.id);
+    this.detailModalOrder.set(order);
+    document.body.style.overflow = 'hidden';
   }
 
-  closeDrawer(): void {
-    this.drawerOpen.set(false);
+  closeDetailModal(): void {
+    this.detailModalOrder.set(null);
+    document.body.style.overflow = '';
+  }
+
+  // ── Quick actions from card ────────────────────────
+  quickAction(order: Order, targetStatus: OrderStatus): void {
+    this.dismissNewOrder(order.id);
+    this.executeStatusChange(order, targetStatus);
   }
 
   cancelOrder(order: Order): void {
     if (confirm(`¿Estás seguro de que deseas cancelar el pedido #${order.id}?`)) {
-      this.executeStatusChange(order.id, OrderStatus.CANCELLED);
+      this.dismissNewOrder(order.id);
+      this.executeStatusChange(order, OrderStatus.CANCELLED);
     }
   }
 
-  executeStatusChange(orderId: number, newStatus: OrderStatus): void {
-    this.updatingStatus.set(true);
+  private executeStatusChange(order: Order, newStatus: OrderStatus): void {
+    const currentOrders = this.orders();
+    const idx = currentOrders.findIndex(o => o.id === order.id);
+    if (idx !== -1) {
+      currentOrders[idx] = { ...currentOrders[idx], status: newStatus };
+      this.orders.set([...currentOrders]);
+    }
+
+    if (this.detailModalOrder()?.id === order.id) {
+      this.detailModalOrder.set({ ...this.detailModalOrder()!, status: newStatus });
+    }
 
     this.ordersService
-      .updateOrderStatus(orderId, newStatus)
-      .pipe(
-        finalize(() => this.updatingStatus.set(false)),
-        takeUntilDestroyed(this.destroyRef),
-      )
+      .updateOrderStatus(order.id, newStatus)
+      .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe({
-        next: (updatedOrder) => {
-          this.snackBar.open('Estado actualizado correctamente', 'Cerrar', {
-            duration: 3000,
-          });
-
-          // Sincronizar selectedOrder en caliente
-          const current = this.selectedOrder();
-          if (current?.id === orderId) {
-            this.selectedOrder.set({ ...current, status: newStatus });
-          }
-          this.drawerSelectedStatus = newStatus;
-
+        next: () => {
+          this.snackBar.open(
+            `Pedido #${order.id} → ${this.getStatusLabel(newStatus)}`,
+            'Cerrar',
+            { duration: 3000 },
+          );
           this.loadOrders();
         },
         error: (err: HttpErrorResponse) => {
+          this.loadOrders();
           this.showError(err);
-          // Revertir el valor del select si la petición falló
-          const current = this.selectedOrder();
-          this.drawerSelectedStatus = current?.status ?? null;
         },
       });
   }
 
+  // ── Modal event handler ────────────────────────────
+  onModalStatusChange(event: { orderId: number; status: OrderStatus }): void {
+    const match = this.orders().find(o => o.id === event.orderId);
+    if (match) {
+      this.quickAction(match, event.status);
+    }
+  }
+
+  // ── Next transition helper for cards ───────────────
+  getNextStatus(status: OrderStatus): OrderStatus | null {
+    const transitions = this.getTransitions(status);
+    const nonCancelled = transitions.filter(s => s !== OrderStatus.CANCELLED);
+    return nonCancelled.length > 0 ? nonCancelled[0] : null;
+  }
+
+  getNextStatusLabel(status: OrderStatus): string {
+    const next = this.getNextStatus(status);
+    return next ? this.getStatusLabel(next) : '';
+  }
+
+  // ── Error handler ──────────────────────────────────
   private showError(err: HttpErrorResponse): void {
     const message =
       (err.error as { message?: string })?.message ??
