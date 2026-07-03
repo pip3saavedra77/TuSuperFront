@@ -30,13 +30,13 @@
 
     <mat-form-field appearance="outline" class="date-field date-field--range">
       <mat-label>Rango de fechas</mat-label>
+      <button mat-icon-button matPrefix class="calendar-btn" (click)="rangePicker.open()" aria-label="Abrir calendario">
+        <mat-icon>event</mat-icon>
+      </button>
       <mat-date-range-input [rangePicker]="rangePicker">
         <input id="date-start" aria-label="Fecha desde" matStartDate placeholder="Desde" [(ngModel)]="filterStartDate" (dateChange)="loadOrders()" />
         <input id="date-end" aria-label="Fecha hasta" matEndDate placeholder="Hasta" [(ngModel)]="filterEndDate" (dateChange)="loadOrders()" />
       </mat-date-range-input>
-      <button mat-icon-button matSuffix (click)="rangePicker.open()" aria-label="Abrir calendario">
-        <mat-icon>calendar_month</mat-icon>
-      </button>
       @if (filterStartDate || filterEndDate) {
         <button mat-icon-button matSuffix (click)="clearDateRange()" aria-label="Limpiar fechas">
           <mat-icon>close</mat-icon>
