@@ -361,6 +361,7 @@
   padding-bottom: calc(var(--tusuper-nav-offset, 32px) + 80px);
   background-color: var(--ts-background, #fbf9f8);
   touch-action: manipulation;
+  overflow-x: hidden;
 
   // Extend background to screen edge below the nav bar on iOS/Brave.
   // Without this, the browser's dynamic bottom toolbar creates a white gap.
@@ -414,15 +415,16 @@
 .user-bottom-nav {
   position: fixed;
   bottom: var(--tusuper-nav-offset, 24px);
-  left: 50%;
-  transform: translateX(-50%);
+  left: 16px;
+  right: 16px;
+  width: auto;
+  max-width: 420px;
+  margin: 0 auto;
   z-index: 100;
   display: flex;
   justify-content: space-between;
   align-items: center;
   padding: 8px 6px;
-  width: calc(100% - 32px);
-  max-width: 420px;
   border-radius: 9999px;
 
   // ── Liquid Glass layers ──────────────────────────────────────────────
@@ -452,6 +454,7 @@
   // ── Desktop ──────────────────────────────────────────────────────────
   @media (min-width: 1024px) {
     left: 0;
+    right: auto;
     transform: none;
     bottom: 0;
     width: 100%;
