@@ -97,4 +97,5 @@ export interface CreateOrderPayload {
   paymentMethod: string;
   deliveryNotes?: string;
   cashChangeRequested?: number;
+  deliveryFee?: number;
 }

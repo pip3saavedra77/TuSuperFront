@@ -267,7 +267,7 @@
 
   @media (max-width: 600px) {
     grid-template-columns: 1fr;
-    gap: 0;
+    gap: 12px;
   }
 }
 
@@ -302,6 +302,47 @@
   }
 }
 
+// ── Payment info ─────────────────────────────────────────────────────────────
+.payment-info {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  padding: 14px;
+  border-radius: 16px;
+  background: rgba(0, 200, 83, 0.06);
+  border: 1px solid rgba(0, 200, 83, 0.12);
+  grid-column: 1 / -1;
+
+  &__icon {
+    font-size: 24px;
+    width: 24px;
+    height: 24px;
+    color: var(--ts-primary, #006e2a);
+    flex-shrink: 0;
+  }
+
+  &__body {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+    min-width: 0;
+  }
+
+  &__label {
+    font-size: 0.75rem;
+    font-weight: 600;
+    color: var(--ts-on-surface-variant, #3c4a3c);
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+  }
+
+  &__value {
+    font-size: 0.95rem;
+    font-weight: 700;
+    color: var(--ts-on-surface, #1b1c1c);
+  }
+}
+
 // ── Summary ─────────────────────────────────────────────────────────────────
 .checkout-summary__card {
   margin-bottom: 0;
@@ -321,7 +362,7 @@
   font-size: 0.92rem;
   color: var(--ts-on-surface-variant, #3c4a3c);
 
-  &__free {
+  &__free, &__fee {
     color: var(--ts-primary, #006e2a);
     font-weight: 700;
     background: rgba(0, 200, 83, 0.08);
