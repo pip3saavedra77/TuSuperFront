@@ -48,6 +48,11 @@
     ::ng-deep .mat-mdc-text-field-wrapper {
       border-radius: 12px !important;
     }
+
+    &--range {
+      min-width: 280px;
+      flex: 0 1 320px;
+    }
   }
 
   .clear-filters-btn {
@@ -440,6 +445,7 @@
 
     .search-field { min-width: 0; }
     .date-field { min-width: 0; }
+    .date-field--range { min-width: 0; }
   }
 
   .orders-cards {

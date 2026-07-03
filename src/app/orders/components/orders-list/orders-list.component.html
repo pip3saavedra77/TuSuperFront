@@ -28,15 +28,23 @@
       }
     </mat-form-field>
 
-    <mat-form-field appearance="outline" class="date-field">
-      <mat-label>Desde</mat-label>
-      <input matInput type="date" [(ngModel)]="filterStartDate" (change)="loadOrders()" />
+    <mat-form-field appearance="outline" class="date-field date-field--range">
+      <mat-label>Rango de fechas</mat-label>
+      <mat-date-range-input [rangePicker]="rangePicker">
+        <input id="date-start" aria-label="Fecha desde" matStartDate placeholder="Desde" [(ngModel)]="filterStartDate" (dateChange)="loadOrders()" />
+        <input id="date-end" aria-label="Fecha hasta" matEndDate placeholder="Hasta" [(ngModel)]="filterEndDate" (dateChange)="loadOrders()" />
+      </mat-date-range-input>
+      <button mat-icon-button matSuffix (click)="rangePicker.open()" aria-label="Abrir calendario">
+        <mat-icon>calendar_month</mat-icon>
+      </button>
+      @if (filterStartDate || filterEndDate) {
+        <button mat-icon-button matSuffix (click)="clearDateRange()" aria-label="Limpiar fechas">
+          <mat-icon>close</mat-icon>
+        </button>
+      }
     </mat-form-field>
 
-    <mat-form-field appearance="outline" class="date-field">
-      <mat-label>Hasta</mat-label>
-      <input matInput type="date" [(ngModel)]="filterEndDate" (change)="loadOrders()" />
-    </mat-form-field>
+    <mat-date-range-picker #rangePicker></mat-date-range-picker>
 
     <button mat-stroked-button (click)="onClearFilters()" class="clear-filters-btn">
       <mat-icon>clear_all</mat-icon>

@@ -128,6 +128,33 @@
 
       </div>
 
+      <!-- EXPERIENCIA DEL CLIENTE (rating) -->
+      @if (order.customerRating !== null) {
+        <section class="detail-section rating-section">
+          <div class="detail-section__header">
+            <mat-icon>feedback</mat-icon>
+            <span>Experiencia del Cliente</span>
+          </div>
+          <div class="rating-display">
+            <span class="rating-display__face">{{ getRatingEmoji(order.customerRating) }}</span>
+            <div class="rating-display__info">
+              <span class="rating-display__score">
+                {{ getRatingLabel(order.customerRating) }}
+                <strong>({{ order.customerRating }}/5)</strong>
+              </span>
+              @if (order.customerFeedback) {
+                <span class="rating-display__feedback">"{{ order.customerFeedback }}"</span>
+              }
+              @if (order.deliveryConfirmedAt) {
+                <span class="rating-display__date">
+                  Confirmado {{ order.deliveryConfirmedAt | date:'dd/MM/yyyy HH:mm' }}
+                </span>
+              }
+            </div>
+          </div>
+        </section>
+      }
+
       <!-- ARTÍCULOS -->
       <section class="detail-section">
         <div class="detail-section__header">

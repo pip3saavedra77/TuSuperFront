@@ -62,6 +62,14 @@ export class OrderDetailComponent implements OnInit {
   readonly statusOptions = Object.values(OrderStatus);
   readonly statusLabels = ORDER_STATUS_LABELS;
 
+  readonly ratingOptions = [
+    { value: 1, emoji: '😡', label: 'Muy malo' },
+    { value: 2, emoji: '😕', label: 'Malo' },
+    { value: 3, emoji: '😐', label: 'Regular' },
+    { value: 4, emoji: '😊', label: 'Bueno' },
+    { value: 5, emoji: '🤩', label: 'Excelente' },
+  ];
+
   ngOnInit(): void {
     this.selectedStatus = this.order.status;
   }
@@ -117,6 +125,14 @@ export class OrderDetailComponent implements OnInit {
           this.snackBar.open(message, 'Cerrar', { duration: 5000 });
         },
       });
+  }
+
+  getRatingEmoji(rating: number): string {
+    return this.ratingOptions.find(o => o.value === rating)?.emoji ?? '';
+  }
+
+  getRatingLabel(rating: number): string {
+    return this.ratingOptions.find(o => o.value === rating)?.label ?? '';
   }
 
   cancelOrder(): void {

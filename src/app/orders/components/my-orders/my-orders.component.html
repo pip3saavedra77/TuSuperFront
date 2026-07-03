@@ -127,6 +127,71 @@
                 }
               </div>
             </div>
+
+            <!-- RATING: confirmar recepción + experiencia -->
+            @if (canRate(order) && ratingOrderId() !== order.id) {
+              <div class="rating-prompt">
+                <p class="rating-prompt__text">¿Recibiste tu pedido? Cuéntanos tu experiencia</p>
+                <button class="rating-prompt__btn" (click)="openRating(order.id)">
+                  <mat-icon>star</mat-icon>
+                  Calificar pedido
+                </button>
+              </div>
+            }
+
+            @if (ratingOrderId() === order.id) {
+              <div class="rating-box">
+                <p class="rating-box__title">¿Cómo fue tu experiencia?</p>
+                <div class="rating-emoji-group">
+                  @for (opt of ratingOptions; track opt.value) {
+                    <button
+                      class="rating-emoji"
+                      [class.rating-emoji--active]="selectedRating() === opt.value"
+                      (click)="selectedRating.set(opt.value)"
+                      [attr.aria-label]="opt.label">
+                      <span class="rating-emoji__face">{{ opt.emoji }}</span>
+                      <span class="rating-emoji__label">{{ opt.label }}</span>
+                    </button>
+                  }
+                </div>
+                <label for="rating-feedback" class="sr-only">Feedback adicional</label>
+                <textarea
+                  id="rating-feedback"
+                  class="rating-feedback"
+                  [(ngModel)]="feedbackText"
+                  placeholder="Cuéntanos más (opcional)"
+                  rows="2"
+                  maxlength="500"></textarea>
+                <div class="rating-actions">
+                  <button class="rating-actions__cancel" (click)="closeRating()" [disabled]="submittingRating()">
+                    Cancelar
+                  </button>
+                  <button
+                    class="rating-actions__submit"
+                    [disabled]="selectedRating() < 1 || submittingRating()"
+                    (click)="submitRating()">
+                    @if (submittingRating()) {
+                      <mat-spinner diameter="18" />
+                    } @else {
+                      <mat-icon>send</mat-icon>
+                    }
+                    Enviar
+                  </button>
+                </div>
+              </div>
+            }
+
+            @if (order.customerRating !== null) {
+              <div class="rating-display">
+                <span class="rating-display__face">{{ ratingOptions[order.customerRating - 1]?.emoji }}</span>
+                <span class="rating-display__text">
+                  Calificaste <strong>{{ order.customerRating }}/5</strong>
+                  @if (order.customerFeedback) {
+                    — "{{ order.customerFeedback }}"
+                  }
+                </span>
+              </div>
+            }
           }
 
         </article>
