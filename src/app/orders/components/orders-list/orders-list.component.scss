@@ -36,6 +36,19 @@
       border-radius: 12px !important;
     }
 
+    ::ng-deep .mdc-notched-outline__leading {
+      border-radius: 12px 0 0 12px !important;
+      width: 12px !important;
+    }
+
+    ::ng-deep .mdc-notched-outline__trailing {
+      border-radius: 0 12px 12px 0 !important;
+    }
+
+    ::ng-deep .mdc-notched-outline__notch {
+      border-top: none !important;
+    }
+
     ::ng-deep input {
       font-size: 0.95rem;
     }
@@ -49,9 +62,43 @@
       border-radius: 12px !important;
     }
 
+    ::ng-deep .mdc-notched-outline__leading {
+      border-radius: 12px 0 0 12px !important;
+      width: 12px !important;
+    }
+
+    ::ng-deep .mdc-notched-outline__trailing {
+      border-radius: 0 12px 12px 0 !important;
+    }
+
+    ::ng-deep .mdc-notched-outline__notch {
+      border-top: none !important;
+    }
+
     &--range {
       min-width: 280px;
       flex: 0 1 320px;
+    }
+  }
+
+  .calendar-btn {
+    color: var(--profile-primary, #1976d2) !important;
+    margin-left: -4px !important;
+    margin-right: 4px !important;
+
+    ::ng-deep .mat-mdc-button-touch-target {
+      width: 36px !important;
+      height: 36px !important;
+    }
+
+    mat-icon {
+      font-size: 20px;
+      width: 20px;
+      height: 20px;
+    }
+
+    &:hover {
+      background: color-mix(in srgb, var(--profile-primary, #1976d2) 10%, transparent) !important;
     }
   }
 
