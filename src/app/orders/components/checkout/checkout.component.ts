@@ -5,8 +5,6 @@ import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
 import { ReactiveFormsModule, FormBuilder, Validators, FormGroup } from '@angular/forms';
-import { MatFormFieldModule } from '@angular/material/form-field';
-import { MatInputModule } from '@angular/material/input';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { CartStore } from '../../../product/store/cart.store';
 import { OrdersService } from '../../services/orders.service';
@@ -23,8 +21,6 @@ import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
     MatIconModule,
     MatSnackBarModule,
     ReactiveFormsModule,
-    MatFormFieldModule,
-    MatInputModule,
     MatProgressSpinnerModule,
   ],
   templateUrl: './checkout.component.html',
