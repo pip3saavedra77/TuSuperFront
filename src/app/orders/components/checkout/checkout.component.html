@@ -91,12 +91,31 @@
           </div>
 
           <div class="field-card">
-            <label class="field-card__label" for="cashChangeRequested">Cambio para (opcional)</label>
-            <div class="field-card__wrapper">
-              <mat-icon class="field-card__icon">payments</mat-icon>
-              <input class="field-card__input" id="cashChangeRequested" formControlName="cashChangeRequested" type="number" min="0" placeholder="Ej: 50.000">
+            <label class="field-card__label">Pagas con (opcional)</label>
+            <div class="bill-pills">
+              @for (bill of billOptions; track bill) {
+                <button
+                  type="button"
+                  class="bill-pill"
+                  [class.bill-pill--active]="selectedBill() === bill"
+                  (click)="selectBill(bill)">
+                  {{ bill | currency:'COP':'symbol-narrow':'1.0-0' }}
+                </button>
+              }
             </div>
-            <span class="field-card__hint">Indica con cuánto pagas al recibir el pedido</span>
+            @if (selectedBill(); as bill) {
+              <div class="bill-change" [class.bill-change--error]="billNotCovering()">
+                <mat-icon>{{ billNotCovering() ? 'warning' : 'payments' }}</mat-icon>
+                <span>
+                  @if (billNotCovering()) {
+                    El billete no cubre el total del pedido
+                  } @else {
+                    Cambio: {{ change() | currency:'COP':'symbol-narrow':'1.0-0' }}
+                  }
+                </span>
+              </div>
+            }
+            <span class="field-card__hint">Selecciona el billete con que pagarás al recibir el pedido</span>
           </div>
 
           <div class="field-card field-card--wide">
@@ -139,7 +158,7 @@
 
           <button
             class="btn-confirm"
-            [disabled]="isProcessing || cartStore.isEmpty() || checkoutForm.invalid"
+            [disabled]="isProcessing || cartStore.isEmpty() || checkoutForm.invalid || billNotCovering()"
             (click)="confirmOrder()">
             @if (isProcessing) {
               <mat-spinner diameter="20"></mat-spinner>

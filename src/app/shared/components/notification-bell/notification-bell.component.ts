@@ -1,5 +1,6 @@
 import { Component, inject, computed, ViewEncapsulation } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { Router } from '@angular/router';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import { MatBadgeModule } from '@angular/material/badge';
@@ -8,6 +9,7 @@ import { OverlayModule } from '@angular/cdk/overlay';
 import { ConnectedPosition } from '@angular/cdk/overlay';
 import { NotificationsService } from '../../../core/services/notifications.service';
 import { AuthService } from '../../../core/services/auth';
+import { Notification } from '../../../core/models/notification.model';
 
 @Component({
   selector: 'app-notification-bell',
@@ -27,6 +29,7 @@ import { AuthService } from '../../../core/services/auth';
 export class NotificationBellComponent {
   public readonly notificationsService = inject(NotificationsService);
   private readonly authService = inject(AuthService);
+  private readonly router = inject(Router);
 
   public readonly notifications = this.notificationsService.allNotifications;
   public readonly unreadCount = this.notificationsService.unreadCount;
@@ -68,6 +71,17 @@ export class NotificationBellComponent {
 
   closePanel(): void {
     this.isOpen = false;
+  }
+
+  navigateToOrder(notification: Notification): void {
+    this.notificationsService.markAsRead(notification.id);
+    this.closePanel();
+    const role = this.profileType();
+    if (role === 'admin' || role === 'seller') {
+      this.router.navigate(['/orders']);
+    } else {
+      this.router.navigate(['/orders/my-orders']);
+    }
   }
 
   markAsRead(event: MouseEvent, id: string): void {
