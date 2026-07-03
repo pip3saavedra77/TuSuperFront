@@ -107,6 +107,24 @@ export class NotificationsService {
       this._orderStatusChanged.next(data);
     });
 
+    this.socket.on('order-rated', (data: any) => {
+      this.sound.playStatusChange();
+      if (this.isStaff()) {
+        this.addNotification({
+          id: crypto.randomUUID(),
+          title: 'Pedido Recibido y Calificado',
+          message: `🧑 ${data.customerName || 'El cliente'} recibió el pedido #${data.orderId} y lo calificó con ${data.rating}/5${
+            data.feedback ? `: "${data.feedback}"` : ''
+          }`,
+          type: 'order-rated' as any,
+          timestamp: new Date().toISOString(),
+          isRead: false,
+          data,
+        });
+      }
+      this._orderStatusChanged.next(data);
+    });
+
     this.socket.on('disconnect', () => {
       console.log('Disconnected from notifications gateway');
     });
