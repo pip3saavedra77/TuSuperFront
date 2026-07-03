@@ -10,6 +10,7 @@ import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
 import { MatIconModule } from '@angular/material/icon';
 import { MatButtonModule } from '@angular/material/button';
 import { MatDialog, MatDialogModule } from '@angular/material/dialog';
+import { FormsModule } from '@angular/forms';
 
 import { OrdersService } from '../../services/orders.service';
 import { NotificationsService } from '../../../core/services/notifications.service';
@@ -34,6 +35,7 @@ import { ConfirmDialogComponent, ConfirmDialogData } from '../confirm-dialog/con
     MatIconModule,
     MatButtonModule,
     MatDialogModule,
+    FormsModule,
   ],
   templateUrl: './my-orders.component.html',
   styleUrl: './my-orders.component.scss',
@@ -52,6 +54,19 @@ export class MyOrdersComponent implements OnInit {
   readonly currentOffset = signal<number>(0);
 
   readonly expandedOrders = signal<Set<number>>(new Set<number>());
+
+  readonly ratingOrderId = signal<number | null>(null);
+  readonly selectedRating = signal<number>(0);
+  readonly feedbackText = signal<string>('');
+  readonly submittingRating = signal<boolean>(false);
+
+  readonly ratingOptions = [
+    { value: 1, emoji: '😡', label: 'Muy malo' },
+    { value: 2, emoji: '😕', label: 'Malo' },
+    { value: 3, emoji: '😐', label: 'Regular' },
+    { value: 4, emoji: '😊', label: 'Bueno' },
+    { value: 5, emoji: '🤩', label: 'Excelente' },
+  ];
 
   ngOnInit(): void {
     this.loadOrders();
@@ -163,6 +178,53 @@ export class MyOrdersComponent implements OnInit {
 
   isExpanded(id: number): boolean {
     return this.expandedOrders().has(id);
+  }
+
+  canRate(order: Order): boolean {
+    return (
+      (order.status === OrderStatus.DISPATCHED || order.status === OrderStatus.DELIVERED) &&
+      order.customerRating === null
+    );
+  }
+
+  openRating(orderId: number): void {
+    this.ratingOrderId.set(orderId);
+    this.selectedRating.set(0);
+    this.feedbackText.set('');
+  }
+
+  closeRating(): void {
+    this.ratingOrderId.set(null);
+    this.selectedRating.set(0);
+    this.feedbackText.set('');
+  }
+
+  submitRating(): void {
+    const orderId = this.ratingOrderId();
+    const rating = this.selectedRating();
+    if (!orderId || rating < 1) return;
+
+    this.submittingRating.set(true);
+    this.ordersService
+      .confirmDelivery(orderId, rating, this.feedbackText() || undefined)
+      .pipe(
+        finalize(() => this.submittingRating.set(false)),
+        takeUntilDestroyed(this.destroyRef),
+      )
+      .subscribe({
+        next: () => {
+          this.snackBar.open(
+            `¡Gracias por tu calificación de ${rating}/5! 🎉`,
+            'Cerrar',
+            { duration: 4000 },
+          );
+          this.closeRating();
+          this.loadOrders();
+        },
+        error: (err: HttpErrorResponse) => {
+          this.showError(err);
+        },
+      });
   }
 
   private showError(err: HttpErrorResponse): void {

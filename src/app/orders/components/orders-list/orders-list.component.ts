@@ -92,8 +92,8 @@ export class OrdersListComponent implements OnInit {
   readonly detailModalOrder = signal<Order | null>(null);
 
   filterStatus: OrderStatus | '' = '';
-  filterStartDate: string = '';
-  filterEndDate: string = '';
+  filterStartDate: Date | null = null;
+  filterEndDate: Date | null = null;
 
   readonly tabOptions: TabOption[] = [
     { label: 'Todos', status: '' },
@@ -109,6 +109,13 @@ export class OrdersListComponent implements OnInit {
 
   readonly statusLabels = ORDER_STATUS_LABELS;
   readonly OrderStatus = OrderStatus;
+
+  private formatDate(date: Date): string {
+    const y = date.getFullYear();
+    const m = String(date.getMonth() + 1).padStart(2, '0');
+    const d = String(date.getDate()).padStart(2, '0');
+    return `${y}-${m}-${d}`;
+  }
 
   // ── New-order tracking ─────────────────────────────
   private wsNotificationTimes: number[] = [];
@@ -175,10 +182,10 @@ export class OrdersListComponent implements OnInit {
       filters.status = this.filterStatus;
     }
     if (this.filterStartDate) {
-      filters.startDate = this.filterStartDate;
+      filters.startDate = this.formatDate(this.filterStartDate);
     }
     if (this.filterEndDate) {
-      filters.endDate = this.filterEndDate;
+      filters.endDate = this.formatDate(this.filterEndDate);
     }
 
     const query = this.searchQuery().trim();
@@ -246,10 +253,17 @@ export class OrdersListComponent implements OnInit {
     this.searchQuery.set('');
   }
 
+  clearDateRange(): void {
+    this.filterStartDate = null;
+    this.filterEndDate = null;
+    this.currentOffset.set(0);
+    this.loadOrders();
+  }
+
   onClearFilters(): void {
     this.filterStatus = this.tabOptions[this.selectedTabIndex].status;
-    this.filterStartDate = '';
-    this.filterEndDate = '';
+    this.filterStartDate = null;
+    this.filterEndDate = null;
     this.currentOffset.set(0);
     this.loadOrders();
   }

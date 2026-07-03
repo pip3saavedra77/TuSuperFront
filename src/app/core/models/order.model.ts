@@ -32,6 +32,9 @@ export interface Order {
   deliveryFee: number;
   contactPhone: string;
   cashChangeRequested: number | null;
+  customerRating: number | null;
+  customerFeedback: string | null;
+  deliveryConfirmedAt: string | null;
   items: OrderItem[];
   createdAt: string;
   updatedAt: string;

@@ -51,5 +51,18 @@ export class OrdersService {
   cancelOrder(id: number): Observable<void> {
     return this.http.delete<void>(`${this.API_URL}/${id}/cancel`);
   }
+
+  confirmDelivery(
+    id: number,
+    rating: number,
+    feedback?: string,
+  ): Observable<Order> {
+    const body: { rating: number; feedback?: string } = { rating };
+    if (feedback) body.feedback = feedback;
+    return this.http.post<Order>(
+      `${this.API_URL}/${id}/confirm-delivery`,
+      body,
+    );
+  }
 }
 
