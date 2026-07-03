@@ -60,19 +60,27 @@
         </h2>
 
         <div class="form-fields">
-          <mat-form-field appearance="fill" class="form-field form-field--wide">
-            <mat-label>Dirección de entrega</mat-label>
-            <input matInput formControlName="deliveryAddress" placeholder="Calle 123 # 45-67, Apto 501">
-            <mat-icon matSuffix>location_on</mat-icon>
-            <mat-error>La dirección es obligatoria</mat-error>
-          </mat-form-field>
+          <div class="field-card field-card--wide">
+            <label class="field-card__label" for="deliveryAddress">Dirección de entrega</label>
+            <div class="field-card__wrapper">
+              <mat-icon class="field-card__icon">location_on</mat-icon>
+              <input class="field-card__input" id="deliveryAddress" formControlName="deliveryAddress" placeholder="Calle 123 # 45-67, Apto 501" type="text" autocomplete="street-address">
+            </div>
+            @if (checkoutForm.get('deliveryAddress')?.invalid && checkoutForm.get('deliveryAddress')?.touched) {
+              <span class="field-card__error">La dirección es obligatoria (mín. 8 caracteres)</span>
+            }
+          </div>
 
-          <mat-form-field appearance="fill" class="form-field">
-            <mat-label>Teléfono de contacto</mat-label>
-            <input matInput formControlName="contactPhone" placeholder="3001234567" type="tel" inputmode="numeric" autocomplete="tel" maxlength="10">
-            <mat-icon matSuffix>call</mat-icon>
-            <mat-error>El teléfono es obligatorio</mat-error>
-          </mat-form-field>
+          <div class="field-card">
+            <label class="field-card__label" for="contactPhone">Teléfono de contacto</label>
+            <div class="field-card__wrapper">
+              <mat-icon class="field-card__icon">call</mat-icon>
+              <input class="field-card__input" id="contactPhone" formControlName="contactPhone" placeholder="3001234567" type="tel" inputmode="numeric" autocomplete="tel" maxlength="10">
+            </div>
+            @if (checkoutForm.get('contactPhone')?.invalid && checkoutForm.get('contactPhone')?.touched) {
+              <span class="field-card__error">Ingresa un número válido (10 dígitos, empieza con 3)</span>
+            }
+          </div>
 
           <div class="payment-info">
             <mat-icon class="payment-info__icon">payments</mat-icon>
@@ -82,18 +90,22 @@
             </div>
           </div>
 
-          <mat-form-field appearance="fill" class="form-field">
-            <mat-label>Cambio para (opcional)</mat-label>
-            <input matInput formControlName="cashChangeRequested" type="number" min="0" placeholder="Ej: 50.000">
-            <mat-icon matSuffix>payments</mat-icon>
-            <mat-hint>Indica con cuánto pagas al recibir el pedido</mat-hint>
-          </mat-form-field>
+          <div class="field-card">
+            <label class="field-card__label" for="cashChangeRequested">Cambio para (opcional)</label>
+            <div class="field-card__wrapper">
+              <mat-icon class="field-card__icon">payments</mat-icon>
+              <input class="field-card__input" id="cashChangeRequested" formControlName="cashChangeRequested" type="number" min="0" placeholder="Ej: 50.000">
+            </div>
+            <span class="field-card__hint">Indica con cuánto pagas al recibir el pedido</span>
+          </div>
 
-          <mat-form-field appearance="fill" class="form-field form-field--wide">
-            <mat-label>Notas de entrega (opcional)</mat-label>
-            <textarea matInput formControlName="deliveryNotes" placeholder="Dejar en portería, timbrar apartamento..." rows="2"></textarea>
-            <mat-icon matSuffix>notes</mat-icon>
-          </mat-form-field>
+          <div class="field-card field-card--wide">
+            <label class="field-card__label" for="deliveryNotes">Notas de entrega (opcional)</label>
+            <div class="field-card__wrapper field-card__wrapper--textarea">
+              <mat-icon class="field-card__icon">notes</mat-icon>
+              <textarea class="field-card__textarea" id="deliveryNotes" formControlName="deliveryNotes" placeholder="Dejar en portería, timbrar apartamento..." rows="2"></textarea>
+            </div>
+          </div>
         </div>
       </section>
 

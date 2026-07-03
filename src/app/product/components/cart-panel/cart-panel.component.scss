@@ -245,13 +245,13 @@
       color: #64748b;
       font-weight: 500;
 
-      .free-text {
-        color: #047857;
+      .delivery-fee {
+        color: var(--ts-primary, #006e2a);
         font-weight: 700;
-        background: rgba(4, 120, 87, 0.1);
+        background: rgba(0, 200, 83, 0.1);
         padding: 2px 10px;
         border-radius: 999px;
-        font-size: 0.72rem;
+        font-size: 0.78rem;
       }
 
       &.total {

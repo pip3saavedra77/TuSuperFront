@@ -83,11 +83,11 @@
         </div>
         <div class="cart-summary__row">
           <span>Envío</span>
-          <span class="cart-summary__free">GRATIS</span>
+          <span class="cart-summary__fee">{{ cartStore.deliveryFee() | currency:'COP':'symbol-narrow':'1.0-0' }}</span>
         </div>
         <div class="cart-summary__row cart-summary__row--total">
           <span>Total</span>
-          <span>{{ cartStore.totalAmount() | currency:'COP':'symbol-narrow':'1.0-0' }}</span>
+          <span>{{ cartStore.totalAmount() + cartStore.deliveryFee() | currency:'COP':'symbol-narrow':'1.0-0' }}</span>
         </div>
 
         @if (cartStore.error()) {

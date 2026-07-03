@@ -82,12 +82,12 @@
       </div>
       <div class="summary-row">
         <span>Envío</span>
-        <span class="free-text">GRATIS</span>
+        <span class="delivery-fee">{{ cartStore.deliveryFee() | currency:'COP':'symbol-narrow':'1.0-0' }}</span>
       </div>
       <div class="summary-row total">
         <span>Total a pagar</span>
         <span class="total-amount">
-          {{ cartStore.totalAmount() | currency:'COP':'symbol-narrow':'1.0-0' }}
+          {{ cartStore.totalAmount() + cartStore.deliveryFee() | currency:'COP':'symbol-narrow':'1.0-0' }}
         </span>
       </div>
 
