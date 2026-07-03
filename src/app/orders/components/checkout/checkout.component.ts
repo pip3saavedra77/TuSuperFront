@@ -1,4 +1,4 @@
-import { Component, inject, effect, DestroyRef } from '@angular/core';
+import { Component, inject, effect, computed, DestroyRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { Router, RouterLink } from '@angular/router';
 import { MatButtonModule } from '@angular/material/button';
@@ -7,7 +7,6 @@ import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
 import { ReactiveFormsModule, FormBuilder, Validators, FormGroup } from '@angular/forms';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
-import { MatSelectModule } from '@angular/material/select';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { CartStore } from '../../../product/store/cart.store';
 import { OrdersService } from '../../services/orders.service';
@@ -26,7 +25,6 @@ import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
     ReactiveFormsModule,
     MatFormFieldModule,
     MatInputModule,
-    MatSelectModule,
     MatProgressSpinnerModule,
   ],
   templateUrl: './checkout.component.html',
@@ -44,11 +42,16 @@ export class CheckoutComponent {
   public isProcessing = false;
   private justPlacedOrder = false;
 
+  readonly deliveryFee = computed(() => {
+    const qty = this.cartStore.totalItems();
+    return 6500 + qty * 100;
+  });
+
   constructor() {
     this.checkoutForm = this.fb.group({
       deliveryAddress: ['', [Validators.required, Validators.minLength(8)]],
       contactPhone: ['', [Validators.required, Validators.pattern(/^3\d{9}$/)]],
-      paymentMethod: ['', [Validators.required]],
+      paymentMethod: ['EFECTIVO'],
       deliveryNotes: [''],
       cashChangeRequested: [null],
     });
@@ -70,12 +73,13 @@ export class CheckoutComponent {
     const payload: CreateOrderPayload = {
       deliveryAddress: (formValues.deliveryAddress ?? '').trim(),
       contactPhone: (formValues.contactPhone ?? '').trim().replace(/\s+/g, ''),
-      paymentMethod: formValues.paymentMethod,
+      paymentMethod: 'EFECTIVO',
       items: this.cartStore.items().map(item => ({
         productId: item.product.id,
         quantity: item.quantity
       })),
       deliveryNotes: (formValues.deliveryNotes ?? '').trim() || undefined,
+      deliveryFee: this.deliveryFee(),
     };
 
     if (formValues.cashChangeRequested !== null && formValues.cashChangeRequested !== undefined && formValues.cashChangeRequested !== '') {

@@ -63,42 +63,36 @@
           <mat-form-field appearance="fill" class="form-field form-field--wide">
             <mat-label>Dirección de entrega</mat-label>
             <input matInput formControlName="deliveryAddress" placeholder="Calle 123 # 45-67, Apto 501">
-            <mat-icon matSuffix>place</mat-icon>
+            <mat-icon matSuffix>location_on</mat-icon>
             <mat-error>La dirección es obligatoria</mat-error>
           </mat-form-field>
 
           <mat-form-field appearance="fill" class="form-field">
             <mat-label>Teléfono de contacto</mat-label>
             <input matInput formControlName="contactPhone" placeholder="3001234567" type="tel" inputmode="numeric" autocomplete="tel" maxlength="10">
-            <mat-icon matSuffix>smartphone</mat-icon>
+            <mat-icon matSuffix>call</mat-icon>
             <mat-error>El teléfono es obligatorio</mat-error>
           </mat-form-field>
 
-          <mat-form-field appearance="fill" class="form-field">
-            <mat-label>Método de pago</mat-label>
-            <mat-select formControlName="paymentMethod">
-              <mat-option value="" disabled>Selecciona</mat-option>
-              <mat-option value="EFECTIVO">Efectivo</mat-option>
-              <mat-option value="TARJETA">Tarjeta</mat-option>
-              <mat-option value="TRANSFERENCIA">Transferencia</mat-option>
-            </mat-select>
-            <mat-icon matSuffix>credit_card</mat-icon>
-            <mat-error>Selecciona un método</mat-error>
-          </mat-form-field>
+          <div class="payment-info">
+            <mat-icon class="payment-info__icon">payments</mat-icon>
+            <div class="payment-info__body">
+              <span class="payment-info__label">Método de pago</span>
+              <span class="payment-info__value">Efectivo — Pago contra entrega</span>
+            </div>
+          </div>
 
-          @if (checkoutForm.get('paymentMethod')?.value === 'EFECTIVO') {
-            <mat-form-field appearance="fill" class="form-field">
-              <mat-label>Cambio para (opcional)</mat-label>
-              <input matInput formControlName="cashChangeRequested" type="number" min="0" placeholder="Ej: 50.000">
-              <mat-icon matSuffix>monetization_on</mat-icon>
-              <mat-hint>Indica con cuánto pagas</mat-hint>
-            </mat-form-field>
-          }
+          <mat-form-field appearance="fill" class="form-field">
+            <mat-label>Cambio para (opcional)</mat-label>
+            <input matInput formControlName="cashChangeRequested" type="number" min="0" placeholder="Ej: 50.000">
+            <mat-icon matSuffix>payments</mat-icon>
+            <mat-hint>Indica con cuánto pagas al recibir el pedido</mat-hint>
+          </mat-form-field>
 
           <mat-form-field appearance="fill" class="form-field form-field--wide">
             <mat-label>Notas de entrega (opcional)</mat-label>
             <textarea matInput formControlName="deliveryNotes" placeholder="Dejar en portería, timbrar apartamento..." rows="2"></textarea>
-            <mat-icon matSuffix>note_alt</mat-icon>
+            <mat-icon matSuffix>notes</mat-icon>
           </mat-form-field>
         </div>
       </section>
@@ -118,7 +112,7 @@
             </div>
             <div class="summary-row">
               <span>Envío</span>
-              <span class="summary-row__free">Gratis</span>
+              <span class="summary-row__fee">{{ deliveryFee() | currency:'COP':'symbol-narrow':'1.0-0' }}</span>
             </div>
             <div class="summary-row summary-row--discount" *ngIf="false">
               <span>Descuento</span>
@@ -128,7 +122,7 @@
 
           <div class="summary-total">
             <span>Total</span>
-            <span class="summary-total__amount">{{ cartStore.totalAmount() | currency:'COP':'symbol-narrow':'1.0-0' }}</span>
+            <span class="summary-total__amount">{{ cartStore.totalAmount() + deliveryFee() | currency:'COP':'symbol-narrow':'1.0-0' }}</span>
           </div>
 
           <button
