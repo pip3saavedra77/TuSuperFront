@@ -141,6 +141,10 @@ export class OrdersListComponent implements OnInit {
     this.notificationsService.newOrderReceived$
       .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe(() => this.loadOrders());
+
+    this.notificationsService.orderStatusChanged$
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe(() => this.loadOrders());
   }
 
   loadOrders(): void {
