@@ -63,7 +63,7 @@
         <mat-tab [label]="tab.label">
           <div class="orders-cards">
             @for (order of orders(); track order.id) {
-              <article class="order-card" [class.order-card--new]="isOrderNew(order)" (click)="dismissNewOrder(order.id)">
+              <article class="order-card" [class.order-card--new]="isOrderNew(order)" [class.order-card--priority]="isPriorityOrder(order)" (click)="dismissNewOrder(order.id)">
 
                 <!-- TOP ROW -->
                 <div class="order-card__top">

@@ -27,99 +27,106 @@
     <div class="modal-body">
 
       <!-- ESTADO Y ACCIÓN -->
-      <section class="detail-section">
+      <section class="detail-section detail-section--state">
         <div class="detail-section__header">
           <mat-icon>sync_alt</mat-icon>
           <span>Estado del pedido</span>
         </div>
         <div class="state-block">
           @if (auth.hasManagementPrivileges() && !isTerminal(order.status)) {
-            <mat-form-field appearance="outline" class="status-select">
-              <mat-label>Cambiar estado</mat-label>
-              <mat-select
-                [(ngModel)]="selectedStatus"
-                (selectionChange)="executeStatusChange($event.value)">
-                @for (status of statusOptions; track status) {
-                  <mat-option
-                    [value]="status"
-                    [disabled]="!isValidTransition(order.status, status)"
-                    [ngClass]="status.toLowerCase()">
-                    {{ getStatusLabel(status) }}
-                  </mat-option>
-                }
-              </mat-select>
-            </mat-form-field>
+            <div class="state-block__controls">
+              <mat-form-field appearance="outline" class="status-select">
+                <mat-label>Cambiar estado</mat-label>
+                <mat-select
+                  [(ngModel)]="selectedStatus"
+                  (selectionChange)="executeStatusChange($event.value)">
+                  @for (status of statusOptions; track status) {
+                    <mat-option
+                      [value]="status"
+                      [disabled]="!isValidTransition(order.status, status)"
+                      [ngClass]="status.toLowerCase()">
+                      {{ getStatusLabel(status) }}
+                    </mat-option>
+                  }
+                </mat-select>
+              </mat-form-field>
 
-            @if (!isTerminal(order.status) && order.status !== OrderStatus.CANCELLED) {
-              <button
-                mat-stroked-button
-                class="cancel-btn"
-                (click)="cancelOrder()">
-                <mat-icon>cancel</mat-icon>
-                Cancelar pedido
-              </button>
-            }
+              @if (!isTerminal(order.status) && order.status !== OrderStatus.CANCELLED) {
+                <button
+                  mat-stroked-button
+                  class="cancel-btn"
+                  (click)="cancelOrder()">
+                  <mat-icon>cancel</mat-icon>
+                  Cancelar pedido
+                </button>
+              }
+            </div>
           } @else {
             <p class="terminal-msg">Este pedido ha finalizado.</p>
           }
         </div>
       </section>
 
-      <!-- CLIENTE -->
-      <section class="detail-section">
-        <div class="detail-section__header">
-          <mat-icon>person</mat-icon>
-          <span>Cliente</span>
-        </div>
-        <div class="detail-grid">
-          <div class="detail-grid__item">
-            <span class="detail-grid__label">Nombre</span>
-            <span class="detail-grid__value">{{ order.customer.firstName }} {{ order.customer.lastName }}</span>
-          </div>
-          <div class="detail-grid__item">
-            <span class="detail-grid__label">Correo</span>
-            <span class="detail-grid__value">{{ order.customer.email }}</span>
-          </div>
-          <div class="detail-grid__item">
-            <span class="detail-grid__label">Teléfono</span>
-            <span class="detail-grid__value">{{ order.contactPhone || 'N/A' }}</span>
-          </div>
-        </div>
-      </section>
+      <!-- INFO GRID: CLIENTE + ENTREGA side-by-side -->
+      <div class="info-grid">
 
-      <!-- ENTREGA -->
-      <section class="detail-section">
-        <div class="detail-section__header">
-          <mat-icon>local_shipping</mat-icon>
-          <span>Entrega</span>
-        </div>
-        <div class="detail-grid">
-          <div class="detail-grid__item detail-grid__item--full">
-            <span class="detail-grid__label">Dirección</span>
-            <span class="detail-grid__value">{{ order.deliveryAddress }}</span>
+        <!-- CLIENTE -->
+        <section class="detail-section">
+          <div class="detail-section__header">
+            <mat-icon>person</mat-icon>
+            <span>Cliente</span>
           </div>
-          <div class="detail-grid__item">
-            <span class="detail-grid__label">Método de pago</span>
-            <span class="detail-grid__value">{{ order.paymentMethod }}</span>
-          </div>
-          <div class="detail-grid__item">
-            <span class="detail-grid__label">Estado del pago</span>
-            <span class="detail-grid__value">{{ order.paymentStatus }}</span>
-          </div>
-          @if (order.cashChangeRequested) {
+          <div class="detail-grid">
             <div class="detail-grid__item">
-              <span class="detail-grid__label">Paga con</span>
-              <span class="detail-grid__value">{{ order.cashChangeRequested | currency:'COP':'symbol-narrow':'1.0-0' }}</span>
+              <span class="detail-grid__label">Nombre</span>
+              <span class="detail-grid__value">{{ order.customer.firstName }} {{ order.customer.lastName }}</span>
             </div>
-          }
-          @if (order.deliveryNotes) {
+            <div class="detail-grid__item">
+              <span class="detail-grid__label">Correo</span>
+              <span class="detail-grid__value">{{ order.customer.email }}</span>
+            </div>
+            <div class="detail-grid__item">
+              <span class="detail-grid__label">Teléfono</span>
+              <span class="detail-grid__value">{{ order.contactPhone || 'N/A' }}</span>
+            </div>
+          </div>
+        </section>
+
+        <!-- ENTREGA -->
+        <section class="detail-section">
+          <div class="detail-section__header">
+            <mat-icon>local_shipping</mat-icon>
+            <span>Entrega</span>
+          </div>
+          <div class="detail-grid">
             <div class="detail-grid__item detail-grid__item--full">
-              <span class="detail-grid__label">Notas</span>
-              <span class="detail-grid__value detail-grid__value--notes">{{ order.deliveryNotes }}</span>
+              <span class="detail-grid__label">Dirección</span>
+              <span class="detail-grid__value">{{ order.deliveryAddress }}</span>
             </div>
-          }
-        </div>
-      </section>
+            <div class="detail-grid__item">
+              <span class="detail-grid__label">Método de pago</span>
+              <span class="detail-grid__value">{{ order.paymentMethod }}</span>
+            </div>
+            <div class="detail-grid__item">
+              <span class="detail-grid__label">Estado del pago</span>
+              <span class="detail-grid__value">{{ order.paymentStatus }}</span>
+            </div>
+            @if (order.cashChangeRequested) {
+              <div class="detail-grid__item">
+                <span class="detail-grid__label">Paga con</span>
+                <span class="detail-grid__value">{{ order.cashChangeRequested | currency:'COP':'symbol-narrow':'1.0-0' }}</span>
+              </div>
+            }
+            @if (order.deliveryNotes) {
+              <div class="detail-grid__item detail-grid__item--full">
+                <span class="detail-grid__label">Notas</span>
+                <span class="detail-grid__value detail-grid__value--notes">{{ order.deliveryNotes }}</span>
+              </div>
+            }
+          </div>
+        </section>
+
+      </div>
 
       <!-- ARTÍCULOS -->
       <section class="detail-section">
