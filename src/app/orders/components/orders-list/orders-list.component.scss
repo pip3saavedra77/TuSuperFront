@@ -5,7 +5,9 @@
 
 :host {
   display: block;
-  padding: 0;
+  max-width: 1280px;
+  margin: 0 auto;
+  padding: 0 24px;
 }
 
 .orders-page {
@@ -16,28 +18,47 @@
 .filters-section {
   display: flex;
   align-items: center;
-  gap: 12px;
+  gap: 16px;
   flex-wrap: wrap;
-  margin-bottom: 24px;
+  margin-bottom: 28px;
+  padding: 20px 24px;
+  background: #ffffff;
+  border-radius: 20px;
+  border: 1px solid #e8ecf0;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.03);
   animation: fadeIn 0.4s ease-out;
 
   .search-field {
     flex: 1;
-    min-width: 240px;
+    min-width: 260px;
+
+    ::ng-deep .mat-mdc-text-field-wrapper {
+      border-radius: 12px !important;
+    }
+
+    ::ng-deep input {
+      font-size: 0.95rem;
+    }
   }
 
   .date-field {
-    min-width: 150px;
+    min-width: 160px;
     flex: 0 1 180px;
+
+    ::ng-deep .mat-mdc-text-field-wrapper {
+      border-radius: 12px !important;
+    }
   }
 
   .clear-filters-btn {
-    border-radius: 12px;
+    border-radius: 999px;
     height: 48px;
+    padding: 0 24px;
     color: #74777f;
     border-color: rgba(0, 0, 0, 0.1);
+    font-weight: 600;
 
-    mat-icon { margin-right: 4px; }
+    mat-icon { margin-right: 6px; }
   }
 
   ::ng-deep .mat-mdc-form-field-subscript-wrapper {
@@ -49,15 +70,15 @@
 ::ng-deep .orders-tabs {
   .mat-mdc-tab-header {
     border-bottom: 1px solid rgba(0, 0, 0, 0.05);
-    margin-bottom: 20px;
+    margin-bottom: 24px;
   }
 
   .mat-mdc-tab {
     color: #74777f;
-    font-weight: 600;
-    font-size: 0.9rem;
-    padding: 0 16px;
-    min-height: 44px;
+    font-weight: 700;
+    font-size: 0.92rem;
+    padding: 0 18px;
+    min-height: 48px;
     letter-spacing: 0.01em;
 
     &.mdc-tab--active {
@@ -76,14 +97,14 @@
 
 // ─── SKELETON ─────────────────────────────────────────
 .skeleton-orders {
-  display: flex;
-  flex-direction: column;
-  gap: 14px;
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(380px, 1fr));
+  gap: 20px;
 }
 
 .skeleton-card {
-  height: 140px;
-  border-radius: 20px;
+  height: 180px;
+  border-radius: 24px;
   background: #ffffff;
   border: 1px solid #e8ecf0;
   overflow: hidden;
@@ -98,30 +119,37 @@
   }
 }
 
-// ─── CARDS GRID ───────────────────────────────────────
+// ─── BENTO GRID ───────────────────────────────────────
 .orders-cards {
-  display: flex;
-  flex-direction: column;
-  gap: 14px;
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 20px;
 }
 
 // ─── ORDER CARD ───────────────────────────────────────
 .order-card {
   position: relative;
   background: #ffffff;
-  border-radius: 20px;
+  border-radius: 24px;
   border: 1px solid #e8ecf0;
   box-shadow: 0 2px 10px rgba(0, 0, 0, 0.04);
-  padding: 20px 24px;
+  padding: 24px 28px;
   display: flex;
   flex-direction: column;
-  gap: 14px;
-  transition: border-color 0.2s, box-shadow 0.2s, transform 0.2s;
+  gap: 16px;
+  transition: border-color 0.25s, box-shadow 0.25s, transform 0.25s;
+  grid-column: span 1;
 
   &:hover {
     border-color: color-mix(in srgb, var(--profile-primary, #1976d2) 25%, transparent);
-    box-shadow: 0 6px 24px rgba(0, 0, 0, 0.07);
-    transform: translateY(-2px);
+    box-shadow: 0 8px 30px rgba(0, 0, 0, 0.08);
+    transform: translateY(-3px);
+  }
+
+  &--priority {
+    grid-column: span 2;
+    border-color: color-mix(in srgb, var(--profile-primary, #1976d2) 20%, transparent);
+    background: linear-gradient(135deg, #ffffff 0%, #f8fbff 100%);
   }
 
   &--new {
@@ -149,11 +177,11 @@
   &__new-badge {
     display: inline-flex;
     align-items: center;
-    padding: 3px 12px;
+    padding: 4px 14px;
     border-radius: 999px;
     background: var(--profile-primary, #1976d2);
     color: #ffffff;
-    font-size: 0.7rem;
+    font-size: 0.72rem;
     font-weight: 800;
     letter-spacing: 0.04em;
     line-height: 1.4;
@@ -161,7 +189,7 @@
   }
 
   &__id {
-    font-size: 1.1rem;
+    font-size: 1.15rem;
     font-weight: 800;
     color: #0f172a;
     letter-spacing: -0.01em;
@@ -171,7 +199,7 @@
     display: flex;
     align-items: center;
     gap: 4px;
-    font-size: 0.8rem;
+    font-size: 0.82rem;
     color: #94a3b8;
     font-weight: 500;
 
@@ -186,14 +214,14 @@
   &__customer {
     display: flex;
     flex-direction: column;
-    gap: 4px;
+    gap: 6px;
   }
 
   &__customer-name {
     display: flex;
     align-items: center;
-    gap: 6px;
-    font-size: 1rem;
+    gap: 8px;
+    font-size: 1.05rem;
     font-weight: 600;
     color: #1e293b;
 
@@ -208,12 +236,13 @@
   &__customer-addr {
     display: flex;
     align-items: center;
-    gap: 6px;
-    font-size: 0.85rem;
+    gap: 8px;
+    font-size: 0.88rem;
     color: #64748b;
     overflow: hidden;
     text-overflow: ellipsis;
     white-space: nowrap;
+    line-height: 1.3;
 
     mat-icon {
       font-size: 16px;
@@ -234,7 +263,7 @@
   }
 
   &__total {
-    font-size: 1.25rem;
+    font-size: 1.35rem;
     font-weight: 800;
     color: var(--profile-primary, #1976d2);
     letter-spacing: -0.01em;
@@ -243,9 +272,9 @@
   &__status-chip {
     display: inline-flex;
     align-items: center;
-    padding: 5px 14px;
+    padding: 6px 16px;
     border-radius: 999px;
-    font-size: 0.78rem;
+    font-size: 0.8rem;
     font-weight: 700;
     letter-spacing: 0.02em;
     text-transform: uppercase;
@@ -258,7 +287,7 @@
     align-items: center;
     gap: 10px;
     flex-wrap: wrap;
-    padding-top: 4px;
+    padding-top: 8px;
     border-top: 1px solid #f1f5f9;
   }
 }
@@ -299,12 +328,12 @@
   display: inline-flex;
   align-items: center;
   gap: 6px;
-  padding: 0 20px;
+  padding: 0 22px;
   border-radius: 999px;
-  font-size: 0.85rem;
+  font-size: 0.87rem;
   font-weight: 700;
   line-height: 1;
-  min-height: 42px;
+  min-height: 48px;
   white-space: nowrap;
   transition: background 0.2s, border-color 0.2s, box-shadow 0.2s;
 
@@ -358,6 +387,7 @@
   align-items: center;
   padding: 56px 24px;
   text-align: center;
+  grid-column: 1 / -1;
 
   &__icon {
     font-size: 44px;
@@ -378,16 +408,33 @@
 
 // ─── PAGINATOR ────────────────────────────────────────
 ::ng-deep mat-paginator {
-  margin-top: 16px;
+  margin-top: 24px;
   background: #ffffff;
-  border-radius: 14px;
+  border-radius: 16px;
   border: 1px solid #e8ecf0;
-  font-size: 0.85rem;
+  font-size: 0.88rem;
+  padding: 4px 8px;
 }
 
 // ─── RESPONSIVE ───────────────────────────────────────
+@media (max-width: 1120px) {
+  .orders-cards {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  .order-card--priority {
+    grid-column: span 2;
+  }
+}
+
 @media (max-width: 768px) {
+  :host {
+    padding: 0 16px;
+  }
+
   .filters-section {
+    padding: 16px;
+    gap: 12px;
     flex-direction: column;
     align-items: stretch;
 
@@ -395,9 +442,19 @@
     .date-field { min-width: 0; }
   }
 
+  .orders-cards {
+    grid-template-columns: 1fr;
+    gap: 16px;
+  }
+
   .order-card {
-    padding: 16px;
-    gap: 12px;
+    padding: 18px 20px;
+    gap: 14px;
+    border-radius: 20px;
+
+    &--priority {
+      grid-column: span 1;
+    }
 
     &__top {
       flex-wrap: wrap;
@@ -412,14 +469,6 @@
         &--detail { margin-left: 0; }
       }
     }
-  }
-}
-
-@media (min-width: 1024px) {
-  .orders-cards {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 16px;
   }
 }
 
@@ -467,4 +516,9 @@
   .order-card { transform: none !important; }
 
   .orders-page { animation: none; }
+
+  .skeleton-card__shimmer {
+    animation: none;
+    background: #f0f0f0;
+  }
 }

@@ -82,6 +82,7 @@ export class OrdersListComponent implements OnInit {
 
   readonly orders = signal<Order[]>([]);
   readonly totalOrders = signal<number>(0);
+  readonly systemTotalOrders = signal<number>(0);
   readonly loading = signal<boolean>(false);
   readonly currentLimit = signal<number>(10);
   readonly currentOffset = signal<number>(0);
@@ -127,6 +128,7 @@ export class OrdersListComponent implements OnInit {
   }
 
   ngOnInit(): void {
+    this.loadSystemTotal();
     this.loadOrders();
     this.setupWebSocketRefresh();
   }
@@ -143,6 +145,22 @@ export class OrdersListComponent implements OnInit {
     this.notificationsService.orderStatusChanged$
       .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe(() => this.loadOrders());
+  }
+
+  private loadSystemTotal(): void {
+    this.ordersService
+      .getAllOrders({ limit: 1, offset: 0 })
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe({
+        next: (result) => this.systemTotalOrders.set(result.total),
+      });
+  }
+
+  isPriorityOrder(order: Order): boolean {
+    return (
+      this.systemTotalOrders() < 10 &&
+      (order.status === OrderStatus.PENDING || order.status === OrderStatus.PREPARING)
+    );
   }
 
   loadOrders(): void {
