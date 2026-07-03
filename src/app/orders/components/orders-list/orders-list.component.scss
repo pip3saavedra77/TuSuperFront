@@ -33,20 +33,7 @@
     min-width: 260px;
 
     ::ng-deep .mat-mdc-text-field-wrapper {
-      border-radius: 12px !important;
-    }
-
-    ::ng-deep .mdc-notched-outline__leading {
-      border-radius: 12px 0 0 12px !important;
-      width: 12px !important;
-    }
-
-    ::ng-deep .mdc-notched-outline__trailing {
-      border-radius: 0 12px 12px 0 !important;
-    }
-
-    ::ng-deep .mdc-notched-outline__notch {
-      border-top: none !important;
+      border-radius: 28px !important;
     }
 
     ::ng-deep input {
@@ -59,20 +46,7 @@
     flex: 0 1 180px;
 
     ::ng-deep .mat-mdc-text-field-wrapper {
-      border-radius: 12px !important;
-    }
-
-    ::ng-deep .mdc-notched-outline__leading {
-      border-radius: 12px 0 0 12px !important;
-      width: 12px !important;
-    }
-
-    ::ng-deep .mdc-notched-outline__trailing {
-      border-radius: 0 12px 12px 0 !important;
-    }
-
-    ::ng-deep .mdc-notched-outline__notch {
-      border-top: none !important;
+      border-radius: 28px !important;
     }
 
     &--range {
@@ -83,8 +57,6 @@
 
   .calendar-btn {
     color: var(--profile-primary, #1976d2) !important;
-    margin-left: -4px !important;
-    margin-right: 4px !important;
 
     ::ng-deep .mat-mdc-button-touch-target {
       width: 36px !important;
