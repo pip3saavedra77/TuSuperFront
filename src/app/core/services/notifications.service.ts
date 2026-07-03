@@ -99,6 +99,7 @@ export class NotificationsService {
         isRead: false,
         data,
       });
+      this._orderStatusChanged.next(data);
     });
 
     this.socket.on('disconnect', () => {
