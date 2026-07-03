@@ -270,6 +270,12 @@
             <span class="info-label">Estado del Pago</span>
             <span class="info-val">{{ order.paymentStatus }}</span>
           </div>
+          @if (order.cashChangeRequested) {
+            <div class="info-item">
+              <span class="info-label">Paga con</span>
+              <span class="info-val">{{ order.cashChangeRequested | currency:'COP':'symbol-narrow':'1.0-0' }}</span>
+            </div>
+          }
           @if (order.deliveryNotes) {
             <div class="info-item full-width">
               <span class="info-label">Notas Especiales</span>

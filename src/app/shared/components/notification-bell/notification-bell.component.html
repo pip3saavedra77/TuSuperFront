@@ -76,7 +76,7 @@
       <div *ngFor="let notification of notifications()"
            class="notification-item"
            [class.unread]="!notification.isRead"
-           (click)="markAsRead($event, notification.id)"
+           (click)="navigateToOrder(notification)"
            role="button"
            tabindex="0">
 

@@ -1,4 +1,4 @@
-import { Component, inject, effect, computed, DestroyRef } from '@angular/core';
+import { Component, inject, effect, computed, signal, DestroyRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { Router, RouterLink } from '@angular/router';
 import { MatButtonModule } from '@angular/material/button';
@@ -38,9 +38,24 @@ export class CheckoutComponent {
   public isProcessing = false;
   private justPlacedOrder = false;
 
+  readonly billOptions = [20000, 50000, 100000] as const;
+  readonly selectedBill = signal<number | null>(null);
+
   readonly deliveryFee = computed(() => {
     const qty = this.cartStore.totalItems();
     return 6500 + qty * 100;
+  });
+
+  readonly total = computed(() => this.cartStore.totalAmount() + this.deliveryFee());
+
+  readonly change = computed(() => {
+    const bill = this.selectedBill();
+    return bill !== null ? bill - this.total() : null;
+  });
+
+  readonly billNotCovering = computed(() => {
+    const bill = this.selectedBill();
+    return bill !== null && bill < this.total();
   });
 
   constructor() {
@@ -49,7 +64,6 @@ export class CheckoutComponent {
       contactPhone: ['', [Validators.required, Validators.pattern(/^3\d{9}$/)]],
       paymentMethod: ['EFECTIVO'],
       deliveryNotes: [''],
-      cashChangeRequested: [null],
     });
 
     // Redirigir si el carrito está vacío al entrar (excepto justo después de crear pedido)
@@ -60,8 +74,12 @@ export class CheckoutComponent {
     });
   }
 
+  selectBill(bill: number): void {
+    this.selectedBill.set(this.selectedBill() === bill ? null : bill);
+  }
+
   confirmOrder(): void {
-    if (this.cartStore.isEmpty() || this.checkoutForm.invalid) return;
+    if (this.cartStore.isEmpty() || this.checkoutForm.invalid || this.billNotCovering()) return;
 
     this.isProcessing = true;
     const formValues = this.checkoutForm.value;
@@ -78,8 +96,9 @@ export class CheckoutComponent {
       deliveryFee: this.deliveryFee(),
     };
 
-    if (formValues.cashChangeRequested !== null && formValues.cashChangeRequested !== undefined && formValues.cashChangeRequested !== '') {
-      payload.cashChangeRequested = Number(formValues.cashChangeRequested);
+    const bill = this.selectedBill();
+    if (bill !== null) {
+      payload.cashChangeRequested = bill;
     }
 
     this.ordersService.createOrder(payload)

@@ -119,6 +119,9 @@
                 <div class="extra-row"><mat-icon>location_on</mat-icon><span>{{ order.deliveryAddress }}</span></div>
                 <div class="extra-row"><mat-icon>phone</mat-icon><span>{{ order.contactPhone }}</span></div>
                 <div class="extra-row"><mat-icon>payments</mat-icon><span>{{ order.paymentMethod }}</span></div>
+                @if (order.cashChangeRequested) {
+                  <div class="extra-row"><mat-icon>currency_exchange</mat-icon><span>Paga con {{ order.cashChangeRequested | currency:'COP':'symbol-narrow':'1.0-0' }}</span></div>
+                }
                 @if (order.deliveryNotes) {
                   <div class="extra-row"><mat-icon>notes</mat-icon><span>{{ order.deliveryNotes }}</span></div>
                 }

@@ -57,26 +57,15 @@ export class NotificationsService {
       this.socket?.emit('authenticate', { token });
     });
 
-    this.socket.on('new-order', (data: string) => {
+    this.socket.on('new-order', (data: any) => {
       this.sound.playNewOrder();
+      const msg = typeof data === 'object'
+        ? `Pedido #${data.orderId} de ${data.customerName} — $${data.total}`
+        : data;
       this.addNotification({
         id: Math.random().toString(36).substring(2, 11),
         title: '¡Nuevo Pedido!',
-        message: data,
-        type: 'new-order',
-        timestamp: new Date().toISOString(),
-        isRead: false,
-        data,
-      });
-      this._newOrderReceived.next(data);
-    });
-
-    this.socket.on('new_order', (data: string) => {
-      this.sound.playNewOrder();
-      this.addNotification({
-        id: Math.random().toString(36).substring(2, 11),
-        title: '¡Nuevo Pedido!',
-        message: data,
+        message: msg,
         type: 'new-order',
         timestamp: new Date().toISOString(),
         isRead: false,
@@ -100,7 +89,7 @@ export class NotificationsService {
     });
 
     this.socket.on('order-cancelled', (data: any) => {
-      this.sound.playNewOrder();
+      this.sound.playStatusChange();
       this.addNotification({
         id: Math.random().toString(36).substring(2, 11),
         title: 'Pedido Cancelado',
