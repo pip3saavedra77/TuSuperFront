@@ -24,6 +24,10 @@ export const AUTH_ROUTES: Routes = [
         path: 'social-callback',
         loadComponent: () => import('./social-callback/social-callback').then(m => m.SocialCallback)
       },
+      {
+        path: 'account-disabled',
+        loadComponent: () => import('./account-disabled/account-disabled').then(m => m.AccountDisabled)
+      },
       { path: '', redirectTo: 'login', pathMatch: 'full' }
     ]
   }

@@ -103,20 +103,27 @@ export class LogIn implements OnInit {
       },
       error: (err: unknown) => {
         this.stopLoading();
+
+        const message = getHttpErrorMessage(
+          err as HttpErrorResponse,
+          'Correo o contraseña incorrectos',
+        );
+
+        if (message.toLowerCase().includes('deshabilitada')) {
+          this.router.navigate(['/auth/account-disabled']);
+          return;
+        }
+
         this.shakeForm.set(true);
         setTimeout(() => this.shakeForm.set(false), 500);
 
         this.loginForm.patchValue({ password: '' });
 
-        let message = getHttpErrorMessage(
-          err as HttpErrorResponse,
-          'Correo o contraseña incorrectos',
-        );
-        // Translate common backend English messages
-        if (message.toLowerCase().includes('invalid credentials')) {
-          message = 'Correo o contraseña incorrectos';
+        let displayMessage = message;
+        if (displayMessage.toLowerCase().includes('invalid credentials')) {
+          displayMessage = 'Correo o contraseña incorrectos';
         }
-        this.errorMessage.set(message);
+        this.errorMessage.set(displayMessage);
       },
     });
   }
