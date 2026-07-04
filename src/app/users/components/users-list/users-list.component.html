@@ -1,5 +1,4 @@
 <div class="users-container">
-  <!-- HEADER UNIFICADO -->
   <div class="page-hero">
     <div class="page-hero__icon">
       <mat-icon>group</mat-icon>
@@ -55,31 +54,28 @@
   } @else {
     <div class="users-grid">
       @for (user of store.users(); track user.id) {
-        <div class="user-card" 
-             [class.user-card--inactive]="!user.isActive"
-             [class.profile-admin]="user.roles[0]?.name === 'ADMIN'"
-             [class.profile-tendero]="user.roles[0]?.name === 'TENDERO'"
-             [class.profile-usuario]="user.roles[0]?.name === 'USER'">
-          <div class="user-card__banner">
-            <span
-              class="user-card__status-badge"
-              [class.active]="user.isActive"
-              [class.inactive]="!user.isActive">
-              {{ user.isActive ? 'Activo' : 'Inactivo' }}
-            </span>
-          </div>
+        <div class="user-card"
+             [class.user-card--inactive]="!user.isActive">
+          <div class="user-card__accent" [class.user-card__accent--active]="user.isActive"></div>
 
-          <div class="user-card__avatar-container">
+          <div class="user-card__top">
             <div class="user-card__avatar">{{ getInitials(user) }}</div>
-          </div>
-
-          <div class="user-card__body">
-            <h3 class="user-card__name">{{ user.firstName }} {{ user.lastName }}</h3>
-            <p class="user-card__email">{{ user.email }}</p>
-            <div class="user-card__roles">
-              @for (role of user.roles; track role.id) {
-                <span class="role-chip" [class]="role.name.toLowerCase()">{{ role.name }}</span>
-              }
+            <div class="user-card__info">
+              <div class="user-card__info-top">
+                <h3 class="user-card__name">{{ user.firstName }} {{ user.lastName }}</h3>
+                <span class="user-card__status"
+                      [class.user-card__status--active]="user.isActive"
+                      [class.user-card__status--inactive]="!user.isActive">
+                  <span class="user-card__status-dot"></span>
+                  {{ user.isActive ? 'Activo' : 'Inactivo' }}
+                </span>
+              </div>
+              <p class="user-card__email">{{ user.email }}</p>
+              <div class="user-card__roles">
+                @for (role of user.roles; track role.id) {
+                  <span class="role-chip" [class]="role.name.toLowerCase()">{{ role.name }}</span>
+                }
+              </div>
             </div>
           </div>
 
