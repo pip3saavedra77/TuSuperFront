@@ -1,8 +1,9 @@
-import { ApplicationConfig, LOCALE_ID, provideBrowserGlobalErrorListeners, isDevMode, APP_INITIALIZER } from '@angular/core';
+import { ApplicationConfig, LOCALE_ID, provideBrowserGlobalErrorListeners, isDevMode, APP_INITIALIZER, importProvidersFrom } from '@angular/core';
 import { provideRouter, withPreloading, PreloadAllModules } from '@angular/router';
 import { registerLocaleData } from '@angular/common';
 import localeEsCO from '@angular/common/locales/es-CO';
 import { provideServiceWorker } from '@angular/service-worker';
+import { MatSnackBarModule } from '@angular/material/snack-bar';
 
 import { routes } from './app.routes';
 import { provideHttpClient, withInterceptors, withXsrfConfiguration } from '@angular/common/http';
@@ -25,6 +26,7 @@ export const appConfig: ApplicationConfig = {
   providers: [
     provideBrowserGlobalErrorListeners(),
     provideRouter(routes, withPreloading(PreloadAllModules)),
+    importProvidersFrom(MatSnackBarModule),
     provideHttpClient(
       withInterceptors([authInterceptor]),
       withXsrfConfiguration({
