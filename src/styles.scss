@@ -447,28 +447,15 @@ body { --mat-menu-container-color: #FFFFFF; }
 
 
 
-.side-drawer-dialog {
-
-  animation: slideInRight 300ms cubic-bezier(0.25, 0.8, 0.25, 1) forwards;
-
-
-
+.user-form-centered {
   .mat-mdc-dialog-container .mdc-dialog__surface {
-
-    border-radius: 16px 0 0 16px !important;
-
+    border-radius: 24px !important;
+    overflow: hidden;
   }
 
-}
-
-
-
-@keyframes slideInRight {
-
-  from { transform: translateX(100%); }
-
-  to   { transform: translateX(0); }
-
+  .mat-mdc-dialog-surface, .mat-mdc-dialog-container {
+    max-height: 90vh !important;
+  }
 }
 
 
