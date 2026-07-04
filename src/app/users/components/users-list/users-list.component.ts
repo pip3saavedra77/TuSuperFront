@@ -7,7 +7,6 @@ import { MatIconModule } from '@angular/material/icon';
 import { MatInputModule } from '@angular/material/input';
 import { MatPaginatorModule, PageEvent } from '@angular/material/paginator';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
-import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
 import { debounceTime, distinctUntilChanged } from 'rxjs/operators';
 import { skip } from 'rxjs';
 import { User } from '../../../core/models/user.model';
@@ -25,7 +24,6 @@ import { AuthService } from '../../../core/services/auth';
     MatFormFieldModule,
     MatInputModule,
     MatDialogModule,
-    MatSnackBarModule,
     MatProgressSpinnerModule,
   ],
   templateUrl: './users-list.component.html',
@@ -34,7 +32,6 @@ import { AuthService } from '../../../core/services/auth';
 export class UsersListComponent {
   readonly store = inject(UsersStore);
   private readonly dialog = inject(MatDialog);
-  private readonly snackBar = inject(MatSnackBar);
   private readonly destroyRef = inject(DestroyRef);
   private readonly authService = inject(AuthService);
 
@@ -93,11 +90,6 @@ export class UsersListComponent {
 
   toggleStatus(user: User): void {
     this.store.toggleStatus(user.id);
-    this.snackBar.open(
-      `Usuario ${user.isActive ? 'desactivado' : 'activado'}`,
-      'Cerrar',
-      { duration: 2000 },
-    );
   }
 
   retry(): void {

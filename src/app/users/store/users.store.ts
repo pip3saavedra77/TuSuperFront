@@ -7,6 +7,7 @@ import {
   withHooks,
   patchState,
 } from '@ngrx/signals';
+import { MatSnackBar } from '@angular/material/snack-bar';
 import { EMPTY, catchError, switchMap, tap, pipe as rxPipe } from 'rxjs';
 import { rxMethod } from '@ngrx/signals/rxjs-interop';
 import { UsersService } from '../services/users.service';
@@ -58,6 +59,7 @@ export const UsersStore = signalStore(
 
   withMethods((store) => {
     const svc = inject(UsersService);
+    const snackBar = inject(MatSnackBar);
 
     const loadOp = switchMap(() =>
       svc.getUsers({
@@ -78,11 +80,19 @@ export const UsersStore = signalStore(
 
     const toggleOp = switchMap((id: number) =>
       svc.toggleStatus(id).pipe(
-        tap((updated) => patchState(store, ({ users }) => ({
-          users: users.map((u) => (u.id === id ? { ...u, ...updated } : u)),
-        }))),
+        tap((updated) => {
+          patchState(store, ({ users }) => ({
+            users: users.map((u) => (u.id === id ? { ...u, ...updated } : u)),
+          }));
+          snackBar.open(
+            `Usuario ${updated.isActive ? 'activado' : 'desactivado'}`,
+            'Cerrar',
+            { duration: 2000 },
+          );
+        }),
         catchError((err: { status: number }) => {
           patchState(store, { error: `Error al cambiar estado: ${String(err.status)}` });
+          snackBar.open(`Error al cambiar estado del usuario`, 'Cerrar', { duration: 3000 });
           return EMPTY;
         }),
       ));
