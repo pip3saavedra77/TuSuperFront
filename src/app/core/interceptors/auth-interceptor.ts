@@ -7,6 +7,13 @@ import { AuthService } from '../services/auth';
 let isRefreshing = false;
 let isRedirecting = false;
 
+function isAccountDisabledError(error: HttpErrorResponse): boolean {
+  const body = error.error;
+  if (!body || typeof body !== 'object') return false;
+  const message = Array.isArray(body.message) ? body.message[0] : body.message;
+  return typeof message === 'string' && message.toLowerCase().includes('deshabilitada');
+}
+
 export const authInterceptor: HttpInterceptorFn = (req, next) => {
   const auth = inject(AuthService);
   const router = inject(Router);
@@ -26,23 +33,33 @@ export const authInterceptor: HttpInterceptorFn = (req, next) => {
 
   return next(authReq).pipe(
     catchError((error: HttpErrorResponse) => {
-      if (error.status === 401 && !isCheckStatus && !isLogout && !isRefresh) {
-        return from(tryRefresh(http, auth)).pipe(
-          switchMap((ok) => {
-            if (ok) {
-              const newToken = auth.getToken();
-              const retryHeaders: Record<string, string> = {};
-              if (newToken) retryHeaders['Authorization'] = `Bearer ${newToken}`;
-              return next(req.clone({ setHeaders: retryHeaders }));
-            }
-            if (!isRedirecting) {
-              isRedirecting = true;
-              auth.clearToken();
-              router.navigate(['/auth/log-in']).then(() => { isRedirecting = false; });
-            }
-            return throwError(() => error);
-          }),
-        );
+      if (error.status === 401 && !isLogout) {
+        if (isAccountDisabledError(error)) {
+          if (!isRedirecting) {
+            isRedirecting = true;
+            auth.clearToken();
+            router.navigate(['/auth/account-disabled']).then(() => { isRedirecting = false; });
+          }
+          return throwError(() => error);
+        }
+        if (!isCheckStatus && !isRefresh) {
+          return from(tryRefresh(http, auth)).pipe(
+            switchMap((ok) => {
+              if (ok) {
+                const newToken = auth.getToken();
+                const retryHeaders: Record<string, string> = {};
+                if (newToken) retryHeaders['Authorization'] = `Bearer ${newToken}`;
+                return next(req.clone({ setHeaders: retryHeaders }));
+              }
+              if (!isRedirecting) {
+                isRedirecting = true;
+                auth.clearToken();
+                router.navigate(['/auth/log-in']).then(() => { isRedirecting = false; });
+              }
+              return throwError(() => error);
+            }),
+          );
+        }
       }
       return throwError(() => error);
     }),
