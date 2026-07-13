@@ -1,36 +1,32 @@
 import { Injectable } from '@angular/core';
 
-const TOKEN_KEY = 'token';
-const REFRESH_TOKEN_KEY = 'refresh_token';
 const PERSIST_FLAG = 'token_persistent';
 
-/**
- * Siempre usa localStorage (iOS PWA purga sessionStorage al minimizar).
- * La bandera `token_persistent` preserva la elección del usuario.
- */
 @Injectable({ providedIn: 'root' })
 export class TokenService {
+  private _token: string | null = null;
+  private _refreshToken: string | null = null;
+
   get(): string | null {
-    return localStorage.getItem(TOKEN_KEY) || null;
+    return this._token;
   }
 
   set(token: string, persistent: boolean): void {
-    this.clear();
-    localStorage.setItem(TOKEN_KEY, token);
+    this._token = token;
     localStorage.setItem(PERSIST_FLAG, persistent ? '1' : '0');
   }
 
   getRefreshToken(): string | null {
-    return localStorage.getItem(REFRESH_TOKEN_KEY) || null;
+    return this._refreshToken;
   }
 
   setRefreshToken(token: string): void {
-    localStorage.setItem(REFRESH_TOKEN_KEY, token);
+    this._refreshToken = token;
   }
 
   clear(): void {
-    localStorage.removeItem(TOKEN_KEY);
-    localStorage.removeItem(REFRESH_TOKEN_KEY);
+    this._token = null;
+    this._refreshToken = null;
     localStorage.removeItem(PERSIST_FLAG);
   }
 

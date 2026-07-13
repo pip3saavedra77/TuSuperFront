@@ -1,11 +1,12 @@
 import { Injectable, inject, Injector, signal, computed, DestroyRef } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
-import { HttpClient, HttpErrorResponse } from '@angular/common/http';
+import { HttpClient, HttpErrorResponse, HttpHeaders } from '@angular/common/http';
 import { catchError, map, Observable, of, shareReplay, tap, timeout } from 'rxjs';
 import { AuthResponse, LoginCredentials, RegisterPayload } from '../models/auth.models';
 import { Router } from '@angular/router';
 import { environment } from '../../../environments/environment';
 import { TokenService } from './token.service';
+import { DpopService } from './dpop.service';
 import { IdleService } from './idle.service';
 import { InitService } from './init.service';
 import { PushService } from './push.service';
@@ -22,6 +23,7 @@ export class AuthService {
 
   private readonly router = inject(Router);
   private readonly tokenService = inject(TokenService);
+  private readonly dpopService = inject(DpopService);
   private readonly injector = inject(Injector);
   private readonly destroyRef = inject(DestroyRef);
   private readonly initService = inject(InitService);
@@ -87,13 +89,23 @@ export class AuthService {
   /* ── Login / Register ─────────────────────────────────── */
 
   public login(credentials: LoginCredentials, rememberMe = true): Observable<AuthResponse> {
-    return this.http.post<AuthResponse>(`${this.API_URL}/login`, credentials).pipe(
+    let headers = new HttpHeaders();
+    const dpopJwk = this.dpopService.getPublicJwkBase64();
+    if (dpopJwk) {
+      headers = headers.set('x-dpop-jwk', dpopJwk);
+    }
+    return this.http.post<AuthResponse>(`${this.API_URL}/login`, credentials, { headers }).pipe(
       tap((response) => this._handleAuthResponse(response, rememberMe)),
     );
   }
 
   public register(payload: RegisterPayload): Observable<AuthResponse> {
-    return this.http.post<AuthResponse>(`${this.API_URL}/register`, payload).pipe(
+    let headers = new HttpHeaders();
+    const dpopJwk = this.dpopService.getPublicJwkBase64();
+    if (dpopJwk) {
+      headers = headers.set('x-dpop-jwk', dpopJwk);
+    }
+    return this.http.post<AuthResponse>(`${this.API_URL}/register`, payload, { headers }).pipe(
       tap((response) => this._handleAuthResponse(response, true)),
     );
   }
@@ -162,10 +174,9 @@ export class AuthService {
   /* ── Proactive token refresh ──────────────────────────── */
 
   refreshToken(): Observable<boolean> {
-    const refreshToken = this.tokenService.getRefreshToken();
     return this.http.post<{ access_token?: string; refresh_token?: string }>(
       `${this.API_URL}/refresh`,
-      { refresh_token: refreshToken },
+      {},
     ).pipe(
       timeout(5000),
       tap((res) => {
@@ -178,7 +189,7 @@ export class AuthService {
       }),
       map(() => true),
       catchError((err: HttpErrorResponse) => {
-        if (err.status === 401 && this.tokenService.get()) {
+        if (err.status === 401) {
           this.clearSession();
         }
         return of(false);
@@ -324,24 +335,22 @@ export class AuthService {
 
   /** Initialize auth on app bootstrap - used by APP_INITIALIZER (non-blocking) */
   initializeAuth(): void {
-    if (!this.getToken()) {
-      this.initService.complete();
-      return;
-    }
-    this.checkAuthStatus().pipe(takeUntilDestroyed(this.destroyRef)).subscribe({
-      next: () => {
-        this.initService.complete();
-      },
-      error: () => {
-        this.refreshToken().pipe(takeUntilDestroyed(this.destroyRef)).subscribe({
-          next: () => {
-            this.initService.complete();
-          },
-          error: () => {
-            this.initService.complete();
-          },
-        });
-      },
+    this.dpopService.init().then(() => {
+      this.checkAuthStatus().pipe(takeUntilDestroyed(this.destroyRef)).subscribe({
+        next: () => {
+          this.initService.complete();
+        },
+        error: () => {
+          this.refreshToken().pipe(takeUntilDestroyed(this.destroyRef)).subscribe({
+            next: () => {
+              this.initService.complete();
+            },
+            error: () => {
+              this.initService.complete();
+            },
+          });
+        },
+      });
     });
   }
 }
