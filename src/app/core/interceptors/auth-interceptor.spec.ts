@@ -2,7 +2,8 @@ import { TestBed } from '@angular/core/testing';
 import { HttpInterceptorFn, HttpRequest, HttpHandlerFn, HttpErrorResponse } from '@angular/common/http';
 import { of, throwError, firstValueFrom } from 'rxjs';
 
-import { authInterceptor, resetTokenCache } from './auth-interceptor';
+import { authInterceptor, resetAuthState } from './auth-interceptor';
+import { TokenService } from '../services/token.service';
 
 function runInterceptor(req: HttpRequest<unknown>, next: HttpHandlerFn) {
   return TestBed.runInInjectionContext(() => authInterceptor(req, next));
@@ -10,15 +11,17 @@ function runInterceptor(req: HttpRequest<unknown>, next: HttpHandlerFn) {
 
 describe('authInterceptor', () => {
   const interceptor: HttpInterceptorFn = authInterceptor;
+  let tokenService: TokenService;
 
   beforeEach(() => {
     TestBed.configureTestingModule({});
     localStorage.clear();
+    tokenService = TestBed.inject(TokenService);
   });
 
   afterEach(() => {
     localStorage.clear();
-    resetTokenCache();
+    resetAuthState();
   });
 
   it('should be created', () => {
@@ -26,7 +29,7 @@ describe('authInterceptor', () => {
   });
 
   it('should add Authorization header when token exists', async () => {
-    localStorage.setItem('token', 'test-token-123');
+    tokenService.set('test-token-123', false);
     const req = new HttpRequest('GET', '/api/data');
     const next: HttpHandlerFn = (r) => {
       expect(r.headers.get('Authorization')).toBe('Bearer test-token-123');
@@ -57,7 +60,7 @@ describe('authInterceptor', () => {
   });
 
   it('should not intercept 401 on check-status requests', async () => {
-    localStorage.setItem('token', 'test-token');
+    tokenService.set('test-token', false);
     const req = new HttpRequest('GET', '/api/auth/check-status');
     const error = new HttpErrorResponse({ status: 401 });
     const next: HttpHandlerFn = () => throwError(() => error);
@@ -70,7 +73,7 @@ describe('authInterceptor', () => {
   });
 
   it('should not intercept 401 on refresh requests', async () => {
-    localStorage.setItem('token', 'test-token');
+    tokenService.set('test-token', false);
     const req = new HttpRequest('POST', '/api/auth/refresh', {});
     const error = new HttpErrorResponse({ status: 401 });
     const next: HttpHandlerFn = () => throwError(() => error);
@@ -83,7 +86,7 @@ describe('authInterceptor', () => {
   });
 
   it('should not intercept non-401 errors', async () => {
-    localStorage.setItem('token', 'test-token');
+    tokenService.set('test-token', false);
     const req = new HttpRequest('GET', '/api/data');
     const error = new HttpErrorResponse({ status: 500 });
     const next: HttpHandlerFn = () => throwError(() => error);

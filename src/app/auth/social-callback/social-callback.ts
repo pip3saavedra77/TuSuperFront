@@ -1,14 +1,8 @@
 import { Component, OnInit, inject } from '@angular/core';
-import { ActivatedRoute, Router } from '@angular/router';
+import { Router } from '@angular/router';
 import { AuthService } from '../../core/services/auth';
-import { TokenService } from '../../core/services/token.service';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
-
-const JWT_REGEX = /^[A-Za-z0-9\-._~+/]+=*$/;
-
-function isValidJwtFormat(token: string): boolean {
-  return token.length > 20 && JWT_REGEX.test(token);
-}
+import { take } from 'rxjs';
 
 @Component({
   selector: 'app-social-callback',
@@ -34,31 +28,15 @@ function isValidJwtFormat(token: string): boolean {
   `]
 })
 export class SocialCallback implements OnInit {
-  private readonly route = inject(ActivatedRoute);
   private readonly router = inject(Router);
   private readonly authService = inject(AuthService);
-  private readonly tokenService = inject(TokenService);
 
   ngOnInit(): void {
-    let token = this.route.snapshot.queryParamMap.get('token');
-
-    if (!token && globalThis.location.hash) {
-      const hash = globalThis.location.hash.slice(1);
-      const params = new URLSearchParams(hash);
-      token = params.get('token');
-    }
-
-    if (token && isValidJwtFormat(token)) {
-      this.tokenService.set(token, true);
-      this.authService.checkAuthStatus().subscribe({
-        next: () => this.router.navigate(['/home']),
-        error: () => {
-          this.tokenService.clear();
-          this.router.navigate(['/auth/login'], { queryParams: { error: 'social_auth_failed' } });
-        },
-      });
-    } else {
-      this.router.navigate(['/auth/login'], { queryParams: { error: 'social_auth_failed' } });
-    }
+    this.authService.checkAuthStatus().pipe(take(1)).subscribe({
+      next: () => this.router.navigate(['/home']),
+      error: () => {
+        this.router.navigate(['/auth/login'], { queryParams: { error: 'social_auth_failed' } });
+      },
+    });
   }
 }
