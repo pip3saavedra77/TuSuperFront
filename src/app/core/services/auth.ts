@@ -99,6 +99,17 @@ export class AuthService {
     );
   }
 
+  public loginAsGuest(rememberMe = false): Observable<AuthResponse> {
+    let headers = new HttpHeaders();
+    const dpopJwk = this.dpopService.getPublicJwkBase64();
+    if (dpopJwk) {
+      headers = headers.set('x-dpop-jwk', dpopJwk);
+    }
+    return this.http.post<AuthResponse>(`${this.API_URL}/guest`, {}, { headers }).pipe(
+      tap((response) => this._handleAuthResponse(response, rememberMe)),
+    );
+  }
+
   public register(payload: RegisterPayload): Observable<AuthResponse> {
     let headers = new HttpHeaders();
     const dpopJwk = this.dpopService.getPublicJwkBase64();

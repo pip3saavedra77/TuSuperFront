@@ -128,6 +128,29 @@ export class LogIn implements OnInit {
     });
   }
 
+  loginAsGuest(): void {
+    if (this.loading()) return;
+
+    this.loading.set(true);
+    this.loadingStartTime = Date.now();
+    this.errorMessage.set('');
+
+    this.authService.loginAsGuest(false).subscribe({
+      next: () => {
+        this.stopLoading();
+        this.router.navigate(['/home']);
+      },
+      error: (err: unknown) => {
+        this.stopLoading();
+        const message = getHttpErrorMessage(
+          err as HttpErrorResponse,
+          'Error al ingresar como invitado. Intenta nuevamente.',
+        );
+        this.errorMessage.set(message);
+      },
+    });
+  }
+
   loginWithGoogle(): void {
     globalThis.location.href = `${environment.apiUrl}/auth/google`;
   }

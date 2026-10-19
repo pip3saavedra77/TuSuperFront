@@ -165,6 +165,12 @@
                         <img src="https://fonts.gstatic.com/s/i/productlogos/googleg/v6/24px.svg" alt="Icono de Google" class="google-icon">
                         <span>Google</span>
                     </button>
+
+                    <!-- Guest / Demo -->
+                    <button type="button" class="guest-social-button" (click)="loginAsGuest()" [disabled]="loading()" aria-label="Continuar como invitado o reclutador">
+                        <mat-icon class="guest-icon">visibility</mat-icon>
+                        <span>Continuar como invitado (Demo)</span>
+                    </button>
                 </form>
 
                 <!-- Footer -->
