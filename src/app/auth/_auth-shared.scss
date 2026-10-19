@@ -543,6 +543,57 @@ $error-bg: rgba(239, 68, 68, 0.06);
       flex-shrink: 0;
     }
   }
+
+  // Guest Access Button (Demo / Recruiters)
+  .guest-social-button {
+    font-family: st.$stitch-font-headline;
+    font-size: 14px;
+    font-weight: 600;
+    letter-spacing: 0.01em;
+    padding: 12px 24px;
+    border-radius: 12px;
+    border: 1.5px dashed rgba($green-600, 0.45);
+    background: rgba($green-600, 0.04);
+    color: $green-700;
+    cursor: pointer;
+    transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    height: 44px;
+    width: 100%;
+    margin-top: 10px;
+    box-sizing: border-box;
+
+    &:hover {
+      background: rgba($green-600, 0.09);
+      border-color: $green-700;
+      transform: translateY(-1px);
+      box-shadow: 0 4px 12px rgba($green-600, 0.12);
+    }
+
+    &:active {
+      transform: translateY(0);
+    }
+
+    &:disabled {
+      cursor: not-allowed;
+      opacity: 0.6;
+      transform: none;
+      box-shadow: none;
+    }
+
+    .guest-icon {
+      font-size: 20px;
+      width: 20px;
+      height: 20px;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+    }
+  }
+
 }
 
 // ==========================================
